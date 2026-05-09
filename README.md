@@ -1,6 +1,6 @@
 # SyncCarreira 🚀
 
-Bem-vindo ao repositório oficial do **SyncCarreira**, um projeto de Trabalho de Conclusão de Curso (TCC) do curso de Análise e Desenvolvimento de Sistemas (IFSP). 
+Bem-vindo ao repositório oficial do **SyncCarreira**, um Projeto de Conclusão de Curso (PCC) do curso de Análise e Desenvolvimento de Sistemas (IFSP). 
 
 O SyncCarreira é um software proprietário do tipo SaaS (Software as a Service) destinado à automação e gestão de processos de orientação vocacional em instituições de ensino. A plataforma visa otimizar o fluxo de trabalho de psicólogos escolares, substituindo métodos manuais por um sistema digital que guia o aluno por quatro trilhas de autoconhecimento (Autoconhecimento, Influências, Informação e Projeto de Futuro).
 
