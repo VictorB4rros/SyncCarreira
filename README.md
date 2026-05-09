@@ -26,7 +26,7 @@ Diretório voltado para a governança e o acompanhamento do desenvolvimento util
 Neste diretório encontra-se todo o código-fonte (código de desenvolvimento) da aplicação SyncCarreira.
 * **Front-end:** Interface de usuário interativa e responsiva.
 * **Back-end:** Motor do sistema e lógica de negócios, desenvolvido em arquitetura de camadas utilizando Java e Spring Boot.
-* **Banco de Dados:** Scripts de criação e população do banco de dados (PostgreSQL) para o armazenamento seguro e criptografado de dados sensíveis e perfis de usuários (Administrador, Psicóloga e Aluno).
+* **Banco de Dados:** Scripts de criação e população do banco de dados (MySQL) para o armazenamento seguro e criptografado de dados sensíveis e perfis de usuários (Administrador, Psicóloga e Aluno).
 
 ---
 
