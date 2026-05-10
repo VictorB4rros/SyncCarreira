@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -63,11 +64,6 @@ public class UserService implements UserDetailsService {
 	public UserDTO insert(UserInsertDTO dto) {
 		User entity = new User();
 		copyDtoToEntity(dto, entity);
-
-		entity.getRoles().clear();
-		Role role = roleRepository.findByAuthority("ROLE_CLIENT");
-		entity.addRole(role);
-
 		entity.setPassword(passwordEncoder.encode(dto.getPassword()));
 		entity = repository.save(entity);
 		return new UserDTO(entity);
@@ -99,15 +95,20 @@ public class UserService implements UserDetailsService {
 		}
 	}
 
-	private void copyDtoToEntity(UserDTO dto, User entity) {
+	private void copyDtoToEntity(UserInsertDTO dto, User entity) {
 		entity.setName(dto.getName());
 		entity.setEmail(dto.getEmail());
-		
 		entity.getRoles().clear();
-		for (RoleDTO roleDto : dto.getRoles()) {
-			Role role = roleRepository.getReferenceById(roleDto.getId());
-			entity.getRoles().add(role);
-		}
+		Optional<Role> role = roleRepository.findById(dto.getRoleId());
+		role.ifPresent(entity::addRole);
+	}
+
+	private void copyDtoToEntity(UserUpdateDTO dto, User entity) {
+		entity.setName(dto.getName());
+		entity.setEmail(dto.getEmail());
+		entity.getRoles().clear();
+		Optional<Role> role = roleRepository.findById(dto.getRoleId());
+		role.ifPresent(entity::addRole);
 	}
 
 	@Override
