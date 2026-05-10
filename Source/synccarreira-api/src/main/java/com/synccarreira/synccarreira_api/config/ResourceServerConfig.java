@@ -46,6 +46,7 @@ public class ResourceServerConfig {
 
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 				.requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
