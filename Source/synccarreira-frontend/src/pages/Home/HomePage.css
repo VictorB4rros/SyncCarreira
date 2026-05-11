@@ -1,0 +1,103 @@
+/* ═══════════════════════════════════════════════════════════════
+   src/pages/Home/HomePage.css
+   ═══════════════════════════════════════════════════════════════ */
+
+.hp-root {
+  min-height: 100vh;
+  background: var(--sc-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Header ────────────────────────────────────────────────── */
+.hp-header {
+  height: 60px;
+  background: var(--sc-white);
+  border-bottom: 1px solid var(--sc-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+}
+
+.hp-brand { display: flex; align-items: center; gap: 10px; }
+
+.hp-brand__mark {
+  width: 30px; height: 30px;
+  background: var(--sc-roxo);
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; font-weight: 700; color: #fff;
+}
+
+.hp-brand__name { font-size: 15px; font-weight: 600; color: var(--sc-text); }
+
+.hp-logout {
+  background: none;
+  border: 1.5px solid var(--sc-border);
+  border-radius: var(--sc-radius-sm);
+  padding: 6px 14px;
+  font-size: 13px;
+  color: var(--sc-muted);
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.hp-logout:hover { border-color: var(--sc-roxo); color: var(--sc-roxo); }
+
+/* ── Main ──────────────────────────────────────────────────── */
+.hp-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+}
+
+.hp-card {
+  background: var(--sc-white);
+  border: 1px solid var(--sc-border);
+  border-radius: var(--sc-radius-lg);
+  padding: 48px 40px;
+  text-align: center;
+  box-shadow: var(--sc-shadow);
+  max-width: 400px;
+  width: 100%;
+}
+
+.hp-avatar {
+  width: 64px; height: 64px;
+  background: var(--sc-roxo);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26px; font-weight: 700; color: #fff;
+  margin: 0 auto 20px;
+}
+
+.hp-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--sc-text);
+  margin-bottom: 8px;
+}
+
+.hp-title span { color: var(--sc-roxo); }
+
+.hp-sub { font-size: 14px; color: var(--sc-muted); }
+
+.hp-btn-cadastro {
+  margin-top: 1.5rem;
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #7c6cb0;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.hp-btn-cadastro:hover {
+  background-color: #6a5a9e;
+}
