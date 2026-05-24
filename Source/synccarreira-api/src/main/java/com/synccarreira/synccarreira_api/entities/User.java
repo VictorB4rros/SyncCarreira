@@ -11,6 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_usuario")
+@Inheritance(strategy = InheritanceType.JOINED)
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
