@@ -1,0 +1,169 @@
+package com.synccarreira.synccarreira_api.service;
+
+import com.synccarreira.synccarreira_api.dto.OpcaoPerguntaDTO;
+import com.synccarreira.synccarreira_api.dto.PerguntaDTO;
+import com.synccarreira.synccarreira_api.entities.OpcaoPergunta;
+import com.synccarreira.synccarreira_api.entities.Pergunta;
+import com.synccarreira.synccarreira_api.entities.Psicologa;
+import com.synccarreira.synccarreira_api.entities.Trilha;
+import com.synccarreira.synccarreira_api.entities.enums.TipoPergunta;
+import com.synccarreira.synccarreira_api.repository.PerguntaRepository;
+import com.synccarreira.synccarreira_api.repository.PsicologaRepository;
+import com.synccarreira.synccarreira_api.repository.TrilhaRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class PerguntaService {
+
+    private static final int LIMITE_PERGUNTAS_POR_TRILHA = 10;
+
+    @Autowired
+    private PerguntaRepository perguntaRepository;
+
+    @Autowired
+    private TrilhaRepository trilhaRepository;
+
+    @Autowired
+    private PsicologaRepository psicologaRepository;
+
+    @Autowired
+    private PsicologaService psicologaService;
+
+    @Transactional(readOnly = true)
+    public List<PerguntaDTO> findAll() {
+        return perguntaRepository.findAll()
+                .stream()
+                .map(PerguntaDTO::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PerguntaDTO findById(Long id) {
+        return new PerguntaDTO(buscarOuLancarExcecao(id));
+    }
+
+    @Transactional(readOnly = true)
+    public List<PerguntaDTO> findByTrilha(Long trilhaId) {
+        return perguntaRepository.findByTrilhaId(trilhaId)
+                .stream()
+                .map(PerguntaDTO::new)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<PerguntaDTO> findByPsicologa(Long psicologaId) {
+        return perguntaRepository.findByPsicologaId(psicologaId)
+                .stream()
+                .map(PerguntaDTO::new)
+                .toList();
+    }
+
+    @Transactional
+    public PerguntaDTO create(PerguntaDTO dto) {
+        // 1. Valida contrato da psicóloga
+        psicologaService.validarContratoAtivo(dto.psicologaId());
+
+        // 2. Busca e valida entidades relacionadas
+        Trilha trilha = trilhaRepository.findById(dto.trilhaId())
+                .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
+
+        Psicologa psicologa = psicologaRepository.findById(dto.psicologaId())
+                .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psicologaId()));
+
+        // 3. Valida limite de perguntas por trilha
+        long total = perguntaRepository.countByTrilhaId(dto.trilhaId());
+        if (total >= LIMITE_PERGUNTAS_POR_TRILHA) {
+            throw new IllegalStateException(
+                    "A trilha '" + trilha.getNome() + "' já atingiu o limite de " +
+                    LIMITE_PERGUNTAS_POR_TRILHA + " perguntas.");
+        }
+
+        // 4. Monta a entidade Pergunta
+        Pergunta pergunta = new Pergunta();
+        pergunta.setEnunciado(dto.enunciado());
+        pergunta.setTipoPergunta(dto.tipoPergunta());
+        pergunta.setTrilha(trilha);
+        pergunta.setPsicologa(psicologa);
+
+        // 5. Adiciona opções apenas se o tipo aceitar (não ABERTA)
+        if (pergunta.aceitaOpcoes()) {
+            validarOpcoes(dto.opcoes());
+            adicionarOpcoes(pergunta, dto.opcoes());
+        }
+
+        pergunta = perguntaRepository.save(pergunta);
+        return new PerguntaDTO(pergunta);
+    }
+
+    @Transactional
+    public PerguntaDTO update(Long id, PerguntaDTO dto) {
+        // 1. Valida contrato da psicóloga
+        psicologaService.validarContratoAtivo(dto.psicologaId());
+
+        Pergunta pergunta = buscarOuLancarExcecao(id);
+
+        Trilha trilha = trilhaRepository.findById(dto.trilhaId())
+                .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
+
+        Psicologa psicologa = psicologaRepository.findById(dto.psicologaId())
+                .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psicologaId()));
+
+        pergunta.setEnunciado(dto.enunciado());
+        pergunta.setTipoPergunta(dto.tipoPergunta());
+        pergunta.setTrilha(trilha);
+        pergunta.setPsicologa(psicologa);
+
+        // Limpa opções antigas e reaplica
+        pergunta.getOpcoes().clear();
+        if (pergunta.aceitaOpcoes()) {
+            validarOpcoes(dto.opcoes());
+            adicionarOpcoes(pergunta, dto.opcoes());
+        }
+
+        pergunta = perguntaRepository.save(pergunta);
+        return new PerguntaDTO(pergunta);
+    }
+
+    @Transactional
+    public void delete(Long id, Long psicologaId) {
+        // Valida contrato antes de excluir
+        psicologaService.validarContratoAtivo(psicologaId);
+
+        if (!perguntaRepository.existsById(id)) {
+            throw new EntityNotFoundException("Pergunta não encontrada. ID: " + id);
+        }
+        perguntaRepository.deleteById(id);
+    }
+
+    // --- Métodos auxiliares privados ---
+
+    private Pergunta buscarOuLancarExcecao(Long id) {
+        return perguntaRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Pergunta não encontrada. ID: " + id));
+    }
+
+    private void validarOpcoes(List<OpcaoPerguntaDTO> opcoes) {
+        if (opcoes == null || opcoes.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "Perguntas de múltipla escolha, checkbox ou Likert devem ter ao menos uma opção.");
+        }
+    }
+
+    private void adicionarOpcoes(Pergunta pergunta, List<OpcaoPerguntaDTO> opcaoDTOs) {
+        for (OpcaoPerguntaDTO opcaoDTO : opcaoDTOs) {
+            OpcaoPergunta opcao = new OpcaoPergunta();
+            opcao.setTextoOpcao(opcaoDTO.textoOpcao());
+            opcao.setPesoHumanas(opcaoDTO.pesoHumanas());
+            opcao.setPesoBiologicas(opcaoDTO.pesoBiologicas());
+            opcao.setPesoExatas(opcaoDTO.pesoExatas());
+            opcao.setPesoArte(opcaoDTO.pesoArte());
+            opcao.setPergunta(pergunta);
+            pergunta.getOpcoes().add(opcao);
+        }
+    }
+}
