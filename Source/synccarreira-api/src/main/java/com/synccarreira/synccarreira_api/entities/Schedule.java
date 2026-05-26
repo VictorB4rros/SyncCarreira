@@ -14,7 +14,7 @@ public class Schedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_agendamento")
+    @Column(name = "id_agendamento")
     @EqualsAndHashCode.Include
     @Getter
     @Setter
@@ -35,12 +35,14 @@ public class Schedule {
     @Setter
     private String scheduleStatus;
 
-    @Column(name = "fk_aluno")
+    @ManyToOne
+    @JoinColumn(name = "fk_aluno")
     @Getter
     @Setter
     private Student student;
 
-    @Column(name = "fk_psicologa")
+    @ManyToOne
+    @JoinColumn(name = "fk_psicologa")
     @Getter
     @Setter
     private Psychologist psychologist;

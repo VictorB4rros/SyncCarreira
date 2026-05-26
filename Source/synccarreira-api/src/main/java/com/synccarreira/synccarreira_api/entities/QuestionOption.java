@@ -8,11 +8,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class OpcaoPergunta {
+public class QuestionOption {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_opcao_pergunta")
+    @Column(name = "id_opcao_pergunta")
     @EqualsAndHashCode.Include
     @Getter
     @Setter
@@ -21,31 +21,31 @@ public class OpcaoPergunta {
     @Column(name = "texto_opcao", nullable = false)
     @Getter
     @Setter
-    private String textoOpcao;
+    private String optionText;
 
     @Column(name = "peso_humanas", nullable = false)
     @Getter
     @Setter
-    private Double pesoHumanas;
+    private Double humanitiesWeight;
 
     @Column(name = "peso_biologicas", nullable = false)
     @Getter
     @Setter
-    private Double pesoBiologicas;
+    private Double biologicalSciencesWeight;
 
     @Column(name = "peso_exatas", nullable = false)
     @Getter
     @Setter
-    private Double pesoExatas;
+    private Double exactSciencesWeight;
 
     @Column(name = "peso_arte", nullable = false)
     @Getter
     @Setter
-    private Double pesoArte;
+    private Double artsWeight;
 
     @ManyToOne
     @JoinColumn(name = "fk_pergunta", nullable = false)
     @Getter
     @Setter
-    private Pergunta pergunta;
+    private Question question;
 }

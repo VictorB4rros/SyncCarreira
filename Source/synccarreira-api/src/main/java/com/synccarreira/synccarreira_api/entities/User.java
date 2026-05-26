@@ -19,7 +19,7 @@ public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_usuario")
+    @Column(name = "id_usuario")
     @EqualsAndHashCode.Include
     @Getter
     @Setter

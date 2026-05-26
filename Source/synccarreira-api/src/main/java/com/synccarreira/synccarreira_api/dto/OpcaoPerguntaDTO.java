@@ -1,6 +1,6 @@
 package com.synccarreira.synccarreira_api.dto;
 
-import com.synccarreira.synccarreira_api.entities.OpcaoPergunta;
+import com.synccarreira.synccarreira_api.entities.QuestionOption;
 
 public record OpcaoPerguntaDTO(
         Long id,
@@ -10,7 +10,7 @@ public record OpcaoPerguntaDTO(
         Double pesoExatas,
         Double pesoArte
 ) {
-    public OpcaoPerguntaDTO(OpcaoPergunta opcao) {
+    public OpcaoPerguntaDTO(QuestionOption opcao) {
         this(
                 opcao.getId(),
                 opcao.getTextoOpcao(),

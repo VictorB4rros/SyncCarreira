@@ -2,8 +2,8 @@ package com.synccarreira.synccarreira_api.service;
 
 import com.synccarreira.synccarreira_api.dto.OpcaoPerguntaDTO;
 import com.synccarreira.synccarreira_api.dto.PerguntaDTO;
-import com.synccarreira.synccarreira_api.entities.OpcaoPergunta;
-import com.synccarreira.synccarreira_api.entities.Pergunta;
+import com.synccarreira.synccarreira_api.entities.QuestionOption;
+import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.Psicologa;
 import com.synccarreira.synccarreira_api.entities.Trilha;
 import com.synccarreira.synccarreira_api.entities.enums.TipoPergunta;
@@ -84,7 +84,7 @@ public class PerguntaService {
         }
 
         // 4. Monta a entidade Pergunta
-        Pergunta pergunta = new Pergunta();
+        Question pergunta = new Question();
         pergunta.setEnunciado(dto.enunciado());
         pergunta.setTipoPergunta(dto.tipoPergunta());
         pergunta.setTrilha(trilha);
@@ -105,7 +105,7 @@ public class PerguntaService {
         // 1. Valida contrato da psicóloga
         psicologaService.validarContratoAtivo(dto.psicologaId());
 
-        Pergunta pergunta = buscarOuLancarExcecao(id);
+        Question pergunta = buscarOuLancarExcecao(id);
 
         Trilha trilha = trilhaRepository.findById(dto.trilhaId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
@@ -142,7 +142,7 @@ public class PerguntaService {
 
     // --- Métodos auxiliares privados ---
 
-    private Pergunta buscarOuLancarExcecao(Long id) {
+    private Question buscarOuLancarExcecao(Long id) {
         return perguntaRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pergunta não encontrada. ID: " + id));
     }
@@ -154,9 +154,9 @@ public class PerguntaService {
         }
     }
 
-    private void adicionarOpcoes(Pergunta pergunta, List<OpcaoPerguntaDTO> opcaoDTOs) {
+    private void adicionarOpcoes(Question pergunta, List<OpcaoPerguntaDTO> opcaoDTOs) {
         for (OpcaoPerguntaDTO opcaoDTO : opcaoDTOs) {
-            OpcaoPergunta opcao = new OpcaoPergunta();
+            QuestionOption opcao = new QuestionOption();
             opcao.setTextoOpcao(opcaoDTO.textoOpcao());
             opcao.setPesoHumanas(opcaoDTO.pesoHumanas());
             opcao.setPesoBiologicas(opcaoDTO.pesoBiologicas());

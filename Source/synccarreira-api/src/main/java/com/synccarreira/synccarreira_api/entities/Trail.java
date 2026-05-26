@@ -16,7 +16,7 @@ public class Trail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_trilha")
+    @Column(name = "id_trilha")
     @EqualsAndHashCode.Include
     @Getter
     @Setter
@@ -33,13 +33,13 @@ public class Trail {
     @Setter
     private Integer sequentialOrder;
 
-    @OneToMany(mappedBy = "trilha", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "trail", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter
-    private List<Pergunta> perguntas = new ArrayList<>();
+    private List<Question> questions = new ArrayList<>();
 
     // Verifica se todas as perguntas da trilha foram respondidas por um aluno
-    public boolean isConcluida(List<Long> idsRespondidos) {
-        return perguntas.stream()
-                .allMatch(p -> idsRespondidos.contains(p.getId()));
+    public boolean isConcluded(List<Long> answeredIds) {
+        return questions.stream()
+                .allMatch(question -> answeredIds.contains(question.getId()));
     }
 }

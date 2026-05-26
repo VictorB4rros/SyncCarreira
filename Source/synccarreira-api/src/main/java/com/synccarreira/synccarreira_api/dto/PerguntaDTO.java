@@ -1,6 +1,6 @@
 package com.synccarreira.synccarreira_api.dto;
 
-import com.synccarreira.synccarreira_api.entities.Pergunta;
+import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.enums.TipoPergunta;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public record PerguntaDTO(
         Long psicologaId,
         List<OpcaoPerguntaDTO> opcoes
 ) {
-    public PerguntaDTO(Pergunta pergunta) {
+    public PerguntaDTO(Question pergunta) {
         this(
                 pergunta.getId(),
                 pergunta.getEnunciado(),

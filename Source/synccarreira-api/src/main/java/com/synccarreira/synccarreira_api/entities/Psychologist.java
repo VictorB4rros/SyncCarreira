@@ -26,9 +26,9 @@ public class Psychologist extends User {
     @Setter
     private LocalDate contractExpirationDate;
 
-    // Agendamentos serão mapeados pelo colega na entidade Agendamento
-    // @OneToMany(mappedBy = "psicologa")
-    // private List<Agendamento> agendamentos = new ArrayList<>();
+    @OneToMany(mappedBy = "psychologist")
+    @Getter
+    private List<Schedule> schedules = new ArrayList<>();
 
     public boolean isContractValid() {
         return contractExpirationDate != null && !contractExpirationDate.isBefore(LocalDate.now());

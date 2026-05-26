@@ -1,7 +1,6 @@
 package com.synccarreira.synccarreira_api.entities;
 
 import com.synccarreira.synccarreira_api.entities.enums.QuestionType;
-import com.synccarreira.synccarreira_api.entities.enums.TipoPergunta;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,11 +12,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Pergunta {
+public class Question {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_pergunta")
+    @Column(name = "id_pergunta")
     @EqualsAndHashCode.Include
     @Getter
     @Setter
@@ -44,18 +43,20 @@ public class Pergunta {
     @JoinColumn(name = "fk_psicologa", nullable = false)
     @Getter
     @Setter
-    private Psicologa psicologa;
+    private Psychologist psychologist;
 
     // Opções só existem para perguntas que não são do tipo ABERTA
-    @OneToMany(mappedBy = "pergunta", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter
-    private List<OpcaoPergunta> opcoes = new ArrayList<>();
+    private List<QuestionOption> options = new ArrayList<>();
 
-    /**
-     * Verifica se este tipo de pergunta aceita opções com pesos.
-     * Perguntas abertas não possuem opções.
-     */
-    public boolean aceitaOpcoes() {
-        return tipoPergunta != null && tipoPergunta != TipoPergunta.ABERTA;
+    @ManyToOne
+    @JoinColumn(name = "fk_modelo")
+    @Getter
+    @Setter
+    private CreatedQuestionnaireTemplate template;
+
+    public boolean acceptsOptions() {
+        return questionType != null && questionType != QuestionType.ABERTA;
     }
 }

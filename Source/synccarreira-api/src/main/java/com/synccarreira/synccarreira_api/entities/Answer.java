@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "tb_resposta")
+@Table(name = "tb_respostas_aluno")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
@@ -12,7 +12,7 @@ public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_resposta")
+    @Column(name = "id_resposta")
     @EqualsAndHashCode.Include
     @Getter
     @Setter
@@ -29,13 +29,11 @@ public class Answer {
     @Setter
     private Student student;
 
-    /*   Atributo question que vai ligar a classe Answer à Question, quando essa classe existir
 
-         @ManyToOne
-         @JoinColumn(name = "pk_pergunta")
-         @Getter
-         @Setter
-         private Question question;
-     */
+     @ManyToOne
+     @JoinColumn(name = "fk_pergunta")
+     @Getter
+     @Setter
+     private Question question;
 
 }
