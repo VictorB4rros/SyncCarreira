@@ -1,6 +1,6 @@
 package com.synccarreira.synccarreira_api.entities;
 
-import com.synccarreira.synccarreira_api.entities.enums.NomeTrilha;
+import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Trilha {
+public class Trail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,12 +26,12 @@ public class Trilha {
     @Column(name = "nome_trilha", nullable = false, unique = true)
     @Getter
     @Setter
-    private NomeTrilha nome;
+    private TrailName name;
 
     @Column(name = "ordem_sequencial_trilha", nullable = false, unique = true)
     @Getter
     @Setter
-    private Integer ordemSequencial;
+    private Integer sequentialOrder;
 
     @OneToMany(mappedBy = "trilha", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter

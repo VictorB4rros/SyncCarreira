@@ -1,5 +1,6 @@
 package com.synccarreira.synccarreira_api.entities;
 
+import com.synccarreira.synccarreira_api.entities.enums.QuestionType;
 import com.synccarreira.synccarreira_api.entities.enums.TipoPergunta;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,19 +26,19 @@ public class Pergunta {
     @Column(name = "enunciado_pergunta", nullable = false, length = 500)
     @Getter
     @Setter
-    private String enunciado;
+    private String content;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tipo_pergunta", nullable = false)
     @Getter
     @Setter
-    private TipoPergunta tipoPergunta;
+    private QuestionType questionType;
 
     @ManyToOne
     @JoinColumn(name = "fk_trilha", nullable = false)
     @Getter
     @Setter
-    private Trilha trilha;
+    private Trail trail;
 
     @ManyToOne
     @JoinColumn(name = "fk_psicologa", nullable = false)

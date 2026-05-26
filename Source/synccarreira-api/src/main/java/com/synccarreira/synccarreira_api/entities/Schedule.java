@@ -3,8 +3,6 @@ package com.synccarreira.synccarreira_api.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -27,17 +25,24 @@ public class Schedule {
     @Setter
     private LocalDateTime dateTime;
 
+    @Column(name = "tipo_agendamento")
+    @Getter
+    @Setter
+    private String scheduleType;
+
+    @Column(name = "status_agendamento")
+    @Getter
+    @Setter
+    private String scheduleStatus;
+
     @Column(name = "fk_aluno")
     @Getter
     @Setter
     private Student student;
 
-    /* Atributo psychologist que vai ligar a classe Schedule à Psychologist, quando essa classe existir
-
-        @Column(name = "fk_psicologa")
-        @Getter
-        @Setter
-        private Psychologist psychologist;
-     */
+    @Column(name = "fk_psicologa")
+    @Getter
+    @Setter
+    private Psychologist psychologist;
 
 }

@@ -1,6 +1,6 @@
 package com.synccarreira.synccarreira_api.entities.enums;
 
-public enum TipoPergunta {
+public enum QuestionType {
     MULTIPLA_ESCOLHA,
     CHECKBOX,
     LIKERT,
