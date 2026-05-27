@@ -29,11 +29,10 @@ public class Answer {
     @Setter
     private Student student;
 
-
-     @ManyToOne
-     @JoinColumn(name = "fk_pergunta")
-     @Getter
-     @Setter
-     private Question question;
+    @ManyToOne
+    @JoinColumn(name = "fk_pergunta")
+    @Getter
+    @Setter
+    private Question question;
 
 }

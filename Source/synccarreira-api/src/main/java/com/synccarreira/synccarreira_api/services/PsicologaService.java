@@ -1,8 +1,7 @@
-package com.synccarreira.synccarreira_api.service;
+package com.synccarreira.synccarreira_api.services;
 
-import com.synccarreira.synccarreira_api.dto.PsicologaDTO;
-import com.synccarreira.synccarreira_api.entities.Psicologa;
-import com.synccarreira.synccarreira_api.repository.PsicologaRepository;
+import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
+import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,24 +13,24 @@ import java.util.List;
 public class PsicologaService {
 
     @Autowired
-    private PsicologaRepository psicologaRepository;
+    private PsychologistRepository psicologaRepository;
 
     @Transactional(readOnly = true)
-    public List<PsicologaDTO> findAll() {
+    public List<PsychologistDTO> findAll() {
         return psicologaRepository.findAll()
                 .stream()
-                .map(PsicologaDTO::new)
+                .map(PsychologistDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public PsicologaDTO findById(Long id) {
+    public PsychologistDTO findById(Long id) {
         Psicologa psicologa = buscarOuLancarExcecao(id);
-        return new PsicologaDTO(psicologa);
+        return new PsychologistDTO(psicologa);
     }
 
     @Transactional
-    public PsicologaDTO create(PsicologaDTO dto) {
+    public PsychologistDTO create(PsychologistDTO dto) {
         if (psicologaRepository.existsByNomePsicologaAndCrp(dto.nomePsicologa(), dto.crp())) {
             throw new IllegalArgumentException(
                     "Já existe uma psicóloga cadastrada com o nome '" + dto.nomePsicologa() +
@@ -45,18 +44,18 @@ public class PsicologaService {
         psicologa.setDataVencContrato(dto.dataVencContrato());
 
         psicologa = psicologaRepository.save(psicologa);
-        return new PsicologaDTO(psicologa);
+        return new PsychologistDTO(psicologa);
     }
 
     @Transactional
-    public PsicologaDTO update(Long id, PsicologaDTO dto) {
+    public PsychologistDTO update(Long id, PsychologistDTO dto) {
         Psicologa psicologa = buscarOuLancarExcecao(id);
         psicologa.setNomePsicologa(dto.nomePsicologa());
         psicologa.setEmail(dto.email());
         psicologa.setCrp(dto.crp());
         psicologa.setDataVencContrato(dto.dataVencContrato());
         psicologa = psicologaRepository.save(psicologa);
-        return new PsicologaDTO(psicologa);
+        return new PsychologistDTO(psicologa);
     }
 
     @Transactional

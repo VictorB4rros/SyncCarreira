@@ -2,7 +2,6 @@ package com.synccarreira.synccarreira_api.service;
 
 import com.synccarreira.synccarreira_api.dto.TrilhaDTO;
 import com.synccarreira.synccarreira_api.entities.Trilha;
-import com.synccarreira.synccarreira_api.repository.TrilhaRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,11 +13,11 @@ import java.util.List;
 public class TrilhaService {
 
     @Autowired
-    private TrilhaRepository trilhaRepository;
+    private com.synccarreira.synccarreira_api.repository.TrailRepository trailRepository;
 
     @Transactional(readOnly = true)
     public List<TrilhaDTO> findAll() {
-        return trilhaRepository.findAll()
+        return trailRepository.findAll()
                 .stream()
                 .map(TrilhaDTO::new)
                 .toList();
@@ -26,7 +25,7 @@ public class TrilhaService {
 
     @Transactional(readOnly = true)
     public TrilhaDTO findById(Long id) {
-        Trilha trilha = trilhaRepository.findById(id)
+        Trilha trilha = trailRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + id));
         return new TrilhaDTO(trilha);
     }
@@ -36,26 +35,26 @@ public class TrilhaService {
         Trilha trilha = new Trilha();
         trilha.setNome(dto.nome());
         trilha.setOrdemSequencial(dto.ordemSequencial());
-        trilha = trilhaRepository.save(trilha);
+        trilha = trailRepository.save(trilha);
         return new TrilhaDTO(trilha);
     }
 
     @Transactional
     public TrilhaDTO update(Long id, TrilhaDTO dto) {
-        Trilha trilha = trilhaRepository.findById(id)
+        Trilha trilha = trailRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + id));
         trilha.setNome(dto.nome());
         trilha.setOrdemSequencial(dto.ordemSequencial());
-        trilha = trilhaRepository.save(trilha);
+        trilha = trailRepository.save(trilha);
         return new TrilhaDTO(trilha);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!trilhaRepository.existsById(id)) {
+        if (!trailRepository.existsById(id)) {
             throw new EntityNotFoundException("Trilha não encontrada. ID: " + id);
         }
-        trilhaRepository.deleteById(id);
+        trailRepository.deleteById(id);
     }
 
     /**
@@ -68,7 +67,7 @@ public class TrilhaService {
      */
     @Transactional(readOnly = true)
     public boolean podeAcessar(Long trilhaId, List<Long> idsRespondidos) {
-        Trilha trilha = trilhaRepository.findById(trilhaId)
+        Trilha trilha = trailRepository.findById(trilhaId)
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + trilhaId));
 
         // Trilha de ordem 1 sempre liberada
@@ -78,7 +77,7 @@ public class TrilhaService {
 
         // Busca a trilha anterior
         int ordemAnterior = trilha.getOrdemSequencial() - 1;
-        Trilha trilhaAnterior = trilhaRepository.findByOrdemSequencial(ordemAnterior)
+        Trilha trilhaAnterior = trailRepository.findByOrdemSequencial(ordemAnterior)
                 .orElseThrow(() -> new EntityNotFoundException(
                         "Trilha anterior (ordem " + ordemAnterior + ") não encontrada."));
 

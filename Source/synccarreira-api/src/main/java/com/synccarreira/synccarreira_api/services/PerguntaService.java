@@ -1,15 +1,15 @@
-package com.synccarreira.synccarreira_api.service;
+package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.OpcaoPerguntaDTO;
 import com.synccarreira.synccarreira_api.dto.PerguntaDTO;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.Question;
-import com.synccarreira.synccarreira_api.entities.Psicologa;
-import com.synccarreira.synccarreira_api.entities.Trilha;
-import com.synccarreira.synccarreira_api.entities.enums.TipoPergunta;
-import com.synccarreira.synccarreira_api.repository.PerguntaRepository;
-import com.synccarreira.synccarreira_api.repository.PsicologaRepository;
-import com.synccarreira.synccarreira_api.repository.TrilhaRepository;
+import com.synccarreira.synccarreira_api.entities.Psychologist;
+import com.synccarreira.synccarreira_api.entities.Trail;
+import com.synccarreira.synccarreira_api.entities.enums.QuestionType;
+import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
+import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
+import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,20 +23,20 @@ public class PerguntaService {
     private static final int LIMITE_PERGUNTAS_POR_TRILHA = 10;
 
     @Autowired
-    private PerguntaRepository perguntaRepository;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    private TrilhaRepository trilhaRepository;
+    private TrailRepository trailRepository;
 
     @Autowired
-    private PsicologaRepository psicologaRepository;
+    private PsychologistRepository psicologaRepository;
 
     @Autowired
     private PsicologaService psicologaService;
 
     @Transactional(readOnly = true)
     public List<PerguntaDTO> findAll() {
-        return perguntaRepository.findAll()
+        return questionRepository.findAll()
                 .stream()
                 .map(PerguntaDTO::new)
                 .toList();
@@ -69,7 +69,7 @@ public class PerguntaService {
         psicologaService.validarContratoAtivo(dto.psicologaId());
 
         // 2. Busca e valida entidades relacionadas
-        Trilha trilha = trilhaRepository.findById(dto.trilhaId())
+        Trilha trilha = trailRepository.findById(dto.trilhaId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
 
         Psicologa psicologa = psicologaRepository.findById(dto.psicologaId())
@@ -107,7 +107,7 @@ public class PerguntaService {
 
         Question pergunta = buscarOuLancarExcecao(id);
 
-        Trilha trilha = trilhaRepository.findById(dto.trilhaId())
+        Trilha trilha = trailRepository.findById(dto.trilhaId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
 
         Psicologa psicologa = psicologaRepository.findById(dto.psicologaId())

@@ -1,6 +1,6 @@
 package com.synccarreira.synccarreira_api.controller;
 
-import com.synccarreira.synccarreira_api.dto.PsicologaDTO;
+import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.service.PsicologaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -18,18 +18,18 @@ public class PsicologaController {
     private PsicologaService psicologaService;
 
     @GetMapping
-    public ResponseEntity<List<PsicologaDTO>> findAll() {
+    public ResponseEntity<List<PsychologistDTO>> findAll() {
         return ResponseEntity.ok(psicologaService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PsicologaDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<PsychologistDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(psicologaService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<PsicologaDTO> create(@RequestBody PsicologaDTO dto) {
-        PsicologaDTO psicologa = psicologaService.create(dto);
+    public ResponseEntity<PsychologistDTO> create(@RequestBody PsychologistDTO dto) {
+        PsychologistDTO psicologa = psicologaService.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(psicologa.id())
@@ -38,7 +38,7 @@ public class PsicologaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PsicologaDTO> update(@PathVariable Long id, @RequestBody PsicologaDTO dto) {
+    public ResponseEntity<PsychologistDTO> update(@PathVariable Long id, @RequestBody PsychologistDTO dto) {
         return ResponseEntity.ok(psicologaService.update(id, dto));
     }
 
@@ -57,7 +57,7 @@ public class PsicologaController {
      */
     @GetMapping("/{id}/contrato-valido")
     public ResponseEntity<Boolean> isContratoValido(@PathVariable Long id) {
-        PsicologaDTO psicologa = psicologaService.findById(id);
+        PsychologistDTO psicologa = psicologaService.findById(id);
         return ResponseEntity.ok(psicologa.contratoValido());
     }
 }

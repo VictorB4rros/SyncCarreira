@@ -37,7 +37,6 @@ public class Trail {
     @Getter
     private List<Question> questions = new ArrayList<>();
 
-    // Verifica se todas as perguntas da trilha foram respondidas por um aluno
     public boolean isConcluded(List<Long> answeredIds) {
         return questions.stream()
                 .allMatch(question -> answeredIds.contains(question.getId()));

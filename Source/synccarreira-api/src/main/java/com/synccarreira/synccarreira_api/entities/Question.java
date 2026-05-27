@@ -50,12 +50,6 @@ public class Question {
     @Getter
     private List<QuestionOption> options = new ArrayList<>();
 
-    @ManyToOne
-    @JoinColumn(name = "fk_modelo")
-    @Getter
-    @Setter
-    private CreatedQuestionnaireTemplate template;
-
     public boolean acceptsOptions() {
         return questionType != null && questionType != QuestionType.ABERTA;
     }
