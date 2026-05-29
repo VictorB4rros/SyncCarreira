@@ -50,7 +50,19 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/users/**").permitAll());
+				.requestMatchers(HttpMethod.DELETE, "/users/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/trails/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/trails/**").permitAll()
+				.requestMatchers(HttpMethod.PUT, "/trails/**").permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/trails/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/psychologists/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/psychologists/**").permitAll()
+				.requestMatchers(HttpMethod.PUT, "/psychologists/**").permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/psychologists/**").permitAll());
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
