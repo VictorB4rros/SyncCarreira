@@ -62,7 +62,11 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, "/psychologists/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/psychologists/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/psychologists/**").permitAll());
+				.requestMatchers(HttpMethod.DELETE, "/psychologists/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/students/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/students/**").permitAll()
+				.requestMatchers(HttpMethod.PUT, "/students/**").permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/students/**").permitAll());
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
