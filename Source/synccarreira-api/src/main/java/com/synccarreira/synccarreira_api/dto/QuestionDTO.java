@@ -7,11 +7,11 @@ import java.util.List;
 
 public record QuestionDTO(
         Long id,
-        String enunciado,
+        String content,
         QuestionType questionType,
-        Long trilhaId,
-        Long psicologaId,
-        List<OpcaoPerguntaDTO> opcoes
+        Long trailId,
+        Long psychologistId,
+        List<QuestionOptionDTO> options
 ) {
     public QuestionDTO(Question question) {
         this(
@@ -21,7 +21,7 @@ public record QuestionDTO(
                 question.getTrail() != null ? question.getTrail().getId() : null,
                 question.getPsychologist() != null ? question.getPsychologist().getId() : null,
                 question.getOptions() != null ?
-                        question.getOptions().stream().map(OpcaoPerguntaDTO::new).toList() : List.of()
+                        question.getOptions().stream().map(QuestionOptionDTO::new).toList() : List.of()
         );
     }
 }

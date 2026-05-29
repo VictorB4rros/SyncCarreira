@@ -12,14 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class PsicologaService {
+public class PsychologistService {
 
     @Autowired
-    private PsychologistRepository psicologaRepository;
+    private PsychologistRepository psychologistRepository;
 
     @Transactional(readOnly = true)
     public List<PsychologistDTO> findAll() {
-        return psicologaRepository.findAll()
+        return psychologistRepository.findAll()
                 .stream()
                 .map(PsychologistDTO::new)
                 .toList();
@@ -27,13 +27,13 @@ public class PsicologaService {
 
     @Transactional(readOnly = true)
     public PsychologistDTO findById(Long id) {
-        Psychologist psychologist = psicologaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
         return new PsychologistDTO(psychologist);
     }
 
     @Transactional
     public PsychologistDTO create(PsychologistDTO dto) {
-        if (psicologaRepository.existsByNameAndCrp(dto.name(), dto.crp())) {
+        if (psychologistRepository.existsByNameAndCrp(dto.name(), dto.crp())) {
             throw new IllegalArgumentException(
                     "Já existe uma psicóloga cadastrada com o nome '" + dto.name() +
                     "' e CRP '" + dto.crp() + "'.");
@@ -45,36 +45,31 @@ public class PsicologaService {
         psychologist.setCrp(dto.crp());
         psychologist.setContractExpirationDate(dto.contractExpirationDate());
 
-        psychologist = psicologaRepository.save(psychologist);
+        psychologist = psychologistRepository.save(psychologist);
         return new PsychologistDTO(psychologist);
     }
 
     @Transactional
     public PsychologistDTO update(Long id, PsychologistDTO dto) {
-        Psychologist psychologist = psicologaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
         psychologist.setName(dto.name());
         psychologist.setEmail(dto.email());
         psychologist.setCrp(dto.crp());
         psychologist.setContractExpirationDate(dto.contractExpirationDate());
-        psychologist = psicologaRepository.save(psychologist);
+        psychologist = psychologistRepository.save(psychologist);
         return new PsychologistDTO(psychologist);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!psicologaRepository.existsById(id)) {
+        if (!psychologistRepository.existsById(id)) {
             throw new EntityNotFoundException("Psicóloga não encontrada. ID: " + id);
         }
-        psicologaRepository.deleteById(id);
+        psychologistRepository.deleteById(id);
     }
 
-    /**
-     * Valida se a psicóloga pode realizar operações restritas
-     * (cadastrar/editar/excluir perguntas e realizar agendamentos).
-     * Lança exceção se o contrato estiver vencido.
-     */
-    public void validarContratoAtivo(Long id) {
-        Psychologist psychologist = psicologaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+    public void validateIfContractIsActive(Long id) {
+        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
         if (!psychologist.isContractValid()) {
             throw new IllegalStateException(
                     "Operação bloqueada: o contrato da psicóloga '" +
