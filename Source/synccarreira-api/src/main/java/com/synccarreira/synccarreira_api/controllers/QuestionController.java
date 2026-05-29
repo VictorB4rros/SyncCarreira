@@ -70,11 +70,11 @@ public class QuestionController {
     }
 
     @GetMapping("/psicologa/{psicologaId}")
-    @Operation(summary = "Busca uma lista de perguntas pelo id da trilha correspondente.")
+    @Operation(summary = "Busca uma lista de perguntas pelo id do(a) psicólogo(a) que as criou.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Pergunta encontrada com sucesso."
+                    description = "Perguntas encontrada com sucesso."
             ),
             @ApiResponse(
                     responseCode = "404",

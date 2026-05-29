@@ -66,7 +66,11 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, "/students/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/students/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/students/**").permitAll());
+				.requestMatchers(HttpMethod.DELETE, "/students/**").permitAll()
+				.requestMatchers(HttpMethod.POST, "/answers/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/answers/**").permitAll()
+				.requestMatchers(HttpMethod.PUT, "/answers/**").permitAll()
+				.requestMatchers(HttpMethod.DELETE, "/answers/**").permitAll());
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
