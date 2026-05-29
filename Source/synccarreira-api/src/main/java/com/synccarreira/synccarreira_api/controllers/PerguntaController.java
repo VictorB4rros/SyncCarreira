@@ -1,7 +1,7 @@
-package com.synccarreira.synccarreira_api.controller;
+package com.synccarreira.synccarreira_api.controllers;
 
-import com.synccarreira.synccarreira_api.dto.PerguntaDTO;
-import com.synccarreira.synccarreira_api.service.PerguntaService;
+import com.synccarreira.synccarreira_api.dto.QuestionDTO;
+import com.synccarreira.synccarreira_api.services.PerguntaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,12 +18,12 @@ public class PerguntaController {
     private PerguntaService perguntaService;
 
     @GetMapping
-    public ResponseEntity<List<PerguntaDTO>> findAll() {
+    public ResponseEntity<List<QuestionDTO>> findAll() {
         return ResponseEntity.ok(perguntaService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PerguntaDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<QuestionDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(perguntaService.findById(id));
     }
 
@@ -33,7 +33,7 @@ public class PerguntaController {
      * GET /perguntas/trilha/{trilhaId}
      */
     @GetMapping("/trilha/{trilhaId}")
-    public ResponseEntity<List<PerguntaDTO>> findByTrilha(@PathVariable Long trilhaId) {
+    public ResponseEntity<List<QuestionDTO>> findByTrilha(@PathVariable Long trilhaId) {
         return ResponseEntity.ok(perguntaService.findByTrilha(trilhaId));
     }
 
@@ -42,7 +42,7 @@ public class PerguntaController {
      * GET /perguntas/psicologa/{psicologaId}
      */
     @GetMapping("/psicologa/{psicologaId}")
-    public ResponseEntity<List<PerguntaDTO>> findByPsicologa(@PathVariable Long psicologaId) {
+    public ResponseEntity<List<QuestionDTO>> findByPsicologa(@PathVariable Long psicologaId) {
         return ResponseEntity.ok(perguntaService.findByPsicologa(psicologaId));
     }
 
@@ -52,8 +52,8 @@ public class PerguntaController {
      * POST /perguntas
      */
     @PostMapping
-    public ResponseEntity<PerguntaDTO> create(@RequestBody PerguntaDTO dto) {
-        PerguntaDTO pergunta = perguntaService.create(dto);
+    public ResponseEntity<QuestionDTO> create(@RequestBody QuestionDTO dto) {
+        QuestionDTO pergunta = perguntaService.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(pergunta.id())
@@ -62,7 +62,7 @@ public class PerguntaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PerguntaDTO> update(@PathVariable Long id, @RequestBody PerguntaDTO dto) {
+    public ResponseEntity<QuestionDTO> update(@PathVariable Long id, @RequestBody QuestionDTO dto) {
         return ResponseEntity.ok(perguntaService.update(id, dto));
     }
 

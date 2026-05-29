@@ -1,7 +1,7 @@
-package com.synccarreira.synccarreira_api.controller;
+package com.synccarreira.synccarreira_api.controllers;
 
-import com.synccarreira.synccarreira_api.dto.TrilhaDTO;
-import com.synccarreira.synccarreira_api.service.TrilhaService;
+import com.synccarreira.synccarreira_api.dto.TrailDTO;
+import com.synccarreira.synccarreira_api.services.TrilhaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,18 +18,18 @@ public class TrilhaController {
     private TrilhaService trilhaService;
 
     @GetMapping
-    public ResponseEntity<List<TrilhaDTO>> findAll() {
+    public ResponseEntity<List<TrailDTO>> findAll() {
         return ResponseEntity.ok(trilhaService.findAll());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<TrilhaDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<TrailDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(trilhaService.findById(id));
     }
 
     @PostMapping
-    public ResponseEntity<TrilhaDTO> create(@RequestBody TrilhaDTO dto) {
-        TrilhaDTO trilha = trilhaService.create(dto);
+    public ResponseEntity<TrailDTO> create(@RequestBody TrailDTO dto) {
+        TrailDTO trilha = trilhaService.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(trilha.id())
@@ -38,7 +38,7 @@ public class TrilhaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TrilhaDTO> update(@PathVariable Long id, @RequestBody TrilhaDTO dto) {
+    public ResponseEntity<TrailDTO> update(@PathVariable Long id, @RequestBody TrailDTO dto) {
         return ResponseEntity.ok(trilhaService.update(id, dto));
     }
 

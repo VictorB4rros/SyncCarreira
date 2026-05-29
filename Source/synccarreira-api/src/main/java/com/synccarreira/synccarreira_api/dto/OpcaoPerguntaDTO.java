@@ -13,11 +13,11 @@ public record OpcaoPerguntaDTO(
     public OpcaoPerguntaDTO(QuestionOption opcao) {
         this(
                 opcao.getId(),
-                opcao.getTextoOpcao(),
-                opcao.getPesoHumanas(),
-                opcao.getPesoBiologicas(),
-                opcao.getPesoExatas(),
-                opcao.getPesoArte()
+                opcao.getOptionText(),
+                opcao.getHumanitiesWeight(),
+                opcao.getBiologicalSciencesWeight(),
+                opcao.getExactSciencesWeight(),
+                opcao.getArtsWeight()
         );
     }
 }

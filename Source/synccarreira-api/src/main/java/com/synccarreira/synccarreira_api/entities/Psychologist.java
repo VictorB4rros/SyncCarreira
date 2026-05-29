@@ -8,10 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(
-    name = "tb_psicologa",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"nome_psicologa", "crp_psicologa"})
-)
+@Table(name = "tb_psicologa")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Psychologist extends User {

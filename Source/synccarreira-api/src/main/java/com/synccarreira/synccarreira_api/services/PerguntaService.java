@@ -1,12 +1,11 @@
 package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.OpcaoPerguntaDTO;
-import com.synccarreira.synccarreira_api.dto.PerguntaDTO;
+import com.synccarreira.synccarreira_api.dto.QuestionDTO;
+import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.Question;
-import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Trail;
-import com.synccarreira.synccarreira_api.entities.enums.QuestionType;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
@@ -35,98 +34,98 @@ public class PerguntaService {
     private PsicologaService psicologaService;
 
     @Transactional(readOnly = true)
-    public List<PerguntaDTO> findAll() {
+    public List<QuestionDTO> findAll() {
         return questionRepository.findAll()
                 .stream()
-                .map(PerguntaDTO::new)
+                .map(QuestionDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public PerguntaDTO findById(Long id) {
-        return new PerguntaDTO(buscarOuLancarExcecao(id));
+    public QuestionDTO findById(Long id) {
+        return new QuestionDTO(buscarOuLancarExcecao(id));
     }
 
     @Transactional(readOnly = true)
-    public List<PerguntaDTO> findByTrilha(Long trilhaId) {
-        return perguntaRepository.findByTrilhaId(trilhaId)
+    public List<QuestionDTO> findByTrilha(Long trilhaId) {
+        return questionRepository.findByTrailId(trilhaId)
                 .stream()
-                .map(PerguntaDTO::new)
+                .map(QuestionDTO::new)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public List<PerguntaDTO> findByPsicologa(Long psicologaId) {
-        return perguntaRepository.findByPsicologaId(psicologaId)
+    public List<QuestionDTO> findByPsicologa(Long psicologaId) {
+        return questionRepository.findByPsychologistId(psicologaId)
                 .stream()
-                .map(PerguntaDTO::new)
+                .map(QuestionDTO::new)
                 .toList();
     }
 
     @Transactional
-    public PerguntaDTO create(PerguntaDTO dto) {
+    public QuestionDTO create(QuestionDTO dto) {
         // 1. Valida contrato da psicóloga
         psicologaService.validarContratoAtivo(dto.psicologaId());
 
         // 2. Busca e valida entidades relacionadas
-        Trilha trilha = trailRepository.findById(dto.trilhaId())
+        Trail trail = trailRepository.findById(dto.trilhaId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
 
-        Psicologa psicologa = psicologaRepository.findById(dto.psicologaId())
+        Psychologist psychologist = psicologaRepository.findById(dto.psicologaId())
                 .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psicologaId()));
 
         // 3. Valida limite de perguntas por trilha
-        long total = perguntaRepository.countByTrilhaId(dto.trilhaId());
+        long total = questionRepository.countByTrailId(dto.trilhaId());
         if (total >= LIMITE_PERGUNTAS_POR_TRILHA) {
             throw new IllegalStateException(
-                    "A trilha '" + trilha.getNome() + "' já atingiu o limite de " +
-                    LIMITE_PERGUNTAS_POR_TRILHA + " perguntas.");
+                    "A trilha '" + trail.getName() + "' já atingiu o limite de " +
+                            LIMITE_PERGUNTAS_POR_TRILHA + " perguntas.");
         }
 
         // 4. Monta a entidade Pergunta
-        Question pergunta = new Question();
-        pergunta.setEnunciado(dto.enunciado());
-        pergunta.setTipoPergunta(dto.tipoPergunta());
-        pergunta.setTrilha(trilha);
-        pergunta.setPsicologa(psicologa);
+        Question question = new Question();
+        question.setContent(dto.enunciado());
+        question.setQuestionType(dto.questionType());
+        question.setTrail(trail);
+        question.setPsychologist(psychologist);
 
         // 5. Adiciona opções apenas se o tipo aceitar (não ABERTA)
-        if (pergunta.aceitaOpcoes()) {
+        if (question.acceptsOptions()) {
             validarOpcoes(dto.opcoes());
-            adicionarOpcoes(pergunta, dto.opcoes());
+            adicionarOpcoes(question, dto.opcoes());
         }
 
-        pergunta = perguntaRepository.save(pergunta);
-        return new PerguntaDTO(pergunta);
+        question = questionRepository.save(question);
+        return new QuestionDTO(question);
     }
 
     @Transactional
-    public PerguntaDTO update(Long id, PerguntaDTO dto) {
+    public QuestionDTO update(Long id, QuestionDTO dto) {
         // 1. Valida contrato da psicóloga
         psicologaService.validarContratoAtivo(dto.psicologaId());
 
-        Question pergunta = buscarOuLancarExcecao(id);
+        Question question = buscarOuLancarExcecao(id);
 
-        Trilha trilha = trailRepository.findById(dto.trilhaId())
+        Trail trail = trailRepository.findById(dto.trilhaId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trilhaId()));
 
-        Psicologa psicologa = psicologaRepository.findById(dto.psicologaId())
+        Psychologist psicologa = psicologaRepository.findById(dto.psicologaId())
                 .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psicologaId()));
 
-        pergunta.setEnunciado(dto.enunciado());
-        pergunta.setTipoPergunta(dto.tipoPergunta());
-        pergunta.setTrilha(trilha);
-        pergunta.setPsicologa(psicologa);
+        question.setContent(dto.enunciado());
+        question.setQuestionType(dto.questionType());
+        question.setTrail(trail);
+        question.setPsychologist(psicologa);
 
         // Limpa opções antigas e reaplica
-        pergunta.getOpcoes().clear();
-        if (pergunta.aceitaOpcoes()) {
+        question.getOptions().clear();
+        if (question.acceptsOptions()) {
             validarOpcoes(dto.opcoes());
-            adicionarOpcoes(pergunta, dto.opcoes());
+            adicionarOpcoes(question, dto.opcoes());
         }
 
-        pergunta = perguntaRepository.save(pergunta);
-        return new PerguntaDTO(pergunta);
+        question = questionRepository.save(question);
+        return new QuestionDTO(question);
     }
 
     @Transactional
@@ -134,16 +133,16 @@ public class PerguntaService {
         // Valida contrato antes de excluir
         psicologaService.validarContratoAtivo(psicologaId);
 
-        if (!perguntaRepository.existsById(id)) {
+        if (!questionRepository.existsById(id)) {
             throw new EntityNotFoundException("Pergunta não encontrada. ID: " + id);
         }
-        perguntaRepository.deleteById(id);
+        questionRepository.deleteById(id);
     }
 
     // --- Métodos auxiliares privados ---
 
     private Question buscarOuLancarExcecao(Long id) {
-        return perguntaRepository.findById(id)
+        return questionRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Pergunta não encontrada. ID: " + id));
     }
 
@@ -157,13 +156,13 @@ public class PerguntaService {
     private void adicionarOpcoes(Question pergunta, List<OpcaoPerguntaDTO> opcaoDTOs) {
         for (OpcaoPerguntaDTO opcaoDTO : opcaoDTOs) {
             QuestionOption opcao = new QuestionOption();
-            opcao.setTextoOpcao(opcaoDTO.textoOpcao());
-            opcao.setPesoHumanas(opcaoDTO.pesoHumanas());
-            opcao.setPesoBiologicas(opcaoDTO.pesoBiologicas());
-            opcao.setPesoExatas(opcaoDTO.pesoExatas());
-            opcao.setPesoArte(opcaoDTO.pesoArte());
-            opcao.setPergunta(pergunta);
-            pergunta.getOpcoes().add(opcao);
+            opcao.setOptionText(opcaoDTO.textoOpcao());
+            opcao.setHumanitiesWeight(opcaoDTO.pesoHumanas());
+            opcao.setBiologicalSciencesWeight(opcaoDTO.pesoBiologicas());
+            opcao.setExactSciencesWeight(opcaoDTO.pesoExatas());
+            opcao.setArtsWeight(opcaoDTO.pesoArte());
+            opcao.setQuestion(pergunta);
+            pergunta.getOptions().add(opcao);
         }
     }
 }

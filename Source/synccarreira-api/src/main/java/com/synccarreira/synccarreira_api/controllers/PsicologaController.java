@@ -1,7 +1,7 @@
-package com.synccarreira.synccarreira_api.controller;
+package com.synccarreira.synccarreira_api.controllers;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
-import com.synccarreira.synccarreira_api.service.PsicologaService;
+import com.synccarreira.synccarreira_api.services.PsicologaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -58,6 +58,6 @@ public class PsicologaController {
     @GetMapping("/{id}/contrato-valido")
     public ResponseEntity<Boolean> isContratoValido(@PathVariable Long id) {
         PsychologistDTO psicologa = psicologaService.findById(id);
-        return ResponseEntity.ok(psicologa.contratoValido());
+        return ResponseEntity.ok(psicologa.isContractValid());
     }
 }

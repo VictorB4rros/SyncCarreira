@@ -1,7 +1,9 @@
 package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
+import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
+import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,37 +27,37 @@ public class PsicologaService {
 
     @Transactional(readOnly = true)
     public PsychologistDTO findById(Long id) {
-        Psicologa psicologa = buscarOuLancarExcecao(id);
-        return new PsychologistDTO(psicologa);
+        Psychologist psychologist = psicologaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        return new PsychologistDTO(psychologist);
     }
 
     @Transactional
     public PsychologistDTO create(PsychologistDTO dto) {
-        if (psicologaRepository.existsByNomePsicologaAndCrp(dto.nomePsicologa(), dto.crp())) {
+        if (psicologaRepository.existsByNameAndCrp(dto.name(), dto.crp())) {
             throw new IllegalArgumentException(
-                    "Já existe uma psicóloga cadastrada com o nome '" + dto.nomePsicologa() +
+                    "Já existe uma psicóloga cadastrada com o nome '" + dto.name() +
                     "' e CRP '" + dto.crp() + "'.");
         }
 
-        Psicologa psicologa = new Psicologa();
-        psicologa.setNomePsicologa(dto.nomePsicologa());
-        psicologa.setEmail(dto.email());
-        psicologa.setCrp(dto.crp());
-        psicologa.setDataVencContrato(dto.dataVencContrato());
+        Psychologist psychologist = new Psychologist();
+        psychologist.setName(dto.name());
+        psychologist.setEmail(dto.email());
+        psychologist.setCrp(dto.crp());
+        psychologist.setContractExpirationDate(dto.contractExpirationDate());
 
-        psicologa = psicologaRepository.save(psicologa);
-        return new PsychologistDTO(psicologa);
+        psychologist = psicologaRepository.save(psychologist);
+        return new PsychologistDTO(psychologist);
     }
 
     @Transactional
     public PsychologistDTO update(Long id, PsychologistDTO dto) {
-        Psicologa psicologa = buscarOuLancarExcecao(id);
-        psicologa.setNomePsicologa(dto.nomePsicologa());
-        psicologa.setEmail(dto.email());
-        psicologa.setCrp(dto.crp());
-        psicologa.setDataVencContrato(dto.dataVencContrato());
-        psicologa = psicologaRepository.save(psicologa);
-        return new PsychologistDTO(psicologa);
+        Psychologist psychologist = psicologaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        psychologist.setName(dto.name());
+        psychologist.setEmail(dto.email());
+        psychologist.setCrp(dto.crp());
+        psychologist.setContractExpirationDate(dto.contractExpirationDate());
+        psychologist = psicologaRepository.save(psychologist);
+        return new PsychologistDTO(psychologist);
     }
 
     @Transactional
@@ -71,19 +73,13 @@ public class PsicologaService {
      * (cadastrar/editar/excluir perguntas e realizar agendamentos).
      * Lança exceção se o contrato estiver vencido.
      */
-    public void validarContratoAtivo(Long psicologaId) {
-        Psicologa psicologa = buscarOuLancarExcecao(psicologaId);
-        if (!psicologa.isContratoValido()) {
+    public void validarContratoAtivo(Long id) {
+        Psychologist psychologist = psicologaRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        if (!psychologist.isContractValid()) {
             throw new IllegalStateException(
                     "Operação bloqueada: o contrato da psicóloga '" +
-                    psicologa.getNomePsicologa() + "' está vencido desde " +
-                    psicologa.getDataVencContrato() + ".");
+                            psychologist.getName() + "' está vencido desde " +
+                            psychologist.getContractExpirationDate() + ".");
         }
-    }
-
-    // Método auxiliar reutilizável internamente
-    private Psicologa buscarOuLancarExcecao(Long id) {
-        return psicologaRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + id));
     }
 }
