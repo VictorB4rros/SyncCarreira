@@ -1,6 +1,5 @@
 package com.synccarreira.synccarreira_api.services;
 
-import com.synccarreira.synccarreira_api.dto.RoleDTO;
 import com.synccarreira.synccarreira_api.dto.UserDTO;
 import com.synccarreira.synccarreira_api.dto.UserInsertDTO;
 import com.synccarreira.synccarreira_api.dto.UserUpdateDTO;
