@@ -1,7 +1,7 @@
 package com.synccarreira.synccarreira_api.controllers;
 
-import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
-import com.synccarreira.synccarreira_api.services.PsychologistService;
+import com.synccarreira.synccarreira_api.dto.TrailDTO;
+import com.synccarreira.synccarreira_api.services.TrailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,31 +16,31 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping("/psychologists")
-@Tag(name = "Psicólogos", description = "Endpoints para interagir com a entidade psicólogo dentro da aplicação.")
-public class PsychologistController {
+@RequestMapping("/trails")
+@Tag(name = "Trilhas", description = "Endpoints para interagir com as trilhas da aplicação.")
+public class TrailController {
 
     @Autowired
-    private PsychologistService psychologistService;
+    private TrailService trailService;
 
     @GetMapping
-    @Operation(summary = "Busca todos os psicólogos.")
+    @Operation(summary = "Busca todas as trilhas.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Psicólogos encontrados com sucesso."
+                    description = "Trilhas encontradas com sucesso."
             )
     })
-    public ResponseEntity<List<PsychologistDTO>> findAll() {
-        return ResponseEntity.ok(psychologistService.findAll());
+    public ResponseEntity<List<TrailDTO>> findAll() {
+        return ResponseEntity.ok(trailService.findAll());
     }
 
     @GetMapping("/{id}")
-    @Operation(summary = "Busca um(a) psicólogo(a) pelo id.")
+    @Operation(summary = "Busca uma trilha pelo id.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Psicólogo(a) encontrado(a) com sucesso."
+                    description = "Trilha encontrada com sucesso."
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -48,16 +48,16 @@ public class PsychologistController {
                     content = @Content
             )
     })
-    public ResponseEntity<PsychologistDTO> findById(@PathVariable Long id) {
-        return ResponseEntity.ok(psychologistService.findById(id));
+    public ResponseEntity<TrailDTO> findById(@PathVariable Long id) {
+        return ResponseEntity.ok(trailService.findById(id));
     }
 
     @PostMapping
-    @Operation(summary = "Cria um(a) novo(a) psicólogo(a).")
+    @Operation(summary = "Cria uma nova trilha.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
-                    description = "Psicólogo(a) criado(a) com sucesso."
+                    description = "Trilha criada com sucesso."
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -65,55 +65,21 @@ public class PsychologistController {
                     content = @Content
             )
     })
-    public ResponseEntity<PsychologistDTO> createPsychologist(@RequestBody PsychologistDTO dto) {
-        PsychologistDTO psicologa = psychologistService.create(dto);
+    public ResponseEntity<TrailDTO> create(@RequestBody TrailDTO dto) {
+        TrailDTO trailDto = trailService.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(psicologa.id())
+                .buildAndExpand(trailDto.id())
                 .toUri();
-        return ResponseEntity.created(uri).body(psicologa);
+        return ResponseEntity.created(uri).body(trailDto);
     }
 
     @PutMapping("/{id}")
-    @Operation(summary = "Atualiza um(a) psicólogo(a) pelo id.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "201",
-                    description = "Psicólogo(a) atualizado(a) com sucesso."
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Not found.",
-                    content = @Content
-            )
-    })
-    public ResponseEntity<PsychologistDTO> update(@PathVariable Long id, @RequestBody PsychologistDTO dto) {
-        return ResponseEntity.ok(psychologistService.update(id, dto));
-    }
-
-    @Operation(summary = "Deleta um(a) psicólogo(a) pelo id.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "204",
-                    description = "Psicólogo(a) deletada com sucesso."
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Not found.",
-                    content = @Content
-            )
-    })
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        psychologistService.delete(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @Operation(summary = "Verifica se o contrato de um(a) psicólogo(a) ainda está válido, através do id do(a) psicólogo(a).")
+    @Operation(summary = "Atualiza uma trilha pelo id.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Psicólogo(a) deletado(a) com sucesso."
+                    description = "Trilha atualizada com sucesso."
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -121,9 +87,45 @@ public class PsychologistController {
                     content = @Content
             )
     })
-    @GetMapping("/{id}/contrato-valido")
-    public ResponseEntity<Boolean> isContractValid(@PathVariable Long id) {
-        PsychologistDTO psychologistDTO = psychologistService.findById(id);
-        return ResponseEntity.ok(psychologistDTO.isContractValid());
+    public ResponseEntity<TrailDTO> update(@PathVariable Long id, @RequestBody TrailDTO dto) {
+        return ResponseEntity.ok(trailService.update(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta uma trilha pelo id.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "204",
+                    description = "Trilha deletada com sucesso."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not found.",
+                    content = @Content
+            )
+    })
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        trailService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{id}/pode-acessar")
+    @Operation(summary = "Verifica se o aluno pode acessar a trilha informada.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Verificação feita com sucesso."
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Not found.",
+                    content = @Content
+            )
+    })
+    public ResponseEntity<Boolean> canAccess(
+            @PathVariable Long id,
+            @RequestBody List<Long> answeredIds) {
+        boolean access = trailService.canAccess(id, answeredIds);
+        return ResponseEntity.ok(access);
     }
 }

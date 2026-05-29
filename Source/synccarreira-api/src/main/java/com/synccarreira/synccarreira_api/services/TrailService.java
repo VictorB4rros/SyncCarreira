@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-public class TrilhaService {
+public class TrailService {
 
     @Autowired
     private com.synccarreira.synccarreira_api.repositories.TrailRepository trailRepository;
@@ -57,30 +57,20 @@ public class TrilhaService {
         trailRepository.deleteById(id);
     }
 
-    /**
-     * Verifica se o aluno pode acessar uma trilha com base na ordem sequencial.
-     * A trilha de ordem 1 é sempre liberada.
-     * As demais exigem que a trilha anterior esteja concluída (todas as perguntas respondidas).
-     *
-     * @param trilhaId       ID da trilha que o aluno quer acessar
-     * @param idsRespondidos IDs das perguntas já respondidas pelo aluno
-     */
     @Transactional(readOnly = true)
-    public boolean podeAcessar(Long trilhaId, List<Long> idsRespondidos) {
-        Trail trail = trailRepository.findById(trilhaId)
-                .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + trilhaId));
+    public boolean canAccess(Long trailId, List<Long> answeredIds) {
+        Trail trail = trailRepository.findById(trailId)
+                .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + trailId));
 
-        // Trilha de ordem 1 sempre liberada
         if (trail.getSequentialOrder() == 1) {
             return true;
         }
 
-        // Busca a trilha anterior
-        int ordemAnterior = trail.getSequentialOrder() - 1;
-        Trail trilhaAnterior = trailRepository.findBySequentialOrder(ordemAnterior)
+        int previousOrder = trail.getSequentialOrder() - 1;
+        Trail previousTrail = trailRepository.findBySequentialOrder(previousOrder)
                 .orElseThrow(() -> new EntityNotFoundException(
-                        "Trilha anterior (ordem " + ordemAnterior + ") não encontrada."));
+                        "Trilha anterior (ordem " + previousOrder + ") não encontrada."));
 
-        return trilhaAnterior.isConcluded(idsRespondidos);
+        return previousTrail.isConcluded(answeredIds);
     }
 }
