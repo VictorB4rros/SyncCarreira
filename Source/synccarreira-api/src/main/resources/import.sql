@@ -66,9 +66,9 @@ INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Analisar dados, fatos ou notícias.', 4.0, 0.0, 6.0, 0.0, 4);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Praticar esportes ou atividades físicas.', 0.0, 8.0, 0.0, 2.0, 4);
 
-INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Seguir rotinas muito rígidas e repetitivas.', 5.0, 0.0, 0.0, 5.0, 5); -- Indica perfil criativo/humano
-INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Falar em público ou liderar reuniões.', 0.0, 3.0, 7.0, 0.0, 5); -- Indica perfil técnico/exatas
-INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Estudar temas teóricos muito densos.', 0.0, 4.0, 6.0, 0.0, 5); -- Indica perfil prático/aplicado
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Seguir rotinas muito rígidas e repetitivas.', 5.0, 0.0, 0.0, 5.0, 5);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Falar em público ou liderar reuniões.', 0.0, 3.0, 7.0, 0.0, 5);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Estudar temas teóricos muito densos.', 0.0, 4.0, 6.0, 0.0, 5);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Lidar com tarefas burocráticas e manuais.', 3.0, 0.0, 2.0, 5.0, 5);
 
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Viajar e conhecer novas culturas.', 6.0, 0.0, 0.0, 4.0, 6);
@@ -90,3 +90,125 @@ INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('"O realizador": Gosto de ver resultados concretos e mãos na massa.', 0.0, 5.0, 5.0, 0.0, 10);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('"O pensador": Gosto de entender os porquês e criar estratégias.', 4.0, 0.0, 6.0, 0.0, 10);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('"O conector": Gosto de mediar pessoas e facilitar comunicações.', 8.0, 0.0, 0.0, 2.0, 10);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 11);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 11);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 11);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.0, 4.0, 4.0, 0.0, 11);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 1.0, 4.5, 4.5, 0.0, 11);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.0, 1.0, 2.0, 5.0, 12);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.0, 2.0, 2.0, 4.0, 12);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 12);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.0, 4.0, 4.0, 0.0, 12);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 1.0, 4.5, 4.5, 0.0, 12);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('A maioria já decidiu', 2.0, 3.0, 4.0, 1.0, 13);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Estamos todos em dúvida', 3.0, 2.0, 2.0, 3.0, 13);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('A maioria não pensa muito nisso', 3.0, 2.0, 2.0, 3.0, 13);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Não sei dizer', 2.5, 2.5, 2.5, 2.5, 13);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Saúde', 0.0, 10.0, 0.0, 0.0, 14);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Tecnologia', 0.0, 0.0, 10.0, 0.0, 14);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Direito', 7.0, 0.0, 3.0, 0.0, 14);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Educação', 10.0, 0.0, 0.0, 0.0, 14);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Arte e Design', 0.0, 0.0, 0.0, 10.0, 14);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Negócios', 3.0, 0.0, 7.0, 0.0, 14);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Ofícios técnicos', 2.0, 0.0, 8.0, 0.0, 14);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 3.0, 1.0, 1.0, 5.0, 15);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 3.0, 2.0, 2.0, 3.0, 15);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 15);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.0, 4.0, 4.0, 0.0, 15);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 1.0, 4.5, 4.5, 0.0, 15);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Sim, e ainda me afeta', 2.0, 4.0, 4.0, 0.0, 16);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Sim, mas já superei', 3.0, 2.0, 2.0, 3.0, 16);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Não me lembro de algo assim', 2.5, 2.5, 2.5, 2.5, 16);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Nunca aconteceu', 2.0, 1.0, 2.0, 5.0, 16);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Preciso trabalhar enquanto estudo', 3.0, 1.0, 5.0, 1.0, 17);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Tenho dificuldade de acesso financeiro a cursos', 4.0, 0.0, 4.0, 2.0, 17);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Moro longe das principais instituições', 3.0, 2.0, 3.0, 2.0, 17);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Preciso ajudar minha família financeiramente', 2.0, 0.0, 7.0, 1.0, 17);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Não me vejo representado nas carreiras que conheço', 3.0, 2.0, 2.0, 3.0, 17);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Nenhuma das anteriores', 2.5, 2.5, 2.5, 2.5, 17);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Família', 1.0, 4.5, 4.5, 0.0, 18);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Amigos', 3.0, 2.0, 2.0, 3.0, 18);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Escola e professores', 4.0, 3.0, 3.0, 0.0, 18);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Mídia e redes sociais', 1.0, 2.0, 5.0, 2.0, 18);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Situação financeira', 1.0, 1.0, 7.0, 1.0, 18);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Religião e cultura', 5.0, 3.0, 1.0, 1.0, 18);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Eu mesmo(a)', 2.0, 2.0, 2.0, 4.0, 18);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('É totalmente o que os outros esperam de mim', 1.0, 4.5, 4.5, 0.0, 19);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('É um pouco o que esperam de mim.', 2.0, 3.5, 3.5, 1.0, 19);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro.', 2.5, 2.5, 2.5, 2.5, 19);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('É um pouco minha escolha.', 3.0, 2.0, 2.0, 3.0, 19);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('É completamente minha escolha.', 2.0, 1.0, 1.0, 6.0, 19);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Fico bem com ela, quero que continue assim', 2.0, 4.0, 4.0, 0.0, 20);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Quero repensar o quanto ela me afeta', 3.0, 1.5, 1.5, 4.0, 20);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Não tinha me dado conta dessa influência antes', 2.5, 2.5, 2.5, 2.5, 20);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Prefiro não responder agora', 2.5, 2.5, 2.5, 2.5, 20);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 21);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 21);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 21);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.5, 2.0, 2.5, 3.0, 21);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 2.5, 1.5, 2.5, 3.5, 21);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 22);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 22);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 22);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.5, 2.5, 2.5, 2.5, 22);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 2.5, 2.5, 2.5, 2.5, 22);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 23);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 23);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 23);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.0, 2.0, 3.0, 3.0, 23);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 1.5, 1.5, 3.5, 3.5, 23);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 24);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 24);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 24);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.0, 2.0, 4.0, 2.0, 24);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 1.5, 1.5, 5.0, 2.0, 24);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 25);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 25);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 25);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.0, 4.0, 4.0, 0.0, 25);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 1.0, 4.5, 4.5, 0.0, 25);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 26);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 26);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 26);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 3.0, 1.0, 4.0, 2.0, 26);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 3.0, 0.0, 5.0, 2.0, 26);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 27);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 27);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 27);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.5, 2.5, 3.0, 2.0, 27);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 2.5, 2.5, 4.0, 1.0, 27);
+"
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 28);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 28);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 28);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 3.0, 2.0, 1.0, 4.0, 28);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 3.5, 2.0, 0.0, 4.5, 28);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 29);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 29);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 29);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.5, 2.5, 2.5, 2.5, 29);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 2.5, 2.5, 2.5, 2.5, 29);
+
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 30);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 30);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 30);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 4.0, 1.0, 1.0, 4.0, 30);
+INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 4.5, 0.5, 0.5, 4.5, 30);
