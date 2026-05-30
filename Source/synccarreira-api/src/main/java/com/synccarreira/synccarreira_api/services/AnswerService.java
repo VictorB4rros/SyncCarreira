@@ -2,10 +2,10 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.AnswerDTO;
 import com.synccarreira.synccarreira_api.entities.Answer;
-import com.synccarreira.synccarreira_api.entities.Question;
+import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.Student;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
-import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
+import com.synccarreira.synccarreira_api.repositories.QuestionOptionRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,7 @@ public class AnswerService {
     private AnswerRepository answerRepository;
 
     @Autowired
-    private QuestionRepository questionRepository;
+    private QuestionOptionRepository questionOptionRepository;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -42,9 +42,9 @@ public class AnswerService {
 
     private void copyDtoToEntity(AnswerDTO dto, Answer entity) {
         entity.setContent(dto.getContent());
-        Question question = questionRepository.findById(dto.getQuestion().id()).orElseThrow(() -> new ResourceNotFoundException("Question not found"));
+        QuestionOption questionOption = questionOptionRepository.findById(dto.getQuestionOptionDTO().id()).orElseThrow(() -> new ResourceNotFoundException("Question option not found"));
         Student student = studentRepository.findById(dto.getStudent().getId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
-        entity.setQuestion(question);
+        entity.setQuestionOption(questionOption);
         entity.setStudent(student);
     }
 }

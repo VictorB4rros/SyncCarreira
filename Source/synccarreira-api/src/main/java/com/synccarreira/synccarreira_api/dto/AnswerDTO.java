@@ -22,9 +22,9 @@ public class AnswerDTO {
     @Getter
     private StudentDTO student;
 
-    @NotNull(message = "A pergunta associada é obrigatória")
+    @NotNull(message = "A opção escolhida é obrigatória")
     @Getter
-    private QuestionDTO question;
+    private QuestionOptionDTO questionOptionDTO;
 
     public AnswerDTO(Answer entity) {
         this.id = entity.getId();
@@ -34,8 +34,8 @@ public class AnswerDTO {
             this.student = new StudentDTO(entity.getStudent());
         }
 
-        if (entity.getQuestion() != null) {
-            this.question = new QuestionDTO(entity.getQuestion());
+        if (entity.getQuestionOption() != null) {
+            this.questionOptionDTO = new QuestionOptionDTO(entity.getQuestionOption());
         }
     }
 }

@@ -24,15 +24,15 @@ public class Answer {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "pk_usuario")
+    @JoinColumn(name = "fk_usuario")
     @Getter
     @Setter
     private Student student;
 
     @ManyToOne
-    @JoinColumn(name = "fk_pergunta")
+    @JoinColumn(name = "fk_opcao_pergunta")
     @Getter
     @Setter
-    private Question question;
+    private QuestionOption questionOption;
 
 }
