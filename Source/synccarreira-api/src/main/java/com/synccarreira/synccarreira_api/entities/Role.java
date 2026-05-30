@@ -13,7 +13,7 @@ public class Role implements GrantedAuthority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pk_role")
+    @Column(name = "id_role")
     @EqualsAndHashCode.Include
     @Getter
     @Setter

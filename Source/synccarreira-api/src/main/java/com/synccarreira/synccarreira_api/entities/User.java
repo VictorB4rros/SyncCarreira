@@ -42,8 +42,8 @@ public class User implements UserDetails {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "tb_usuario_role",
-            joinColumns = @JoinColumn(name = "pk_usuario"),
-            inverseJoinColumns = @JoinColumn(name = "pk_role"))
+            joinColumns = @JoinColumn(name = "id_usuario"),
+            inverseJoinColumns = @JoinColumn(name = "id_role"))
     @Getter
     private Set<Role> roles = new HashSet<>();
 

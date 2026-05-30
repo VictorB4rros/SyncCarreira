@@ -48,7 +48,7 @@ public class SynccarreiraApiApplication implements CommandLineRunner {
 		Student student1 = new Student();
 		student1.setName("José Souza");
 		student1.setEmail("jose@gmail.com");
-		student1.setPassword("$2a$10$0yPwCU.0hvygBMVoNsfpduxFaIDCiBFO1xKT1CMPVerj8QR9SHKZ6");
+		student1.setPassword(passwordEncoder.encode("12345678"));
 		student1.setSchoolType("Escola pública");
 		student1.setSchollarYear("3º ano do EM");
 		student1.addRole(role1);

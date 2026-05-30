@@ -117,7 +117,7 @@ public class TrailController {
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/{id}/pode-acessar")
+    @PostMapping("/{id}/can-access")
     @Operation(summary = "Verifica se o aluno pode acessar a trilha informada.")
     @ApiResponses(value = {
             @ApiResponse(
@@ -133,6 +133,7 @@ public class TrailController {
     public ResponseEntity<Boolean> canAccess(
             @PathVariable Long id,
             @RequestBody List<Long> answeredIds) {
+
         boolean access = trailService.canAccess(id, answeredIds);
         return ResponseEntity.ok(access);
     }
