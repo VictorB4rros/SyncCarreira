@@ -49,13 +49,12 @@ public class StudentService {
     public StudentDTO insert(StudentInsertDTO dto) {
         Student entity = new Student();
         copyDtoToEntity(dto, entity);
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity = studentRepository.save(entity);
         return new StudentDTO(entity);
     }
 
     @Transactional
-    public StudentDTO update(Long id, @Valid StudentDTO dto) {
+    public StudentDTO update(Long id, @Valid StudentUpdateDTO dto) {
         try {
             Student entity = studentRepository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
@@ -80,15 +79,24 @@ public class StudentService {
         }
     }
 
-    private void copyDtoToEntity(StudentDTO dto, Student entity) {
+    private void copyDtoToEntity(StudentInsertDTO dto, Student entity) {
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        entity.setSchoolType(dto.getSchoolType());
+        entity.setSchollarYear(dto.getSchollarYear());
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.getRoles().clear();
+        Optional<Role> role = roleRepository.findById(dto.getRoleId());
+        role.ifPresent(entity::addRole);
+    }
+
+    private void copyDtoToEntity(StudentUpdateDTO dto, Student entity) {
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setSchoolType(dto.getSchoolType());
         entity.setSchollarYear(dto.getSchollarYear());
         entity.getRoles().clear();
-        for (RoleDTO roleDto : dto.getRoles()) {
-            Role role = roleRepository.getReferenceById(roleDto.getId());
-            entity.getRoles().add(role);
-        }
+        Optional<Role> role = roleRepository.findById(dto.getRoleId());
+        role.ifPresent(entity::addRole);
     }
 }

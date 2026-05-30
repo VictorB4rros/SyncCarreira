@@ -30,7 +30,7 @@ public class Student extends User {
 
     @OneToMany(mappedBy = "student")
     @Getter
-    private List<Schedule> schedules = new ArrayList<>();
+    private List<Appointment> appointments = new ArrayList<>();
 
     @OneToMany(mappedBy = "student")
     @Getter

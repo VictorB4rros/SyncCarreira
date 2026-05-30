@@ -1,6 +1,6 @@
 package com.synccarreira.synccarreira_api.dto;
 
-import com.synccarreira.synccarreira_api.services.validation.UserInsertValid;
+import com.synccarreira.synccarreira_api.services.validation.UserUpdateValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -11,8 +11,8 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@UserInsertValid
-public class StudentInsertDTO {
+@UserUpdateValid
+public class StudentUpdateDTO {
 
     @NotBlank(message = "Campo obrigatório")
     @Getter
@@ -30,10 +30,4 @@ public class StudentInsertDTO {
 
     @Getter
     private String schoolType;
-
-    @NotBlank(message = "Campo obrigatório")
-    @Size(min = 8, message = "Deve ter no mínimo 8 caracteres")
-    @Getter
-    @Setter
-    private String password;
 }

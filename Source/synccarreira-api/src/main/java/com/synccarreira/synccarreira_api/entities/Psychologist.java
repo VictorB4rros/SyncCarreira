@@ -25,7 +25,7 @@ public class Psychologist extends User {
 
     @OneToMany(mappedBy = "psychologist")
     @Getter
-    private List<Schedule> schedules = new ArrayList<>();
+    private List<Appointment> appointments = new ArrayList<>();
 
     public boolean isContractValid() {
         return contractExpirationDate != null && !contractExpirationDate.isBefore(LocalDate.now());

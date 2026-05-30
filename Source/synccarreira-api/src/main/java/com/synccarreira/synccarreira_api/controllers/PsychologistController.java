@@ -1,6 +1,8 @@
 package com.synccarreira.synccarreira_api.controllers;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
+import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
+import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
 import com.synccarreira.synccarreira_api.services.PsychologistService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -65,7 +67,7 @@ public class PsychologistController {
                     content = @Content
             )
     })
-    public ResponseEntity<PsychologistDTO> createPsychologist(@RequestBody PsychologistDTO dto) {
+    public ResponseEntity<PsychologistDTO> createPsychologist(@RequestBody PsychologistInsertDTO dto) {
         PsychologistDTO psicologa = psychologistService.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -87,7 +89,7 @@ public class PsychologistController {
                     content = @Content
             )
     })
-    public ResponseEntity<PsychologistDTO> update(@PathVariable Long id, @RequestBody PsychologistDTO dto) {
+    public ResponseEntity<PsychologistDTO> update(@PathVariable Long id, @RequestBody PsychologistUpdateDTO dto) {
         return ResponseEntity.ok(psychologistService.update(id, dto));
     }
 
