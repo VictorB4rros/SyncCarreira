@@ -1,9 +1,12 @@
 package com.synccarreira.synccarreira_api.controllers;
 
+import com.synccarreira.synccarreira_api.dto.CustomError;
 import com.synccarreira.synccarreira_api.dto.TrailDTO;
+import com.synccarreira.synccarreira_api.dto.TrailUpdateDTO;
 import com.synccarreira.synccarreira_api.services.TrailService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -85,9 +88,14 @@ public class TrailController {
                     responseCode = "404",
                     description = "Not found.",
                     content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "422",
+                    description = "Unprocessable content.",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CustomError.class)) }
             )
     })
-    public ResponseEntity<TrailDTO> update(@PathVariable Long id, @RequestBody TrailDTO dto) {
+    public ResponseEntity<TrailDTO> update(@PathVariable Long id, @RequestBody TrailUpdateDTO dto) {
         return ResponseEntity.ok(trailService.update(id, dto));
     }
 

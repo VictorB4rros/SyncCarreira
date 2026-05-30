@@ -23,12 +23,12 @@ public class Trail {
     private Long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "nome_trilha", nullable = false, unique = true)
+    @Column(name = "nome_trilha", nullable = false)
     @Getter
     @Setter
     private TrailName name;
 
-    @Column(name = "ordem_sequencial_trilha", nullable = false, unique = true)
+    @Column(name = "ordem_sequencial_trilha", nullable = false)
     @Getter
     @Setter
     private Integer sequentialOrder;
