@@ -43,7 +43,7 @@ public class AnswerController {
             @Parameter(description = "Id do aluno que criou essas respostas.", required = true)
             @RequestParam(value="studentId", required = true)
             Long studentId,
-            @Parameter(description = "Id da trilha à qual a as respostas pertencem.", required = true)
+            @Parameter(description = "Id da trilha à qual as respostas pertencem.", required = true)
             @RequestParam(value="trailId", required = true)
             Long trailId
     ) {

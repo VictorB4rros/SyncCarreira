@@ -40,7 +40,7 @@ public class Question {
     private Trail trail;
 
     @ManyToOne
-    @JoinColumn(name = "fk_psicologa", nullable = false)
+    @JoinColumn(name = "fk_psicologa")
     @Getter
     @Setter
     private Psychologist psychologist;
