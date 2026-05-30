@@ -194,7 +194,7 @@ INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 27);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 2.5, 2.5, 3.0, 2.0, 27);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 2.5, 2.5, 4.0, 1.0, 27);
-"
+
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo totalmente', 2.5, 2.5, 2.5, 2.5, 28);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Discordo', 2.5, 2.5, 2.5, 2.5, 28);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 28);
