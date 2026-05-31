@@ -76,7 +76,7 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.findByTrail(trailId));
     }
 
-    @GetMapping("/psicologa/{psicologaId}")
+    @GetMapping("/psychologist/{psychologistId}")
     @Operation(summary = "Busca uma lista de perguntas pelo id do(a) psicólogo(a) que as criou.")
     @ApiResponses(value = {
             @ApiResponse(
