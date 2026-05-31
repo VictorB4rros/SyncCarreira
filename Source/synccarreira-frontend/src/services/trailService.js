@@ -54,7 +54,7 @@ export const getQuestionsByTrail = async (trailId) => {
  */
 export const getAnswers = async (studentId, trailId) => {
   const response = await api.get('/answers', {
-    params: { alunoId: studentId, trailId },
+    params: { studentId, trailId },
   })
   return response.data
 }
