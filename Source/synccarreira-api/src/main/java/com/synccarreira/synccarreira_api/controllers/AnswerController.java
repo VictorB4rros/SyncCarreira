@@ -26,7 +26,7 @@ public class AnswerController {
     @Autowired
     private AnswerService answerService;
 
-    @Operation(summary = "Busca todas as respotas que um aluno deu às perguntas de uma trilha, pelo id do aluno e id da trilha.")
+    @Operation(summary = "Busca todas as respostas que um aluno deu às perguntas de uma trilha, pelo id do aluno e id da trilha.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
@@ -65,7 +65,7 @@ public class AnswerController {
             )
     })
     @PostMapping
-    public ResponseEntity<AnswerDTO> insert(@Valid @RequestBody AnswerDTO dto) {
+    public ResponseEntity<AnswerDTO> insert(@Valid @RequestBody AnswerInsertDTO dto) {
         AnswerDTO result = answerService.insert(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(result.getId()).toUri();
         return ResponseEntity.created(uri).body(result);

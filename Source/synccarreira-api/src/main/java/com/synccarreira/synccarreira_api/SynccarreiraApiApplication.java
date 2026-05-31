@@ -96,7 +96,6 @@ public class SynccarreiraApiApplication implements CommandLineRunner {
 		simulatedAnswers.put(123L, "Concordo totalmente");
 		simulatedAnswers.put(126L, "Neutro");
 		simulatedAnswers.put(132L, "Concordo");
-		simulatedAnswers.put(137L, "Concordo");
 
 		List<Answer> allTheAnswers = new ArrayList<>();
 

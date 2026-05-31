@@ -1,6 +1,7 @@
 package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.AnswerDTO;
+import com.synccarreira.synccarreira_api.dto.AnswerInsertDTO;
 import com.synccarreira.synccarreira_api.entities.Answer;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.Student;
@@ -33,17 +34,17 @@ public class AnswerService {
     }
 
     @Transactional
-    public AnswerDTO insert(AnswerDTO dto) {
+    public AnswerDTO insert(AnswerInsertDTO dto) {
         Answer entity = new Answer();
         copyDtoToEntity(dto, entity);
         entity = answerRepository.save(entity);
         return new AnswerDTO(entity);
     }
 
-    private void copyDtoToEntity(AnswerDTO dto, Answer entity) {
+    private void copyDtoToEntity(AnswerInsertDTO dto, Answer entity) {
         entity.setContent(dto.getContent());
-        QuestionOption questionOption = questionOptionRepository.findById(dto.getQuestionOptionDTO().id()).orElseThrow(() -> new ResourceNotFoundException("Question option not found"));
-        Student student = studentRepository.findById(dto.getStudent().getId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        QuestionOption questionOption = questionOptionRepository.findById(dto.getQuestionOptionId()).orElseThrow(() -> new ResourceNotFoundException("Question option not found"));
+        Student student = studentRepository.findById(dto.getStudentId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         entity.setQuestionOption(questionOption);
         entity.setStudent(student);
     }
