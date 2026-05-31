@@ -52,7 +52,10 @@ public class TrailController {
                     content = @Content
             )
     })
-    public ResponseEntity<TrailDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<TrailDTO> findById(
+            @Parameter(description = "Id da trilha.", required = true)
+            @PathVariable Long id
+    ) {
         return ResponseEntity.ok(trailService.findById(id));
     }
 
@@ -96,7 +99,11 @@ public class TrailController {
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CustomError.class)) }
             )
     })
-    public ResponseEntity<TrailDTO> update(@PathVariable Long id, @RequestBody TrailUpdateDTO dto) {
+    public ResponseEntity<TrailDTO> update(
+            @Parameter(description = "Id da trilha que será atualizada.", required = true)
+            @PathVariable Long id,
+            @RequestBody TrailUpdateDTO dto
+    ) {
         return ResponseEntity.ok(trailService.update(id, dto));
     }
 
@@ -113,17 +120,30 @@ public class TrailController {
                     content = @Content
             )
     })
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @Parameter(description = "Id da trilha que será deletada.", required = true)
+            @PathVariable Long id
+    ) {
         trailService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{id}/can-access")
-    @Operation(summary = "Verifica se o aluno pode acessar a trilha informada.")
+    @Operation(summary = "Verifica se o aluno pode acessar a trilha informada, através do id da trilha.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
                     description = "Verificação feita com sucesso."
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "Unauthorized.",
+                    content = @Content
+            ),
+            @ApiResponse(
+                    responseCode = "403",
+                    description = "Forbidden.",
+                    content = @Content
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -132,6 +152,7 @@ public class TrailController {
             )
     })
     public ResponseEntity<Boolean> canAccess(
+            @Parameter(description = "Id da trilha que será verificada se o aluno pode acessar.", required = true)
             @PathVariable Long id) {
         boolean access = trailService.canAccess(id);
         return ResponseEntity.ok(access);
