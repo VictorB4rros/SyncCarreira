@@ -14,4 +14,8 @@ public interface AnswerRepository extends JpaRepository<Answer, Long> {
             "WHERE a.student.id = :studentId " +
             "AND q.trail.id = :trailId")
     List<Answer> findByStudentAndTrail(Long studentId, Long trailId);
+
+    // AnswerRepository.java
+    @Query("SELECT a FROM Answer a JOIN FETCH a.questionOption WHERE a.student.id = :studentId")
+    List<Answer> findByStudentId(Long studentId);
 }

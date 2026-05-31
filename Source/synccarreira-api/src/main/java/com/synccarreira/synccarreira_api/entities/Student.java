@@ -35,4 +35,20 @@ public class Student extends User {
     @OneToMany(mappedBy = "student")
     @Getter
     private List<Answer> answerList = new ArrayList<>();
+
+    @Column(name = "score_humanas")
+    @Getter @Setter
+    private Double humanitiesScore = 0.0;
+
+    @Column(name = "score_exatas")
+    @Getter @Setter
+    private Double exactSciencesScore = 0.0;
+
+    @Column(name = "score_biologicas")
+    @Getter @Setter
+    private Double biologicalSciencesScore = 0.0;
+
+    @Column(name = "score_artes")
+    @Getter @Setter
+    private Double artsScore = 0.0;
 }

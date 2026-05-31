@@ -38,6 +38,7 @@ public class AnswerService {
         Answer entity = new Answer();
         copyDtoToEntity(dto, entity);
         entity = answerRepository.save(entity);
+        recalculateStudentScore(entity.getStudent());
         return new AnswerDTO(entity);
     }
 
@@ -47,5 +48,28 @@ public class AnswerService {
         Student student = studentRepository.findById(dto.getStudentId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         entity.setQuestionOption(questionOption);
         entity.setStudent(student);
+    }
+
+    private void recalculateStudentScore(Student student) {
+        List<Answer> allAnswers = answerRepository.findByStudentId(student.getId());
+
+        double humanities = 0.0, exactSciences = 0.0, biological = 0.0, arts = 0.0;
+
+        for (Answer answer : allAnswers) {
+            QuestionOption option = answer.getQuestionOption();
+            if (option != null) {
+                humanities    += option.getHumanitiesWeight();
+                exactSciences += option.getExactSciencesWeight();
+                biological    += option.getBiologicalSciencesWeight();
+                arts          += option.getArtsWeight();
+            }
+        }
+
+        student.setHumanitiesScore(humanities);
+        student.setExactSciencesScore(exactSciences);
+        student.setBiologicalSciencesScore(biological);
+        student.setArtsScore(arts);
+
+        studentRepository.save(student);
     }
 }
