@@ -123,7 +123,7 @@ public class PsychologistController {
                     content = @Content
             )
     })
-    @GetMapping("/{id}/contrato-valido")
+    @GetMapping("/{id}/valid-contract")
     public ResponseEntity<Boolean> isContractValid(@PathVariable Long id) {
         PsychologistDTO psychologistDTO = psychologistService.findById(id);
         return ResponseEntity.ok(psychologistDTO.isContractValid());

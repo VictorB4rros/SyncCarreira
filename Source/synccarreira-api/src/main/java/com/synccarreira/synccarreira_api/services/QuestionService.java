@@ -9,6 +9,7 @@ import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
+import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,13 +105,13 @@ public class QuestionService {
         Trail trail = trailRepository.findById(dto.trailId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trailId()));
 
-        Psychologist psicologa = psychologistRepository.findById(dto.psychologistId())
+        Psychologist psychologist = psychologistRepository.findById(dto.psychologistId())
                 .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psychologistId()));
 
         question.setContent(dto.content());
         question.setQuestionType(dto.questionType());
         question.setTrail(trail);
-        question.setPsychologist(psicologa);
+        question.setPsychologist(psychologist);
 
         question.getOptions().clear();
         if (question.acceptsOptions()) {
@@ -127,7 +128,7 @@ public class QuestionService {
         psychologistService.validateIfContractIsActive(psicologaId);
 
         if (!questionRepository.existsById(id)) {
-            throw new EntityNotFoundException("Pergunta não encontrada. ID: " + id);
+            throw new ResourceNotFoundException("Pergunta não encontrada. ID: " + id);
         }
         questionRepository.deleteById(id);
     }

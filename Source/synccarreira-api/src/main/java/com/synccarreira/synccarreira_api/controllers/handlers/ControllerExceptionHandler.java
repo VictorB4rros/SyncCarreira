@@ -48,4 +48,11 @@ public class ControllerExceptionHandler {
 		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
+
+	@ExceptionHandler(IllegalStateException.class)
+	public ResponseEntity<CustomError> illegalState(IllegalStateException e, HttpServletRequest request) {
+		HttpStatus status = HttpStatus.CONFLICT;
+		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
 }

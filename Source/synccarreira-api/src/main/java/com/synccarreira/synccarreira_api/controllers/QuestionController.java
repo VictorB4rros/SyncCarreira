@@ -3,6 +3,7 @@ package com.synccarreira.synccarreira_api.controllers;
 import com.synccarreira.synccarreira_api.dto.QuestionDTO;
 import com.synccarreira.synccarreira_api.services.QuestionService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -48,11 +49,14 @@ public class QuestionController {
                     content = @Content
             )
     })
-    public ResponseEntity<QuestionDTO> findById(@PathVariable Long id) {
+    public ResponseEntity<QuestionDTO> findById(
+            @Parameter(description = "Id da pergunta.", required = true)
+            @PathVariable Long id
+    ) {
         return ResponseEntity.ok(questionService.findById(id));
     }
 
-    @GetMapping("/trilha/{trilhaId}")
+    @GetMapping("/trail/{trailId}")
     @Operation(summary = "Busca uma lista de perguntas pelo id da trilha correspondente.")
     @ApiResponses(value = {
             @ApiResponse(
@@ -65,7 +69,10 @@ public class QuestionController {
                     content = @Content
             )
     })
-    public ResponseEntity<List<QuestionDTO>> findByTrilha(@PathVariable Long trailId) {
+    public ResponseEntity<List<QuestionDTO>> findByTrilha(
+            @Parameter(description = "Id da trilha.", required = true)
+            @PathVariable Long trailId
+    ) {
         return ResponseEntity.ok(questionService.findByTrail(trailId));
     }
 
@@ -140,7 +147,7 @@ public class QuestionController {
     })
     public ResponseEntity<Void> deleteQuestionById(
             @PathVariable Long id,
-            @RequestParam Long psychologistId) {
+            @RequestParam(name = "psychologistId") Long psychologistId) {
         questionService.deleteQuestionById(id, psychologistId);
         return ResponseEntity.noContent().build();
     }
