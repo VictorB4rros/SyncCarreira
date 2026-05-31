@@ -5,6 +5,7 @@ import com.synccarreira.synccarreira_api.dto.TrailDTO;
 import com.synccarreira.synccarreira_api.dto.TrailUpdateDTO;
 import com.synccarreira.synccarreira_api.services.TrailService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -131,10 +132,8 @@ public class TrailController {
             )
     })
     public ResponseEntity<Boolean> canAccess(
-            @PathVariable Long id,
-            @RequestBody List<Long> answeredIds) {
-
-        boolean access = trailService.canAccess(id, answeredIds);
+            @PathVariable Long id) {
+        boolean access = trailService.canAccess(id);
         return ResponseEntity.ok(access);
     }
 }

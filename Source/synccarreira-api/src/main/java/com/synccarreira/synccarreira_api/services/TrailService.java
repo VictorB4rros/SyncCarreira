@@ -1,8 +1,16 @@
 package com.synccarreira.synccarreira_api.services;
 
+import com.synccarreira.synccarreira_api.dto.AnswerDTO;
 import com.synccarreira.synccarreira_api.dto.TrailDTO;
 import com.synccarreira.synccarreira_api.dto.TrailUpdateDTO;
+import com.synccarreira.synccarreira_api.dto.UserDTO;
+import com.synccarreira.synccarreira_api.entities.Answer;
+import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.Trail;
+import com.synccarreira.synccarreira_api.entities.User;
+import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
+import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
+import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,7 +23,16 @@ import java.util.List;
 public class TrailService {
 
     @Autowired
-    private com.synccarreira.synccarreira_api.repositories.TrailRepository trailRepository;
+    private TrailRepository trailRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private AnswerRepository answerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
 
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
@@ -70,7 +87,7 @@ public class TrailService {
     }
 
     @Transactional(readOnly = true)
-    public boolean canAccess(Long trailId, List<Long> answeredIds) {
+    public boolean canAccess(Long trailId) {
         Trail trail = trailRepository.findById(trailId)
                 .orElseThrow(() -> new ResourceNotFoundException("Trilha não encontrada. ID: " + trailId));
 
@@ -82,6 +99,11 @@ public class TrailService {
         Trail previousTrail = trailRepository.findBySequentialOrder(previousOrder)
                 .orElseThrow(() -> new ResourceNotFoundException(
                         "Trilha anterior (ordem " + previousOrder + ") não encontrada."));
+
+        UserDTO userDto = userService.findMe();
+        List<Answer> answers = answerRepository.findByStudentAndTrail(userDto.getId(), previousTrail.getId());
+        List<Long> answeredIds = new ArrayList<>();
+        answers.forEach(answer -> answeredIds.add(answer.getQuestionOption().getQuestion().getId()));
 
         return previousTrail.isConcluded(answeredIds);
     }

@@ -8,6 +8,10 @@ import java.util.List;
 
 public interface AnswerRepository extends JpaRepository<Answer, Long> {
 
-    @Query(value = "SELECT a FROM Answer a WHERE a.student.id = :studentId AND a.questionOption.question.trail.id = :trailId")
+    @Query("SELECT a FROM Answer a " +
+            "JOIN FETCH a.questionOption qo " +
+            "JOIN FETCH qo.question q " +
+            "WHERE a.student.id = :studentId " +
+            "AND q.trail.id = :trailId")
     List<Answer> findByStudentAndTrail(Long studentId, Long trailId);
 }
