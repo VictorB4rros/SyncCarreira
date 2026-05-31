@@ -44,9 +44,9 @@ public class TrailService {
 
     @Transactional(readOnly = true)
     public TrailDTO findById(Long id) {
-        Trail trilha = trailRepository.findById(id)
+        Trail trail = trailRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Trilha não encontrada. ID: " + id));
-        return new TrailDTO(trilha);
+        return new TrailDTO(trail);
     }
 
     @Transactional
