@@ -34,7 +34,6 @@ export const login = async (email, senha) => {
       localStorage.setItem('token', accessToken)
     }
 
-    // Busca os dados do usuário com o token recém-obtido
     const meResponse = await api.get('/users/me')
     const data = meResponse.data
     const usuario = {
@@ -55,18 +54,40 @@ export const login = async (email, senha) => {
 }
 
 // ─── Cadastro ─────────────────────────────────────────────────
+//
+// O backend possui endpoints separados por perfil:
+//   POST /students      → aluno
+//   POST /psychologists → psicóloga
+//
 export const register = async (dados) => {
   try {
-    const payload = {
-      name:     dados.nome,
-      email:    dados.email,
-      password: dados.senha,
-      roleId:   ROLE_MAP[dados.perfil] ?? 1,
-      ...(dados.perfil === 'aluno' && dados.nascimento && { nascimento: dados.nascimento }),
-      ...(dados.perfil === 'aluno' && dados.duvida     && { duvida: dados.duvida }),
+    let response
+
+    if (dados.perfil === 'psicologa') {
+      // Payload para psicóloga
+      const payload = {
+        name:                   dados.nome,
+        email:                  dados.email,
+        password:               dados.password,
+        roleId:                 ROLE_MAP.psicologa,
+        crp:                    dados.crp,
+        contractExpirationDate: dados.contractExpirationDate,
+      }
+      response = await api.post('/psychologists', payload)
+
+    } else {
+      // Payload para aluno (perfil padrão)
+      const payload = {
+        name:         dados.nome,
+        email:        dados.email,
+        password:     dados.password,
+        roleId:       ROLE_MAP.aluno,
+        schollarYear: dados.schollarYear,
+        schoolType:   dados.schoolType,
+      }
+      response = await api.post('/students', payload)
     }
 
-    const response = await api.post('/users', payload)
     return response.data
 
   } catch (error) {

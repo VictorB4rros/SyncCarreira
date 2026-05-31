@@ -1,83 +1,51 @@
-/**
- * @file CadastroPage.jsx
- * @description Página de cadastro de novos usuários do SyncCarreira.
- *
- * Suporta dois perfis de usuário: Aluno e Psicóloga.
- * Os campos exibidos se adaptam ao perfil selecionado —
- * data de nascimento e dúvida vocacional aparecem apenas para alunos.
- *
- * Após cadastro bem-sucedido, redireciona para /login.
- *
- * Dependências:
- *  - authService.register(): envia os dados ao backend
- *  - React Router: useNavigate e Link
- *  - Footer: componente de rodapé reutilizável
- */
-
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { register } from '../../services/authService'
 import Footer from '../../components/Footer/Footer.jsx'
 import './CadastroPage.css'
 
-// ─── Constantes ───────────────────────────────────────────────
-
-/** Perfis disponíveis para seleção no cadastro */
 const PERFIS = [
   { id: 'aluno',     label: 'Aluno'     },
   { id: 'psicologa', label: 'Psicóloga' },
 ]
 
-/** Opções do campo "maior dúvida" — exibido apenas para alunos */
-const DUVIDAS = [
-  'Escolha de curso superior',
-  'Mudança de carreira',
-  'Autoconhecimento',
-  'Mercado de trabalho',
+const ANOS_ESCOLARES = [
+  '1º Ano - Ensino Médio',
+  '2º Ano - Ensino Médio',
+  '3º Ano - Ensino Médio',
   'Outro',
 ]
 
-// ─── Componente ───────────────────────────────────────────────
+const TIPOS_ESCOLA = [
+  'Pública',
+  'Privada',
+]
 
-/**
- * CadastroPage
- * Formulário de registro com validação no frontend e envio via authService.
- *
- * @returns {JSX.Element}
- */
 export default function CadastroPage() {
   const navigate = useNavigate()
 
-  // ── Estados do formulário ──────────────────────────────────
   const [perfil, setPerfil]     = useState('aluno')
   const [nome, setNome]         = useState('')
   const [email, setEmail]       = useState('')
-  const [nascimento, setNasc]   = useState('')
-  const [duvida, setDuvida]     = useState('')
   const [password, setPassword] = useState('')
   const [confirm, setConfirm]   = useState('')
 
-  // ── Estados de interface ───────────────────────────────────
+  // Campos de aluno
+  const [schollarYear, setSchollarYear] = useState('')
+  const [schoolType, setSchoolType]     = useState('')
+
+  // Campos de psicóloga
+  const [crp, setCrp]                                   = useState('')
+  const [contractExpirationDate, setContractExpiration] = useState('')
+
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
   const [error, setError]       = useState('')
 
-  // ── Submissão do formulário ────────────────────────────────
-
-  /**
-   * Valida os campos, monta o payload e chama authService.register().
-   *
-   * O payload enviado varia conforme o perfil:
-   *  - aluno:     { nome, email, senha, perfil, nascimento, duvida }
-   *  - psicóloga: { nome, email, senha, perfil }
-   *
-   * @param {React.FormEvent} e
-   */
   async function handleSubmit(e) {
     e.preventDefault()
     setError('')
 
-    // Validação de campos obrigatórios
     if (!nome || !email || !password || !confirm) {
       setError('Preencha todos os campos obrigatórios.')
       return
@@ -86,43 +54,46 @@ export default function CadastroPage() {
       setError('As senhas não coincidem.')
       return
     }
-    if (password.length < 8) {
-      setError('A senha deve ter ao menos 8 caracteres.')
+    if (password.length < 6) {
+      setError('A senha deve ter ao menos 6 caracteres.')
+      return
+    }
+    if (perfil === 'aluno' && (!schollarYear || !schoolType)) {
+      setError('Preencha os dados escolares do aluno.')
+      return
+    }
+    if (perfil === 'psicologa' && (!crp || !contractExpirationDate)) {
+      setError('Preencha os dados profissionais da psicóloga.')
       return
     }
 
     setLoading(true)
 
     try {
-      // Monta o payload adaptado ao perfil selecionado
-      // TODO: confirmar com o backend se o campo é "senha" ou "password"
-      const payload = {
+      // Passa `password` (não `senha`) — authService usa dados.password
+      await register({
+        perfil,
         nome,
         email,
-        senha: password,
-        perfil,
-        // Campos extras apenas para aluno
-        ...(perfil === 'aluno' && { nascimento, duvida }),
-      }
+        password,
+        schollarYear,
+        schoolType,
+        crp,
+        contractExpirationDate,
+      })
 
-      await register(payload)
-
-      // TODO: se o backend retornar token no cadastro, salvar e ir para /home
-      //       Se não, redirecionar para /login para o usuário fazer login
       navigate('/login')
 
     } catch (err) {
-      setError(err.message || 'Ocorreu um erro. Tente novamente.')
+      setError(err.message || 'Ocorreu um erro no cadastro. Tente novamente.')
     } finally {
       setLoading(false)
     }
   }
 
-  // ── Renderização ──────────────────────────────────────────
   return (
       <div className="cp-root">
 
-        {/* ── Cabeçalho ── */}
         <header className="cp-header">
           <span className="cp-header__brand">SyncCarreira</span>
           <button className="cp-header__help" aria-label="Ajuda">?</button>
@@ -130,7 +101,6 @@ export default function CadastroPage() {
 
         <main className="cp-main">
 
-          {/* ── Hero ilustrado ── */}
           <div className="cp-hero">
             <div className="cp-hero__img" aria-hidden="true">
               <svg viewBox="0 0 200 120" width="200" height="120" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -153,10 +123,8 @@ export default function CadastroPage() {
             </p>
           </div>
 
-          {/* ── Card de formulário ── */}
           <div className="cp-card">
 
-            {/* Seleção de perfil */}
             <div className="cp-perfis" role="group" aria-label="Tipo de conta">
               {PERFIS.map(p => (
                   <button
@@ -173,24 +141,21 @@ export default function CadastroPage() {
 
             <form onSubmit={handleSubmit} noValidate>
 
-              {/* Feedback de erro */}
               {error && (
                   <div className="cp-error" role="alert" aria-live="polite">
                     {error}
                   </div>
               )}
 
-              {/* Nome completo */}
               <div className="cp-field">
-                <label htmlFor="nome">Qual é o nome completo? *</label>
+                <label htmlFor="nome">Nome Completo *</label>
                 <input
                     id="nome" type="text" value={nome}
                     onChange={e => setNome(e.target.value)}
-                    placeholder="Nome Completo"
+                    placeholder="Ex: João Silva"
                 />
               </div>
 
-              {/* E-mail */}
               <div className="cp-field">
                 <label htmlFor="email">E-mail *</label>
                 <input
@@ -201,33 +166,59 @@ export default function CadastroPage() {
                 />
               </div>
 
-              {/* Campos exclusivos do perfil Aluno */}
+              {/* Campos exclusivos do Aluno */}
               {perfil === 'aluno' && (
                   <>
                     <div className="cp-field">
-                      <label htmlFor="nasc">Qual é sua data de nascimento?</label>
-                      <input
-                          id="nasc" type="date" value={nascimento}
-                          onChange={e => setNasc(e.target.value)}
-                      />
+                      <label htmlFor="anoEscolar">Ano Escolar *</label>
+                      <select
+                          id="anoEscolar" value={schollarYear}
+                          onChange={e => setSchollarYear(e.target.value)}
+                      >
+                        <option value="">Selecione o ano</option>
+                        {ANOS_ESCOLARES.map(ano => (
+                            <option key={ano} value={ano}>{ano}</option>
+                        ))}
+                      </select>
                     </div>
 
                     <div className="cp-field">
-                      <label htmlFor="duvida">Qual é a sua maior dúvida?</label>
+                      <label htmlFor="tipoEscola">Tipo de Escola *</label>
                       <select
-                          id="duvida" value={duvida}
-                          onChange={e => setDuvida(e.target.value)}
+                          id="tipoEscola" value={schoolType}
+                          onChange={e => setSchoolType(e.target.value)}
                       >
-                        <option value="">Selecione um tema</option>
-                        {DUVIDAS.map(d => (
-                            <option key={d} value={d}>{d}</option>
+                        <option value="">Selecione o tipo</option>
+                        {TIPOS_ESCOLA.map(tipo => (
+                            <option key={tipo} value={tipo}>{tipo}</option>
                         ))}
                       </select>
                     </div>
                   </>
               )}
 
-              {/* Senha com toggle de visibilidade */}
+              {/* Campos exclusivos da Psicóloga */}
+              {perfil === 'psicologa' && (
+                  <>
+                    <div className="cp-field">
+                      <label htmlFor="crp">Registro CRP *</label>
+                      <input
+                          id="crp" type="text" value={crp}
+                          onChange={e => setCrp(e.target.value)}
+                          placeholder="Ex: CRP 06/12345"
+                      />
+                    </div>
+
+                    <div className="cp-field">
+                      <label htmlFor="expirationDate">Data de Expiração do Contrato *</label>
+                      <input
+                          id="expirationDate" type="date" value={contractExpirationDate}
+                          onChange={e => setContractExpiration(e.target.value)}
+                      />
+                    </div>
+                  </>
+              )}
+
               <div className="cp-field">
                 <label htmlFor="password">Senha *</label>
                 <div className="cp-field__wrap">
@@ -252,7 +243,6 @@ export default function CadastroPage() {
                 </div>
               </div>
 
-              {/* Confirmação de senha */}
               <div className="cp-field">
                 <label htmlFor="confirm">Confirmar senha *</label>
                 <input
@@ -263,13 +253,11 @@ export default function CadastroPage() {
                 />
               </div>
 
-              {/* Botão de submit */}
               <button type="submit" className="cp-btn" disabled={loading}>
                 {loading ? <span className="cp-spinner" aria-label="Carregando" /> : 'Criar conta'}
               </button>
             </form>
 
-            {/* Link para login */}
             <p className="cp-footer-text">
               Já tem uma conta?{' '}
               <Link to="/login" className="cp-link">Entrar</Link>
@@ -277,7 +265,6 @@ export default function CadastroPage() {
           </div>
         </main>
 
-        {/* Rodapé modular reutilizável */}
         <Footer />
       </div>
   )
