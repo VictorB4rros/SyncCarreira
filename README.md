@@ -33,7 +33,7 @@ Neste diretório encontra-se todo o código-fonte (código de desenvolvimento) d
 ## 🛠️ Tecnologias Utilizadas
 
 * **Linguagem & Framework (Back-end):** Java com Spring Boot
-* **Banco de Dados:** PostgreSQL
+* **Banco de Dados:** MySQL
 * **Arquitetura & Infraestrutura:** Modelo SaaS hospedado na nuvem (AWS)
 * **Autenticação:** Segurança baseada em tokens JWT e isolamento por perfis
 * **Documentação de API:** Swagger/OpenAPI
