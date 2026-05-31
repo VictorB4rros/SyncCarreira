@@ -3,6 +3,7 @@ package com.synccarreira.synccarreira_api.controllers;
 import com.synccarreira.synccarreira_api.dto.*;
 import com.synccarreira.synccarreira_api.services.StudentService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -92,7 +93,11 @@ public class StudentController {
             )
     })
     @PutMapping(value = "/{id}")
-    public ResponseEntity<StudentDTO> update(@PathVariable Long id, @Valid @RequestBody StudentUpdateDTO dto) {
+    public ResponseEntity<StudentDTO> update(
+            @Parameter(description = "Id do aluno.", required = true)
+            @PathVariable Long id,
+            @Valid @RequestBody StudentUpdateDTO dto
+    ) {
         StudentDTO result = studentService.update(id, dto);
         return ResponseEntity.ok(result);
     }
@@ -111,7 +116,10 @@ public class StudentController {
             )
     })
     @DeleteMapping(value = "/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
+    public ResponseEntity<Void> delete(
+            @Parameter(description = "Id do aluno.", required = true)
+            @PathVariable Long id
+    ) {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
     }

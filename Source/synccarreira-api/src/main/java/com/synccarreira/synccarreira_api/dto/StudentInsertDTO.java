@@ -1,6 +1,5 @@
 package com.synccarreira.synccarreira_api.dto;
 
-import com.synccarreira.synccarreira_api.services.validation.UserInsertValid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -11,7 +10,6 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@UserInsertValid
 public class StudentInsertDTO {
 
     @NotBlank(message = "Campo obrigatório")
