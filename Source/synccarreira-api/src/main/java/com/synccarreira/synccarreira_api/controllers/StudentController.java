@@ -123,4 +123,22 @@ public class StudentController {
         studentService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/{id}/score")
+    @Operation(summary = "Retorna o score acumulado do aluno por área do conhecimento.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Score encontrado com sucesso.",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = StudentScoreDTO.class)) }
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Aluno não encontrado.",
+                    content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CustomError.class)) }
+            )
+    })
+    public ResponseEntity<StudentScoreDTO> getScore(@PathVariable Long id) {
+        return ResponseEntity.ok(studentService.getScore(id));
+    }
 }

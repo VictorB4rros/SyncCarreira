@@ -79,6 +79,13 @@ public class StudentService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public StudentScoreDTO getScore(Long id) {
+        Student student = studentRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found. ID: " + id));
+        return new StudentScoreDTO(student);
+    }
+
     private void copyDtoToEntity(StudentInsertDTO dto, Student entity) {
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
