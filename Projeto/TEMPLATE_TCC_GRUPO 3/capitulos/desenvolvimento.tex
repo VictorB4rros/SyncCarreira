@@ -985,7 +985,7 @@ Por fim, o diagrama estabelece uma premissa de segurança global para a platafor
 \begin{figure}[H]
     \centering
     \caption{Diagrama de Casos de Uso.}
-    \label{fig_grafico_inep1}
+    \label{diagrama_casos_de_uso}
     \includegraphics[width=0.85\textwidth]{img/diagrama-casos-de-uso.png}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
@@ -1055,16 +1055,53 @@ O projeto \textit{SyncCarreira} adota a metodologia ágil Scrum, utilizando Hist
 
 \section{Arquitetura}
 
-O software \textit{SyncCarreira}. adota o modelo de implantação \textit{Software as a Service} (SaaS), focado na distribuição do sistema em nuvem para instituições de ensino. Sob a ótica do desenvolvimento web, o projeto foi concebido a partir da separação das responsabilidades entre o cliente e o servidor, sendo a comunicação intermediada por uma API REST.
+\subsection{Definições da Arquitetura}
+
+O software SyncCarreira adota o modelo de implantação \textit{Software as a Service} (SaaS), focado na distribuição do sistema em nuvem para instituições de ensino. Sob a ótica do desenvolvimento web, o projeto foi concebido a partir da separação das responsabilidades entre o cliente e o servidor, sendo a comunicação intermediada por uma API REST.
 
 Para a camada de visualização, o sistema utiliza a abordagem de \textit{Single Page Application} (SPA), a qual propicia uma experiência de uso responsiva, interativa e econômica no consumo de banda, visto que dispensa recarregamentos completos de página a cada interação do usuário. No que tange à lógica do servidor, a aplicação fundamenta-se no padrão de Arquitetura em Camadas (Layered Architecture). Esse padrão, amplamente consolidado no ecossistema Spring Boot, assegura que o código seja altamente coeso e de baixo acoplamento, já que cada camada detém uma finalidade delimitada e apenas se comunica de modo estrito com as camadas diretamente adjacentes.
 
+\subsubsection{Padrão em Camadas (\textit{Layered Architecture})}
 
-\subsection{Definições da Arquitetura}
+O backend segue o padrão de arquitetura em camadas amplamente adotado em aplicações Spring Boot. Cada camada tem uma responsabilidade bem definida e se comunica exclusivamente com a camada adjacente, promovendo separação de responsabilidades, facilidade de manutenção e testabilidade.
 
-O \textit{SyncCarreira} foi estruturado com base em uma Arquitetura em Camadas (\textit{Layered Architecture}), que garante a separação de responsabilidades entre a interface de usuário, a lógica de negócios e a persistência de dados. Esta definição arquitetural prioriza a manutenibilidade, permitindo que alterações na interface ou nas regras de negócio ocorram sem impactar o núcleo do sistema.
+\begin{table}[H]
+\ABNTEXfontereduzida
+\caption[Padrão em camadas e responsabilidades.]{Padrão em camadas e responsabilidades.}
+\label{tab-camadas-backend}
+\begin{tabular}{p{4.6cm}|p{4.6cm}|p{4.6cm}}
+\textbf{Camada} & \textbf{Pacote} & \textbf{Responsabilidade} \\
+\hline
+Controllers & controllers/ & Recebe requisições HTTP, valida entrada e devolve respostas. \\
+\hline
+Services & services/ & Contém toda a lógica de negócio da aplicação. \\
+\hline
+Repositories & repositories/ & Acesso ao banco de dados via Spring Data JPA. \\
+\hline
+Entities & entities/ & Mapeamento das tabelas do banco de dados. \\
+\hline
+DTOs & dto/ & Objetos de transferência de dados entre camadas e cliente. \\
 
-O sistema gerencia o ciclo de vida da informação através de módulos de alta coesão, abstraindo operações básicas de persistência para níveis de governança e orquestração de dados:
+\end{tabular}
+\legend{Fonte: Autoria própria (2026).}
+\end{table}
+
+\subsubsection{Herança de Entidades com JPA (\textit{JOINED Strategy})}
+
+O domínio de usuários utiliza herança de tabelas com a estratégia JOINED do JPA. A entidade base User é persistida em tb\_usuario e contém os atributos comuns a todos os usuários (id, nome, email, senha e roles). As entidades filhas Student e Psychologist possuem tabelas próprias (tb\_aluno e tb\_psicologa) que armazenam apenas seus atributos específicos, com uma chave estrangeira referenciando tb\_usuario.
+
+A razão do uso de Joined é que essa estratégia evita colunas nulas em uma única tabela (estratégia SINGLE\_TABLE) e mantém a integridade referencial. Cada tipo de usuário tem sua tabela própria, o que facilita consultas específicas por perfil e garante que campos obrigatórios de cada subtipo sejam sempre preenchidos.
+
+\subsubsection{Separação de DTOs por Operação}
+
+O projeto adota a boa prática de criar DTOs distintos para cada operação, evitando expor mais dados do que o necessário em cada contexto. O padrão utilizado é:
+\begin{itemize}
+    \item DTO de leitura (ex: StudentDTO): retorna os dados ao cliente após uma consulta ou operação de escrita.
+    \item DTO de inserção (ex: StudentInsertDTO): recebe os dados necessários para criar um novo registro, incluindo senha.
+    \item DTO de atualização (ex: StudentUpdateDTO): limita os campos que podem ser alterados em um update, excluindo, por exemplo, a senha e o id.
+\end{itemize}
+
+Muitos dos DTOs de leitura são implementados como Java Records, oferecendo imutabilidade e concisão sintática. Os DTOs de inserção e atualização que precisam de validações com Bean Validation utilizam classes convencionais com anotações como @NotNull e @Email.
 
 \subsection{Diagrama da Arquitetura}
 
