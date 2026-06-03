@@ -38,7 +38,7 @@ As regras de negócio estabelecem as políticas, as restrições e as diretrizes
 
 A dinâmica principal do sistema fundamenta-se em uma progressão estruturada, na qual a jornada do aluno é dividida em quatro trilhas sequenciais obrigatórias: autoconhecimento, influências, informação e projeto de futuro. Como mecanismo de controle de fluxo, o avanço na plataforma é estritamente condicionado à conclusão da etapa anterior. Durante esse processo, o sistema assegura a autonomia do estudante, permitindo que ele expresse suas opiniões e sentimentos livremente, culminando na elaboração de uma síntese textual ao final de cada trilha.
 
-Em alinhamento com as diretrizes contemporâneas de orientação profissional, que compreendem a escolha de carreira como um processo construído socialmente em vez da revelação de uma vocação inata (BOCK, 2004), o software atua estritamente como uma ferramenta facilitadora. O sistema não valida nem fornece conteúdo psicológico proprietário; a curadoria e a formulação das perguntas são de inteira responsabilidade da instituição e do profissional de psicologia. Consequentemente, o resultado final entregue pelo sistema não consiste em um diagnóstico fechado de carreira, mas sim na apresentação de um leque amplo de possibilidades, garantindo que o aluno possua um panorama completo do seu processo de escolha. No pilar de Informação, a plataforma deve assegurar que o aluno acesse links previamente curados pela psicóloga, direcionando-o a fontes externas seguras e confiáveis, como portais do Enem, ProUni, políticas de cotas e informações sobre cursos.
+Em alinhamento com as diretrizes contemporâneas de orientação profissional, que compreendem a escolha de carreira como um processo construído socialmente em vez da revelação de uma vocação inata \cite{bock2004}, o software atua estritamente como uma ferramenta facilitadora. O sistema não valida nem fornece conteúdo psicológico proprietário; a curadoria e a formulação das perguntas são de inteira responsabilidade da instituição e do profissional de psicologia. Consequentemente, o resultado final entregue pelo sistema não consiste em um diagnóstico fechado de carreira, mas sim na apresentação de um leque amplo de possibilidades, garantindo que o aluno possua um panorama completo do seu processo de escolha. No pilar de Informação, a plataforma deve assegurar que o aluno acesse links previamente curados pela psicóloga, direcionando-o a fontes externas seguras e confiáveis, como portais do Enem, ProUni, políticas de cotas e informações sobre cursos.
 
 Por fim, os mecanismos de monitoramento foram projetados para otimizar o tempo e a intervenção da psicóloga escolar, garantindo que ela consiga dar atenção especial àqueles alunos que apresentam dificuldades. Para respeitar as normas de atuação profissional e manter o foco na gestão das turmas, o painel da psicóloga exibirá um indicador de status de conclusão por aluno e acionará um alerta visual (flag) de "necessidade de orientação", preservando, nesse nível gerencial, o sigilo sobre o detalhe de cada resposta fornecida. O sistema também incorpora regras de triagem terapêutica, nas quais os alunos que já possuem todas as trilhas concluídas, mas permanecem com o status "em dúvida", são imediatamente priorizados para a participação em sessões de orientação em grupo.
 
@@ -81,24 +81,43 @@ A arquitetura de funcionalidades do sistema foi distribuída entre três atores 
 
 Do lado do aluno, o sistema exige a navegação obrigatória pelas quatro trilhas sequenciais (autoconhecimento, influências, informação e projeto de futuro). A plataforma garante a autonomia do estudante, permitindo o registro de sínteses textuais ao final de cada etapa e a livre expressão por meio de campos abertos e escalas. Como entrega de valor, o sistema fornece ao estudante a visualização de um leque de possibilidades de carreira ao final da jornada, o acompanhamento do seu histórico de testes, a personalização de interesses e o acesso direto aos seus agendamentos e feedbacks enviados pela profissional.
 
-A Tabela 2 detalha todos os requisitos funcionais mapeados para o MVP do SyncCarreira e suas respectivas prioridades. 
+A Tabela 5 detalha todos os requisitos funcionais mapeados para o MVP do SyncCarreira e suas respectivas prioridades. 
 
-\begin{table}[H]
-    \centering
-    \ABNTEXfontereduzida
+{\ABNTEXfontereduzida
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|c|p{2.5cm}|p{4.5cm}|c|c|c|}
     \caption[Requisitos Funcionais do SyncCarreira]{Requisitos funcionais do SyncCarreira.}
-    \label{tab-requisitos-funcionais}
-    \begin{tabular}{|c|p{3cm}|p{5.5cm}|c|c|c|}
+    \label{tab-requisitos-funcionais} \\
     \hline
-    \rowcolor{blue!80!black}
-    \textcolor{white}{\textbf{ID}} & 
-    \textcolor{white}{\textbf{Título}} & 
-    \textcolor{white}{\textbf{Descrição}} & 
-    \textcolor{white}{\textbf{Regras}} & 
-    \textcolor{white}{\textbf{Ator}} & 
-    \textcolor{white}{\textbf{Prior.}} \\
+
+    \textbf{ID} & 
+    \textbf{Título} & 
+    \textbf{Descrição} & 
+    \textbf{Regras} & 
+    \textbf{Ator} & 
+    \textbf{Prior.} \\
     \hline
+    \endfirsthead
+
+    \caption[]{Requisitos funcionais do SyncCarreira (continuação).} \\
+    \hline
+    \textbf{ID} & 
+    \textbf{Título} & 
+    \textbf{Descrição} & 
+    \textbf{Regras} & 
+    \textbf{Ator} & 
+    \textbf{Prior.} \\
+    \hline
+    \endhead
+
+    \hline
+    \multicolumn{6}{r}{\textit{Continua na próxima página...}} \\
+    \endfoot
     
+    \hline
+    \multicolumn{6}{l}{Fonte: Autoria própria (2026).} \\
+    \endlastfoot
+
     \textcolor{blue!70!black}{\textbf{RF-01}} & 
     \textbf{Cadastro de instituições} & 
     O administrador deve poder cadastrar, editar e desativar instituições (escolas/ONGs) na plataforma, associando a cada uma seus usuários e turmas. & 
@@ -133,15 +152,118 @@ A Tabela 2 detalha todos os requisitos funcionais mapeados para o MVP do SyncCar
     
     \textcolor{blue!70!black}{\textbf{RF-05}} & 
     \textbf{Flag de necessidade de orientação} & 
-    O sistema deve sinalizar automaticamente alunos que concluíram todas as trilhas mas \textit{permanecem com o status "em dúvida"}. & 
+    O sistema deve sinalizar automaticamente alunos que concluíram todas as trilhas mas registraram dúvida ou indecisão na síntese final, gerando um alerta visível no painel da psicóloga. & 
     RN-03, RN-04 & 
     Psicóloga & 
     \textcolor{red!80!black}{\textbf{Alta}} \\
     \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-06}} & 
+    \textbf{Priorização de alunos em dúvida para sessão} & 
+    A psicóloga deve poder visualizar e filtrar alunos com flag ativa e agendá-los para atendimento individual ou sessão em grupo, com suporte a múltiplos alunos por sessão. & 
+    RN-04 & 
+    Psicóloga & 
+    \textcolor{red!80!black}{\textbf{Alta}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-07}} & 
+    \textbf{Curadoria de links de fontes externas} & 
+    A psicóloga deve poder cadastrar e associar links de fontes externas confiáveis (Enem, ProUni, cotas, portais de cursos) à trilha de Informação, visíveis ao aluno durante a jornada. & 
+    RN-05 & 
+    Psicóloga & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-08}} & 
+    \textbf{Emissão de relatórios de turma e individuais} & 
+    A psicóloga deve poder gerar relatórios com o panorama de progresso da turma (visão macro) e relatório individual por aluno contendo sínteses e status de cada trilha. & 
+    RN-03 & 
+    Psicóloga & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-09}} & 
+    \textbf{Agendamento de sessões} & 
+    A psicóloga deve poder criar, editar e cancelar agendamentos de sessões individuais ou em grupo, com visualização por calendário. O aluno deve ser notificado sobre seus agendamentos. & 
+    --- & 
+    Psicóloga & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-10}} & 
+    \textbf{Feedback personalizável ao aluno} & 
+    A psicóloga deve poder redigir e enviar um feedback textual personalizado ao aluno ao final da jornada ou após sessão de orientação. & 
+    --- & 
+    Psicóloga & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-11}} & 
+    \textbf{Jornada de 4 trilhas sequenciais intertravadas} & 
+    O aluno deve percorrer as trilhas obrigatoriamente na ordem: autoconhecimento $\rightarrow$ influências $\rightarrow$ informação $\rightarrow$ projeto de futuro. O acesso à trilha seguinte é liberado somente após conclusão e síntese da trilha atual. & 
+    RN-01 & 
+    Aluno & 
+    \textcolor{red!80!black}{\textbf{Alta}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-12}} & 
+    \textbf{Registro de síntese textual ao final de cada trilha} & 
+    Ao concluir cada trilha, o aluno deve registrar uma síntese textual livre com suas reflexões e conclusões. O campo deve ter tamanho mínimo orientado, sem restrições de conteúdo. & 
+    RN-02 & 
+    Aluno & 
+    \textcolor{red!80!black}{\textbf{Alta}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-13}} & 
+    \textbf{Autonomia para expressão de opinião e sentimento} & 
+    O sistema deve oferecer campos abertos e instrumentos de escala (ex.: Likert) que permitam ao aluno expressar percepções, opiniões e sentimentos sem julgamento ou resposta certa. & 
+    RN-02 & 
+    Aluno & 
+    \textcolor{red!80!black}{\textbf{Alta}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-14}} & 
+    \textbf{Visualização do leque de possibilidades de carreira} & 
+    Ao final da jornada, o sistema deve apresentar ao aluno um conjunto de áreas e carreiras sugeridas com base nas suas respostas --- nunca um diagnóstico fechado. O resultado deve enfatizar que é um ponto de partida, não uma decisão definitiva. & 
+    RN-07 & 
+    Aluno & 
+    \textcolor{red!80!black}{\textbf{Alta}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-15}} & 
+    \textbf{Panorama completo da jornada} & 
+    O aluno deve poder visualizar, a qualquer momento, o histórico de suas respostas e sínteses de todas as trilhas já concluídas, permitindo revisão e reflexão. & 
+    RN-08 & 
+    Aluno & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-16}} & 
+    \textbf{Personalização de perfil e interesses} & 
+    O aluno deve poder configurar algumas informações de perfil (interesses declarados) utilizadas para contextualizar a jornada. & 
+    --- & 
+    Aluno & 
+    \textcolor{green!80!black}{\textbf{Baixa}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-17}} & 
+    \textbf{Histórico de testes e evolução} & 
+    O aluno deve poder consultar o histórico de jornadas anteriores (caso a instituição repita o processo), acompanhando sua evolução ao longo do tempo. & 
+    --- & 
+    Aluno & 
+    \textcolor{green!80!black}{\textbf{Baixa}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RF-18}} & 
+    \textbf{Visualização de agendamentos e feedbacks} & 
+    O aluno deve visualizar seus agendamentos de sessão e os feedbacks enviados pela psicóloga, em uma área dedicada no seu painel. & 
+    --- & 
+    Aluno & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
     
-    \end{tabular}
-    \legend{Fonte: Autoria própria (2026).}
-\end{table}
+\end{longtable}
+}
 
 \subsection{Requisitos Funcionais}
 
@@ -149,28 +271,47 @@ Enquanto os requisitos funcionais definem o que o sistema fará, os requisitos n
 
 Para o SyncCarreira, a proteção da informação é um pilar crítico, dado o tratamento de dados de menores de idade. Nesse sentido, o sistema implementará controle de autenticação utilizando tokens JWT para impedir acessos cruzados entre perfis e adotará criptografia em repouso para os dados sensíveis, garantindo estrita conformidade com a Lei Geral de Proteção de Dados (LGPD) e permitindo a exclusão de registros a pedido da instituição. A arquitetura SaaS impõe também que haja um isolamento lógico completo dos dados, impedindo que informações de alunos e turmas sejam acessadas por outras instituições cadastradas.
 
-No aspecto de usabilidade e performance, o software requer uma interface responsiva (focada em mobile-first), acessível e intuitiva para o público jovem. As operações fundamentais devem manter um tempo de resposta inferior a 2 segundos e a disponibilidade do sistema deve ser garantida em 99% durante o período letivo comercial. A sustentabilidade técnica do back-end será viabilizada pela utilização de uma arquitetura em camadas em Java com Spring Boot, aliada à documentação automática da API via Swagger/OpenAPI, assegurando manutenibilidade e escalabilidade para versões futuras.
+No aspecto de usabilidade e performance, o software requer uma interface responsiva (focada em mobile-first), acessível e intuitiva para o público jovem. As operações fundamentais devem manter um tempo de resposta inferior a 2 segundos e a disponibilidade do sistema deve ser garantida em 99\% durante o período letivo comercial. A sustentabilidade técnica do back-end será viabilizada pela utilização de uma arquitetura em camadas em Java com Spring Boot, aliada à documentação automática da API via Swagger/OpenAPI, assegurando manutenibilidade e escalabilidade para versões futuras.
 
 A Tabela 6 sistematiza as premissas não funcionais adotadas para o projeto.
 
-\begin{table}[H]
-    \centering
-    \ABNTEXfontereduzida
+{\ABNTEXfontereduzida
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|c|p{2.5cm}|p{4.5cm}|c|c|c|}
     \caption[Requisitos Não Funcionais do SyncCarreira]{Requisitos não funcionais do SyncCarreira.}
-    \label{tab-requisitos-nao-funcionais}
-    \begin{tabular}{|c|p{3.5cm}|p{5cm}|c|c|c|}
-    \hline
-    \rowcolor{blue!80!black}
-    \textcolor{white}{\textbf{ID}} & 
-    \textcolor{white}{\textbf{Título}} & 
-    \textcolor{white}{\textbf{Descrição}} & 
-    \textcolor{white}{\textbf{Regras}} & 
-    \textcolor{white}{\textbf{Ator}} & 
-    \textcolor{white}{\textbf{Prior.}} \\
+    \label{tab-requisitos-nao-funcionais} \\
     \hline
     
+    \textbf{ID} & 
+    \textbf{Título} & 
+    \textbf{Descrição} & 
+    \textbf{Regras} & 
+    \textbf{Ator} & 
+    \textbf{Prior.} \\
+    \hline
+    \endfirsthead
+
+    \caption[]{Requisitos não funcionais do SyncCarreira (continuação).} \\
+    \hline
+    \textbf{ID} & 
+    \textbf{Título} & 
+    \textbf{Descrição} & 
+    \textbf{Regras} & 
+    \textbf{Ator} & 
+    \textbf{Prior.} \\
+    \hline
+    \endhead
+
+    \hline
+    \multicolumn{6}{r}{\textit{Continua na próxima página...}} \\
+    \endfoot
+
+    \hline
+    \multicolumn{6}{l}{Fonte: Autoria própria (2026).} \\
+    \endlastfoot
+
     \textcolor{blue!70!black}{\textbf{RNF-01}} & 
-    \textbf{Segurança — autenticação e autorização} & 
+    \textbf{Segurança --- autenticação e autorização} & 
     O sistema deve implementar autenticação via token JWT com expiração configurável. O acesso a cada recurso deve ser validado pelo perfil do usuário (administrador, psicóloga, aluno), impedindo acesso cruzado entre perfis. & 
     --- & 
     Sistema & 
@@ -186,15 +327,15 @@ A Tabela 6 sistematiza as premissas não funcionais adotadas para o projeto.
     \hline
     
     \textcolor{blue!70!black}{\textbf{RNF-03}} & 
-    \textbf{Desempenho — tempo de resposta} & 
+    \textbf{Desempenho --- tempo de resposta} & 
     As operações principais (carregamento de trilha, salvamento de resposta, exibição do painel) devem responder em até 2 segundos em condições normais de uso. & 
     --- & 
     Sistema & 
-    \textcolor{orange!90!black}{\textbf{Média}} \\
+    \textcolor{orange!80!black}{\textbf{Média}} \\
     \hline
     
     \textcolor{blue!70!black}{\textbf{RNF-04}} & 
-    \textbf{Usabilidade — interface acessível e responsiva} & 
+    \textbf{Usabilidade --- interface acessível e responsiva} & 
     A interface deve ser responsiva (mobile-first), legível e navegável por jovens sem familiaridade técnica. A jornada do aluno deve ser intuitiva, sem necessidade de manual. & 
     --- & 
     Sistema & 
@@ -206,12 +347,35 @@ A Tabela 6 sistematiza as premissas não funcionais adotadas para o projeto.
     O sistema deve ter disponibilidade mínima de 99\% durante o horário comercial. & 
     --- & 
     Sistema & 
-    \textcolor{orange!90!black}{\textbf{Média}} \\
+    \textcolor{orange!80!black}{\textbf{Média}} \\
     \hline
-    
-    \end{tabular}
-    \legend{Fonte: Autoria própria (2026).}
-    \end{table}
+
+    \textcolor{blue!70!black}{\textbf{RNF-06}} & 
+    \textbf{Manutenibilidade --- arquitetura em camadas} & 
+    O back-end deve seguir arquitetura em camadas (Controller, Service, Repository, Entity) com Spring Boot, garantindo separação de responsabilidades e facilidade de evolução. & 
+    --- & 
+    Sistema & 
+    \textcolor{orange!80!black}{\textbf{Média}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RNF-07}} & 
+    \textbf{Documentação de API} & 
+    Todas as rotas da API devem ser documentadas automaticamente via Swagger/OpenAPI, permitindo integração e testes sem dependência de documentação manual. & 
+    --- & 
+    Sistema & 
+    \textcolor{green!80!black}{\textbf{Baixa}} \\
+    \hline
+
+    \textcolor{blue!70!black}{\textbf{RNF-08}} & 
+    \textbf{Isolamento de dados por instituição} & 
+    Os dados de alunos, turmas e trilhas de uma instituição não devem ser acessíveis por outras instituições cadastradas na plataforma, garantindo isolamento lógico completo. & 
+    --- & 
+    Sistema & 
+    \textcolor{red!80!black}{\textbf{Alta}} \\
+    \hline
+
+\end{longtable}
+}
 
 \section{Histórias de Usuário}
 

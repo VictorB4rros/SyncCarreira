@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.3)  3 JUN 2026 14:28
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.3)  3 JUN 2026 15:18
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1361,44 +1361,63 @@ LaTeX Info: Redefining \cite on input line 618.
 \ABCItoken=\toks64
 ))
 (./configuracoes/cores.tex) (./configuracoes/espacamentos.tex))
-(./documento.aux (./estrutura/pos-textual.aux))
+(/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2023-11-01 v4.19 Multi-page Table package (DPC)
+\LTleft=\skip286
+\LTright=\skip287
+\LTpre=\skip288
+\LTpost=\skip289
+\LTchunksize=\count432
+\LTcapwidth=\dimen338
+\LT@head=\box94
+\LT@firsthead=\box95
+\LT@foot=\box96
+\LT@lastfoot=\box97
+\LT@gbox=\box98
+\LT@cols=\count433
+\LT@rows=\count434
+\c@LT@tables=\count435
+\c@LT@chunks=\count436
+\LT@p@ftn=\toks65
+) (./documento.aux
+(./estrutura/pos-textual.aux))
 \openout1 = `documento.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 7.
-LaTeX Font Info:    ... okay on input line 7.
-Package hyperref Info: Link coloring ON on input line 7.
-\myptabbox=\box94
-\myptabboxwidth=\skip286
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 8.
+LaTeX Font Info:    ... okay on input line 8.
+Package hyperref Info: Link coloring ON on input line 8.
+\myptabbox=\box99
+\myptabboxwidth=\skip290
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count432
-\scratchdimen=\dimen338
-\scratchbox=\box95
-\nofMPsegments=\count433
-\nofMParguments=\count434
-\everyMPshowfont=\toks65
-\MPscratchCnt=\count435
-\MPscratchDim=\dimen339
-\MPnumerator=\count436
-\makeMPintoPDFobject=\count437
-\everyMPtoPDFconversion=\toks66
+\scratchcounter=\count437
+\scratchdimen=\dimen339
+\scratchbox=\box100
+\nofMPsegments=\count438
+\nofMParguments=\count439
+\everyMPshowfont=\toks66
+\MPscratchCnt=\count440
+\MPscratchDim=\dimen340
+\MPnumerator=\count441
+\makeMPintoPDFobject=\count442
+\everyMPtoPDFconversion=\toks67
 ) (/usr/share/texlive/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -1408,19 +1427,19 @@ Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
 e
 ))
-LaTeX Info: Redefining \microtypecontext on input line 7.
-Package microtype Info: Applying patch `item' on input line 7.
-Package microtype Info: Applying patch `toc' on input line 7.
-Package microtype Info: Applying patch `eqnum' on input line 7.
-Package microtype Info: Applying patch `footnote' on input line 7.
-Package microtype Info: Applying patch `verbatim' on input line 7.
+LaTeX Info: Redefining \microtypecontext on input line 8.
+Package microtype Info: Applying patch `item' on input line 8.
+Package microtype Info: Applying patch `toc' on input line 8.
+Package microtype Info: Applying patch `eqnum' on input line 8.
+Package microtype Info: Applying patch `footnote' on input line 8.
+Package microtype Info: Applying patch `verbatim' on input line 8.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `alltext-nott'.
-LaTeX Info: Redefining \showhyphens on input line 7.
+LaTeX Info: Redefining \showhyphens on input line 8.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -1442,6 +1461,11 @@ Package: lscape 2020/05/28 v3.02 Landscape Pages (DPC)
 Package pdflscape Info: Auto-detected driver: pdftex on input line 81.
 ))
 Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: longtable package is loaded.
+
+(/usr/share/texlive/texmf-dist/tex/latex/caption/ltcaption.sty
+Package: ltcaption 2021/01/08 v1.4c longtable captions (AR)
+)
 Package caption Info: End \AtBeginDocument code.
 
 (./estrutura/pre-textual.tex
@@ -1695,254 +1719,414 @@ LaTeX Font Info:    Font shape `T1/phv/b/it' in size <12> not available
 LaTeX Font Info:    Font shape `T1/phv/m/it' in size <10> not available
 (Font)              Font shape `T1/phv/m/sl' tried instead on input line 60.
  [34]
-Underfull \hbox (badness 1281) in paragraph at lines 111--111
-[]|\T1/phv/b/n/10 (+20) Gestão de usuá-
+Underfull \hbox (badness 10000) in paragraph at lines 122--122
+[]|\T1/phv/b/n/10 (+20) Cadastro de
  []
 
 
-Underfull \hbox (badness 1762) in paragraph at lines 111--111
-\T1/phv/b/n/10 (+20) rios e per-fis de
+Underfull \hbox (badness 10000) in paragraph at lines 130--130
+[]|\T1/phv/b/n/10 (+20) Gestão de
  []
 
 
-Underfull \hbox (badness 1325) in paragraph at lines 135--135
-[]|\T1/phv/b/n/10 (+20) Flag de ne-ces-si-
+Underfull \hbox (badness 10000) in paragraph at lines 146--146
+\T1/phv/b/n/10 (+20) ni-to-ra-mento
  []
 
 
-Underfull \hbox (badness 1584) in paragraph at lines 135--135
-\T1/phv/b/n/10 (+20) dade de ori-en-ta-
+Underfull \hbox (badness 1097) in paragraph at lines 146--146
+\T1/phv/b/n/10 (+20) de sta-tus por
  []
 
 
-Overfull \hbox (39.86627pt too wide) in paragraph at lines 91--143
- [][] 
+Underfull \hbox (badness 10000) in paragraph at lines 170--170
+[]|\T1/phv/b/n/10 (+20) Curadoria de
  []
 
-[35] [36]
-Underfull \hbox (badness 10000) in paragraph at lines 189--189
-[]|\T1/phv/b/n/10 (+20) Desempenho ^^V
+
+Underfull \hbox (badness 3460) in paragraph at lines 171--171
+\T1/phv/m/n/10 (+20) fon-tes ex-ter-nas con-fiá-veis
  []
 
-[37] [38] [39]
-<img/diag-1-arquitetura-infraestrutura-aws.png, id=496, 444.91219pt x 286.82156
+
+Underfull \hbox (badness 10000) in paragraph at lines 178--178
+[]|\T1/phv/b/n/10 (+20) Emissão de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 178--178
+\T1/phv/b/n/10 (+20) re-la-tó-rios
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 178--178
+\T1/phv/b/n/10 (+20) de turma e
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 186--186
+[]|\T1/phv/b/n/10 (+20) Agendamento
+ []
+
+
+Underfull \hbox (badness 1297) in paragraph at lines 187--187
+\T1/phv/m/n/10 (+20) za-ção por ca-len-dá-rio. O
+ []
+
+
+Underfull \hbox (badness 1496) in paragraph at lines 194--194
+[]|\T1/phv/b/n/10 (+20) Feedback per-
+ []
+
+
+Underfull \hbox (badness 1735) in paragraph at lines 202--202
+[]|\T1/phv/b/n/10 (+20) Jornada de 4
+ []
+
+
+Underfull \hbox (badness 2302) in paragraph at lines 210--210
+\T1/phv/b/n/10 (+20) fi-nal de cada
+ []
+
+
+Underfull \hbox (badness 1259) in paragraph at lines 211--211
+[]|\T1/phv/m/n/10 (+20) Ao con-cluir cada tri-lha, o
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 218--218
+[]|\T1/phv/b/n/10 (+20) Autonomia
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 218--218
+\T1/phv/b/n/10 (+20) para ex-pres-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
+[]|\T1/phv/b/n/10 (+20) Visualização
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
+\T1/phv/b/n/10 (+20) do le-que de
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 226--226
+\T1/phv/b/n/10 (+20) pos-si-bi-li-da-des
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 234--234
+[]|\T1/phv/b/n/10 (+20) Panorama
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 234--234
+\T1/phv/b/n/10 (+20) com-pleto da
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 242--242
+[]|\T1/phv/b/n/10 (-17) Personalização
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 250--250
+[]|\T1/phv/b/n/10 (+20) Histórico
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 250--250
+\T1/phv/b/n/10 (+20) de tes-tes e
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--258
+[]|\T1/phv/b/n/10 (+20) Visualização
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--258
+\T1/phv/b/n/10 (+20) de agen-da-
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 258--258
+\T1/phv/b/n/10 (+20) men-tos e
+ []
+
+[35] [36] [37] [38]
+Underfull \hbox (badness 10000) in paragraph at lines 316--316
+[]|\T1/phv/b/n/10 (+20) Segurança ---
+ []
+
+
+Underfull \hbox (badness 1122) in paragraph at lines 317--317
+\T1/phv/m/n/10 (+20) O acesso a cada re-curso
+ []
+
+
+Underfull \hbox (badness 3872) in paragraph at lines 324--324
+[]|\T1/phv/b/n/10 (+20) Privacidade e
+ []
+
+
+Overfull \hbox (0.82187pt too wide) in paragraph at lines 332--332
+[]|\T1/phv/b/n/10 (-20) Desempenho ---
+ []
+
+
+Overfull \hbox (1.83809pt too wide) in paragraph at lines 348--348
+[]|\T1/phv/b/n/10 (-20) Disponibilidade| 
+ []
+
+
+Overfull \hbox (8.81367pt too wide) in paragraph at lines 356--356
+[]|\T1/phv/b/n/10 (-20) Manutenibilidade
+ []
+
+
+Underfull \hbox (badness 6204) in paragraph at lines 356--356
+\T1/phv/b/n/10 (+20) --- ar-qui-te-tura
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 364--364
+[]|\T1/phv/b/n/10 (-8) Documentação
+ []
+
+
+Underfull \hbox (badness 7925) in paragraph at lines 365--365
+[]|\T1/phv/m/n/10 (+20) Todas as ro-tas da API
+ []
+
+
+Underfull \hbox (badness 3989) in paragraph at lines 365--365
+\T1/phv/m/n/10 (+20) de-vem ser do-cu-men-ta-das
+ []
+
+[39] [40] [41] [42]
+<img/diag-1-arquitetura-infraestrutura-aws.png, id=513, 444.91219pt x 286.82156
 pt>
 File: img/diag-1-arquitetura-infraestrutura-aws.png Graphic file (type png)
 <use img/diag-1-arquitetura-infraestrutura-aws.png>
 Package pdftex.def Info: img/diag-1-arquitetura-infraestrutura-aws.png  used on
- input line 300.
+ input line 466.
 (pdftex.def)             Requested size: 409.49722pt x 263.99281pt.
- [40] [41 <./img/diag-1-arquitetura-infraestrutura-aws.png>]
-[42] [43]
-<img/diag-2-modelo-entidade-relacionamento.png, id=515, 398.23781pt x 356.83313
+ [43 <./img/diag-1-arquitetura-infraestrutura-aws.png>]
+[44] [45] [46]
+<img/diag-2-modelo-entidade-relacionamento.png, id=531, 398.23781pt x 356.83313
 pt>
 File: img/diag-2-modelo-entidade-relacionamento.png Graphic file (type png)
 <use img/diag-2-modelo-entidade-relacionamento.png>
 Package pdftex.def Info: img/diag-2-modelo-entidade-relacionamento.png  used on
- input line 385.
+ input line 551.
 (pdftex.def)             Requested size: 409.49722pt x 366.93784pt.
-<img/diag-3-diagrama-entidade-relacionamento.png, id=516, 749.04843pt x 378.664
+<img/diag-3-diagrama-entidade-relacionamento.png, id=532, 749.04843pt x 378.664
 69pt>
 File: img/diag-3-diagrama-entidade-relacionamento.png Graphic file (type png)
 <use img/diag-3-diagrama-entidade-relacionamento.png>
 Package pdftex.def Info: img/diag-3-diagrama-entidade-relacionamento.png  used 
-on input line 397.
+on input line 563.
 (pdftex.def)             Requested size: 409.49722pt x 207.0124pt.
- [44 <./img/diag-2-modelo-entidade-relacionamento.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 436--436
+ [47 <./img/diag-2-modelo-entidade-relacionamento.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 602--602
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 433--444
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 599--610
  [][] 
  []
 
-[45 <./img/diag-3-diagrama-entidade-relacionamento.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 456--456
+[48 <./img/diag-3-diagrama-entidade-relacionamento.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 622--622
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 456--457
+Underfull \hbox (badness 10000) in paragraph at lines 622--623
 []|\T1/phv/m/n/10 (+20) Identificador único do
  []
 
 
-Underfull \hbox (badness 1527) in paragraph at lines 462--463
+Underfull \hbox (badness 1527) in paragraph at lines 628--629
 []|\T1/phv/m/n/10 (+20) Senha crip-to-gra-fada do
  []
 
 
-Underfull \hbox (badness 1281) in paragraph at lines 464--465
+Underfull \hbox (badness 1281) in paragraph at lines 630--631
 []|\T1/phv/m/n/10 (+20) Referência ao per-fil de
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 453--466
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 619--632
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 480--480
+Underfull \hbox (badness 10000) in paragraph at lines 646--646
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 480--481
+Underfull \hbox (badness 10000) in paragraph at lines 646--647
 []|\T1/phv/m/n/10 (+20) Identificador único do
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 477--492
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 643--658
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 504--504
+Underfull \hbox (badness 10000) in paragraph at lines 670--670
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 501--514
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 667--680
  [][] 
  []
 
-[46]
-Underfull \hbox (badness 10000) in paragraph at lines 528--528
+[49]
+Underfull \hbox (badness 10000) in paragraph at lines 694--694
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (13.19101pt too wide) in paragraph at lines 532--532
+Overfull \hbox (13.19101pt too wide) in paragraph at lines 698--698
 []|\T1/phv/m/n/10 (-20) Ordem_Sequencial_Trilha| 
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 525--538
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 691--704
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 550--550
+Underfull \hbox (badness 10000) in paragraph at lines 716--716
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 547--558
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 713--724
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 570--570
+Underfull \hbox (badness 10000) in paragraph at lines 736--736
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 2762) in paragraph at lines 572--573
+Underfull \hbox (badness 2762) in paragraph at lines 738--739
 []|\T1/phv/m/n/10 (+20) Descrição do in-te-resse
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 567--574
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 733--740
  [][] 
  []
 
-[47]
-Underfull \hbox (badness 10000) in paragraph at lines 586--586
+[50]
+Underfull \hbox (badness 10000) in paragraph at lines 752--752
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 583--592
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 749--758
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 604--604
+Underfull \hbox (badness 10000) in paragraph at lines 770--770
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 606--607
+Underfull \hbox (badness 10000) in paragraph at lines 772--773
 []|\T1/phv/m/n/10 (+20) Nome da au-to-ri-
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 601--608
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 767--774
  [][] 
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 617--624
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 783--790
  [][] 
  []
 
 
-Underfull \hbox (badness 3386) in paragraph at lines 638--639
+Underfull \hbox (badness 3386) in paragraph at lines 804--805
 []|\T1/phv/m/n/10 (+20) Registo pro-fis-si-o-nal da
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 633--642
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 799--808
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 656--656
+Underfull \hbox (badness 10000) in paragraph at lines 822--822
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 653--668
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 819--834
  [][] 
  []
 
-[48]
-Underfull \hbox (badness 1147) in paragraph at lines 689--689
+[51]
+Underfull \hbox (badness 1147) in paragraph at lines 855--855
 []|\T1/phv/m/n/10 (+20) Configuração do Am-bi-ente
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--691
+Underfull \hbox (badness 10000) in paragraph at lines 857--857
 []|\T1/phv/m/n/10 (+20) Desenvolvimento do Mó-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 691--691
+Underfull \hbox (badness 10000) in paragraph at lines 857--857
 \T1/phv/m/n/10 (+20) dulo de Au-ten-ti-ca-ção
  []
 
 
-Underfull \hbox (badness 6316) in paragraph at lines 701--701
+Underfull \hbox (badness 6316) in paragraph at lines 867--867
 []|\T1/phv/m/n/10 (+20) Módulo de Fe-ed-backs e
  []
 
 
-Underfull \hbox (badness 8056) in paragraph at lines 701--702
+Underfull \hbox (badness 8056) in paragraph at lines 867--868
 []|\T1/phv/m/n/10 (+20) Funcionalidade de in-te-ra-ção
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 705--705
+Underfull \hbox (badness 10000) in paragraph at lines 871--871
 []|\T1/phv/m/n/10 (+20) Testes de Per-for-mance,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 707--707
+Underfull \hbox (badness 10000) in paragraph at lines 873--873
 []|\T1/phv/m/n/10 (+20) V. En-cer-ra-
  []
 
-) (./capitulos/analise-financeira.tex [49] [50]
+) (./capitulos/analise-financeira.tex [52] [53]
 Overfull \hbox (9.00635pt too wide) in paragraph at lines 27--28
 []\T1/phv/b/n/12 (-20) Receita Men-sal: \T1/phv/m/n/12 (-20) Cap-ta-ção de do-a
 -ções ou fundo da pró-pria ONG de R$ 300,00/mês. 
  []
 
-[51
+[54
 
-]) (./capitulos/conclusao.tex [52]) (./capitulos/trabalhos-futuros.tex))
-[53
+]) (./capitulos/conclusao.tex [55]) (./capitulos/trabalhos-futuros.tex))
+[56
 
 ]
 \openout2 = `estrutura/pos-textual.aux'.
@@ -1955,7 +2139,7 @@ Overfull \hbox (9.00635pt too wide) in paragraph at lines 27--28
 
 bibitemlist
 )) (./pos-textual/glossario.tex) (./pos-textual/apendices.tex)
-(./pos-textual/indices.tex)) [54
+(./pos-textual/indices.tex)) [57
 
 
 ]
@@ -1976,33 +2160,28 @@ enddocument/afterlastpage: lastpage setting LastPage.
 LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2020/03/25>
  ***********
-
-
-Package rerunfilecheck Warning: File `documento.brf' has changed.
-(rerunfilecheck)                Rerun to get bibliographical references right.
-
-Package rerunfilecheck Info: Checksums for `documento.brf':
-(rerunfilecheck)             Before: EC7F23246381EBE82C29C8A7A21F0533;1097
-(rerunfilecheck)             After:  BFC672EF2FF2CBDF99E103D0ACD7671C;1167.
+Package rerunfilecheck Info: File `documento.brf' has not changed.
+(rerunfilecheck)             Checksum: 92A40DF3A68A1066A93024CC2F002F28;1219.
  ) 
 Here is how much of TeX's memory you used:
- 38659 strings out of 476089
- 740058 string characters out of 5793233
- 1955975 words of memory out of 5000000
- 59321 multiletter control sequences out of 15000+600000
- 610748 words of font info for 367 fonts, out of 8000000 for 9000
+ 38840 strings out of 476089
+ 742663 string characters out of 5793233
+ 1971975 words of memory out of 5000000
+ 59463 multiletter control sequences out of 15000+600000
+ 611892 words of font info for 387 fonts, out of 8000000 for 9000
  61 hyphenation exceptions out of 8191
- 115i,17n,134p,1844b,638s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb
-></usr/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/
-texlive/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texm
-f-dist/fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/texmf-dist/font
-s/type1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/
-helvetic/uhvro8a.pfb>
-Output written on documento.pdf (55 pages, 1130860 bytes).
+ 115i,17n,134p,1844b,643s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
+r/share/texlive/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr
+/share/texlive/texmf-dist/fonts/type1/urw/courier/ucrr8a.pfb></usr/share/texliv
+e/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist
+/fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/texmf-dist/fonts/type
+1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvet
+ic/uhvro8a.pfb>
+Output written on documento.pdf (58 pages, 1147700 bytes).
 PDF statistics:
- 866 PDF objects out of 1000 (max. 8388607)
- 757 compressed objects within 8 object streams
- 179 named destinations out of 1000 (max. 500000)
+ 891 PDF objects out of 1000 (max. 8388607)
+ 777 compressed objects within 8 object streams
+ 183 named destinations out of 1000 (max. 500000)
  48288 words of extra memory for PDF output out of 51595 (max. 10000000)
 
