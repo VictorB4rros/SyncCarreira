@@ -1,0 +1,23 @@
+\providecommand{\abntreprintinfo}[1]{%
+ \citeonline{#1}}
+\setlength{\labelsep}{0pt}\begin{thebibliography}{}
+\providecommand{\abntrefinfo}[3]{}
+\providecommand{\abntbstabout}[1]{}
+\abntbstabout{v-1.9.7 }
+
+\bibitem[ABADE 2005]{abade2005}
+\abntrefinfo{ABADE}{ABADE}{2005}
+{ABADE, F.~L. Orientação profissional no brasil: Uma revisão histórica da produção científica.
+\textbf{Revista Brasileira de Orientação Profissional}, v.~6, p. 15--24, 2005.}
+
+\bibitem[{INSTITUTO NACIONAL DE ESTUDOS E PESQUISAS EDUCACIONAIS ANÍSIO TEIXEIRA (INEP)} 2026]{inep2026}
+\abntrefinfo{{INSTITUTO NACIONAL DE ESTUDOS E PESQUISAS EDUCACIONAIS ANÍSIO TEIXEIRA (INEP)}}{{INSTITUTO NACIONAL DE ESTUDOS E PESQUISAS EDUCACIONAIS ANÍSIO TEIXEIRA (INEP)}}{2026}
+{{INSTITUTO NACIONAL DE ESTUDOS E PESQUISAS EDUCACIONAIS ANÍSIO TEIXEIRA (INEP)}. \textbf{Painel de Estatísticas do Censo da Educação Superior}. 2026.
+Acesso em: 17 mar. 2026.
+Dispon{\'\i}vel em: \url{https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisas-estatisticas-e-indicadores/censo-da-educacao-superior/resultados}.}
+
+\bibitem[KOTLER \& KELLER 2012]{kotler2012}
+\abntrefinfo{KOTLER \& KELLER}{KOTLER; KELLER}{2012}
+{KOTLER, P.; KELLER, K.~L. \textbf{Administração de Marketing}. 14. ed. São Paulo: Pearson Education do Brasil, 2012.}
+
+\end{thebibliography}

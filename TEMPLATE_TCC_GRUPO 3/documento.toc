@@ -1,0 +1,78 @@
+\changetocdepth {4}
+\babel@toc {brazil}{}\relax 
+\babel@toc {brazil}{}\relax 
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {1}\MakeTextUppercase []{Introdução}}{14}{chapter.1}%
+\contentsline {section}{\numberline {1.1}Objetivos}{14}{section.1.1}%
+\contentsline {subsection}{\numberline {1.1.1}Objetivos Específicos}{14}{subsection.1.1.1}%
+\contentsline {section}{\numberline {1.2}Problema e Solução Proposta}{15}{section.1.2}%
+\contentsline {section}{\numberline {1.3}Justificativa}{16}{section.1.3}%
+\contentsline {section}{\numberline {1.4}Análise da Concorrência}{18}{section.1.4}%
+\contentsline {subsection}{\numberline {1.4.1}16 Personalities}{19}{subsection.1.4.1}%
+\contentsline {subsection}{\numberline {1.4.2}Descomplica}{19}{subsection.1.4.2}%
+\contentsline {subsection}{\numberline {1.4.3}Qual Carreira}{20}{subsection.1.4.3}%
+\contentsline {subsection}{\numberline {1.4.4}CareerExplorer}{21}{subsection.1.4.4}%
+\contentsline {subsection}{\numberline {1.4.5}Comparativo}{21}{subsection.1.4.5}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {2}\MakeTextUppercase []{Revisão da Literatura}}{22}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Orientação Vocacional}{22}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Atualidade e Panorama do Mercado}{23}{section.2.2}%
+\contentsline {section}{\numberline {2.3}Aplicação em Outros Contextos}{23}{section.2.3}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {3}\MakeTextUppercase []{Gestão do Projeto}}{25}{chapter.3}%
+\contentsline {section}{\numberline {3.1}Organização da Equipe}{26}{section.3.1}%
+\contentsline {subsection}{\numberline {3.1.1}Membros e Atribuições}{27}{subsection.3.1.1}%
+\contentsline {paragraph}{\numberline {3.1.1.0.1}Metodologia de Colaboração}{27}{paragraph.3.1.1.0.1}%
+\contentsline {section}{\numberline {3.2}Metodologias de Gestão e Desenvolvimento}{27}{section.3.2}%
+\contentsline {subsection}{\numberline {3.2.1}Scrum / FDD / PMBOK}{29}{subsection.3.2.1}%
+\contentsline {subsubsection}{\numberline {3.2.1.1}Sprints}{30}{subsubsection.3.2.1.1}%
+\contentsline {section}{\numberline {3.3}Repositório da Aplicação}{30}{section.3.3}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {4}\MakeTextUppercase []{Desenvolvimento do Projeto}}{31}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Escopo do Projeto}{31}{section.4.1}%
+\contentsline {subsection}{\numberline {4.1.1}Regras de negócio}{32}{subsection.4.1.1}%
+\contentsline {subsection}{\numberline {4.1.2}Requisitos Funcionais}{33}{subsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.1.3}Requisitos Funcionais}{35}{subsection.4.1.3}%
+\contentsline {section}{\numberline {4.2}Histórias de Usuário}{36}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Descrição das Histórias de Usuário}{36}{subsection.4.2.1}%
+\contentsline {paragraph}{\numberline {4.2.1.0.1}Perfil: Psicólogo (Gestão, Intervenção e Acompanhamento)}{36}{paragraph.4.2.1.0.1}%
+\contentsline {paragraph}{\numberline {4.2.1.0.2}Perfil: Aluno (Engajamento, Reflexão e Organização)}{37}{paragraph.4.2.1.0.2}%
+\contentsline {paragraph}{\numberline {4.2.1.0.3}Perfil: Administrador (Governança, Segurança e Escala)}{38}{paragraph.4.2.1.0.3}%
+\contentsline {section}{\numberline {4.3}Arquitetura}{38}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Definições da Arquitetura}{39}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Diagrama da Arquitetura}{39}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Tecnologias}{40}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Front-end}{40}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Back-end}{40}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Banco de Dados}{41}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Infraestrutura}{41}{subsection.4.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.4.1}Amazon Web Services (AWS)}{41}{subsubsection.4.4.4.1}%
+\contentsline {section}{\numberline {4.5}Testes e Manutenibilidade}{41}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Plano de Testes}{41}{subsection.4.5.1}%
+\contentsline {section}{\numberline {4.6}Segurança, Privacidade e Legislação}{42}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Critérios de Segurança e Privacidade}{42}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Observância à Legislação}{42}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Modelo de Banco de Dados}{43}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Modelo Entidade Relacionamento -- MER}{43}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Diagrama Entidade Relacionamento -- DER (Tabelas)}{44}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}Dicionário de Dados}{44}{subsection.4.7.3}%
+\contentsline {section}{\numberline {4.8}Duração / Cronograma}{48}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Análise da Duração do Projeto}{48}{subsection.4.8.1}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Análise Financeira}}{50}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Custos}{50}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Receitas}{50}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Cenário Realista}{50}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Cenário Otimista}{50}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Cenário Pessimista}{51}{section.5.5}%
+\setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
+\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Considerações Finais}}{52}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Dificuldades, Escolhas e Descartes}{52}{section.6.1}%
+\vspace {\cftbeforechapterskip }
+\setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
+\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{53}{section*.47}%
