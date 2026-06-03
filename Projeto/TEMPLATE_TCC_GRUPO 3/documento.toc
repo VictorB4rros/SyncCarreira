@@ -40,41 +40,41 @@
 \contentsline {subsection}{\numberline {4.1.3}Requisitos Funcionais}{38}{subsection.4.1.3}%
 \contentsline {subsection}{\numberline {4.1.4}Casos de Uso}{40}{subsection.4.1.4}%
 \contentsline {subsubsection}{\numberline {4.1.4.1}Diagrama de casos de uso}{55}{subsubsection.4.1.4.1}%
-\contentsline {section}{\numberline {4.2}Histórias de Usuário}{56}{section.4.2}%
-\contentsline {subsection}{\numberline {4.2.1}Descrição das Histórias de Usuário}{57}{subsection.4.2.1}%
-\contentsline {paragraph}{\numberline {4.2.1.0.1}Perfil: Psicólogo (Gestão, Intervenção e Acompanhamento)}{57}{paragraph.4.2.1.0.1}%
-\contentsline {paragraph}{\numberline {4.2.1.0.2}Perfil: Aluno (Engajamento, Reflexão e Organização)}{57}{paragraph.4.2.1.0.2}%
-\contentsline {paragraph}{\numberline {4.2.1.0.3}Perfil: Administrador (Governança, Segurança e Escala)}{58}{paragraph.4.2.1.0.3}%
-\contentsline {section}{\numberline {4.3}Arquitetura}{59}{section.4.3}%
-\contentsline {subsection}{\numberline {4.3.1}Definições da Arquitetura}{59}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Diagrama da Arquitetura}{59}{subsection.4.3.2}%
-\contentsline {section}{\numberline {4.4}Tecnologias}{60}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Front-end}{60}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Back-end}{61}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.4.3}Banco de Dados}{61}{subsection.4.4.3}%
-\contentsline {subsection}{\numberline {4.4.4}Infraestrutura}{61}{subsection.4.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.4.1}Amazon Web Services (AWS)}{61}{subsubsection.4.4.4.1}%
-\contentsline {section}{\numberline {4.5}Testes e Manutenibilidade}{61}{section.4.5}%
-\contentsline {subsection}{\numberline {4.5.1}Plano de Testes}{61}{subsection.4.5.1}%
-\contentsline {section}{\numberline {4.6}Segurança, Privacidade e Legislação}{62}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Critérios de Segurança e Privacidade}{62}{subsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.6.2}Observância à Legislação}{62}{subsection.4.6.2}%
-\contentsline {section}{\numberline {4.7}Modelo de Banco de Dados}{63}{section.4.7}%
-\contentsline {subsection}{\numberline {4.7.1}Modelo Entidade Relacionamento -- MER}{63}{subsection.4.7.1}%
-\contentsline {subsection}{\numberline {4.7.2}Diagrama Entidade Relacionamento -- DER (Tabelas)}{64}{subsection.4.7.2}%
-\contentsline {subsection}{\numberline {4.7.3}Dicionário de Dados}{65}{subsection.4.7.3}%
-\contentsline {section}{\numberline {4.8}Duração / Cronograma}{69}{section.4.8}%
-\contentsline {subsection}{\numberline {4.8.1}Análise da Duração do Projeto}{69}{subsection.4.8.1}%
+\contentsline {section}{\numberline {4.2}Histórias de Usuário}{57}{section.4.2}%
+\contentsline {subsection}{\numberline {4.2.1}Descrição das Histórias de Usuário}{58}{subsection.4.2.1}%
+\contentsline {paragraph}{\numberline {4.2.1.0.1}Perfil: Psicólogo (Gestão, Intervenção e Acompanhamento)}{58}{paragraph.4.2.1.0.1}%
+\contentsline {paragraph}{\numberline {4.2.1.0.2}Perfil: Aluno (Engajamento, Reflexão e Organização)}{58}{paragraph.4.2.1.0.2}%
+\contentsline {paragraph}{\numberline {4.2.1.0.3}Perfil: Administrador (Governança, Segurança e Escala)}{59}{paragraph.4.2.1.0.3}%
+\contentsline {section}{\numberline {4.3}Arquitetura}{60}{section.4.3}%
+\contentsline {subsection}{\numberline {4.3.1}Definições da Arquitetura}{60}{subsection.4.3.1}%
+\contentsline {subsection}{\numberline {4.3.2}Diagrama da Arquitetura}{60}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Tecnologias}{61}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Front-end}{61}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Back-end}{62}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Banco de Dados}{62}{subsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.4.4}Infraestrutura}{62}{subsection.4.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.4.1}Amazon Web Services (AWS)}{62}{subsubsection.4.4.4.1}%
+\contentsline {section}{\numberline {4.5}Testes e Manutenibilidade}{62}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Plano de Testes}{62}{subsection.4.5.1}%
+\contentsline {section}{\numberline {4.6}Segurança, Privacidade e Legislação}{63}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Critérios de Segurança e Privacidade}{63}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Observância à Legislação}{63}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Modelo de Banco de Dados}{64}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Modelo Entidade Relacionamento -- MER}{64}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Diagrama Entidade Relacionamento -- DER (Tabelas)}{65}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}Dicionário de Dados}{66}{subsection.4.7.3}%
+\contentsline {section}{\numberline {4.8}Duração / Cronograma}{70}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Análise da Duração do Projeto}{70}{subsection.4.8.1}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
-\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Análise Financeira}}{71}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Custos}{71}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Receitas}{71}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Cenário Realista}{71}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Cenário Otimista}{71}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Cenário Pessimista}{72}{section.5.5}%
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Análise Financeira}}{72}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Custos}{72}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Receitas}{72}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Cenário Realista}{72}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Cenário Otimista}{72}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Cenário Pessimista}{73}{section.5.5}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
-\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Considerações Finais}}{73}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Dificuldades, Escolhas e Descartes}{73}{section.6.1}%
+\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Considerações Finais}}{74}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Dificuldades, Escolhas e Descartes}{74}{section.6.1}%
 \vspace {\cftbeforechapterskip }
 \setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
-\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{74}{section*.45}%
+\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{75}{section*.46}%
