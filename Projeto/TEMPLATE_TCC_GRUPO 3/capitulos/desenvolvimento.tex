@@ -926,6 +926,62 @@ O mapeamento das funcionalidades visa garantir que o software atenda às necessi
 \end{longtable}
 }
 
+Abaixo estão descritos e organizados em tópicos os casos de uso do sistema, agrupados por seus respectivos atores principais.
+
+\vspace{\baselineskip}
+\noindent{Atores Globais do Sistema}
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \item UC16: Realizar \textit{login} (Autenticação): Caso de uso base que garante a autenticação segura de qualquer usuário (Administrador, Psicóloga ou Aluno) na plataforma SyncCarreira. Ele verifica as credenciais cadastradas e estabelece a sessão de acordo com as permissões do perfil de acesso correspondente.
+\end{itemize}
+
+\vspace{\baselineskip}
+\noindent{Ator: Administrador}
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \item UC01: Cadastrar e Gerenciar Instituições: Permite ao Administrador cadastrar, editar, visualizar e desativar instituições (escolas ou ONGs) que utilizarão a plataforma SyncCarreira.
+    \item UC02: Gerenciar Usuários e Perfis de Acesso: Permite ao Administrador criar, editar, vincular e desativar usuários na plataforma, definindo os perfis de acesso (Administrador, Psicóloga, Aluno) e garantindo o isolamento lógico e o sigilo entre as instituições.
+\end{itemize}
+
+\vspace{\baselineskip}
+\noindent{Ator: Psicóloga}
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \item UC03: Visualizar Painel de Monitoramento por Turma: Permite à profissional acompanhar em tempo real o progresso de cada aluno nas trilhas de orientação vocacional, visualizando o status consolidado de toda a turma.
+    \item UC04: Visualizar Alunos com Flag de Dúvida: Trata-se de uma extensão do painel de monitoramento, onde o sistema exibe uma seção destacada com os alunos que concluíram a jornada, mas sinalizaram necessidade de apoio adicional, facilitando a priorização do atendimento clínico.
+    \item UC05: Criar e Customizar Perguntas e Trilhas: Permite à Psicóloga criar novas perguntas reflexivas e customizar o conteúdo das quatro trilhas sequenciais (Autoconhecimento, Influências, Informação e Projeto de Futuro), adaptando a jornada ao contexto específico de sua instituição.
+    \item UC06: Cadastrar Links e Fontes Externas (Curadoria de Conteúdo): Permite o cadastro e a organização de links de fontes externas confiáveis (como vídeos, artigos e sites de profissões), que serão recomendados aos alunos durante a trilha de Informação.
+    \item UC07: Emitir Relatórios de Turma e Individuais: Permite gerar e baixar relatórios em PDF sobre o progresso e os resultados dos alunos, tanto de forma individual quanto consolidada por turma, respeitando as regras de sigilo configuradas.
+    \item UC08: Agendar Sessões de Orientação: Permite a criação e o gerenciamento de agendamentos para sessões de orientação vocacional, individuais ou em grupo, enviando notificações aos alunos convocados.
+    \item UC09: Enviar Feedback Personalizado ao Aluno: Permite à Psicóloga redigir e enviar mensagens de feedback detalhadas e personalizadas para alunos específicos, comentando suas sínteses reflexivas e orientando os próximos passos.
+\end{itemize}
+
+\vspace{\baselineskip}
+\noindent{Ator: Aluno}
+\vspace{-0.5\baselineskip}
+\begin{itemize}
+    \item UC10: Personalizar Perfil e Interesses Iniciais: Permite ao Aluno configurar seu perfil na plataforma, informando interesses e áreas de curiosidade iniciais, informações que servirão de base para a curadoria de conteúdo.
+    \item UC11: Percorrer Trilhas Sequenciais Intertravadas: Permite ao Aluno navegar pelas quatro trilhas de orientação vocacional (Autoconhecimento, Influências, Informação e Projeto de Futuro), em que o sistema exige a conclusão de uma etapa anterior para desbloquear a seguinte.
+    \item UC12: Registrar Síntese Textual ao Final de Cada Trilha: Como requisito obrigatório para avançar na jornada, o Aluno deve registrar uma síntese reflexiva em texto livre ao final de cada trilha concluída, consolidando os aprendizados daquela etapa.
+    \item UC13: Visualizar Leque de Possibilidades de Carreira: Após a conclusão de todas as trilhas, o sistema apresenta ao estudante um conjunto personalizado de áreas e profissões alinhadas ao seu perfil, atuando como um leque de possibilidades e não como um diagnóstico engessado.
+    \item UC14: Consultar Histórico de Respostas e Evolução: Permite ao Aluno revisar todas as respostas fornecidas, sínteses textuais elaboradas e evoluções registradas, promovendo a autorreflexão sobre seu próprio processo de descoberta.
+    \item UC15: Visualizar Agendamentos e Feedbacks da Psicóloga: Permite ao Aluno consultar em seu painel as sessões de orientação marcadas e os feedbacks textuais enviados pela Psicóloga sobre o seu desempenho nas trilhas.
+\end{itemize}
+
+\subsubsection{Diagrama de casos de uso}
+
+O diagrama de casos de uso constitui a representação visual das interações mapeadas na seção anterior, fornecendo uma visão arquitetural do comportamento do sistema a partir da perspectiva de quem o utiliza. Em trabalhos acadêmicos e projetos de Engenharia de Software, esse diagrama é essencial para validar as fronteiras da aplicação e os relacionamentos de dependência entre as funcionalidades.
+No diagrama projetado para o sistema SyncCarreira, a hierarquia de usuários foi estruturada utilizando o conceito de generalização. O modelo estabelece um ator base genérico denominado "Usuário", do qual herdam (ou seja, são especializações) os três atores principais da plataforma: Administrador(a), Psicólogo(a) e Aluno(a).
+Para fins de organização lógica e visual, as funcionalidades do sistema foram agrupadas em três pacotes ou fronteiras (sub-sistemas) principais:
+
+\begin{itemize}
+    \item Tela Administrador(a): Agrupa os casos de uso de governança, contemplando o "UC01: Cadastrar Instituições e Gerenciar Instituições" e o "UC02: Gerenciar Usuários e Acessos".
+    \item Tela Psicólogo(a): Concentra as ferramentas de curadoria e monitoramento, incluindo os casos de uso "UC03: Monitorar Status por Turma", "UC05: Criar e Customizar Conteúdo das Trilhas", "UC06: Cadastrar Links e Fontes", "UC07: Emitir Relatórios", "UC08: Agendar Sessões de Orientação" e "UC09: Enviar Feedback ao Aluno". Como destaque neste pacote, o diagrama ilustra uma relação de extensão (<<extends>>), na qual o caso "UC04: Ver Alunos com Flag de Dúvida" estende o "UC03: Monitorar Status por Turma".
+    \item Tela Aluno(a): Representa a jornada do estudante, agrupando as interações "UC10: Personalizar Perfil", "UC11: Percorrer Trilhas Sequenciais", "UC12: Registrar Síntese da Trilha", "UC13: Ver Leque de Carreiras", "UC14: Consultar Histórico e Evolução" e "UC15: Ver Agendamentos e Feedbacks". Neste módulo, é possível observar uma dependência explícita modelada pela relação de inclusão (<<include>>) entre os casos de registro de síntese (UC12) e a navegação pelas trilhas (UC11).
+\end{itemize}
+
+Por fim, o diagrama estabelece uma premissa de segurança global para a plataforma. Todas as três "telas" (fronteiras) descritas acima possuem um relacionamento de inclusão (<<include>>) apontando diretamente para o caso de uso independente "UC16: Realizar Login". Essa modelagem indica que a etapa de autenticação é um pré-requisito obrigatório e comum a todos os módulos isolados do sistema.
+
 \section{Histórias de Usuário}
 
 O projeto \textit{SyncCarreira} adota a metodologia ágil Scrum, utilizando Histórias de Usuário (HU) para orientar o desenvolvimento de todo o ecossistema da plataforma, desde a jornada básica do MVP até as funcionalidades de gestão avançada previstas para a conclusão do projeto. As histórias a seguir refletem as necessidades de todos os perfis de usuários identificados.
