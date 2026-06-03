@@ -265,7 +265,7 @@ A Tabela 5 detalha todos os requisitos funcionais mapeados para o MVP do SyncCar
 \end{longtable}
 }
 
-\subsection{Requisitos Funcionais}
+\subsection{Requisitos Não Funcionais}
 
 Enquanto os requisitos funcionais definem o que o sistema fará, os requisitos não funcionais especificam "como" ele deve operar, estabelecendo os atributos de qualidade, as restrições tecnológicas e as exigências de desempenho e segurança da aplicação.
 
@@ -1127,6 +1127,16 @@ A arquitetura foi estruturada para garantir escalabilidade e segurança, compost
 
     \item \textbf{AWS RDS (MySQL):} Banco de dados gerenciado que garante a persistência das entidades do sistema, com conexão segura via JDBC realizada diretamente pelo \textit{back-end}.
 \end{itemize}
+
+Complementando a visão estrutural da arquitetura, o Diagrama de Componentes UML ilustra a organização modular do sistema  \textit{SyncCarreira}, evidenciando o desacoplamento e as diretrizes de comunicação entre os principais subsistemas da aplicação.
+ 
+\begin{figure}[H]
+    \centering
+    \caption{Diagrama de Componentes do SyncCarreira.}
+    \label{fig_diagrama_componentes}
+    \includegraphics[width=0.95\textwidth]{img/diag-componentes.png}
+    \legend{Fonte: Produzido pelos autores (2026).}
+\end{figure}
 
 \section{Tecnologias}
 
