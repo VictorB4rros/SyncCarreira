@@ -16,8 +16,8 @@
 \contentsline {subsection}{\numberline {1.4.1}16 Personalities}{19}{subsection.1.4.1}%
 \contentsline {subsection}{\numberline {1.4.2}Descomplica}{19}{subsection.1.4.2}%
 \contentsline {subsection}{\numberline {1.4.3}Qual Carreira}{20}{subsection.1.4.3}%
-\contentsline {subsection}{\numberline {1.4.4}CareerExplorer}{20}{subsection.1.4.4}%
-\contentsline {subsection}{\numberline {1.4.5}Comparativo}{20}{subsection.1.4.5}%
+\contentsline {subsection}{\numberline {1.4.4}CareerExplorer}{21}{subsection.1.4.4}%
+\contentsline {subsection}{\numberline {1.4.5}Comparativo}{22}{subsection.1.4.5}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
 \contentsline {chapter}{\chapternumberline {2}\MakeTextUppercase []{Revisão da Literatura}}{23}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Orientação Vocacional}{23}{section.2.1}%
