@@ -377,6 +377,555 @@ A Tabela 6 sistematiza as premissas não funcionais adotadas para o projeto.
 \end{longtable}
 }
 
+\subsection{Casos de Uso}
+
+Os Casos de Uso descrevem o comportamento do sistema sob o ponto de vista de seus usuários, detalhando as funcionalidades oferecidas e as interações necessárias para o cumprimento dos objetivos de negócio. Para o sistema SyncCarreira, a especificação dos casos de uso foi estruturada em torno dos três perfis de atores principais que interagem com a plataforma: Administrador, Psicóloga e Aluno.
+
+O mapeamento das funcionalidades visa garantir que o software atenda às necessidades de automação da orientação vocacional, respeitando os níveis de acesso e o fluxo lógico do processo. Dentre as funções fundamentais, destaca-se a obrigatoriedade de autenticação no sistema para todos os atores, caracterizada pelo caso de uso base de Login, do qual todas as demais ações dependem para garantir a segurança e a identificação do perfil de acesso correspondente.
+
+{\ABNTEXfontereduzida
+\setlength{\tabcolsep}{3pt}
+\begin{longtable}{|p{4.5cm}|p{10.5cm}|}
+    \caption[Casos de Uso do SyncCarreira]{Casos de uso do SyncCarreira.}
+    \label{tab-casos-de-uso} \\
+    \hline
+    \endfirsthead
+
+    \caption[]{Casos de uso do SyncCarreira (continuação).} \\
+    \hline
+    \endhead
+
+    \hline
+    \multicolumn{2}{r}{\textit{Continua na próxima página...}} \\
+    \endfoot
+
+    \hline
+    \multicolumn{2}{l}{Fonte: Elaborado pelos autores (2026).} \\
+    \endlastfoot
+
+    \multicolumn{2}{|l|}{\textbf{UC01: Cadastrar e Gerenciar Instituições}} \\ \hline
+    \textbf{Ator Principal} & Administrador \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite ao Administrador cadastrar, editar, visualizar e desativar instituições (escolas ou ONGs) que utilizarão a plataforma SyncCarreira. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Administrador autenticado na plataforma (UC16). \newline
+    \textbullet~ Dados básicos da instituição disponíveis (nome, CNPJ, endereço, responsável). \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Instituição registrada e ativa no sistema, podendo ter usuários vinculados. \newline
+    \textbullet~ Log de auditoria registrado com data, hora e ação realizada. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Administrador acessa o módulo `Instituições' no painel administrativo. \newline
+    2. Sistema exibe a lista de instituições cadastradas com filtros de busca. \newline
+    3. Administrador clica em `Nova Instituição'. \newline
+    4. Sistema exibe formulário com campos: nome, CNPJ, tipo (escola/ONG), endereço, e-mail e telefone do responsável. \newline
+    5. Administrador preenche os campos obrigatórios e confirma o cadastro. \newline
+    6. Sistema valida os dados, salva o registro e exibe mensagem de sucesso. \newline
+    7. Nova instituição aparece listada com status `Ativa'. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Editar instituição existente} \newline
+    1. No passo 3, Administrador seleciona uma instituição da lista e clica em `Editar'. \newline
+    2. Sistema carrega os dados atuais no formulário. \newline
+    3. Administrador altera os campos desejados e confirma. \newline
+    4. Sistema salva as alterações e retorna à listagem atualizada.
+    
+    \textbf{FA02 -- Desativar instituição} \newline
+    1. Administrador seleciona a instituição e clica em `Desativar'. \newline
+    2. Sistema exibe confirmação alertando que usuários vinculados perderão acesso. \newline
+    3. Administrador confirma a ação. \newline
+    4. Sistema marca a instituição como inativa e bloqueia acessos vinculados. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- CNPJ já cadastrado} \newline
+    1. No passo 6, sistema detecta CNPJ duplicado. \newline
+    2. Sistema exibe mensagem: `Este CNPJ já está vinculado a outra instituição.' \newline
+    3. Retorna ao passo 4 para correção.
+    
+    \textbf{FE02 -- Campos obrigatórios em branco} \newline
+    1. No passo 6, sistema identifica campo obrigatório não preenchido. \newline
+    2. Sistema destaca o campo em vermelho com mensagem de validação. \newline
+    3. Retorna ao passo 4. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC02: Gerenciar Usuários e Perfis de Acesso}} \\ \hline
+    \textbf{Ator Principal} & Administrador \\ \hline
+    \textbf{Atores Secundários} & Psicóloga, Aluno \\ \hline
+    \textbf{Descrição} & Permite ao Administrador criar, editar, vincular e desativar usuários na plataforma, definindo perfis de acesso (Administrador, Psicóloga, Aluno) e garantindo o sigilo entre instituições. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Administrador autenticado (UC16). \newline
+    \textbullet~ Ao menos uma instituição ativa cadastrada no sistema. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Usuário criado, vinculado a uma instituição e com perfil de acesso definido. \newline
+    \textbullet~ Credenciais de acesso enviadas ao e-mail do usuário cadastrado. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Administrador acessa o módulo `Usuários'. \newline
+    2. Sistema exibe lista de usuários com filtros por instituição, perfil e status. \newline
+    3. Administrador clica em `Novo Usuário'. \newline
+    4. Sistema exibe formulário: nome, e-mail, perfil (Admin/Psicóloga/Aluno) e instituição. \newline
+    5. Administrador preenche os dados e confirma. \newline
+    6. Sistema cria o usuário, gera credenciais temporárias e envia e-mail de boas-vindas. \newline
+    7. Usuário aparece na listagem com status `Ativo'. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Editar perfil de usuário} \newline
+    1. Administrador seleciona usuário da lista e clica em `Editar'. \newline
+    2. Sistema carrega os dados no formulário. \newline
+    3. Administrador altera perfil ou instituição vinculada e confirma. \newline
+    4. Sistema atualiza permissões imediatamente.
+    
+    \textbf{FA02 -- Desativar usuário} \newline
+    1. Administrador seleciona usuário e clica em `Desativar'. \newline
+    2. Sistema exibe confirmação. \newline
+    3. Administrador confirma; sistema bloqueia acesso e mantém histórico de dados. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- E-mail já cadastrado} \newline
+    1. Sistema detecta e-mail duplicado no passo 5. \newline
+    2. Exibe mensagem: `Este e-mail já está em uso por outro usuário.' \newline
+    3. Retorna ao formulário.
+    
+    \textbf{FE02 -- Falha no envio do e-mail} \newline
+    1. Sistema não consegue enviar e-mail de boas-vindas. \newline
+    2. Usuário é criado com sucesso, mas sistema exibe aviso sobre falha no envio. \newline
+    3. Administrador pode reenviar credenciais manualmente. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC03: Visualizar Painel de Monitoramento por Turma}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite à Psicóloga acompanhar em tempo real o progresso de cada aluno nas trilhas de orientação vocacional, visualizando status consolidado por turma. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada (UC16). \newline
+    \textbullet~ Ao menos uma turma com alunos cadastrados e com progresso iniciado. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Psicóloga visualizou o status atual de cada aluno. \newline
+    \textbullet~ Nenhum dado é alterado --- operação somente leitura. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Psicóloga acessa o módulo `Dashboard' no menu principal. \newline
+    2. Sistema exibe cartões de turmas vinculadas à instituição da Psicóloga e percentual de progresso geral da turma e por trilha. \newline
+    3. Psicóloga seleciona a turma desejada. \newline
+    4. Sistema carrega o painel com uma lista de todos os alunos, mostrando: nome, trilha atual, percentual de conclusão e data da última atividade. \newline
+    5. Psicóloga visualiza o painel e pode ordenar ou filtrar por status (Dúvida, estável, inatividade longa e concluído). \newline
+    6. Psicóloga clica em um aluno para ver o progresso detalhado individual. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Filtrar por trilha específica} \newline
+    1. No passo 5, Psicóloga aplica filtro por trilha (ex.: Autoconhecimento). \newline
+    2. Sistema recarrega o painel exibindo apenas alunos naquela trilha.
+    
+    \textbf{FA02 -- Caminho pelo Módulo ``Triagem''} \newline
+    1. No passo 3, a psicóloga seleciona o módulo ``Triagem'' e filtra por turma desejada. \newline
+    2. Sistema carrega o painel com uma lista dos alunos da turma. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Turma sem alunos cadastrados} \newline
+    1. No passo 4, sistema detecta que a turma não possui alunos. \newline
+    2. Exibe mensagem: `Nenhum aluno encontrado nesta turma.' \newline
+    3. Psicóloga pode selecionar outra turma. \\ \hline
+    \textbf{Relações UML} & 
+    $\ll$include$\gg$ UC16: Realizar Login \newline
+    $\ll$extend$\gg$ UC04: Visualizar Alunos com Flag de Dúvida (condição: existem alunos com flag ativa) \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC04: Visualizar Alunos com Flag de Dúvida}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Extensão do UC03. Quando há alunos que concluíram a jornada mas sinalizaram necessidade de apoio adicional, o painel exibe uma seção destacada com esses alunos para priorização do atendimento. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada e visualizando o Painel de Monitoramento (UC03). \newline
+    \textbullet~ Ao menos um aluno concluiu todas as trilhas e ativou a flag de dúvida. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Psicóloga identificou os alunos prioritários para atendimento. \newline
+    \textbullet~ Psicóloga pode iniciar agendamento (UC08) ou enviar feedback (UC09) a partir desta tela. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Durante a execução do UC03, sistema detecta alunos com flag de dúvida ativa. \newline
+    2. Sistema exibe seção `Atenção Necessária' no topo do painel, com destaque visual (ícone e cor diferenciados). \newline
+    3. Psicóloga visualiza a lista de alunos sinalizados com nome, data de conclusão da jornada e mensagem de dúvida registrada pelo aluno. \newline
+    4. Psicóloga clica em um aluno para acessar seu perfil completo e histórico de sínteses. \newline
+    5. Psicóloga decide a ação: agendar sessão (UC08) ou enviar feedback imediato (UC09). \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Nenhuma flag ativa na turma selecionada} \newline
+    1. Sistema não exibe a seção `Atenção Necessária'. \newline
+    2. Painel do UC03 é exibido normalmente sem o bloco de flags. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Aluno removeu a flag antes da consulta} \newline
+    1. Sistema recarrega o painel e o aluno não aparece mais na seção de flags. \newline
+    2. Exibe mensagem informativa: `Lista de flags atualizada.' \\ \hline
+    \textbf{Relações UML} & 
+    $\ll$extend$\gg$ UC03: Visualizar Painel de Monitoramento por Turma \newline
+    $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC05: Criar e Customizar Perguntas e Trilhas}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite à Psicóloga criar novas perguntas reflexivas e customizar o conteúdo das quatro trilhas sequenciais (Autoconhecimento, Influências, Informação e Projeto de Futuro), adaptando a jornada ao contexto da sua instituição. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada (UC16). \newline
+    \textbullet~ Estrutura base das trilhas já existente no sistema. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Novas perguntas ou configurações de trilha salvas e disponíveis para os alunos da instituição. \newline
+    \textbullet~ Histórico de versões da trilha registrado. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Psicóloga acessa o módulo `Curadoria de Trilhas'. \newline
+    2. Sistema exibe as quatro trilhas com suas perguntas atuais. \newline
+    3. Psicóloga seleciona a trilha que deseja editar. \newline
+    4. Sistema exibe as perguntas existentes com opções de reordenar, editar ou excluir. \newline
+    5. Psicóloga clica em `Nova Pergunta'. \newline
+    6. Sistema exibe formulário: enunciado, tipo de resposta (texto livre, escala, múltipla escolha) e trilha de destino. \newline
+    7. Psicóloga preenche e salva a pergunta. \newline
+    8. Sistema adiciona a pergunta à trilha e confirma o salvamento. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Reordenar perguntas} \newline
+    1. No passo 4, Psicóloga arrasta e solta as perguntas para reordenar. \newline
+    2. Sistema salva a nova ordem automaticamente.
+    
+    \textbf{FA02 -- Excluir pergunta} \newline
+    1. Psicóloga clica no ícone de exclusão de uma pergunta. \newline
+    2. Sistema exibe confirmação, alertando se há respostas registradas. \newline
+    3. Psicóloga confirma; sistema inativa a pergunta (não apaga para preservar histórico). \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Enunciado em branco} \newline
+    1. Sistema valida o formulário no passo 7 e detecta enunciado vazio. \newline
+    2. Exibe mensagem de erro e retorna ao formulário. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC06: Cadastrar Links e Fontes Externas (Curadoria de Conteúdo)}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Aluno (consulta indireta) \\ \hline
+    \textbf{Descrição} & Permite à Psicóloga cadastrar e organizar links de fontes externas --- vídeos, artigos, sites de profissões --- que serão recomendados aos alunos na trilha de Informação. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada (UC16). \newline
+    \textbullet~ Links e fontes previamente selecionados e validados pela Psicóloga. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Links cadastrados e disponíveis para exibição na trilha de Informação para os alunos. \newline
+    \textbullet~ Conteúdo organizado por categoria/área profissional. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Psicóloga acessa o módulo `Biblioteca de Conteúdo'. \newline
+    2. Sistema exibe lista de links cadastrados com filtros por categoria. \newline
+    3. Psicóloga clica em `Adicionar Link'. \newline
+    4. Sistema exibe formulário: URL, título descritivo, categoria (área profissional) e descrição curta. \newline
+    5. Psicóloga preenche os campos e confirma. \newline
+    6. Sistema valida a URL, salva o registro e exibe na lista atualizada. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Editar link cadastrado} \newline
+    1. Psicóloga seleciona um link existente e clica em `Editar'. \newline
+    2. Sistema carrega os dados no formulário. \newline
+    3. Psicóloga atualiza os campos e salva.
+    
+    \textbf{FA02 -- Remover link} \newline
+    1. Psicóloga seleciona o link e clica em `Remover'. \newline
+    2. Sistema exibe confirmação. \newline
+    3. Psicóloga confirma; link é removido da biblioteca e da trilha. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- URL inválida ou inacessível} \newline
+    1. Sistema tenta acessar a URL no passo 6 e detecta erro de conexão. \newline
+    2. Exibe aviso: `A URL informada parece estar inacessível. Deseja salvar mesmo assim?' \newline
+    3. Psicóloga decide se salva ou corrige a URL. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC07: Emitir Relatórios de Turma e Individuais}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite à Psicóloga gerar relatórios sobre o progresso e resultados dos alunos, tanto no nível individual quanto consolidado por turma, para apoiar tomadas de decisão e registros institucionais. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada (UC16). \newline
+    \textbullet~ Ao menos um aluno com progresso registrado no sistema. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Relatório gerado e disponível para download em formato PDF. \newline
+    \textbullet~ Dados sensíveis exibidos respeitando as regras de sigilo configuradas. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Psicóloga acessa o módulo `Relatórios'. \newline
+    2. Sistema exibe opções: Relatório Individual ou Relatório de Turma. \newline
+    3. Psicóloga seleciona o tipo de relatório. \newline
+    4. Sistema exibe filtros: turma, aluno (se individual), período e trilhas. \newline
+    5. Psicóloga configura os filtros e clica em `Gerar Relatório'. \newline
+    6. Sistema processa os dados e exibe pré-visualização do relatório. \newline
+    7. Psicóloga confirma e clica em `Baixar PDF'. \newline
+    8. Sistema gera e disponibiliza o arquivo para download. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Relatório de turma consolidado} \newline
+    1. No passo 3, Psicóloga seleciona `Turma'. \newline
+    2. Sistema agrega dados de todos os alunos da turma selecionada. \newline
+    3. Relatório exibe médias, distribuição de status e destaques por trilha. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Nenhum dado no período selecionado} \newline
+    1. Sistema detecta ausência de registros para os filtros aplicados. \newline
+    2. Exibe mensagem: `Nenhum dado encontrado para o período e turma selecionados.' \newline
+    3. Psicóloga ajusta os filtros. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC08: Agendar Sessões de Orientação}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Aluno \\ \hline
+    \textbf{Descrição} & Permite à Psicóloga criar e gerenciar agendamentos de sessões de orientação vocacional, individuais ou em grupo, que serão visíveis para os alunos convocados (UC15). \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada (UC16). \newline
+    \textbullet~ Ao menos um aluno ativo vinculado à turma da Psicóloga. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Sessão agendada e visível para os alunos convocados em UC15. \newline
+    \textbullet~ Notificação enviada por e-mail aos participantes. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Psicóloga acessa o módulo `Agenda'. \newline
+    2. Sistema exibe calendário com agendamentos existentes. \newline
+    3. Psicóloga clica em uma data/horário disponível e seleciona `Novo Agendamento'. \newline
+    4. Sistema exibe formulário: tipo (individual/grupo), data, hora, duração, aluno(s) e observações. \newline
+    5. Psicóloga preenche os dados e confirma. \newline
+    6. Sistema salva o agendamento, notifica os alunos por e-mail e exibe confirmação. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Reagendar sessão existente} \newline
+    1. Psicóloga clica em uma sessão existente no calendário. \newline
+    2. Sistema abre o formulário com os dados atuais. \newline
+    3. Psicóloga altera data/hora e confirma. \newline
+    4. Sistema atualiza o registro e reenvia notificação aos participantes.
+    
+    \textbf{FA02 -- Cancelar sessão} \newline
+    1. Psicóloga seleciona a sessão e clica em `Cancelar'. \newline
+    2. Sistema exibe confirmação e campo para justificativa. \newline
+    3. Psicóloga confirma; sistema cancela e notifica os alunos. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Conflito de horário} \newline
+    1. Sistema detecta que o aluno já tem sessão no horário selecionado. \newline
+    2. Exibe aviso: `Conflito de horário detectado para [nome do aluno].' \newline
+    3. Psicóloga ajusta o horário ou prossegue ciente do conflito. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC09: Enviar Feedback Personalizado ao Aluno}} \\ \hline
+    \textbf{Ator Principal} & Psicóloga \\ \hline
+    \textbf{Atores Secundários} & Aluno \\ \hline
+    \textbf{Descrição} & Permite à Psicóloga redigir e enviar mensagens de feedback personalizadas para alunos específicos, comentando suas sínteses e orientando os próximos passos da jornada. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Psicóloga autenticada (UC16). \newline
+    \textbullet~ Aluno com ao menos uma síntese registrada no sistema. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Feedback enviado e disponível para o aluno em UC15. \newline
+    \textbullet~ Registro do feedback mantido no histórico do aluno. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Psicóloga acessa o perfil de um aluno (via UC03 ou UC04). \newline
+    2. Sistema exibe o histórico de sínteses e feedbacks anteriores. \newline
+    3. Psicóloga clica em `Enviar Feedback'. \newline
+    4. Sistema exibe editor de texto com campo para selecionar a síntese de referência. \newline
+    5. Psicóloga redige o feedback e confirma o envio. \newline
+    6. Sistema salva o feedback, vincula à síntese correspondente e notifica o aluno por e-mail. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Editar feedback já enviado} \newline
+    1. Psicóloga localiza um feedback anterior e clica em `Editar'. \newline
+    2. Sistema abre o editor com o conteúdo existente. \newline
+    3. Psicóloga edita e salva; aluno é notificado da atualização. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Campo de feedback em branco} \newline
+    1. Sistema valida o conteúdo no passo 5 e detecta campo vazio. \newline
+    2. Exibe mensagem: `O feedback não pode ser enviado em branco.' \newline
+    3. Retorna ao editor. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC10: Personalizar Perfil e Interesses Iniciais}} \\ \hline
+    \textbf{Ator Principal} & Aluno \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite ao Aluno configurar seu perfil na plataforma e indicar interesses e áreas de curiosidade iniciais, que servirão como ponto de partida para a curadoria de conteúdo nas trilhas. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Aluno autenticado (UC16). \newline
+    \textbullet~ Primeiro acesso ou necessidade de atualização do perfil. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Perfil atualizado com interesses registrados. \newline
+    \textbullet~ Sistema ajusta as sugestões de conteúdo com base nos interesses informados. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Aluno acessa a seção `Meu Perfil'. \newline
+    2. Sistema exibe formulário com foto, nome preferido, bio curta e lista de áreas de interesse. \newline
+    3. Aluno seleciona entre 3 e 5 áreas de interesse de uma lista predefinida. \newline
+    4. Aluno adiciona uma bio opcional (texto livre, até 300 caracteres). \newline
+    5. Aluno confirma as alterações. \newline
+    6. Sistema salva o perfil e redireciona para a tela inicial da jornada. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Alterar interesses durante a jornada} \newline
+    1. Aluno retorna ao perfil após já ter iniciado as trilhas. \newline
+    2. Sistema permite edição dos interesses com aviso de que isso pode alterar sugestões. \newline
+    3. Aluno confirma; sistema atualiza as recomendações. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Menos de 3 interesses selecionados} \newline
+    1. Sistema valida no passo 5 e detecta seleção insuficiente. \newline
+    2. Exibe mensagem: `Selecione ao menos 3 áreas de interesse para continuar.' \newline
+    3. Retorna ao passo 3. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC11: Percorrer Trilhas Sequenciais Intertravadas}} \\ \hline
+    \textbf{Ator Principal} & Aluno \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite ao Aluno navegar pelas quatro trilhas sequenciais de orientação vocacional: Autoconhecimento, Influências, Informação e Projeto de Futuro. O acesso a cada trilha depende da conclusão da anterior (intertravamento). \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Aluno autenticado (UC16). \newline
+    \textbullet~ Perfil configurado (UC10 concluído). \newline
+    \textbullet~ Para trilhas 2, 3 e 4: trilha anterior concluída e síntese registrada (UC12). \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Atividades da trilha respondidas e salvas. \newline
+    \textbullet~ Próxima trilha desbloqueada após síntese registrada (UC12). \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Aluno acessa a tela `Minha Jornada'. \newline
+    2. Sistema exibe as quatro trilhas com status: Disponível, Em andamento, Bloqueada ou Concluída. \newline
+    3. Aluno clica na trilha disponível/em andamento. \newline
+    4. Sistema carrega as perguntas e atividades reflexivas da trilha. \newline
+    5. Aluno responde às perguntas em seu próprio ritmo, podendo salvar e continuar depois. \newline
+    6. Aluno conclui todas as atividades da trilha. \newline
+    7. Sistema exibe tela de encerramento da trilha e direciona para o registro de síntese (UC12). \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Salvar progresso parcial} \newline
+    1. Aluno clica em `Salvar e sair' antes de concluir a trilha. \newline
+    2. Sistema salva o progresso parcial. \newline
+    3. No próximo acesso, trilha retoma do ponto onde o aluno parou. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Tentativa de acessar trilha bloqueada} \newline
+    1. Aluno tenta clicar em uma trilha bloqueada. \newline
+    2. Sistema exibe mensagem: `Conclua a trilha anterior e registre sua síntese para desbloquear esta etapa.' \newline
+    3. Aluno é redirecionado para a trilha atual. \\ \hline
+    \textbf{Relações UML} & 
+    $\ll$include$\gg$ UC16: Realizar Login \newline
+    $\ll$include$\gg$ UC12: Registrar Síntese da Trilha (incluso ao final de cada trilha) \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC12: Registrar Síntese Textual ao Final de Cada Trilha}} \\ \hline
+    \textbf{Ator Principal} & Aluno \\ \hline
+    \textbf{Atores Secundários} & Psicóloga (leitura posterior) \\ \hline
+    \textbf{Descrição} & Ao concluir cada trilha, o Aluno registra uma síntese reflexiva em texto livre, consolidando seus aprendizados. Este registro é pré-condição para desbloquear a próxima trilha e fica disponível para leitura e feedback da Psicóloga. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Aluno autenticado (UC16). \newline
+    \textbullet~ Todas as atividades da trilha atual concluídas (UC11). \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Síntese salva e vinculada à trilha concluída. \newline
+    \textbullet~ Próxima trilha desbloqueada. \newline
+    \textbullet~ Síntese disponível para a Psicóloga em UC09. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Ao concluir UC11, sistema exibe automaticamente a tela `Registrar Síntese'. \newline
+    2. Sistema apresenta prompt reflexivo personalizado para a trilha concluída (ex.: `O que você descobriu sobre si mesmo nesta trilha?'). \newline
+    3. Aluno redige sua síntese no campo de texto livre. \newline
+    4. Aluno clica em `Salvar Síntese'. \newline
+    5. Sistema valida que o texto possui ao menos 50 caracteres. \newline
+    6. Sistema salva a síntese, registra a data e desbloqueia a próxima trilha. \newline
+    7. Exibe mensagem de parabéns e apresenta a trilha seguinte. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Editar síntese antes da revisão da Psicóloga} \newline
+    1. Aluno retorna ao histórico e localiza a síntese salva. \newline
+    2. Sistema permite edição enquanto a Psicóloga ainda não enviou feedback. \newline
+    3. Aluno edita e salva novamente. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Síntese muito curta} \newline
+    1. Sistema detecta texto com menos de 50 caracteres no passo 5. \newline
+    2. Exibe aviso: `Sua síntese está muito curta. Tente elaborar um pouco mais sua reflexão.' \newline
+    3. Retorna ao editor sem bloquear o aluno indefinidamente. \\ \hline
+    \textbf{Relações UML} & 
+    $\ll$include$\gg$ UC11: Percorrer Trilhas Sequenciais (pré-condição estrutural) \newline
+    $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC13: Visualizar Leque de Possibilidades de Carreira}} \\ \hline
+    \textbf{Ator Principal} & Aluno \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Após a conclusão das quatro trilhas, o sistema apresenta ao Aluno um conjunto personalizado de áreas e profissões alinhadas ao seu perfil construído ao longo da jornada --- não um diagnóstico único, mas um leque de possibilidades. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Aluno autenticado (UC16). \newline
+    \textbullet~ Todas as quatro trilhas concluídas e sínteses registradas (UC12). \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Aluno visualizou seu leque de carreiras. \newline
+    \textbullet~ Aluno pode explorar os links de fontes externas cadastrados (UC06) para cada área sugerida. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Após conclusão da quarta trilha, sistema redireciona automaticamente para `Meu Leque de Carreiras'. \newline
+    2. Sistema processa as respostas e sínteses do aluno e gera uma lista de 5 a 10 áreas profissionais compatíveis. \newline
+    3. Sistema exibe as áreas com: nome da profissão, breve descrição, nível de compatibilidade (\%) e links de conteúdo curado (UC06). \newline
+    4. Aluno explora cada área clicando para ver mais detalhes. \newline
+    5. Aluno pode marcar áreas de maior interesse para referência futura. \newline
+    6. Aluno pode ativar a flag de dúvida caso queira suporte adicional da Psicóloga. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Acessar o leque posteriormente} \newline
+    1. Aluno retorna à plataforma após sessão anterior. \newline
+    2. Acessa `Meus Resultados' no menu. \newline
+    3. Sistema carrega o leque já gerado. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Trilhas não concluídas} \newline
+    1. Aluno tenta acessar `Meus Resultados' sem ter concluído todas as trilhas. \newline
+    2. Sistema exibe: `Complete todas as trilhas para visualizar seu leque de carreiras.' \newline
+    3. Sistema exibe barra de progresso indicando trilhas pendentes. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC14: Consultar Histórico de Respostas e Evolução}} \\ \hline
+    \textbf{Ator Principal} & Aluno \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Permite ao Aluno revisar todas as suas respostas, sínteses e evoluções registradas ao longo da jornada nas quatro trilhas, promovendo a autorreflexão sobre o próprio processo. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Aluno autenticado (UC16). \newline
+    \textbullet~ Ao menos uma atividade ou síntese registrada no sistema. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Aluno visualizou seu histórico. Nenhum dado é alterado --- operação somente leitura. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Aluno acessa `Meu Histórico' no menu lateral. \newline
+    2. Sistema exibe linha do tempo com as trilhas percorridas e datas de conclusão. \newline
+    3. Aluno seleciona uma trilha para visualizar suas respostas e síntese. \newline
+    4. Sistema exibe as perguntas com as respectivas respostas do aluno e a síntese registrada. \newline
+    5. Aluno pode navegar entre trilhas para comparar sua evolução. \newline
+    6. Sistema exibe feedbacks da Psicóloga vinculados a cada síntese (se houver). \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Filtrar por trilha} \newline
+    1. Aluno usa o filtro lateral para selecionar uma trilha específica. \newline
+    2. Sistema carrega apenas o conteúdo daquela trilha. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Nenhum histórico disponível} \newline
+    1. Sistema detecta que o aluno não possui nenhuma resposta registrada. \newline
+    2. Exibe mensagem: `Você ainda não iniciou nenhuma trilha. Comece sua jornada agora!' \newline
+    3. Exibe botão de atalho para a tela `Minha Jornada'. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC15: Visualizar Agendamentos e Feedbacks da Psicóloga}} \\ \hline
+    \textbf{Ator Principal} & Aluno \\ \hline
+    \textbf{Atores Secundários} & Psicóloga \\ \hline
+    \textbf{Descrição} & Permite ao Aluno consultar os agendamentos de sessões de orientação criados pela Psicóloga (UC08) e os feedbacks personalizados enviados para suas sínteses (UC09). \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Aluno autenticado (UC16). \newline
+    \textbullet~ Ao menos um agendamento criado (UC08) ou feedback enviado (UC09) pela Psicóloga. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Aluno visualizou seus agendamentos e/ou feedbacks. Operação somente leitura. \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Aluno acessa `Minhas Notificações' ou `Agenda' no menu. \newline
+    2. Sistema exibe duas abas: `Sessões Agendadas' e `Feedbacks Recebidos'. \newline
+    3. Na aba `Sessões', sistema lista os agendamentos com data, hora, tipo (individual/grupo) e observações da Psicóloga. \newline
+    4. Na aba `Feedbacks', sistema lista os feedbacks recebidos com a síntese de referência e a mensagem da Psicóloga. \newline
+    5. Aluno clica em um feedback para expandir e ler o conteúdo completo. \newline
+    6. Sistema marca o feedback como `Lido' automaticamente. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Nenhum agendamento futuro} \newline
+    1. Sistema exibe mensagem na aba `Sessões': `Você não possui sessões agendadas no momento.' \newline
+    2. Aluno permanece na tela podendo verificar a aba de feedbacks. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Sessão cancelada pela Psicóloga} \newline
+    1. Sistema exibe o agendamento com status `Cancelado' e justificativa fornecida. \newline
+    2. Aluno é notificado via e-mail previamente. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ UC16: Realizar Login \\ \hline
+
+    \multicolumn{2}{|l|}{\textbf{UC16: Realizar Login (Autenticação)}} \\ \hline
+    \textbf{Ator Principal} & Administrador, Psicóloga, Aluno \\ \hline
+    \textbf{Atores Secundários} & Nenhum \\ \hline
+    \textbf{Descrição} & Caso de uso base incluído por todos os demais. Garante a autenticação segura de qualquer usuário na plataforma SyncCarreira, verificando credenciais e estabelecendo a sessão de acordo com o perfil de acesso. \\ \hline
+    \textbf{Pré-condições} & 
+    \textbullet~ Usuário cadastrado no sistema com credenciais ativas. \newline
+    \textbullet~ Acesso à internet e disponibilidade da plataforma. \\ \hline
+    \textbf{Pós-condições} & 
+    \textbullet~ Sessão autenticada estabelecida com permissões correspondentes ao perfil do usuário. \newline
+    \textbullet~ Usuário redirecionado para o painel correspondente ao seu papel (Admin, Psicóloga ou Aluno). \\ \hline
+    \textbf{Fluxo Principal} & 
+    1. Usuário acessa a URL da plataforma SyncCarreira. \newline
+    2. Sistema exibe tela de login com campos de e-mail e senha. \newline
+    3. Usuário informa suas credenciais e clica em `Entrar'. \newline
+    4. Sistema valida as credenciais contra o banco de dados. \newline
+    5. Sistema identifica o perfil do usuário (Admin/Psicóloga/Aluno) e a instituição vinculada. \newline
+    6. Sistema estabelece sessão segura e redireciona para o painel correspondente. \\ \hline
+    \textbf{Fluxos Alternativos} & 
+    \textbf{FA01 -- Recuperação de senha} \newline
+    1. Usuário clica em `Esqueci minha senha'. \newline
+    2. Sistema solicita o e-mail cadastrado. \newline
+    3. Sistema envia link de redefinição com validade de 1 hora. \newline
+    4. Usuário acessa o link, define nova senha e é redirecionado para o login. \\ \hline
+    \textbf{Fluxos de Exceção} & 
+    \textbf{FE01 -- Credenciais inválidas} \newline
+    1. Sistema detecta e-mail ou senha incorretos no passo 4. \newline
+    2. Exibe mensagem genérica: `E-mail ou senha inválidos.' (sem indicar qual campo está errado, por segurança). \newline
+    3. Após 5 tentativas, sistema bloqueia temporariamente o acesso por 15 minutos.
+    
+    \textbf{FE02 -- Usuário inativo} \newline
+    1. Sistema detecta conta desativada pelo Administrador. \newline
+    2. Exibe mensagem: `Sua conta está inativa. Entre em contato com o administrador.' \newline
+    3. Acesso negado. \\ \hline
+    \textbf{Relações UML} & $\ll$include$\gg$ por todos os demais casos de uso (UC01 a UC15) \\ \hline
+
+\end{longtable}
+}
+
 \section{Histórias de Usuário}
 
 O projeto \textit{SyncCarreira} adota a metodologia ágil Scrum, utilizando Histórias de Usuário (HU) para orientar o desenvolvimento de todo o ecossistema da plataforma, desde a jornada básica do MVP até as funcionalidades de gestão avançada previstas para a conclusão do projeto. As histórias a seguir refletem as necessidades de todos os perfis de usuários identificados.

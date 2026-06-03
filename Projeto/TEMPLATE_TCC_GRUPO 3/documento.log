@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.3)  3 JUN 2026 15:18
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.6.3)  3 JUN 2026 15:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1608,7 +1608,7 @@ LaTeX Font Info:    Font shape `T1/phv/m/it' in size <12> not available
 
 
 ] [15] [16]
-<img/graf-1-trajetoria-historica-ensino-superior.png, id=317, 1023.825pt x 469.
+<img/graf-1-trajetoria-historica-ensino-superior.png, id=321, 1023.825pt x 469.
 00218pt>
 File: img/graf-1-trajetoria-historica-ensino-superior.png Graphic file (type pn
 g)
@@ -1616,13 +1616,13 @@ g)
 Package pdftex.def Info: img/graf-1-trajetoria-historica-ensino-superior.png  u
 sed on input line 42.
 (pdftex.def)             Requested size: 386.75278pt x 177.16353pt.
-<img/graf-2-taxa-conclusao-anual.png, id=322, 367.3725pt x 208.52907pt>
+<img/graf-2-taxa-conclusao-anual.png, id=326, 367.3725pt x 208.52907pt>
 File: img/graf-2-taxa-conclusao-anual.png Graphic file (type png)
 <use img/graf-2-taxa-conclusao-anual.png>
 Package pdftex.def Info: img/graf-2-taxa-conclusao-anual.png  used on input lin
 e 50.
 (pdftex.def)             Requested size: 386.75278pt x 219.54425pt.
-<img/graf-3-taxa-desistencia-acumulada.png, id=328, 365.86688pt x 210.03468pt>
+<img/graf-3-taxa-desistencia-acumulada.png, id=332, 365.86688pt x 210.03468pt>
 File: img/graf-3-taxa-desistencia-acumulada.png Graphic file (type png)
 <use img/graf-3-taxa-desistencia-acumulada.png>
 Package pdftex.def Info: img/graf-3-taxa-desistencia-acumulada.png  used on inp
@@ -1630,24 +1630,24 @@ ut line 58.
 (pdftex.def)             Requested size: 386.75278pt x 222.03638pt.
  [17 <./img/graf-1-trajetoria-historica-ensino-superior.png> <./img/graf-2-taxa
 -conclusao-anual.png>] [18 <./img/graf-3-taxa-desistencia-acumulada.png>]
-<img/fig-1-16personalities.png, id=353, 375.65344pt x 190.46156pt>
+<img/fig-1-16personalities.png, id=357, 375.65344pt x 190.46156pt>
 File: img/fig-1-16personalities.png Graphic file (type png)
 <use img/fig-1-16personalities.png>
 Package pdftex.def Info: img/fig-1-16personalities.png  used on input line 82.
 (pdftex.def)             Requested size: 364.00139pt x 184.56728pt.
-<img/fig-2-descomplica.png, id=354, 383.93437pt x 209.28188pt>
+<img/fig-2-descomplica.png, id=358, 383.93437pt x 209.28188pt>
 File: img/fig-2-descomplica.png Graphic file (type png)
 <use img/fig-2-descomplica.png>
 Package pdftex.def Info: img/fig-2-descomplica.png  used on input line 96.
 (pdftex.def)             Requested size: 364.00139pt x 198.43024pt.
  [19 <./img/fig-1-16personalities.png>]
-<img/fig-3-qualcarreira.png, id=360, 310.15875pt x 211.54031pt>
+<img/fig-3-qualcarreira.png, id=364, 310.15875pt x 211.54031pt>
 File: img/fig-3-qualcarreira.png Graphic file (type png)
 <use img/fig-3-qualcarreira.png>
 Package pdftex.def Info: img/fig-3-qualcarreira.png  used on input line 108.
 (pdftex.def)             Requested size: 364.00139pt x 248.26292pt.
  [20 <./img/fig-2-descomplica.png>]
-<img/fig-4-careerexplorer.png, id=366, 389.20406pt x 190.46156pt>
+<img/fig-4-careerexplorer.png, id=370, 389.20406pt x 190.46156pt>
 File: img/fig-4-careerexplorer.png Graphic file (type png)
 <use img/fig-4-careerexplorer.png>
 Package pdftex.def Info: img/fig-4-careerexplorer.png  used on input line 120.
@@ -1859,274 +1859,282 @@ Underfull \hbox (badness 10000) in paragraph at lines 258--258
  []
 
 [35] [36] [37] [38]
-Underfull \hbox (badness 10000) in paragraph at lines 316--316
+Underfull \hbox (badness 10000) in paragraph at lines 314--314
 []|\T1/phv/b/n/10 (+20) Segurança ---
  []
 
 
-Underfull \hbox (badness 1122) in paragraph at lines 317--317
+Underfull \hbox (badness 1122) in paragraph at lines 315--315
 \T1/phv/m/n/10 (+20) O acesso a cada re-curso
  []
 
 
-Underfull \hbox (badness 3872) in paragraph at lines 324--324
+Underfull \hbox (badness 3872) in paragraph at lines 322--322
 []|\T1/phv/b/n/10 (+20) Privacidade e
  []
 
 
-Overfull \hbox (0.82187pt too wide) in paragraph at lines 332--332
+Overfull \hbox (0.82187pt too wide) in paragraph at lines 330--330
 []|\T1/phv/b/n/10 (-20) Desempenho ---
  []
 
 
-Overfull \hbox (1.83809pt too wide) in paragraph at lines 348--348
+Overfull \hbox (1.83809pt too wide) in paragraph at lines 346--346
 []|\T1/phv/b/n/10 (-20) Disponibilidade| 
  []
 
 
-Overfull \hbox (8.81367pt too wide) in paragraph at lines 356--356
+Overfull \hbox (8.81367pt too wide) in paragraph at lines 354--354
 []|\T1/phv/b/n/10 (-20) Manutenibilidade
  []
 
 
-Underfull \hbox (badness 6204) in paragraph at lines 356--356
+Underfull \hbox (badness 6204) in paragraph at lines 354--354
 \T1/phv/b/n/10 (+20) --- ar-qui-te-tura
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 364--364
+Underfull \hbox (badness 10000) in paragraph at lines 362--362
 []|\T1/phv/b/n/10 (-8) Documentação
  []
 
 
-Underfull \hbox (badness 7925) in paragraph at lines 365--365
+Underfull \hbox (badness 7925) in paragraph at lines 363--363
 []|\T1/phv/m/n/10 (+20) Todas as ro-tas da API
  []
 
 
-Underfull \hbox (badness 3989) in paragraph at lines 365--365
+Underfull \hbox (badness 3989) in paragraph at lines 363--363
 \T1/phv/m/n/10 (+20) de-vem ser do-cu-men-ta-das
  []
 
-[39] [40] [41] [42]
-<img/diag-1-arquitetura-infraestrutura-aws.png, id=513, 444.91219pt x 286.82156
+[39]
+Underfull \hbox (badness 4531) in paragraph at lines 459--465
+\T1/phv/m/n/10 (+20) 4. Sis-tema exibe for-mu-lá-rio: nome, e-mail, per-fil (Ad
+-
+ []
+
+[40] [41] [42] [43] [44] [45] [46] [47] [48] [49] [50] [51] [52] [53] [54]
+[55]
+<img/diag-1-arquitetura-infraestrutura-aws.png, id=572, 444.91219pt x 286.82156
 pt>
 File: img/diag-1-arquitetura-infraestrutura-aws.png Graphic file (type png)
 <use img/diag-1-arquitetura-infraestrutura-aws.png>
 Package pdftex.def Info: img/diag-1-arquitetura-infraestrutura-aws.png  used on
- input line 466.
+ input line 1013.
 (pdftex.def)             Requested size: 409.49722pt x 263.99281pt.
- [43 <./img/diag-1-arquitetura-infraestrutura-aws.png>]
-[44] [45] [46]
-<img/diag-2-modelo-entidade-relacionamento.png, id=531, 398.23781pt x 356.83313
+ [56] [57 <./img/diag-1-arquitetura-infraestrutura-aws.png>] [58] [59]
+<img/diag-2-modelo-entidade-relacionamento.png, id=590, 398.23781pt x 356.83313
 pt>
 File: img/diag-2-modelo-entidade-relacionamento.png Graphic file (type png)
 <use img/diag-2-modelo-entidade-relacionamento.png>
 Package pdftex.def Info: img/diag-2-modelo-entidade-relacionamento.png  used on
- input line 551.
+ input line 1098.
 (pdftex.def)             Requested size: 409.49722pt x 366.93784pt.
-<img/diag-3-diagrama-entidade-relacionamento.png, id=532, 749.04843pt x 378.664
+
+[60]
+<img/diag-3-diagrama-entidade-relacionamento.png, id=596, 749.04843pt x 378.664
 69pt>
 File: img/diag-3-diagrama-entidade-relacionamento.png Graphic file (type png)
 <use img/diag-3-diagrama-entidade-relacionamento.png>
 Package pdftex.def Info: img/diag-3-diagrama-entidade-relacionamento.png  used 
-on input line 563.
+on input line 1110.
 (pdftex.def)             Requested size: 409.49722pt x 207.0124pt.
- [47 <./img/diag-2-modelo-entidade-relacionamento.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 602--602
+ [61 <./img/diag-2-modelo-entidade-relacionamento.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1149--1149
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 599--610
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1146--1157
  [][] 
  []
 
-[48 <./img/diag-3-diagrama-entidade-relacionamento.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 622--622
+[62 <./img/diag-3-diagrama-entidade-relacionamento.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 1169--1169
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 622--623
+Underfull \hbox (badness 10000) in paragraph at lines 1169--1170
 []|\T1/phv/m/n/10 (+20) Identificador único do
  []
 
 
-Underfull \hbox (badness 1527) in paragraph at lines 628--629
+Underfull \hbox (badness 1527) in paragraph at lines 1175--1176
 []|\T1/phv/m/n/10 (+20) Senha crip-to-gra-fada do
  []
 
 
-Underfull \hbox (badness 1281) in paragraph at lines 630--631
+Underfull \hbox (badness 1281) in paragraph at lines 1177--1178
 []|\T1/phv/m/n/10 (+20) Referência ao per-fil de
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 619--632
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1166--1179
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 646--646
+Underfull \hbox (badness 10000) in paragraph at lines 1193--1193
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 646--647
+Underfull \hbox (badness 10000) in paragraph at lines 1193--1194
 []|\T1/phv/m/n/10 (+20) Identificador único do
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 643--658
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1190--1205
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 670--670
+Underfull \hbox (badness 10000) in paragraph at lines 1217--1217
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 667--680
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1214--1227
  [][] 
  []
 
-[49]
-Underfull \hbox (badness 10000) in paragraph at lines 694--694
+[63]
+Underfull \hbox (badness 10000) in paragraph at lines 1241--1241
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (13.19101pt too wide) in paragraph at lines 698--698
+Overfull \hbox (13.19101pt too wide) in paragraph at lines 1245--1245
 []|\T1/phv/m/n/10 (-20) Ordem_Sequencial_Trilha| 
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 691--704
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1238--1251
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 716--716
+Underfull \hbox (badness 10000) in paragraph at lines 1263--1263
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 713--724
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1260--1271
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 736--736
+Underfull \hbox (badness 10000) in paragraph at lines 1283--1283
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 2762) in paragraph at lines 738--739
+Underfull \hbox (badness 2762) in paragraph at lines 1285--1286
 []|\T1/phv/m/n/10 (+20) Descrição do in-te-resse
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 733--740
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1280--1287
  [][] 
  []
 
-[50]
-Underfull \hbox (badness 10000) in paragraph at lines 752--752
+[64]
+Underfull \hbox (badness 10000) in paragraph at lines 1299--1299
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 749--758
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1296--1305
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 770--770
+Underfull \hbox (badness 10000) in paragraph at lines 1317--1317
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 772--773
+Underfull \hbox (badness 10000) in paragraph at lines 1319--1320
 []|\T1/phv/m/n/10 (+20) Nome da au-to-ri-
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 767--774
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1314--1321
  [][] 
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 783--790
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1330--1337
  [][] 
  []
 
 
-Underfull \hbox (badness 3386) in paragraph at lines 804--805
+Underfull \hbox (badness 3386) in paragraph at lines 1351--1352
 []|\T1/phv/m/n/10 (+20) Registo pro-fis-si-o-nal da
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 799--808
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1346--1355
  [][] 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 822--822
+Underfull \hbox (badness 10000) in paragraph at lines 1369--1369
 []|\T1/phv/m/n/10 (+20) PK,
  []
 
 
-Overfull \hbox (20.13554pt too wide) in paragraph at lines 819--834
+Overfull \hbox (20.13554pt too wide) in paragraph at lines 1366--1381
  [][] 
  []
 
-[51]
-Underfull \hbox (badness 1147) in paragraph at lines 855--855
+[65]
+Underfull \hbox (badness 1147) in paragraph at lines 1402--1402
 []|\T1/phv/m/n/10 (+20) Configuração do Am-bi-ente
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 857--857
+Underfull \hbox (badness 10000) in paragraph at lines 1404--1404
 []|\T1/phv/m/n/10 (+20) Desenvolvimento do Mó-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 857--857
+Underfull \hbox (badness 10000) in paragraph at lines 1404--1404
 \T1/phv/m/n/10 (+20) dulo de Au-ten-ti-ca-ção
  []
 
 
-Underfull \hbox (badness 6316) in paragraph at lines 867--867
+Underfull \hbox (badness 6316) in paragraph at lines 1414--1414
 []|\T1/phv/m/n/10 (+20) Módulo de Fe-ed-backs e
  []
 
 
-Underfull \hbox (badness 8056) in paragraph at lines 867--868
+Underfull \hbox (badness 8056) in paragraph at lines 1414--1415
 []|\T1/phv/m/n/10 (+20) Funcionalidade de in-te-ra-ção
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 871--871
+Underfull \hbox (badness 10000) in paragraph at lines 1418--1418
 []|\T1/phv/m/n/10 (+20) Testes de Per-for-mance,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 873--873
+Underfull \hbox (badness 10000) in paragraph at lines 1420--1420
 []|\T1/phv/m/n/10 (+20) V. En-cer-ra-
  []
 
-) (./capitulos/analise-financeira.tex [52] [53]
+) (./capitulos/analise-financeira.tex [66] [67]
 Overfull \hbox (9.00635pt too wide) in paragraph at lines 27--28
 []\T1/phv/b/n/12 (-20) Receita Men-sal: \T1/phv/m/n/12 (-20) Cap-ta-ção de do-a
 -ções ou fundo da pró-pria ONG de R$ 300,00/mês. 
  []
 
-[54
+[68
 
-]) (./capitulos/conclusao.tex [55]) (./capitulos/trabalhos-futuros.tex))
-[56
+]) (./capitulos/conclusao.tex [69]) (./capitulos/trabalhos-futuros.tex))
+[70
 
 ]
 \openout2 = `estrutura/pos-textual.aux'.
@@ -2139,7 +2147,7 @@ Overfull \hbox (9.00635pt too wide) in paragraph at lines 27--28
 
 bibitemlist
 )) (./pos-textual/glossario.tex) (./pos-textual/apendices.tex)
-(./pos-textual/indices.tex)) [57
+(./pos-textual/indices.tex)) [71
 
 
 ]
@@ -2164,11 +2172,11 @@ Package rerunfilecheck Info: File `documento.brf' has not changed.
 (rerunfilecheck)             Checksum: 92A40DF3A68A1066A93024CC2F002F28;1219.
  ) 
 Here is how much of TeX's memory you used:
- 38840 strings out of 476089
- 742663 string characters out of 5793233
- 1971975 words of memory out of 5000000
- 59463 multiletter control sequences out of 15000+600000
- 611892 words of font info for 387 fonts, out of 8000000 for 9000
+ 38915 strings out of 476089
+ 743309 string characters out of 5793233
+ 2113975 words of memory out of 5000000
+ 59468 multiletter control sequences out of 15000+600000
+ 614000 words of font info for 424 fonts, out of 8000000 for 9000
  61 hyphenation exceptions out of 8191
  115i,17n,134p,1844b,643s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></us
@@ -2178,10 +2186,10 @@ e/texmf-dist/fonts/type1/urw/helvetic/uhvb8a.pfb></usr/share/texlive/texmf-dist
 /fonts/type1/urw/helvetic/uhvbo8a.pfb></usr/share/texlive/texmf-dist/fonts/type
 1/urw/helvetic/uhvr8a.pfb></usr/share/texlive/texmf-dist/fonts/type1/urw/helvet
 ic/uhvro8a.pfb>
-Output written on documento.pdf (58 pages, 1147700 bytes).
+Output written on documento.pdf (72 pages, 1185537 bytes).
 PDF statistics:
- 891 PDF objects out of 1000 (max. 8388607)
- 777 compressed objects within 8 object streams
- 183 named destinations out of 1000 (max. 500000)
- 48288 words of extra memory for PDF output out of 51595 (max. 10000000)
+ 960 PDF objects out of 1000 (max. 8388607)
+ 831 compressed objects within 9 object streams
+ 199 named destinations out of 1000 (max. 500000)
+ 50344 words of extra memory for PDF output out of 51595 (max. 10000000)
 
