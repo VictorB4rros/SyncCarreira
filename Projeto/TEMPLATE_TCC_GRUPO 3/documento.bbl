@@ -20,4 +20,9 @@ Dispon{\'\i}vel em: \url{https://www.gov.br/inep/pt-br/areas-de-atuacao/pesquisa
 \abntrefinfo{KOTLER \& KELLER}{KOTLER; KELLER}{2012}
 {KOTLER, P.; KELLER, K.~L. \textbf{Administração de Marketing}. 14. ed. São Paulo: Pearson Education do Brasil, 2012.}
 
+\bibitem[SOMMERVILLE 2011]{sommerville2011}
+\abntrefinfo{SOMMERVILLE}{SOMMERVILLE}{2011}
+{SOMMERVILLE, I.
+\textbf{Engenharia de Software.}, 14. ed. São Paulo: Pearson Prentice Hall, 2011.}
+
 \end{thebibliography}
