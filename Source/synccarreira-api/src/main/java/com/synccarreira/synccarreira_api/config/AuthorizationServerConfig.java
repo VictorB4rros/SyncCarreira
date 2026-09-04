@@ -35,6 +35,7 @@ import org.springframework.security.oauth2.server.authorization.settings.OAuth2T
 import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.oauth2.server.authorization.token.*;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -62,6 +63,9 @@ public class AuthorizationServerConfig {
 	@Autowired
 	private WebSecurityConfig webSecurityConfig;
 
+	@Autowired
+	private CorsConfigurationSource corsConfigurationSource;
+
 	@Bean
 	@Order(2)
 	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -82,6 +86,8 @@ public class AuthorizationServerConfig {
 				);
 
 		http.securityMatcher("/oauth2/**", "/.well-known/**").with(authorizationServerConfigurer, Customizer.withDefaults());
+
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
 
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 
