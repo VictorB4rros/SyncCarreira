@@ -3,6 +3,9 @@ package com.synccarreira.synccarreira_api.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tb_instituicao")
 @NoArgsConstructor
@@ -32,4 +35,8 @@ public class Institution {
     @Getter
     @Setter
     private boolean active;
+
+    @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL)
+    @Getter
+    private List<Class> classList = new ArrayList<>();
 }

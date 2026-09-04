@@ -1,18 +1,14 @@
 package com.synccarreira.synccarreira_api.dto;
 
-import com.synccarreira.synccarreira_api.entities.Student;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentDTO {
+public class StudentDetailsDTO {
 
     @Getter
     private Long id;
@@ -26,9 +22,6 @@ public class StudentDTO {
     private String email;
 
     @Getter
-    private Set<RoleDTO> roles = new HashSet<>();
-
-    @Getter
     private String schollarYear;
 
     @Getter
@@ -37,13 +30,9 @@ public class StudentDTO {
     @Getter
     private String race;
 
-    public StudentDTO(Student entity) {
-        this.id = entity.getId();
-        this.name = entity.getName();
-        this.email = entity.getEmail();
-        entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
-        this.schollarYear = entity.getSchollarYear();
-        this.schoolType = entity.getSchoolType();
-        this.race = entity.getRace();
-    }
+    @Getter
+    private String className;
+
+    @Getter
+    private String institutionName;
 }

@@ -34,9 +34,8 @@ public class StudentService {
     private RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public Page<StudentDTO> findAll(Pageable pageable) {
-        Page<Student> result = studentRepository.findAll(pageable);
-        return result.map(StudentDTO::new);
+    public Page<StudentDetailsDTO> findAll(Pageable pageable) {
+        return studentRepository.searchAllPaged(pageable);
     }
 
     @Transactional(readOnly = true)
