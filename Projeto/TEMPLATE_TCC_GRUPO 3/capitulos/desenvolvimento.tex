@@ -985,7 +985,7 @@ Por fim, o diagrama estabelece uma premissa de segurança global para a platafor
 \begin{figure}[H]
     \centering
     \caption{Diagrama de Casos de Uso.}
-    \label{fig_grafico_inep1}
+    \label{diagrama_casos_de_uso}
     \includegraphics[width=0.85\textwidth]{img/diagrama-casos-de-uso.png}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
@@ -1055,16 +1055,53 @@ O projeto \textit{SyncCarreira} adota a metodologia ágil Scrum, utilizando Hist
 
 \section{Arquitetura}
 
-O software \textit{SyncCarreira}. adota o modelo de implantação \textit{Software as a Service} (SaaS), focado na distribuição do sistema em nuvem para instituições de ensino. Sob a ótica do desenvolvimento web, o projeto foi concebido a partir da separação das responsabilidades entre o cliente e o servidor, sendo a comunicação intermediada por uma API REST.
+\subsection{Definições da Arquitetura}
+
+O software SyncCarreira adota o modelo de implantação \textit{Software as a Service} (SaaS), focado na distribuição do sistema em nuvem para instituições de ensino. Sob a ótica do desenvolvimento web, o projeto foi concebido a partir da separação das responsabilidades entre o cliente e o servidor, sendo a comunicação intermediada por uma API REST.
 
 Para a camada de visualização, o sistema utiliza a abordagem de \textit{Single Page Application} (SPA), a qual propicia uma experiência de uso responsiva, interativa e econômica no consumo de banda, visto que dispensa recarregamentos completos de página a cada interação do usuário. No que tange à lógica do servidor, a aplicação fundamenta-se no padrão de Arquitetura em Camadas (Layered Architecture). Esse padrão, amplamente consolidado no ecossistema Spring Boot, assegura que o código seja altamente coeso e de baixo acoplamento, já que cada camada detém uma finalidade delimitada e apenas se comunica de modo estrito com as camadas diretamente adjacentes.
 
+\subsubsection{Padrão em Camadas (\textit{Layered Architecture})}
 
-\subsection{Definições da Arquitetura}
+O backend segue o padrão de arquitetura em camadas amplamente adotado em aplicações Spring Boot. Cada camada tem uma responsabilidade bem definida e se comunica exclusivamente com a camada adjacente, promovendo separação de responsabilidades, facilidade de manutenção e testabilidade.
 
-O \textit{SyncCarreira} foi estruturado com base em uma Arquitetura em Camadas (\textit{Layered Architecture}), que garante a separação de responsabilidades entre a interface de usuário, a lógica de negócios e a persistência de dados. Esta definição arquitetural prioriza a manutenibilidade, permitindo que alterações na interface ou nas regras de negócio ocorram sem impactar o núcleo do sistema.
+\begin{table}[H]
+\ABNTEXfontereduzida
+\caption[Padrão em camadas e responsabilidades.]{Padrão em camadas e responsabilidades.}
+\label{tab-camadas-backend}
+\begin{tabular}{p{4.6cm}|p{4.6cm}|p{4.6cm}}
+\textbf{Camada} & \textbf{Pacote} & \textbf{Responsabilidade} \\
+\hline
+Controllers & controllers/ & Recebe requisições HTTP, valida entrada e devolve respostas. \\
+\hline
+Services & services/ & Contém toda a lógica de negócio da aplicação. \\
+\hline
+Repositories & repositories/ & Acesso ao banco de dados via Spring Data JPA. \\
+\hline
+Entities & entities/ & Mapeamento das tabelas do banco de dados. \\
+\hline
+DTOs & dto/ & Objetos de transferência de dados entre camadas e cliente. \\
 
-O sistema gerencia o ciclo de vida da informação através de módulos de alta coesão, abstraindo operações básicas de persistência para níveis de governança e orquestração de dados:
+\end{tabular}
+\legend{Fonte: Autoria própria (2026).}
+\end{table}
+
+\subsubsection{Herança de Entidades com JPA (\textit{JOINED Strategy})}
+
+O domínio de usuários utiliza herança de tabelas com a estratégia JOINED do JPA. A entidade base User é persistida em tb\_usuario e contém os atributos comuns a todos os usuários (id, nome, email, senha e roles). As entidades filhas Student e Psychologist possuem tabelas próprias (tb\_aluno e tb\_psicologa) que armazenam apenas seus atributos específicos, com uma chave estrangeira referenciando tb\_usuario.
+
+A razão do uso de Joined é que essa estratégia evita colunas nulas em uma única tabela (estratégia SINGLE\_TABLE) e mantém a integridade referencial. Cada tipo de usuário tem sua tabela própria, o que facilita consultas específicas por perfil e garante que campos obrigatórios de cada subtipo sejam sempre preenchidos.
+
+\subsubsection{Separação de DTOs por Operação}
+
+O projeto adota a boa prática de criar DTOs distintos para cada operação, evitando expor mais dados do que o necessário em cada contexto. O padrão utilizado é:
+\begin{itemize}
+    \item DTO de leitura (ex: StudentDTO): retorna os dados ao cliente após uma consulta ou operação de escrita.
+    \item DTO de inserção (ex: StudentInsertDTO): recebe os dados necessários para criar um novo registro, incluindo senha.
+    \item DTO de atualização (ex: StudentUpdateDTO): limita os campos que podem ser alterados em um update, excluindo, por exemplo, a senha e o id.
+\end{itemize}
+
+Muitos dos DTOs de leitura são implementados como Java Records, oferecendo imutabilidade e concisão sintática. Os DTOs de inserção e atualização que precisam de validações com Bean Validation utilizam classes convencionais com anotações como @NotNull e @Email.
 
 \subsection{Diagrama da Arquitetura}
 
@@ -1095,7 +1132,7 @@ Complementando a visão estrutural da arquitetura, o Diagrama de Componentes UML
  
 \begin{figure}[H]
     \centering
-    \caption{Diagrama de Componentes.}
+    \caption{Diagrama de Componentes do SyncCarreira.}
     \label{fig_diagrama_componentes}
     \includegraphics[width=0.95\textwidth]{img/diag-componentes.png}
     \legend{Fonte: Produzido pelos autores (2026).}
@@ -1113,9 +1150,35 @@ O \textit{front-end} foi desenvolvido com abordagem \textit{mobile-first}, utili
 
 O \textit{back-end} utiliza Java com o \textit{framework} \textit{Spring Boot}, estruturado sob o padrão de arquitetura em camadas (Controller, Service, Repository, Entity), o que garante a separação de responsabilidades, facilidade de manutenção e a robustez necessária para as regras de negócio complexas das trilhas vocacionais.
 
-\subsection{Banco de Dados}
-
-O sistema utiliza o banco de dados MySQL para o armazenamento das entidades e registros da plataforma, garantindo a integridade, a consistência dos dados e o suporte eficiente às transações relacionais necessárias para o funcionamento das trilhas de orientação e perfis de usuário.
+\begin{table}[H]
+\centering
+\ABNTEXfontereduzida
+\caption[Tecnologias utilizadas no back-end.]{Tecnologias utilizadas no back-end.}
+\label{tab-tecnologias-backend}
+\begin{tabular}{p{4.5cm}|c|p{7.5cm}}
+\textbf{Tecnologia} & \textbf{Versão} & \textbf{Finalidade} \\
+\hline
+Java & 21+ & Linguagem principal do backend \\
+\hline
+Spring Boot & 4.x & Framework principal da aplicação \\
+\hline
+Spring Security + OAuth2 & --- & Autenticação e autorização via JWT \\
+\hline
+Spring Data JPA & --- & Persistência e mapeamento objeto-relacional \\
+\hline
+Hibernate & --- & Implementação JPA / ORM \\
+\hline
+H2 Database & --- & Banco em memória para ambiente de testes \\
+\hline
+Lombok & --- & Redução de boilerplate (getters, setters, construtores) \\
+\hline
+SpringDoc / Swagger UI & --- & Documentação interativa dos endpoints \\
+\hline
+Gradle & --- & Gerenciamento de dependências e build \\
+\hline
+\end{tabular}
+\legend{Fonte: Autoria própria (2026).}
+\end{table}
 
 \subsection{Infraestrutura}
 
@@ -1123,7 +1186,25 @@ A estratégia de infraestrutura baseia-se em um modelo SaaS (\textit{Software as
 
 \subsubsection{Amazon Web Services (AWS)}
 
-A aplicação é hospedada na AWS (\textit{Amazon Web Services}), aproveitando a infraestrutura global para garantir a disponibilidade exigida para o horário letivo. Além disso, a segurança baseada em \textit{tokens} JWT (\textit{JSON Web Token}) é implementada para garantir a autorização e o isolamento lógico entre os diferentes perfis (Administrador, Psicóloga e Aluno) e entre diferentes instituições, cumprindo as diretrizes de segurança da informação.
+A aplicação é hospedada na AWS (\textit{Amazon Web Services}), aproveitando a infraestrutura global para garantir a disponibilidade exigida para o horário letivo. Além disso, a segurança baseada em tokens JWT (\textit{JSON Web Token}) é implementada para garantir a autorização e o isolamento lógico entre os diferentes perfis (Administrador, Psicóloga e Aluno) e entre diferentes instituições, cumprindo as diretrizes de segurança da informação.
+
+A escolha pela AWS justifica-se pela sua confiabilidade, pelo amplo ecossistema de serviços gerenciados e pela disponibilidade de créditos promocionais para projetos acadêmicos e de impacto social, o que viabiliza a operação do \textit{SyncCarreira} sem custos iniciais de infraestrutura \cite{aws2026}.
+
+A arquitetura de implantação foi estruturada com os seguintes serviços:
+
+EC2 (\textit{Elastic Compute Cloud}) — fornece a instância de servidor virtual Linux que hospeda o back-end da aplicação, desenvolvido em Java com \textit{Spring Boot}. A instância processa as requisições REST provenientes do front-end, executa as regras de negócio e gerencia a comunicação com o banco de dados. O dimensionamento da instância foi definido para atender à demanda do ambiente escolar, com capacidade de escalonamento vertical conforme o crescimento do número de instituições atendidas.
+
+S3 (\textit{Simple Storage Service}) — armazena e serve os arquivos estáticos que compõem o front-end React (HTML, CSS e JavaScript). Por se tratar de uma \textit{Single Page Application} (SPA), todos os recursos da interface são compilados em arquivos estáticos durante o processo de \textit{build} e distribuídos diretamente pelo S3, eliminando a necessidade de um servidor web dedicado para a camada de apresentação e reduzindo os custos operacionais.
+
+RDS (\textit{Relational Database Service}) com MySQL — provê o banco de dados relacional gerenciado que persiste todas as entidades do sistema: usuários, trilhas, perguntas, respostas e agendamentos. Por ser um serviço gerenciado, o RDS elimina a necessidade de administração manual do servidor de banco de dados, oferecendo backups automatizados, aplicação de patches de segurança e alta disponibilidade nativos. A conexão entre a instância EC2 e o RDS é realizada via JDBC, de forma privada dentro da rede da AWS.
+
+VPC (\textit{Virtual Private Cloud}) — define a rede virtual privada que isola logicamente todos os recursos da aplicação na nuvem. A VPC estabelece sub-redes públicas e privadas: o bucket S3 e o balanceador de carga ficam expostos à internet, enquanto a instância EC2 e a instância RDS operam em sub-redes privadas, inacessíveis diretamente de fora da rede. Essa segregação é fundamental para proteger o banco de dados e o servidor de aplicação de acessos externos não autorizados.
+
+\textit{Security Groups} — atuam como firewalls virtuais no nível de instância, controlando o tráfego de entrada e saída de cada recurso. As regras configuradas garantem que: a instância EC2 aceite requisições HTTPS apenas provenientes do \textit{front-end} hospedado no S3; a instância RDS aceite conexões na porta 3306 exclusivamente a partir da instância EC2; e nenhum recurso da camada de dados seja acessível diretamente pela internet. Essa política de mínimo privilégio é especialmente relevante dado que o sistema processa dados sensíveis de menores de idade, em conformidade com os requisitos da LGPD.
+
+\subsection{Banco de Dados}
+
+O sistema utiliza o banco de dados MySQL para o armazenamento das entidades e registros da plataforma, garantindo a integridade, a consistência dos dados e o suporte eficiente às transações relacionais necessárias para o funcionamento das trilhas de orientação e perfis de usuário.
 
 \section{Testes e Manutenibilidade}
 
@@ -1147,15 +1228,33 @@ A execução do plano de testes contempla:
 
 \section{Segurança, Privacidade e Legislação}
 
-Esta seção estabelece os compromissos do \textit{SyncCarreira} com a proteção de dados e a conformidade legal, priorizando um ambiente de confiança para a interação entre alunos, psicólogos e instituições de ensino. A segurança da informação é tratada como um requisito fundamental para a operação do sistema, assegurando que o tratamento de dados pessoais ocorra de forma ética e protegida.
-
 \subsection{Critérios de Segurança e Privacidade}
 
-O sistema foi projetado para garantir que as informações de cada participante permaneçam restritas ao contexto da sua própria instituição de ensino. O acesso à plataforma é rigorosamente controlado, assegurando que cada usuário --- seja ele aluno, psicólogo ou administrador --- visualize apenas os dados necessários para o exercício de sua função. Essa estrutura de governança impede o cruzamento de informações entre diferentes escolas ou grupos, protegendo o sigilo e a privacidade dos registros individuais. Além disso, todas as informações sensíveis dos estudantes são armazenadas com proteção rigorosa contra acessos não autorizados, reforçando o cuidado necessário com a jornada de autodescoberta dos jovens.
+Considerando que a orientação vocacional demanda sigilo terapêutico e lida com registros individuais evolutivos, o projeto incorpora parâmetros de segurança rigorosos.
+
+Autenticação e Autorização: O software implementa o protocolo de controle \textit{OAuth2} associado à emissão de tokens JWT (\textit{JSON Web Token}) por meio das ferramentas \textit{Spring Authorization Server} e \textit{Resource Server}.
+
+Isolamento Perfilado (RBAC): Os níveis de acesso baseiam-se nos papéis (roles) de Administrador, Psicóloga e Aluno. O escopo de proteção nos endpoints intercepta a requisição e assegura a validação individual de permissão, frustrando ataques de elevação de privilégio ou acessos cruzados.
+
+Isolamento Multi-Tenant: A arquitetura segmenta os registros por instituições cadastradas de modo a coibir vazamentos verticais de informações e de histórico escolar para terceiros não autorizados.
+
+Criptografia: Todas as senhas cadastradas nas contas dos usuários são codificadas antes do processo de inserção no banco de dados.
+
+Proteção do Histórico (Soft Deletion): Exclusões de itens, como perguntas ou instituições, utilizam lógicas de inativação referencial (exclusão lógica) no lugar da supressão direta. Tal recurso defende o histórico terapêutico pregresso dos alunos que já executaram atividades relacionadas a tais conteúdos.
+
+Rastreabilidade: Através do mapeamento da implantação sistêmica de logs de auditoria, o sistema registra silenciosamente dados sobre a autoria, a ação e o momento cronológico das modificações de curadoria e administração executadas pelos usuários em cargos de gerência.
 
 \subsection{Observância à Legislação}
 
-O \textit{SyncCarreira} está em conformidade com as diretrizes da Lei Geral de Proteção de Dados (LGPD), tratando a privacidade como um compromisso central do serviço prestado. A plataforma foi estruturada para respeitar o direito de controle do usuário sobre seus próprios dados, oferecendo mecanismos que permitem às instituições parceiras gerenciar a permanência das informações, incluindo o procedimento para exclusão ou anonimização dos registros quando o vínculo do aluno com a escola é finalizado. O sistema assegura que os dados coletados sejam utilizados exclusivamente para a finalidade de orientação vocacional, garantindo total transparência e conformidade com o cenário legal vigente para o tratamento de dados pessoais no ambiente educacional.
+O tratamento de dados dentro do sistema atende às diretrizes normativas propostas pela Lei Geral de Proteção de Dados Pessoais (LGPD).
+
+Pela premissa da jornada vocacional, os questionários do aluno alimentam o banco de dados com percepções sobre características emocionais e de núcleo sociofamiliar, classificando essas informações como dados pessoais sensíveis nos ditames legais.
+
+Como amparo normativo prévio a tal atividade — que envolve em grande parte alunos menores de idade —, o sistema prescreve obrigatoriamente, em seu fluxo de primeiro acesso, a exibição e a anuência de um Termo de Consentimento Livre e Esclarecido (TCLE).
+
+O repouso desses registros na nuvem é guarnecido com rotinas de criptografia que asseguram que a visualização só aconteça a partir da chave da própria plataforma ou de contas autenticadas com permissão curatorial.
+
+Por fim, respeitando os direitos primordiais dos usuários expostos na LGPD, o modelo do sistema abrange fluxos voltados para atender à exclusão definitiva ou à anonimização reversível dos dados e perfis, garantindo transparência à instituição e ao titular em caso de desligamentos contratuais ou solicitação legal.
 
 \section{Modelo de Banco de Dados}
 

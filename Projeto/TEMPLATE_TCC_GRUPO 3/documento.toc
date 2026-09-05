@@ -47,34 +47,37 @@
 \contentsline {paragraph}{\numberline {4.2.1.0.3}Perfil: Administrador (Governança, Segurança e Escala)}{59}{paragraph.4.2.1.0.3}%
 \contentsline {section}{\numberline {4.3}Arquitetura}{60}{section.4.3}%
 \contentsline {subsection}{\numberline {4.3.1}Definições da Arquitetura}{60}{subsection.4.3.1}%
-\contentsline {subsection}{\numberline {4.3.2}Diagrama da Arquitetura}{60}{subsection.4.3.2}%
-\contentsline {section}{\numberline {4.4}Tecnologias}{62}{section.4.4}%
-\contentsline {subsection}{\numberline {4.4.1}Front-end}{62}{subsection.4.4.1}%
-\contentsline {subsection}{\numberline {4.4.2}Back-end}{62}{subsection.4.4.2}%
-\contentsline {subsection}{\numberline {4.4.3}Banco de Dados}{62}{subsection.4.4.3}%
-\contentsline {subsection}{\numberline {4.4.4}Infraestrutura}{63}{subsection.4.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.4.1}Amazon Web Services (AWS)}{63}{subsubsection.4.4.4.1}%
-\contentsline {section}{\numberline {4.5}Testes e Manutenibilidade}{63}{section.4.5}%
-\contentsline {subsection}{\numberline {4.5.1}Plano de Testes}{63}{subsection.4.5.1}%
-\contentsline {section}{\numberline {4.6}Segurança, Privacidade e Legislação}{64}{section.4.6}%
-\contentsline {subsection}{\numberline {4.6.1}Critérios de Segurança e Privacidade}{64}{subsection.4.6.1}%
-\contentsline {subsection}{\numberline {4.6.2}Observância à Legislação}{64}{subsection.4.6.2}%
-\contentsline {section}{\numberline {4.7}Modelo de Banco de Dados}{65}{section.4.7}%
-\contentsline {subsection}{\numberline {4.7.1}Modelo Entidade Relacionamento -- MER}{65}{subsection.4.7.1}%
-\contentsline {subsection}{\numberline {4.7.2}Diagrama Entidade Relacionamento -- DER (Tabelas)}{66}{subsection.4.7.2}%
-\contentsline {subsection}{\numberline {4.7.3}Dicionário de Dados}{66}{subsection.4.7.3}%
-\contentsline {section}{\numberline {4.8}Duração / Cronograma}{70}{section.4.8}%
-\contentsline {subsection}{\numberline {4.8.1}Análise da Duração do Projeto}{70}{subsection.4.8.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.1}Padrão em Camadas (\textit {Layered Architecture})}{60}{subsubsection.4.3.1.1}%
+\contentsline {subsubsection}{\numberline {4.3.1.2}Herança de Entidades com JPA (\textit {JOINED Strategy})}{61}{subsubsection.4.3.1.2}%
+\contentsline {subsubsection}{\numberline {4.3.1.3}Separação de DTOs por Operação}{61}{subsubsection.4.3.1.3}%
+\contentsline {subsection}{\numberline {4.3.2}Diagrama da Arquitetura}{61}{subsection.4.3.2}%
+\contentsline {section}{\numberline {4.4}Tecnologias}{63}{section.4.4}%
+\contentsline {subsection}{\numberline {4.4.1}Front-end}{63}{subsection.4.4.1}%
+\contentsline {subsection}{\numberline {4.4.2}Back-end}{63}{subsection.4.4.2}%
+\contentsline {subsection}{\numberline {4.4.3}Infraestrutura}{64}{subsection.4.4.3}%
+\contentsline {subsubsection}{\numberline {4.4.3.1}Amazon Web Services (AWS)}{64}{subsubsection.4.4.3.1}%
+\contentsline {subsection}{\numberline {4.4.4}Banco de Dados}{65}{subsection.4.4.4}%
+\contentsline {section}{\numberline {4.5}Testes e Manutenibilidade}{65}{section.4.5}%
+\contentsline {subsection}{\numberline {4.5.1}Plano de Testes}{65}{subsection.4.5.1}%
+\contentsline {section}{\numberline {4.6}Segurança, Privacidade e Legislação}{66}{section.4.6}%
+\contentsline {subsection}{\numberline {4.6.1}Critérios de Segurança e Privacidade}{66}{subsection.4.6.1}%
+\contentsline {subsection}{\numberline {4.6.2}Observância à Legislação}{67}{subsection.4.6.2}%
+\contentsline {section}{\numberline {4.7}Modelo de Banco de Dados}{67}{section.4.7}%
+\contentsline {subsection}{\numberline {4.7.1}Modelo Entidade Relacionamento -- MER}{67}{subsection.4.7.1}%
+\contentsline {subsection}{\numberline {4.7.2}Diagrama Entidade Relacionamento -- DER (Tabelas)}{68}{subsection.4.7.2}%
+\contentsline {subsection}{\numberline {4.7.3}Dicionário de Dados}{69}{subsection.4.7.3}%
+\contentsline {section}{\numberline {4.8}Duração / Cronograma}{73}{section.4.8}%
+\contentsline {subsection}{\numberline {4.8.1}Análise da Duração do Projeto}{73}{subsection.4.8.1}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
-\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Análise Financeira}}{72}{chapter.5}%
-\contentsline {section}{\numberline {5.1}Custos}{72}{section.5.1}%
-\contentsline {section}{\numberline {5.2}Receitas}{72}{section.5.2}%
-\contentsline {section}{\numberline {5.3}Cenário Realista}{72}{section.5.3}%
-\contentsline {section}{\numberline {5.4}Cenário Otimista}{72}{section.5.4}%
-\contentsline {section}{\numberline {5.5}Cenário Pessimista}{73}{section.5.5}%
+\contentsline {chapter}{\chapternumberline {5}\MakeTextUppercase []{Análise Financeira}}{75}{chapter.5}%
+\contentsline {section}{\numberline {5.1}Custos}{75}{section.5.1}%
+\contentsline {section}{\numberline {5.2}Receitas}{75}{section.5.2}%
+\contentsline {section}{\numberline {5.3}Cenário Realista}{75}{section.5.3}%
+\contentsline {section}{\numberline {5.4}Cenário Otimista}{75}{section.5.4}%
+\contentsline {section}{\numberline {5.5}Cenário Pessimista}{76}{section.5.5}%
 \setlength {\cftchapterindent }{0em} \setlength {\cftchapternumwidth }{\cftlastnumwidth }
-\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Considerações Finais}}{74}{chapter.6}%
-\contentsline {section}{\numberline {6.1}Dificuldades, Escolhas e Descartes}{74}{section.6.1}%
+\contentsline {chapter}{\chapternumberline {6}\MakeTextUppercase []{Considerações Finais}}{77}{chapter.6}%
+\contentsline {section}{\numberline {6.1}Dificuldades, Escolhas e Descartes}{77}{section.6.1}%
 \vspace {\cftbeforechapterskip }
 \setlength {\cftchapterindent }{\cftlastnumwidth } \setlength {\cftchapternumwidth }{2em}
-\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{75}{section*.47}%
+\contentsline {chapter}{\MakeTextUppercase []{Refer\^encias}}{78}{section*.49}%
