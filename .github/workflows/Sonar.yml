@@ -21,6 +21,21 @@ jobs:
           java-version: 21
           distribution: 'temurin'
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: Source/synccarreira-frontend/package-lock.json
+
+      - name: Install frontend dependencies
+        working-directory: Source/synccarreira-frontend
+        run: npm ci
+
+      - name: Build frontend
+        working-directory: Source/synccarreira-frontend
+        run: npm run build
+
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
@@ -48,3 +63,8 @@ jobs:
           -Dsonar.projectKey=synccarreira
           -Dsonar.organization=synccarreira
           -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.projectBaseDir=${{ github.workspace }}
+          -Dsonar.sources=Source/synccarreira-api/src/main/java,Source/synccarreira-frontend/src
+          -Dsonar.tests=Source/synccarreira-api/src/test/java
+          -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**
+          -Dsonar.qualitygate.wait=true
