@@ -27,6 +27,14 @@ Neste diretório encontra-se todo o código-fonte (código de desenvolvimento) d
 * **Front-end:** Interface de usuário interativa e responsiva.
 * **Back-end:** Motor do sistema e lógica de negócios, desenvolvido em arquitetura de camadas utilizando Java e Spring Boot.
 * **Banco de Dados:** Scripts de criação e população do banco de dados (MySQL) para o armazenamento seguro e criptografado de dados sensíveis e perfis de usuários (Administrador, Psicóloga e Aluno).
+  
+### 4. `📁 .github/workflows/`
+Diretório destinado à automação de integração contínua (CI - Continuous Integration) por meio do GitHub Actions. Nele estão configurados os fluxos automatizados que garantem a integridade da aplicação e a governança de código:
+* **Automação de Build e Testes:** Pipelines que compilam o projeto e executam testes automatizados a cada pull request ou push, prevenindo que alterações quebrem o ambiente principal.
+* **Análise Estática de Código (Sonar / SonarCloud):** Ferramenta integrada ao fluxo de CI responsável por inspecionar o código-fonte de forma contínua, identificando:
+* **Qualidade e Manutenibilidade:** Detecção de code smells (más práticas), duplicação de trechos e cálculo de dívida técnica.
+* **Confiabilidade e Segurança:** Identificação precoce de bugs lógicos, vulnerabilidades de segurança e falhas que possam comprometer dados sensíveis da aplicação.
+* **Garantia de Padrões (Quality Gate):** Estabelece critérios mínimos de qualidade que devem ser atendidos antes que um novo código seja integrado à branch principal, alinhando o desenvolvimento às melhores práticas de Engenharia de Software.
 
 ---
 
