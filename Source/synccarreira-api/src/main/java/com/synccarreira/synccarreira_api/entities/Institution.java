@@ -1,8 +1,10 @@
 package com.synccarreira.synccarreira_api.entities;
 
+import com.synccarreira.synccarreira_api.entities.enums.InstitutionType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,22 +23,48 @@ public class Institution {
     @Setter
     private Long id;
 
-    @Column(name = "nome_instituicao")
+    @Column(name = "razao_social", nullable = false)
     @Getter
     @Setter
-    private String name;
+    private String legalName;
+
+    @Column(name = "nome_fantasia")
+    @Getter
+    @Setter
+    private String tradeName;
 
     @Column(name = "cnpj_instituicao")
     @Getter
     @Setter
     private String cnpj;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_instituicao", nullable = false, length = 20)
+    @Getter
+    @Setter
+    private InstitutionType type;
+
     @Column(name = "ativo")
     @Getter
     @Setter
-    private boolean active;
+    private Boolean active;
+
+    @Column(name = "criado_em", nullable = false)
+    @Getter
+    @Setter
+    private Instant createdAt;
 
     @OneToMany(mappedBy = "institution", cascade = CascadeType.ALL)
     @Getter
-    private List<Class> classList = new ArrayList<>();
+    private List<SchoolClass> schoolClassList = new ArrayList<>();
+
+    @PrePersist
+    void onCreate() {
+        if (createdAt == null) {
+            createdAt = Instant.now();
+        }
+        if (active == null) {
+            active = true;
+        }
+    }
 }

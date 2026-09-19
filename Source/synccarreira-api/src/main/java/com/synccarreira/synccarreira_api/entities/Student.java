@@ -18,7 +18,7 @@ public class Student extends User {
     @Column(name = "ano_escolaridade")
     @Getter
     @Setter
-    private String schollarYear;
+    private String scholarYear;
 
     @Column(name = "tipo_escola")
     @Getter
@@ -42,7 +42,7 @@ public class Student extends User {
     @JoinColumn(name = "fk_id_turma")
     @Getter
     @Setter
-    private Class determinedClass;
+    private SchoolClass determinedSchoolClass;
 
     @Column(name = "score_humanas")
     @Getter @Setter
