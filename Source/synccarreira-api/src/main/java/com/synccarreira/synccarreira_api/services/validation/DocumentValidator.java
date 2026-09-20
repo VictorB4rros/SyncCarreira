@@ -2,7 +2,8 @@ package com.synccarreira.synccarreira_api.services.validation;
 
 public final class DocumentValidator {
 
-    public DocumentValidator() {
+    private DocumentValidator() {
+        throw new UnsupportedOperationException("Esta é uma classe utilitária e não deve ser instanciada.");
     }
 
     public static String onlyDigits(String value) {

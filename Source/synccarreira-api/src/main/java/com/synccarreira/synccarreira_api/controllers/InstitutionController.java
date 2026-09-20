@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,8 +21,11 @@ import java.util.List;
 @Tag(name = "Instituições", description = "Gestão de escolas e ONGs parceiras. Somente administrador.")
 public class InstitutionController {
 
-    @Autowired
-    private InstitutionService institutionService;
+    private final InstitutionService institutionService;
+
+    public InstitutionController(final InstitutionService institutionService) {
+        this.institutionService = institutionService;
+    }
 
     @GetMapping
     @Operation(summary = "Lista todas as instituições cadastradas.")
@@ -34,10 +36,8 @@ public class InstitutionController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Busca uma instituição pelo id.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Instituição encontrada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Instituição não encontrada.")
-    })
+    @ApiResponse(responseCode = "200", description = "Instituição encontrada com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Instituição não encontrada.")
     public ResponseEntity<InstitutionDTO> findById(@PathVariable Long id) {
         return ResponseEntity.ok(institutionService.findById(id));
     }
@@ -58,22 +58,18 @@ public class InstitutionController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Edita uma instituição (inclui ativar/desativar).")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Instituição atualizada com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Instituição não encontrada."),
-            @ApiResponse(responseCode = "409", description = "CNPJ já pertence a outra instituição.")
-    })
+    @ApiResponse(responseCode = "200", description = "Instituição atualizada com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Instituição não encontrada.")
+    @ApiResponse(responseCode = "409", description = "CNPJ já pertence a outra instituição.")
     public ResponseEntity<InstitutionDTO> update(@PathVariable Long id, @Valid @RequestBody InstitutionUpdateDTO dto) {
         return ResponseEntity.ok(institutionService.update(id, dto));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Exclui uma instituição sem turmas vinculadas.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Instituição excluída com sucesso."),
-            @ApiResponse(responseCode = "404", description = "Instituição não encontrada."),
-            @ApiResponse(responseCode = "409", description = "Instituição possui turmas vinculadas.")
-    })
+    @ApiResponse(responseCode = "204", description = "Instituição excluída com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Instituição não encontrada.")
+    @ApiResponse(responseCode = "409", description = "Instituição possui turmas vinculadas.")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         institutionService.delete(id);
         return ResponseEntity.noContent().build();

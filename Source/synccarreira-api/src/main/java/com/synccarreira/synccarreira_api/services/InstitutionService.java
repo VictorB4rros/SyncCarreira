@@ -1,5 +1,6 @@
 package com.synccarreira.synccarreira_api.services;
 
+import com.synccarreira.synccarreira_api.controllers.InstitutionController;
 import com.synccarreira.synccarreira_api.dto.InstitutionDTO;
 import com.synccarreira.synccarreira_api.dto.InstitutionInsertDTO;
 import com.synccarreira.synccarreira_api.dto.InstitutionUpdateDTO;
@@ -19,11 +20,14 @@ import java.util.List;
 @Service
 public class InstitutionService {
 
-    @Autowired
-    private InstitutionRepository institutionRepository;
+    private final InstitutionRepository institutionRepository;
 
-    @Autowired
-    private SchoolClassRepository schoolClassRepository;
+    private final SchoolClassRepository schoolClassRepository;
+
+    public InstitutionService(final InstitutionRepository institutionRepository, final SchoolClassRepository schoolClassRepository) {
+        this.institutionRepository = institutionRepository;
+        this.schoolClassRepository = schoolClassRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<InstitutionDTO> findAll() {
