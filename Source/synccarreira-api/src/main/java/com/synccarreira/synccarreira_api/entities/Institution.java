@@ -4,6 +4,7 @@ import com.synccarreira.synccarreira_api.entities.enums.InstitutionType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.io.Serializable;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Institution {
+public class Institution implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

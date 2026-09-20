@@ -44,11 +44,9 @@ public class InstitutionController {
 
     @PostMapping
     @Operation(summary = "Cadastra uma nova instituição. CNPJ obrigatório, validado e único.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Instituição criada com sucesso."),
-            @ApiResponse(responseCode = "409", description = "CNPJ já cadastrado."),
-            @ApiResponse(responseCode = "422", description = "Dados inválidos (ex.: CNPJ inválido).")
-    })
+    @ApiResponse(responseCode = "201", description = "Instituição criada com sucesso.")
+    @ApiResponse(responseCode = "409", description = "CNPJ já cadastrado.")
+    @ApiResponse(responseCode = "422", description = "Dados inválidos (ex.: CNPJ inválido).")
     public ResponseEntity<InstitutionDTO> create(@Valid @RequestBody InstitutionInsertDTO dto) {
         InstitutionDTO created = institutionService.create(dto);
         URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
