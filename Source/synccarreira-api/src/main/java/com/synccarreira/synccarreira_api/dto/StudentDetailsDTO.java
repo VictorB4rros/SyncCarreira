@@ -22,7 +22,7 @@ public class StudentDetailsDTO {
     private String email;
 
     @Getter
-    private String schollarYear;
+    private String scholarYear;
 
     @Getter
     private String schoolType;

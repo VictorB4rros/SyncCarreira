@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
-    @Query(value = "SELECT new com.synccarreira.synccarreira_api.dto.StudentDetailsDTO(obj.id, obj.name, obj.email, obj.schollarYear, obj.schoolType, obj.race, c.name, i.name) " +
+    @Query(value = "SELECT new com.synccarreira.synccarreira_api.dto.StudentDetailsDTO(obj.id, obj.name, obj.email, obj.scholarYear, obj.schoolType, obj.race, c.name, i.legalName) " +
             "FROM Student obj " +
-            "LEFT JOIN obj.determinedClass c " +
+            "LEFT JOIN obj.determinedSchoolClass c " +
             "LEFT JOIN c.institution i",
             countQuery = "SELECT count(obj) FROM Student obj")
     Page<StudentDetailsDTO> searchAllPaged(Pageable pageable);

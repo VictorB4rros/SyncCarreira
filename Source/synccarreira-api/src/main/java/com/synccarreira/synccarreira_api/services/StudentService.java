@@ -89,7 +89,7 @@ public class StudentService {
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setSchoolType(dto.getSchoolType());
-        entity.setSchollarYear(dto.getSchollarYear());
+        entity.setScholarYear(dto.getSchollarYear());
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
         Optional<Role> role = roleRepository.findById(dto.getRoleId());
@@ -100,7 +100,7 @@ public class StudentService {
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setSchoolType(dto.getSchoolType());
-        entity.setSchollarYear(dto.getSchollarYear());
+        entity.setScholarYear(dto.getSchollarYear());
         entity.getRoles().clear();
         Optional<Role> role = roleRepository.findById(dto.getRoleId());
         role.ifPresent(entity::addRole);
