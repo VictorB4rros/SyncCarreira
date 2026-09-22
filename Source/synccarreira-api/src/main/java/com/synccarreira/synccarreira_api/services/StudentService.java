@@ -34,9 +34,8 @@ public class StudentService {
     private RoleRepository roleRepository;
 
     @Transactional(readOnly = true)
-    public Page<StudentDTO> findAll(Pageable pageable) {
-        Page<Student> result = studentRepository.findAll(pageable);
-        return result.map(StudentDTO::new);
+    public Page<StudentDetailsDTO> findAll(Pageable pageable) {
+        return studentRepository.searchAllPaged(pageable);
     }
 
     @Transactional(readOnly = true)
@@ -90,7 +89,7 @@ public class StudentService {
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setSchoolType(dto.getSchoolType());
-        entity.setSchollarYear(dto.getSchollarYear());
+        entity.setScholarYear(dto.getSchollarYear());
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
         Optional<Role> role = roleRepository.findById(dto.getRoleId());
@@ -101,7 +100,7 @@ public class StudentService {
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         entity.setSchoolType(dto.getSchoolType());
-        entity.setSchollarYear(dto.getSchollarYear());
+        entity.setScholarYear(dto.getSchollarYear());
         entity.getRoles().clear();
         Optional<Role> role = roleRepository.findById(dto.getRoleId());
         role.ifPresent(entity::addRole);

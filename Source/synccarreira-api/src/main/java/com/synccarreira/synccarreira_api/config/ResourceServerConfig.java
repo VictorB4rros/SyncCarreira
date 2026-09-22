@@ -30,6 +30,10 @@ public class ResourceServerConfig {
 	@Value("${cors.origins}")
 	private String corsOrigins;
 
+	private static final String INSTITUTIONS = "/institutions/**";
+	private static final String ANSWERS = "/answers/**";
+	private static final String ADMIN = "ADMIN";
+
 	@Bean
 	@Profile("test")
 	@Order(1)
@@ -68,10 +72,14 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/students/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/students/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/answers/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/answers/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/answers/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/answers/**").permitAll());
+				.requestMatchers(HttpMethod.POST, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.GET, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.PUT, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.DELETE, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.POST, INSTITUTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, INSTITUTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, INSTITUTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, INSTITUTIONS).hasRole(ADMIN));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();

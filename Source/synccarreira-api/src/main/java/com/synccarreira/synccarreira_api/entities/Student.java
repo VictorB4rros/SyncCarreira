@@ -1,9 +1,6 @@
 package com.synccarreira.synccarreira_api.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,12 +18,17 @@ public class Student extends User {
     @Column(name = "ano_escolaridade")
     @Getter
     @Setter
-    private String schollarYear;
+    private String scholarYear;
 
     @Column(name = "tipo_escola")
     @Getter
     @Setter
     private String schoolType;
+
+    @Column(name = "raca")
+    @Getter
+    @Setter
+    private String race;
 
     @OneToMany(mappedBy = "student")
     @Getter
@@ -35,6 +37,12 @@ public class Student extends User {
     @OneToMany(mappedBy = "student")
     @Getter
     private List<Answer> answerList = new ArrayList<>();
+
+    @ManyToOne
+    @JoinColumn(name = "fk_id_turma")
+    @Getter
+    @Setter
+    private SchoolClass determinedSchoolClass;
 
     @Column(name = "score_humanas")
     @Getter @Setter

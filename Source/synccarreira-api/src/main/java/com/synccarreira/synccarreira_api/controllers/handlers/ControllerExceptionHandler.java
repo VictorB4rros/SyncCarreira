@@ -2,6 +2,8 @@ package com.synccarreira.synccarreira_api.controllers.handlers;
 
 import com.synccarreira.synccarreira_api.dto.CustomError;
 import com.synccarreira.synccarreira_api.dto.ValidationError;
+import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
+import com.synccarreira.synccarreira_api.services.exceptions.ConflictException;
 import com.synccarreira.synccarreira_api.services.exceptions.DatabaseException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,6 +54,20 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(IllegalStateException.class)
 	public ResponseEntity<CustomError> illegalState(IllegalStateException e, HttpServletRequest request) {
 		HttpStatus status = HttpStatus.CONFLICT;
+		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
+	@ExceptionHandler(ConflictException.class)
+	public ResponseEntity<CustomError> conflict(ConflictException e, HttpServletRequest request) {
+		HttpStatus status = HttpStatus.CONFLICT;
+		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
+	@ExceptionHandler(BusinessException.class)
+	public ResponseEntity<CustomError> business(BusinessException e, HttpServletRequest request) {
+		HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
 		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}
