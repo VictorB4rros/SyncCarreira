@@ -25,26 +25,33 @@ public class InstitutionServiceTests {
     @Mock
     private InstitutionRepository repository;
 
-    private Institution institution;
+    private Institution institution, institution1;
     private List<Institution> institutionList;
 
     @BeforeEach
     void setUp() {
         institution = InstitutionFactory.createInstitution();
+        institution1 = InstitutionFactory.createInstitution();
+        institution1.setId(2L);
+        institution1.setLegalName("Alternative School");
 
         institutionList = new ArrayList<>();
         institutionList.add(institution);
-
-        Mockito.when(repository.findAll()).thenReturn(institutionList);
+        institutionList.add(institution1);
     }
 
     @Test
     void findAllShouldReturnInstitutionDTOList() {
+        Mockito.when(repository.findAll()).thenReturn(institutionList);
+
         List<InstitutionDTO> result = service.findAll();
 
-        Assertions.assertEquals(1, result.size());
-        Assertions.assertEquals(institution.getId(), result.getFirst().id());
-        Assertions.assertEquals(institution.getLegalName(), result.getFirst().legalName());
-        Assertions.assertEquals(institution.getCnpj(), result.getFirst().cnpj());
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(institution.getId(), result.getLast().id());
+        Assertions.assertEquals(institution.getLegalName(), result.getLast().legalName());
+        Assertions.assertEquals(institution.getCnpj(), result.getLast().cnpj());
+        Assertions.assertEquals(institution1.getId(), result.getFirst().id());
+        Assertions.assertEquals(institution1.getLegalName(), result.getFirst().legalName());
+        Assertions.assertEquals(institution1.getCnpj(), result.getFirst().cnpj());
     }
 }
