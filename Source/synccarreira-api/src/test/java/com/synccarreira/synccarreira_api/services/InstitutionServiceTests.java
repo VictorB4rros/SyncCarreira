@@ -29,7 +29,7 @@ public class InstitutionServiceTests {
     private List<Institution> institutionList;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         institution = InstitutionFactory.createInstitution();
 
         institutionList = new ArrayList<>();
@@ -39,7 +39,7 @@ public class InstitutionServiceTests {
     }
 
     @Test
-    public void findAllShouldReturnInstitutionDTOList() {
+    void findAllShouldReturnInstitutionDTOList() {
         List<InstitutionDTO> result = service.findAll();
 
         Assertions.assertEquals(1, result.size());
