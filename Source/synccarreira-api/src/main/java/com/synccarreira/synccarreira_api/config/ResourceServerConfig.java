@@ -32,6 +32,7 @@ public class ResourceServerConfig {
 
 	private static final String INSTITUTIONS = "/institutions/**";
 	private static final String ANSWERS = "/answers/**";
+	private static final String CLASSES = "/classes/**";
 	private static final String ADMIN = "ADMIN";
 
 	@Bean
@@ -79,7 +80,11 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, INSTITUTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.GET, INSTITUTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PUT, INSTITUTIONS).hasRole(ADMIN)
-				.requestMatchers(HttpMethod.DELETE, INSTITUTIONS).hasRole(ADMIN));
+				.requestMatchers(HttpMethod.DELETE, INSTITUTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, CLASSES).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, CLASSES).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, CLASSES).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, CLASSES).hasRole(ADMIN));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
