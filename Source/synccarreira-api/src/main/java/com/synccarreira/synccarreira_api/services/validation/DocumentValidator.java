@@ -2,6 +2,9 @@ package com.synccarreira.synccarreira_api.services.validation;
 
 public final class DocumentValidator {
 
+    private static final int[] W1 = {5,4,3,2,9,8,7,6,5,4,3,2};
+    private static final int[] W2 = {6,5,4,3,2,9,8,7,6,5,4,3,2};
+
     private DocumentValidator() {
         throw new UnsupportedOperationException("Esta é uma classe utilitária e não deve ser instanciada.");
     }
@@ -37,29 +40,38 @@ public final class DocumentValidator {
     }
 
     public static boolean isCnpjValid(String cnpj) {
-        String d = onlyDigits(cnpj);
-        if (d.length() != 14 || d.chars().distinct().count() == 1) {
-            return false;
+        if (cnpj == null) return false;
+        char[] c = new char[14];
+        int n = 0;
+        for (int i = 0; i < cnpj.length(); i++) {
+            char ch = cnpj.charAt(i);
+            if (ch == '.' || ch == '/' || ch == '-') continue;
+            if (n == 14) return false;
+            if (ch >= 'a' && ch <= 'z') ch -= 32;
+            boolean digit = ch >= '0' && ch <= '9';
+            boolean letter  = ch >= 'A' && ch <= 'Z';
+            if (!digit && !(letter && n < 12)) return false;
+            c[n++] = ch;
         }
-        try {
-            int[] weight1 = {5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
-            int[] weight2 = {6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2};
+        if (n != 14) return false;
 
-            int sum = 0;
-            for (int i = 0; i < 12; i++) {
-                sum += (d.charAt(i) - '0') * weight1[i];
-            }
-            int dig1 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-            if (dig1 != d.charAt(12) - '0') return false;
+        boolean equals = true;
+        for (int i = 1; i < 14 && equals; i++) equals = c[i] == c[0];
+        if (equals) return false;
 
-            sum = 0;
-            for (int i = 0; i < 13; i++) {
-                sum += (d.charAt(i) - '0') * weight2[i];
-            }
-            int dig2 = sum % 11 < 2 ? 0 : 11 - (sum % 11);
-            return dig2 == d.charAt(13) - '0';
-        } catch (RuntimeException e) {
-            return false;
+        int s1 = 0, s2 = 0;
+        for (int i = 0; i < 12; i++) {
+            int v = c[i] - '0';
+            s1 += v * W1[i];
+            s2 += v * W2[i];
         }
+        int d1 = dv(s1);
+        int d2 = dv(s2 + d1 * W2[12]);
+        return c[12] - '0' == d1 && c[13] - '0' == d2;
+    }
+
+    private static int dv(int sum) {
+        int r = sum % 11;
+        return r < 2 ? 0 : 11 - r;
     }
 }
