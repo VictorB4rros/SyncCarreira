@@ -53,6 +53,17 @@ jacocoTestReport {
         csv.required = false
         html.outputLocation = layout.buildDirectory.dir('reports/jacoco/html')
     }
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+			        "com/synccarreira/synccarreira_api/config/**",
+					"com/synccarreira/synccarreira_api/entities/**",
+			        "com/synccarreira/synccarreira_api/services/exceptions/**",
+					"com/synccarreira/synccarreira_api/controllers/handlers/**",
+			        "com/synccarreira/synccarreira_api/dto/**"
+			])
+		}))
+	}
 }
 
 sonar {

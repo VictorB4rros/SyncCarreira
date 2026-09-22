@@ -59,6 +59,16 @@ public class Institution implements Serializable {
     @Getter
     private List<SchoolClass> schoolClassList = new ArrayList<>();
 
+    public Institution(Long id, String legalName, String tradeName, String cnpj, InstitutionType type, Boolean active, Instant createdAt) {
+        this.id = id;
+        this.legalName = legalName;
+        this.tradeName = tradeName;
+        this.cnpj = cnpj;
+        this.type = type;
+        this.active = active;
+        this.createdAt = createdAt;
+    }
+
     @PrePersist
     void onCreate() {
         if (createdAt == null) {

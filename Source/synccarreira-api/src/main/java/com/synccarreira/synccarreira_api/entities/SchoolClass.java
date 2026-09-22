@@ -42,6 +42,13 @@ public class SchoolClass implements Serializable {
     @Setter
     private Instant createdAt;
 
+    public SchoolClass(Long id, String name, Integer schoolYear, Instant createdAt) {
+        this.id = id;
+        this.name = name;
+        this.schoolYear = schoolYear;
+        this.createdAt = createdAt;
+    }
+
     @PrePersist
     void onCreate() {
         if (createdAt == null) {

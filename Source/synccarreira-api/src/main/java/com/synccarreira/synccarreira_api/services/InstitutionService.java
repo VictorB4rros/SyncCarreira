@@ -1,6 +1,5 @@
 package com.synccarreira.synccarreira_api.services;
 
-import com.synccarreira.synccarreira_api.controllers.InstitutionController;
 import com.synccarreira.synccarreira_api.dto.InstitutionDTO;
 import com.synccarreira.synccarreira_api.dto.InstitutionInsertDTO;
 import com.synccarreira.synccarreira_api.dto.InstitutionUpdateDTO;
@@ -11,7 +10,6 @@ import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
 import com.synccarreira.synccarreira_api.services.exceptions.ConflictException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import com.synccarreira.synccarreira_api.services.validation.DocumentValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
