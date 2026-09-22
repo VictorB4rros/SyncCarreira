@@ -45,6 +45,9 @@ tasks.named('test') {
 	useJUnitPlatform()
 }
 
+test {
+    finalizedBy jacocoTestReport
+}
 
 jacocoTestReport {
     dependsOn test // Garante que os testes rodem antes de gerar o relatório
@@ -72,5 +75,17 @@ sonar {
         property "sonar.organization", "synccarreira"
         property "sonar.host.url", "https://sonarcloud.io"
         property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.coverage.exclusions", [
+				"**/config/**",
+			    "**/entities/**",
+			    "**/dto/**",
+			    "**/services/exceptions/**",
+			    "**/controllers/handlers/**"
+		].join(",")
     }
+}
+
+tasks.named('sonar') {
+	dependsOn tasks.named('test')
+	dependsOn tasks.named('jacocoTestReport')
 }
