@@ -29,10 +29,11 @@ public class SchoolClassController {
     @GetMapping
     @Operation(summary = "Lista turmas. Filtro opcional por instituição.")
     @ApiResponse(responseCode = "200", description = "Turmas encontradas com sucesso.")
+    @ApiResponse(responseCode = "404", description = "Turma não encontrada.")
     public ResponseEntity<List<SchoolClassDTO>> findAll(
             @RequestParam(value = "institutionId", required = false) Long institutionId) {
         List<SchoolClassDTO> result = institutionId != null
-                ? schoolClassService.findByInstitution(institutionId)
+                ? schoolClassService.findByInstitutionId(institutionId)
                 : schoolClassService.findAll();
         return ResponseEntity.ok(result);
     }
@@ -48,7 +49,7 @@ public class SchoolClassController {
     @PostMapping
     @Operation(summary = "Cria uma turma vinculada a uma instituição.")
     @ApiResponse(responseCode = "201", description = "Turma criada com sucesso.")
-    @ApiResponse(responseCode = "404", description = "Instituição ou psicóloga não encontrada.")
+    @ApiResponse(responseCode = "404", description = "Instituição não encontrada.")
     @ApiResponse(responseCode = "422", description = "Dados inválidos.")
     public ResponseEntity<SchoolClassDTO> create(@Valid @RequestBody SchoolClassInsertDTO dto) {
         SchoolClassDTO created = schoolClassService.create(dto);

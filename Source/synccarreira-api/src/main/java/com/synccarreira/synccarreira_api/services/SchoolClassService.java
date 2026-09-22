@@ -39,8 +39,8 @@ public class SchoolClassService {
     }
 
     @Transactional(readOnly = true)
-    public List<SchoolClassDTO> findByInstitution(Long institutionId) {
-        return schoolClassRepository.findByInstitution(institutionId).stream()
+    public List<SchoolClassDTO> findByInstitutionId(Long institutionId) {
+        return schoolClassRepository.findByInstitutionId(institutionId).stream()
                 .map(SchoolClassDTO::new)
                 .toList();
     }
