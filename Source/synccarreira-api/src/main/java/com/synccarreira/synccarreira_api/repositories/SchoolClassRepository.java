@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface SchoolClassRepository extends JpaRepository<SchoolClass, Long> {
 
-    List<SchoolClass> findByInstitution(Long institutionId);
+    List<SchoolClass> findByInstitutionId(Long institutionId);
 
     boolean existsByInstitutionId(Long institutionId);
 }
