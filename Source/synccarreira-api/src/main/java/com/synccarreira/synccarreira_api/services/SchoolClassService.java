@@ -9,10 +9,13 @@ import com.synccarreira.synccarreira_api.repositories.InstitutionRepository;
 import com.synccarreira.synccarreira_api.repositories.SchoolClassRepository;
 import com.synccarreira.synccarreira_api.repositories.UserRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
+import com.synccarreira.synccarreira_api.services.exceptions.ConflictException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 @Service
@@ -22,12 +25,9 @@ public class SchoolClassService {
 
     private final InstitutionRepository institutionRepository;
 
-    private final UserRepository userRepository;
-
     public SchoolClassService(final SchoolClassRepository schoolClassRepository, final InstitutionRepository institutionRepository, final UserRepository userRepository) {
         this.schoolClassRepository = schoolClassRepository;
         this.institutionRepository = institutionRepository;
-        this.userRepository = userRepository;
     }
 
     @Transactional(readOnly = true)
@@ -40,9 +40,14 @@ public class SchoolClassService {
 
     @Transactional(readOnly = true)
     public List<SchoolClassDTO> findByInstitutionId(Long institutionId) {
-        return schoolClassRepository.findByInstitutionId(institutionId).stream()
+        List<SchoolClassDTO> dtos = schoolClassRepository.findByInstitutionId(institutionId)
+                .stream()
                 .map(SchoolClassDTO::new)
                 .toList();
+        if (dtos.isEmpty()) {
+            throw new ResourceNotFoundException("Instituição não encontrada. ID: " + institutionId);
+        }
+        return dtos;
     }
 
     @Transactional(readOnly = true)
@@ -77,7 +82,12 @@ public class SchoolClassService {
     @Transactional
     public void delete(Long id) {
         SchoolClass entity = getOrThrow(id);
-        schoolClassRepository.delete(entity);
+        try {
+            schoolClassRepository.delete(entity);
+            schoolClassRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new ConflictException("Não é possível excluir: a turma possui alunos vinculados que responderam o formulário.");
+        }
     }
 
     private SchoolClass getOrThrow(Long id) {

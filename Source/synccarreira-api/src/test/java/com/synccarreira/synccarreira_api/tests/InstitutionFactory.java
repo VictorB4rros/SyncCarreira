@@ -18,6 +18,13 @@ public class InstitutionFactory {
         return institution;
     }
 
+    public static Institution createInactiveInstitution() {
+        Institution institution = new Institution(1L, "Escola Estadual Pedro II", "E.E. Pedro II", "33158816000105", InstitutionType.PUBLICA, Boolean.FALSE, Instant.now());
+        SchoolClass schoolClass = SchoolClassFactory.createSchoolClass();
+        institution.getSchoolClassList().add(schoolClass);
+        return institution;
+    }
+
     public static InstitutionDTO createInstitutionDTO() {
         return new InstitutionDTO(createInstitution());
     }
