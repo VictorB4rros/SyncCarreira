@@ -19,11 +19,11 @@ public class StudentUpdateDTO {
     private String email;
 
     @Getter
-    private Long roleId;
-
-    @Getter
     private String schollarYear;
 
     @Getter
     private String schoolType;
+
+    @Getter
+    private String race;
 }

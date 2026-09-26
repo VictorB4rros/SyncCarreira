@@ -91,7 +91,7 @@ public class PsychologistService {
         entity.setCrp(dto.getCrp());
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
+        Optional<Role> role = roleRepository.findById(3L);
         role.ifPresent(entity::addRole);
     }
 
@@ -101,7 +101,7 @@ public class PsychologistService {
         entity.setContractExpirationDate(dto.getContractExpirationDate());
         entity.setCrp(dto.getCrp());
         entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
+        Optional<Role> role = roleRepository.findById(3L);
         role.ifPresent(entity::addRole);
     }
 }

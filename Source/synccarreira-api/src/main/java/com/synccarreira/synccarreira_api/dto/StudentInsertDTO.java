@@ -21,13 +21,13 @@ public class StudentInsertDTO {
     private String email;
 
     @Getter
-    private Long roleId;
-
-    @Getter
     private String schollarYear;
 
     @Getter
     private String schoolType;
+
+    @Getter
+    private String race;
 
     @NotBlank(message = "Campo obrigatório")
     @Size(min = 8, message = "Deve ter no mínimo 8 caracteres")
