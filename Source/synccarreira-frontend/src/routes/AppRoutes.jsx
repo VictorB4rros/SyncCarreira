@@ -4,6 +4,7 @@ import LoginPage    from '../pages/Login/LoginPage.jsx'
 import CadastroPage from '../pages/Cadastro/CadastroPage.jsx'
 import HomePage     from '../pages/Home/HomePage.jsx'
 import TrailPage    from '../pages/Trilha/TrailPage.jsx'
+import AgendamentosPage from '../pages/Agendamentos/AgendamentosPage.jsx'
 
 function PrivateRoute({ children }) {
   const { user } = useAuth()
@@ -20,6 +21,9 @@ export default function AppRoutes() {
       } />
       <Route path="/trail/:trailId" element={
         <PrivateRoute><TrailPage /></PrivateRoute>
+      } />
+      <Route path="/agendamentos" element={
+        <PrivateRoute><AgendamentosPage /></PrivateRoute>
       } />
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
