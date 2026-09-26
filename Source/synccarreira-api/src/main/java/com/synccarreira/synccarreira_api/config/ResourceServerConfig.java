@@ -33,6 +33,7 @@ public class ResourceServerConfig {
 	private static final String INSTITUTIONS = "/institutions/**";
 	private static final String ANSWERS = "/answers/**";
 	private static final String CLASSES = "/classes/**";
+	private static final String STUDENTS = "/students/**";
 	private static final String ADMIN = "ADMIN";
 
 	@Bean
@@ -69,10 +70,11 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/psychologists/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/psychologists/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/students/**").permitAll()
+				.requestMatchers(HttpMethod.POST, STUDENTS).permitAll()
+				.requestMatchers(HttpMethod.GET, STUDENTS).permitAll()
+				.requestMatchers(HttpMethod.PUT, STUDENTS).permitAll()
+				.requestMatchers(HttpMethod.DELETE, STUDENTS).permitAll()
+				.requestMatchers(HttpMethod.PATCH, STUDENTS).permitAll()
 				.requestMatchers(HttpMethod.POST, ANSWERS).permitAll()
 				.requestMatchers(HttpMethod.GET, ANSWERS).permitAll()
 				.requestMatchers(HttpMethod.PUT, ANSWERS).permitAll()

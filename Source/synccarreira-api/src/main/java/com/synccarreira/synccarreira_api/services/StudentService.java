@@ -24,14 +24,17 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final RoleRepository roleRepository;
+
+    public StudentService(final PasswordEncoder passwordEncoder, final StudentRepository studentRepository, final RoleRepository roleRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.studentRepository = studentRepository;
+        this.roleRepository = roleRepository;
+    }
 
     @Transactional(readOnly = true)
     public Page<StudentDetailsDTO> findAll(Pageable pageable) {
@@ -76,6 +79,11 @@ public class StudentService {
         catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Referential integrity failure");
         }
+    }
+
+    @Transactional
+    public void setSchoolClass(Long studentId, Long classId) {
+        studentRepository.setSchoolClass(studentId, classId);
     }
 
     @Transactional(readOnly = true)

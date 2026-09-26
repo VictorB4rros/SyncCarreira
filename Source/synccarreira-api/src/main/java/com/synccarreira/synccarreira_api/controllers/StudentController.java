@@ -24,8 +24,11 @@ import java.net.URI;
 @Tag(name = "Alunos", description = "Endpoints para interagir com os alunos da aplicação.")
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
+
+    public StudentController(final StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @Operation(summary = "Busca todos os alunos cadastrados.")
     @ApiResponses(value = {
@@ -140,5 +143,23 @@ public class StudentController {
     })
     public ResponseEntity<StudentScoreDTO> getScore(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getScore(id));
+    }
+
+    @PatchMapping("/class")
+    @Operation(summary = "Aloca um aluno numa turma.")
+    @ApiResponse(
+            responseCode = "204",
+            description = "Aluno alocado na turma com sucesso."
+    )
+    public ResponseEntity<Void> setSchoolClass(
+            @Parameter(description = "Id do aluno que será alocado na turma.", required = true)
+            @RequestParam(value="studentId")
+            Long studentId,
+            @Parameter(description = "Id da turma à qual o aluno pertence.", required = true)
+            @RequestParam(value="classId")
+            Long classId
+    ) {
+        studentService.setSchoolClass(studentId, classId);
+        return ResponseEntity.noContent().build();
     }
 }
