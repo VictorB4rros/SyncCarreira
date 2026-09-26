@@ -1,3 +1,8 @@
+/* ═══════════════════════════════════════════════════════════════
+   src/pages/Agendamentos/Agendamentos.css
+   RF-08 (psicóloga) e RF-16 (aluno). Prefixo: ag-
+   ═══════════════════════════════════════════════════════════════ */
+
 .ag-root {
   min-height: 100vh;
   background: var(--sc-bg);
@@ -281,10 +286,10 @@ code {
   font-size: 13px;
   color: var(--sc-muted);
   line-height: 1.5;
+  white-space: pre-line;
   display: -webkit-box;
-  -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
 }
 
@@ -378,20 +383,39 @@ code {
 .ag-feedback__text { font-size: 14px; color: var(--sc-text); line-height: 1.6; margin-top: 10px; white-space: pre-line; }
 
 /* ── Modal ─────────────────────────────────────────────────── */
-.ag-modal__backdrop {
+/* <dialog> nativo ocupa a tela toda; o conteúdo fica centralizado */
+.ag-modal__dialog {
   position: fixed;
   inset: 0;
-  background: rgba(26, 26, 46, 0.45);
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 20px;
+  border: none;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
-  z-index: 100;
   animation: agFade 0.15s ease;
+}
+.ag-modal__dialog:not([open]) { display: none; }
+.ag-modal__dialog::backdrop { background: rgba(26, 26, 46, 0.45); }
+
+/* Área clicável do fundo (fecha o modal) */
+.ag-modal__scrim {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: default;
 }
 @keyframes agFade { from { opacity: 0; } }
 
 .ag-modal {
+  position: relative;
+  z-index: 1;
   width: 100%;
   max-width: 460px;
   max-height: calc(100vh - 40px);
@@ -441,6 +465,10 @@ code {
 .ag-field { display: flex; flex-direction: column; gap: 6px; flex: 1; min-width: 0; position: relative; }
 .ag-row { display: flex; gap: 12px; }
 
+/* fieldset sem a borda/padding padrão do navegador */
+.ag-fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+.ag-fieldset > legend { padding: 0; margin-bottom: 6px; width: 100%; }
+
 .ag-label { font-size: 13px; font-weight: 600; color: var(--sc-text); display: flex; align-items: center; gap: 8px; }
 .ag-label em { font-style: normal; font-weight: 400; color: var(--sc-muted); }
 .ag-label__count { margin-left: auto; font-size: 12px; color: var(--sc-roxo) !important; }
@@ -468,6 +496,8 @@ code {
   align-self: flex-start;
 }
 .ag-segment__opt {
+  cursor: pointer;
+  user-select: none;
   background: none;
   border: none;
   padding: 7px 18px;
@@ -476,6 +506,7 @@ code {
   font-weight: 500;
   color: var(--sc-muted);
 }
+.ag-segment__opt:focus-within { outline: 2px solid var(--sc-roxo); outline-offset: 1px; }
 .ag-segment__opt--on { background: var(--sc-white); color: var(--sc-roxo); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
 
 .ag-picker {
@@ -489,14 +520,22 @@ code {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 12px;
-  cursor: pointer;
+  padding: 0 0 0 12px;
   border-bottom: 1px solid #f1f2f5;
 }
 .ag-picker__item:last-child { border-bottom: none; }
 .ag-picker__item:hover { background: #fafafe; }
 .ag-picker__item--on { background: var(--sc-roxo-soft); }
 .ag-picker__item input { accent-color: var(--sc-roxo); width: 16px; height: 16px; flex-shrink: 0; }
+.ag-picker__label {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px 9px 0;
+  cursor: pointer;
+}
 .ag-picker__avatar {
   width: 30px; height: 30px;
   border-radius: 50%;
@@ -518,10 +557,11 @@ code {
   border: 1.5px solid #b2dfdb;
   background: #f0faf8;
   border-radius: var(--sc-radius-md);
-  cursor: pointer;
 }
 .ag-google-opt input { accent-color: #00897b; width: 16px; height: 16px; margin-top: 2px; flex-shrink: 0; }
-.ag-google-opt span { display: flex; flex-direction: column; gap: 2px; font-size: 13.5px; }
+.ag-google-opt__text { display: flex; flex-direction: column; gap: 2px; font-size: 13.5px; }
+.ag-google-opt__text label { font-weight: 700; cursor: pointer; }
+.ag-google-opt--off .ag-google-opt__text label { cursor: not-allowed; }
 .ag-google-opt small { font-size: 12.5px; color: var(--sc-muted); line-height: 1.4; }
 .ag-google-opt--off { border-color: var(--sc-border); background: #f7f7f9; cursor: not-allowed; opacity: 0.8; }
 

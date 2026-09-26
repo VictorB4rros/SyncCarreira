@@ -326,7 +326,7 @@ export default function PsicologaAgendamentos() {
         />
       )}
 
-      {toast && <div className="ag-toast" role="status">{toast}</div>}
+      {toast && <div className="ag-toast" aria-live="polite">{toast}</div>}
     </>
   )
 }

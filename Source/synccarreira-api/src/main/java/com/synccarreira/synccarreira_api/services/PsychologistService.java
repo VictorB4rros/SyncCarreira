@@ -17,10 +17,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PsychologistService {
+
+    private static final String PSYCHOLOGIST_ROLE = "ROLE_PSICOLOGA";
 
     @Autowired
     private PsychologistRepository psychologistRepository;
@@ -91,8 +92,7 @@ public class PsychologistService {
         entity.setCrp(dto.getCrp());
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
-        role.ifPresent(entity::addRole);
+        entity.addRole(psychologistRole());
     }
 
     private void copyDtoToEntity(PsychologistUpdateDTO dto, Psychologist entity) {
@@ -101,7 +101,20 @@ public class PsychologistService {
         entity.setContractExpirationDate(dto.getContractExpirationDate());
         entity.setCrp(dto.getCrp());
         entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
-        role.ifPresent(entity::addRole);
+        entity.addRole(psychologistRole());
+    }
+
+    /**
+     * Toda psicóloga recebe a role ROLE_PSICOLOGA, buscada pelo NOME.
+     * Antes a role vinha do roleId enviado pelo front: se o id não existisse,
+     * a conta era salva sem role e o login falhava (a consulta de login usa INNER JOIN).
+     */
+    private Role psychologistRole() {
+        Role role = roleRepository.findByAuthority(PSYCHOLOGIST_ROLE);
+        if (role == null) {
+            throw new IllegalStateException(
+                    "A role " + PSYCHOLOGIST_ROLE + " não está cadastrada na tabela tb_role.");
+        }
+        return role;
     }
 }

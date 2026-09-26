@@ -36,7 +36,7 @@ export default function CadastroPage() {
 
   // Campos de psicóloga
   const [crp, setCrp]                                   = useState('')
-  const [contractExpirationDate, setContractExpiration] = useState('')
+  const [contractExpirationDate, setContractExpirationDate] = useState('')
 
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading]   = useState(false)
@@ -54,8 +54,8 @@ export default function CadastroPage() {
       setError('As senhas não coincidem.')
       return
     }
-    if (password.length < 6) {
-      setError('A senha deve ter ao menos 6 caracteres.')
+    if (password.length < 8) {
+      setError('A senha deve ter ao menos 8 caracteres.')
       return
     }
     if (perfil === 'aluno' && (!schollarYear || !schoolType)) {
@@ -125,7 +125,8 @@ export default function CadastroPage() {
 
           <div className="cp-card">
 
-            <div className="cp-perfis" role="group" aria-label="Tipo de conta">
+            <fieldset className="cp-perfis">
+              <legend className="sr-only">Tipo de conta</legend>
               {PERFIS.map(p => (
                   <button
                       key={p.id}
@@ -137,7 +138,7 @@ export default function CadastroPage() {
                     <strong>{p.label}</strong>
                   </button>
               ))}
-            </div>
+            </fieldset>
 
             <form onSubmit={handleSubmit} noValidate>
 
@@ -213,7 +214,7 @@ export default function CadastroPage() {
                       <label htmlFor="expirationDate">Data de Expiração do Contrato *</label>
                       <input
                           id="expirationDate" type="date" value={contractExpirationDate}
-                          onChange={e => setContractExpiration(e.target.value)}
+                          onChange={e => setContractExpirationDate(e.target.value)}
                       />
                     </div>
                   </>
@@ -227,7 +228,7 @@ export default function CadastroPage() {
                       type={showPass ? 'text' : 'password'}
                       value={password}
                       onChange={e => setPassword(e.target.value)}
-                      placeholder="Mínimo 6 caracteres"
+                      placeholder="Mínimo 8 caracteres"
                       autoComplete="new-password"
                   />
                   <button
