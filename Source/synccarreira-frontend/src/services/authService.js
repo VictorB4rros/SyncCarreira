@@ -41,6 +41,7 @@ export const login = async (email, senha) => {
       nome:   data.name,
       email:  data.email,
       perfil: data.roles?.[0]?.authority ?? 'aluno',
+      roles:  data.roles,
     }
 
     return { token: accessToken, usuario }

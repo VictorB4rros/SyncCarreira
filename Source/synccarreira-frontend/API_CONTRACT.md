@@ -203,7 +203,7 @@ Erros de validação incluem o campo `errors`:
 | `roleId` (cadastro) | `authority` (resposta) | Descrição |
 |---|---|---|
 | `1` | `ROLE_USER` | Aluno |
-| `2` | _(a confirmar)_ | Psicóloga |
+| `2` | _(a confirmar — authority `ROLE_PSICOLOGA`)_ | Psicóloga |
 
 ---
 
@@ -216,3 +216,117 @@ O backend usa campos em inglês. O frontend normaliza internamente no `authServi
 | `name` | `nome` |
 | `access_token` | `token` (localStorage) |
 | `roles[0].authority` | `perfil` |
+---
+
+## 6. Agendamentos (RF-08 / RF-16)
+
+> **Status:** o front já está pronto. O backend possui a entidade `Appointment`
+> (`tb_agendamento`), mas ainda **não** expõe os endpoints abaixo.
+> Enquanto isso, use `VITE_APPOINTMENTS_MOCK=true` no `.env` (salva no localStorage).
+
+### Como a integração com o Google funciona
+
+A criação do evento no Google Agenda + link do Meet é feita **pelo front**, com a
+conta Google da psicóloga (OAuth Google Identity Services, escopo
+`https://www.googleapis.com/auth/calendar.events`). Os alunos entram como
+convidados do evento (`attendees`) e o Google envia o convite/atualização/cancelamento
+para o e-mail de cada aluno (`sendUpdates=all`).
+
+O backend só **persiste** a sessão, incluindo os dados devolvidos pelo Google
+(`googleEventId`, `meetLink`, `calendarLink`). Nenhum segredo do Google vai para o backend.
+
+### Objeto `AppointmentDTO` (resposta)
+
+```json
+{
+  "id": 12,
+  "title": "Conversa sobre a trilha Autoconhecimento",
+  "description": "Traga suas dúvidas sobre as áreas de interesse.",
+  "dateTime": "2026-10-01T14:00:00",
+  "durationMinutes": 50,
+  "scheduleType": "INDIVIDUAL",
+  "scheduleStatus": "AGENDADA",
+  "psychologist": { "id": 2, "name": "Fernanda Castro", "email": "fernanda@gmail.com" },
+  "students": [
+    { "id": 1, "name": "João Silva", "email": "joao@gmail.com" }
+  ],
+  "googleEventId": "7l3k2j1h0g9f8e7d6c5b4a",
+  "meetLink": "https://meet.google.com/abc-defg-hij",
+  "calendarLink": "https://www.google.com/calendar/event?eid=...",
+  "feedback": null,
+  "feedbackDate": null,
+  "cancelReason": null
+}
+```
+
+| Campo | Valores |
+|---|---|
+| `scheduleType` | `INDIVIDUAL` \| `GRUPO` |
+| `scheduleStatus` | `AGENDADA` \| `CANCELADA` \| `REALIZADA` |
+| `dateTime` | `LocalDateTime` sem fuso (horário local) |
+
+### Corpo de criação/edição (`AppointmentInsertDTO`)
+
+```json
+{
+  "title": "Conversa sobre a trilha Autoconhecimento",
+  "description": "Traga suas dúvidas.",
+  "dateTime": "2026-10-01T14:00:00",
+  "durationMinutes": 50,
+  "scheduleType": "GRUPO",
+  "psychologistId": 2,
+  "studentIds": [1, 5, 8],
+  "googleEventId": "7l3k2j1h0g9f8e7d6c5b4a",
+  "meetLink": "https://meet.google.com/abc-defg-hij",
+  "calendarLink": "https://www.google.com/calendar/event?eid=..."
+}
+```
+
+Validações sugeridas: `dateTime` no futuro; `INDIVIDUAL` = exatamente 1 aluno;
+`GRUPO` = 2 ou mais; contrato da psicóloga válido (`validateIfContractIsActive`).
+
+### Endpoints
+
+| Método | Rota | Quem | Corpo | Resposta |
+|---|---|---|---|---|
+| `GET` | `/appointments/psychologist/{id}` | psicóloga | — | `AppointmentDTO[]` |
+| `GET` | `/appointments/student/{id}` | aluno | — | `AppointmentDTO[]` |
+| `POST` | `/appointments` | psicóloga | `AppointmentInsertDTO` | `201` + `AppointmentDTO` |
+| `PUT` | `/appointments/{id}` | psicóloga | `AppointmentInsertDTO` | `200` + `AppointmentDTO` |
+| `PATCH` | `/appointments/{id}/cancel` | psicóloga | `{ "cancelReason": "..." }` | `200` + `AppointmentDTO` (status `CANCELADA`) |
+| `PUT` | `/appointments/{id}/feedback` | psicóloga | `{ "feedback": "..." }` | `200` + `AppointmentDTO` (status `REALIZADA`, `feedbackDate` = agora) |
+
+### Mudanças necessárias na entidade `Appointment`
+
+A entidade atual tem `dateTime`, `scheduleType`, `scheduleStatus`, `student` (ManyToOne) e `psychologist`.
+Para suportar o front:
+
+- trocar `student` (ManyToOne) por `students` (**ManyToMany**, tabela `tb_agendamento_aluno`) — sessões em grupo;
+- adicionar colunas: `titulo`, `descricao`, `duracao_minutos`, `google_event_id`, `link_meet`,
+  `link_calendar`, `feedback` (TEXT), `data_feedback`, `motivo_cancelamento`;
+- liberar as rotas `/appointments/**` no `ResourceServerConfig`.
+
+### Configurando o Google (uma vez)
+
+1. Acesse <https://console.cloud.google.com/> e crie um projeto (ex.: *SyncCarreira*).
+2. **APIs e serviços → Biblioteca** → ative a **Google Calendar API**.
+3. **Tela de consentimento OAuth** → tipo *Externo* → preencha nome/e-mail →
+   em *Escopos* adicione `.../auth/calendar.events` → em *Usuários de teste*
+   adicione o e-mail Google da(s) psicóloga(s) (enquanto o app estiver em modo "Teste").
+4. **Credenciais → Criar credenciais → ID do cliente OAuth → Aplicativo da Web**.
+   Em *Origens JavaScript autorizadas* adicione:
+   - `http://localhost:5173` (dev)
+   - `https://synccarreira.duckdns.org` (produção)
+5. Copie o *Client ID* para `VITE_GOOGLE_CLIENT_ID` nos arquivos `.env.*` e reinicie o `yarn dev`.
+
+> O e-mail do **aluno** cadastrado no SyncCarreira é o que recebe o convite.
+> Se for uma conta Google, o evento aparece automaticamente no Google Agenda dele.
+
+### Mapeamento de roles (tela de agendamentos)
+
+| `authority` | Visão em `/agendamentos` |
+|---|---|
+| `ROLE_PSICOLOGA` | Psicóloga — criar, editar, cancelar sessões e enviar feedback (RF-08) |
+| `ROLE_USER` | Aluno — ver agendamentos e feedbacks (RF-16) |
+
+Definido em `src/utils/roles.js`.

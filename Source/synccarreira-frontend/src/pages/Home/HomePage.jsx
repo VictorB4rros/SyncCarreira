@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getTrails, getQuestionsByTrail, getAnswers } from '../../services/trailService'
+import AppHeader from '../../components/AppHeader/AppHeader.jsx'
 import './HomePage.css'
 
 // ─── Card de trilha com progresso ─────────────────────────────
@@ -92,7 +93,7 @@ function TrailCard({ trail, studentId, onEnter, refreshKey }) {
 // ─── Componente principal ─────────────────────────────────────
 
 export default function HomePage() {
-  const { user, logout } = useAuth()
+  const { user } = useAuth()
   const navigate = useNavigate()
 
   const [trails, setTrails]         = useState([])
@@ -123,11 +124,6 @@ export default function HomePage() {
     load()
   }, [])
 
-  async function handleLogout() {
-    await logout()
-    navigate('/login')
-  }
-
   // Ao entrar numa trilha, atualiza o refreshKey ao voltar via navigate
   function handleEnterTrail(id) {
     navigate(`/trail/${id}`)
@@ -136,16 +132,8 @@ export default function HomePage() {
   return (
     <div className="hp-root">
 
-      {/* ── Cabeçalho ── */}
-      <header className="hp-header">
-        <div className="hp-brand">
-          <span className="hp-brand__mark" aria-hidden="true">S</span>
-          <span className="hp-brand__name">SyncCarreira</span>
-        </div>
-        <button className="hp-logout" onClick={handleLogout}>
-          Sair
-        </button>
-      </header>
+      {/* ── Cabeçalho (com link para Agendamentos) ── */}
+      <AppHeader />
 
       {/* ── Conteúdo ── */}
       <main className="hp-main">
