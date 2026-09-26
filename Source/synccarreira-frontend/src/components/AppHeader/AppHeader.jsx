@@ -1,0 +1,43 @@
+/**
+ * @file AppHeader.jsx
+ * @description Cabeçalho das páginas autenticadas, com navegação principal.
+ *
+ * @example
+ * import AppHeader from '../../components/AppHeader/AppHeader.jsx'
+ * <AppHeader />
+ */
+
+import { NavLink, useNavigate } from 'react-router-dom'
+import { useAuth } from '../../context/AuthContext.jsx'
+import './AppHeader.css'
+
+export default function AppHeader() {
+  const { logout } = useAuth()
+  const navigate = useNavigate()
+
+  async function handleLogout() {
+    await logout()
+    navigate('/login')
+  }
+
+  const linkClass = ({ isActive }) =>
+    `sc-header__link${isActive ? ' sc-header__link--active' : ''}`
+
+  return (
+    <header className="sc-header">
+      <div className="sc-header__brand">
+        <span className="sc-header__mark" aria-hidden="true">S</span>
+        <span className="sc-header__name">SyncCarreira</span>
+      </div>
+
+      <nav className="sc-header__nav" aria-label="Navegação principal">
+        <NavLink to="/home" className={linkClass}>Início</NavLink>
+        <NavLink to="/agendamentos" className={linkClass}>Agendamentos</NavLink>
+      </nav>
+
+      <button className="sc-header__logout" onClick={handleLogout}>
+        Sair
+      </button>
+    </header>
+  )
+}
