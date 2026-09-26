@@ -52,5 +52,3 @@ Diretório destinado à automação de integração contínua (CI - Continuous I
 ## 🔒 Acesso e Permissões
 
 As permissões de acesso e edição ao código-fonte e à documentação acadêmica são restritas aos perfis dos desenvolvedores da equipe e ao professor orientador, que possuem perfis concedidos diretamente na plataforma para acompanhamento, leitura e validação dos artefatos.
-
--
