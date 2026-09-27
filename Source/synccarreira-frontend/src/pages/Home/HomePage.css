@@ -96,7 +96,7 @@
   padding: 3px 10px;
   border-radius: 99px;
   background: var(--sc-roxo-soft);
-  color: var(--sc-roxo);
+  color: #5a35e8; /* contraste 5.7:1 sobre o roxo claro */
   font-size: 12px;
   font-weight: 600;
 }

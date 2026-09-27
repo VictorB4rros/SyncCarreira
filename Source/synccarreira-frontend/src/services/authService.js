@@ -21,6 +21,16 @@ const ROLE_MAP = {
 //
 // Os detalhes técnicos vão para o console do navegador (F12) para facilitar o debug.
 
+/** Ex.: "GET /users/me → 401: Unauthorized" — ajuda a identificar a causa pelo print da tela. */
+function describeHttpError(endpoint, error) {
+  const status  = error.response?.status
+  const detalhe = error.response?.data?.error || error.response?.data?.message || error.message
+  let text = endpoint
+  if (status)  text += ` → ${status}`
+  if (detalhe) text += `: ${detalhe}`
+  return text
+}
+
 /** Traduz o erro do POST /oauth2/token em uma mensagem para o usuário. */
 function tokenErrorMessage(error) {
   if (!error.response) {
@@ -79,11 +89,8 @@ export const login = async (email, senha) => {
   } catch (error) {
     console.error('[Login] Falha no GET /users/me:', error.response?.status, error.response?.data ?? error.message)
     localStorage.removeItem('token')
-    const status  = error.response?.status
-    const detalhe = error.response?.data?.error || error.response?.data?.message || error.message
     throw new Error(
-      `Login aceito, mas não foi possível carregar seus dados (GET /users/me` +
-      `${status ? ` → ${status}` : ''}${detalhe ? `: ${detalhe}` : ''}).`
+      `Login aceito, mas não foi possível carregar seus dados (${describeHttpError('GET /users/me', error)}).`
     )
   }
 }
