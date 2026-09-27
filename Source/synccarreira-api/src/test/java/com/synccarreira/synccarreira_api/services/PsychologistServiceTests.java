@@ -3,12 +3,16 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
-import com.synccarreira.synccarreira_api.dto.RoleDTO;
+import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
+import com.synccarreira.synccarreira_api.entities.Role;
+import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
+import com.synccarreira.synccarreira_api.services.events.EmailEvent;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import com.synccarreira.synccarreira_api.tests.PsychologistFactory;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,17 +21,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
-class PsychologistServiceTests {
+public class PsychologistServiceTests {
 
     @InjectMocks
     private PsychologistService service;
@@ -36,116 +40,191 @@ class PsychologistServiceTests {
     private PsychologistRepository psychologistRepository;
 
     @Mock
-    private PasswordEncoder passwordEncoder;
-
-    @Mock
     private RoleRepository roleRepository;
 
-    private long existingId;
-    private long nonExistingId;
-    private Psychologist psychologist;
-    private PsychologistInsertDTO insertDTO;
-    private PsychologistUpdateDTO updateDTO;
+    @Mock
+    private PasswordRecoverRepository passwordRecoverRepository;
+
+    @Mock
+    private ApplicationEventPublisher eventPublisher;
+
+    private Long existingPsychologistId, nonExistingPsychologistId, psychologistRoleId;
+    private Psychologist psychologist, psychologist1, expiredContractPsychologist;
+    private Role psychologistRole;
+    private PsychologistInsertDTO psychologistInsertDTO;
+    private PsychologistUpdateDTO psychologistUpdateDTO;
+    private List<Psychologist> psychologistList;
 
     @BeforeEach
     void setUp() {
-        existingId = 1L;
-        nonExistingId = 100L;
+        ReflectionTestUtils.setField(service, "tokenMinutes", 1440L);
+        ReflectionTestUtils.setField(service, "recoverUri", "http://localhost:3000/new-password?token=");
+
+        existingPsychologistId = 1L;
+        nonExistingPsychologistId = 100L;
+        psychologistRoleId = 3L;
+
         psychologist = PsychologistFactory.createPsychologist();
-        insertDTO = PsychologistFactory.createPsychologistInsertDTO();
-        updateDTO = PsychologistFactory.createPsychologistUpdateDTO();
-    }
+        psychologist1 = PsychologistFactory.createPsychologist();
+        expiredContractPsychologist = PsychologistFactory.createExpiredContractPsychologist();
+        psychologistRole = PsychologistFactory.createPsychologistRole();
+        psychologistInsertDTO = PsychologistFactory.createPsychologistInsertDTO();
+        psychologistUpdateDTO = PsychologistFactory.createPsychologistUpdateDTO();
+        psychologist1.setId(2L);
+        psychologist1.setName("Mariana Alves");
 
-    private static List<String> authoritiesOf(PsychologistDTO dto) {
-        return dto.roles().stream().map(RoleDTO::getAuthority).toList();
-    }
-
-    // ── create ──────────────────────────────────────────────────
-
-    @Test
-    void createShouldAssignPsychologistRoleByNameIgnoringRoleIdFromRequest() {
-        Mockito.when(psychologistRepository.existsByNameAndCrp(anyString(), anyString())).thenReturn(false);
-        Mockito.when(passwordEncoder.encode(anyString())).thenReturn("hash");
-        Mockito.when(roleRepository.findByAuthority(PsychologistFactory.PSYCHOLOGIST_ROLE))
-                .thenReturn(PsychologistFactory.createPsychologistRole());
-        Mockito.when(psychologistRepository.save(any(Psychologist.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        PsychologistDTO result = service.create(insertDTO);
-
-        Assertions.assertEquals(List.of(PsychologistFactory.PSYCHOLOGIST_ROLE), authoritiesOf(result));
-        Assertions.assertEquals(insertDTO.getEmail(), result.email());
-        Mockito.verify(roleRepository, Mockito.never()).findById(anyLong());
+        psychologistList = new ArrayList<>();
+        psychologistList.add(psychologist);
+        psychologistList.add(psychologist1);
     }
 
     @Test
-    void createShouldEncodePassword() {
-        Mockito.when(psychologistRepository.existsByNameAndCrp(anyString(), anyString())).thenReturn(false);
-        Mockito.when(passwordEncoder.encode(insertDTO.getPassword())).thenReturn("hash");
-        Mockito.when(roleRepository.findByAuthority(PsychologistFactory.PSYCHOLOGIST_ROLE))
-                .thenReturn(PsychologistFactory.createPsychologistRole());
-        Mockito.when(psychologistRepository.save(any(Psychologist.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
+    void findAllShouldReturnPsychologistDTOList() {
+        Mockito.when(psychologistRepository.findAll()).thenReturn(psychologistList);
 
-        service.create(insertDTO);
+        List<PsychologistDTO> result = service.findAll();
 
-        Mockito.verify(psychologistRepository).save(Mockito.argThat(p -> "hash".equals(p.getPassword())));
+        Assertions.assertEquals(2, result.size());
+        Assertions.assertEquals(psychologist.getId(), result.getFirst().id());
+        Assertions.assertEquals(psychologist.getName(), result.getFirst().name());
+        Assertions.assertEquals(psychologist.getCrp(), result.getFirst().crp());
+        Assertions.assertEquals(psychologist1.getId(), result.getLast().id());
+        Assertions.assertEquals(psychologist1.getName(), result.getLast().name());
+        Assertions.assertEquals(psychologist1.getCrp(), result.getLast().crp());
     }
 
     @Test
-    void createShouldThrowIllegalStateExceptionAndNotSaveWhenPsychologistRoleIsMissing() {
-        Mockito.when(psychologistRepository.existsByNameAndCrp(anyString(), anyString())).thenReturn(false);
-        Mockito.when(passwordEncoder.encode(anyString())).thenReturn("hash");
-        Mockito.when(roleRepository.findByAuthority(PsychologistFactory.PSYCHOLOGIST_ROLE)).thenReturn(null);
+    void findByIdShouldReturnPsychologistDTOWhenIdExists() {
+        Mockito.when(psychologistRepository.findById(existingPsychologistId)).thenReturn(Optional.of(psychologist));
 
-        Assertions.assertThrows(IllegalStateException.class, () -> service.create(insertDTO));
+        PsychologistDTO result = service.findById(existingPsychologistId);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(existingPsychologistId, result.id());
+        Assertions.assertEquals(psychologist.getName(), result.name());
+        Assertions.assertEquals(psychologist.getEmail(), result.email());
+        Assertions.assertEquals(psychologist.getCrp(), result.crp());
+        Assertions.assertEquals(psychologist.getContractExpirationDate(), result.contractExpirationDate());
+        Assertions.assertTrue(result.isContractValid());
+    }
+
+    @Test
+    void findByIdShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
+        Mockito.when(psychologistRepository.findById(nonExistingPsychologistId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.findById(nonExistingPsychologistId);
+        });
+    }
+
+    @Test
+    void createShouldReturnPsychologistDTOWhenNameAndCrpDoNotExist() {
+        Mockito.when(psychologistRepository.existsByNameAndCrp(psychologistInsertDTO.getName(), psychologistInsertDTO.getCrp())).thenReturn(false);
+        Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
+        Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
+        Mockito.when(passwordRecoverRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        PsychologistDTO result = service.create(psychologistInsertDTO);
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(psychologist.getId(), result.id());
+        Assertions.assertEquals(psychologist.getName(), result.name());
+        Assertions.assertEquals(psychologist.getEmail(), result.email());
+        Assertions.assertEquals(psychologist.getCrp(), result.crp());
+        Assertions.assertEquals(1, result.roles().size());
+        Mockito.verify(passwordRecoverRepository).save(Mockito.argThat((PasswordRecover passwordRecover) ->
+                psychologistInsertDTO.getEmail().equals(passwordRecover.getEmail())
+                        && passwordRecover.getToken() != null
+                        && passwordRecover.getExpiration() != null));
+        Mockito.verify(eventPublisher).publishEvent(Mockito.argThat((EmailEvent event) ->
+                psychologistInsertDTO.getEmail().equals(event.to())
+                        && psychologistInsertDTO.getName().equals(event.templateModel().get("recipientName"))));
+    }
+
+    @Test
+    void createShouldReturnIllegalArgumentExceptionWhenNameAndCrpAlreadyExist() {
+        Mockito.when(psychologistRepository.existsByNameAndCrp(psychologistInsertDTO.getName(), psychologistInsertDTO.getCrp())).thenReturn(true);
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            service.create(psychologistInsertDTO);
+        });
 
         Mockito.verify(psychologistRepository, Mockito.never()).save(any());
+        Mockito.verify(eventPublisher, Mockito.never()).publishEvent(any());
     }
 
     @Test
-    void createShouldThrowIllegalArgumentExceptionWhenNameAndCrpAlreadyExist() {
-        Mockito.when(psychologistRepository.existsByNameAndCrp(anyString(), anyString())).thenReturn(true);
+    void updateShouldReturnPsychologistDTOWhenIdExists() {
+        Mockito.when(psychologistRepository.findById(existingPsychologistId)).thenReturn(Optional.of(psychologist));
+        Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
+        Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
 
-        Assertions.assertThrows(IllegalArgumentException.class, () -> service.create(insertDTO));
+        PsychologistDTO result = service.update(existingPsychologistId, psychologistUpdateDTO);
 
-        Mockito.verify(psychologistRepository, Mockito.never()).save(any());
-    }
-
-    // ── update ──────────────────────────────────────────────────
-
-    @Test
-    void updateShouldReplaceRolesWithPsychologistRole() {
-        Mockito.when(psychologistRepository.findById(existingId)).thenReturn(Optional.of(psychologist));
-        Mockito.when(roleRepository.findByAuthority(PsychologistFactory.PSYCHOLOGIST_ROLE))
-                .thenReturn(PsychologistFactory.createPsychologistRole());
-        Mockito.when(psychologistRepository.save(any(Psychologist.class)))
-                .thenAnswer(invocation -> invocation.getArgument(0));
-
-        PsychologistDTO result = service.update(existingId, updateDTO);
-
-        Assertions.assertEquals(List.of(PsychologistFactory.PSYCHOLOGIST_ROLE), authoritiesOf(result));
-        Assertions.assertEquals(updateDTO.getName(), result.name());
-        Assertions.assertEquals(updateDTO.getCrp(), result.crp());
-        Mockito.verify(roleRepository, Mockito.never()).findById(anyLong());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(existingPsychologistId, result.id());
+        Assertions.assertEquals(psychologistUpdateDTO.getName(), result.name());
+        Assertions.assertEquals(psychologistUpdateDTO.getEmail(), result.email());
+        Assertions.assertEquals(psychologistUpdateDTO.getCrp(), result.crp());
+        Assertions.assertEquals(psychologistUpdateDTO.getContractExpirationDate(), result.contractExpirationDate());
+        Assertions.assertEquals(1, result.roles().size());
     }
 
     @Test
-    void updateShouldThrowIllegalStateExceptionAndNotSaveWhenPsychologistRoleIsMissing() {
-        Mockito.when(psychologistRepository.findById(existingId)).thenReturn(Optional.of(psychologist));
-        Mockito.when(roleRepository.findByAuthority(PsychologistFactory.PSYCHOLOGIST_ROLE)).thenReturn(null);
+    void updateShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
+        Mockito.when(psychologistRepository.findById(nonExistingPsychologistId)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(IllegalStateException.class, () -> service.update(existingId, updateDTO));
-
-        Mockito.verify(psychologistRepository, Mockito.never()).save(any());
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.update(nonExistingPsychologistId, psychologistUpdateDTO);
+        });
     }
 
     @Test
-    void updateShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
-        Mockito.when(psychologistRepository.findById(nonExistingId)).thenReturn(Optional.empty());
+    void deleteShouldDoNothingWhenIdExists() {
+        Mockito.when(psychologistRepository.existsById(existingPsychologistId)).thenReturn(true);
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.update(nonExistingId, updateDTO));
+        Assertions.assertDoesNotThrow(() -> {
+            service.delete(existingPsychologistId);
+        });
 
-        Mockito.verify(roleRepository, Mockito.never()).findByAuthority(anyString());
+        Mockito.verify(psychologistRepository).deleteById(existingPsychologistId);
+    }
+
+    @Test
+    void deleteShouldReturnEntityNotFoundExceptionWhenIdDoesNotExist() {
+        Mockito.when(psychologistRepository.existsById(nonExistingPsychologistId)).thenReturn(false);
+
+        Assertions.assertThrows(EntityNotFoundException.class, () -> {
+            service.delete(nonExistingPsychologistId);
+        });
+
+        Mockito.verify(psychologistRepository, Mockito.never()).deleteById(any());
+    }
+
+    @Test
+    void validateIfContractIsActiveShouldDoNothingWhenContractIsValid() {
+        Mockito.when(psychologistRepository.findById(existingPsychologistId)).thenReturn(Optional.of(psychologist));
+
+        Assertions.assertDoesNotThrow(() -> {
+            service.validateIfContractIsActive(existingPsychologistId);
+        });
+    }
+
+    @Test
+    void validateIfContractIsActiveShouldReturnIllegalStateExceptionWhenContractIsExpired() {
+        Mockito.when(psychologistRepository.findById(existingPsychologistId)).thenReturn(Optional.of(expiredContractPsychologist));
+
+        Assertions.assertThrows(IllegalStateException.class, () -> {
+            service.validateIfContractIsActive(existingPsychologistId);
+        });
+    }
+
+    @Test
+    void validateIfContractIsActiveShouldReturnResourceNotFoundExceptionWhenIdDoesNotExist() {
+        Mockito.when(psychologistRepository.findById(nonExistingPsychologistId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.validateIfContractIsActive(nonExistingPsychologistId);
+        });
     }
 }
