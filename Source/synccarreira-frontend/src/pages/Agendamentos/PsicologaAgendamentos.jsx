@@ -28,6 +28,17 @@ import {
 } from '../../services/googleCalendarService'
 import { getAllStudents } from '../../services/studentService'
 
+/**
+ * Remove do Google um evento recém-criado quando o backend falhou (evita evento "órfão").
+ * Fica fora do componente porque não depende de estado. Nunca rejeita: se nem o rollback
+ * funcionar, o erro original (do backend) é o que importa mostrar.
+ * @param {string} googleEventId
+ * @returns {Promise<void>}
+ */
+function rollbackGoogleEvent(googleEventId) {
+  return cancelMeetEvent(googleEventId).catch(() => undefined)
+}
+
 const TABS = [
   { id: 'AGENDADA',  label: 'Próximas'   },
   { id: 'REALIZADA', label: 'Realizadas' },
@@ -113,43 +124,50 @@ export default function PsicologaAgendamentos() {
           .sort((x, y) => new Date(x.dateTime) - new Date(y.dateTime)))
   }
 
-  async function handleSaveSession(form) {
-    const editing = modal?.appointment
-    let google = {
+  /**
+   * Cria ou atualiza o evento no Google Agenda (quando a opção está marcada).
+   * @returns {{ google: Object, createdNow: boolean }} dados do Google + se o evento acabou de ser criado
+   */
+  async function syncSessionWithGoogle(form, editing) {
+    const current = {
       googleEventId: editing?.googleEventId ?? null,
       meetLink:      editing?.meetLink ?? null,
       calendarLink:  editing?.calendarLink ?? null,
     }
-    let createdNow = false
+    if (!form.syncGoogle) return { google: current, createdNow: false }
 
-    if (form.syncGoogle) {
-      await ensureGoogle()
-      if (google.googleEventId) {
-        google = await updateMeetEvent(google.googleEventId, { ...form, meetLink: google.meetLink })
-      } else {
-        google = await createMeetEvent(form)
-        createdNow = true
-      }
+    await ensureGoogle()
+    if (current.googleEventId) {
+      const google = await updateMeetEvent(current.googleEventId, { ...form, meetLink: current.meetLink })
+      return { google, createdNow: false }
     }
+    return { google: await createMeetEvent(form), createdNow: true }
+  }
 
-    const payload = { ...form, ...google, psychologist }
+  /** Salva no backend (ou no mock) e atualiza a lista na tela. */
+  async function persistSession(editing, payload) {
+    if (editing) {
+      replaceInList(await updateAppointment(editing.id, payload))
+      setToast(payload.syncGoogle ? 'Sessão atualizada e alunos avisados pelo Google Agenda.' : 'Sessão atualizada.')
+      return
+    }
+    const created = await createAppointment(payload)
+    setAppointments(list =>
+      [...list, created].sort((x, y) => new Date(x.dateTime) - new Date(y.dateTime)))
+    setTab('AGENDADA')
+    setToast(payload.syncGoogle ? 'Sessão agendada! Convite com link do Meet enviado aos alunos.' : 'Sessão agendada.')
+  }
+
+  async function handleSaveSession(form) {
+    const editing = modal?.appointment
+    const { google, createdNow } = await syncSessionWithGoogle(form, editing)
 
     try {
-      if (editing) {
-        replaceInList(await updateAppointment(editing.id, payload))
-        setToast(form.syncGoogle ? 'Sessão atualizada e alunos avisados pelo Google Agenda.' : 'Sessão atualizada.')
-      } else {
-        const created = await createAppointment(payload)
-        setAppointments(list =>
-          [...list, created].sort((x, y) => new Date(x.dateTime) - new Date(y.dateTime)))
-        setTab('AGENDADA')
-        setToast(form.syncGoogle ? 'Sessão agendada! Convite com link do Meet enviado aos alunos.' : 'Sessão agendada.')
-      }
+      await persistSession(editing, { ...form, ...google, psychologist })
       setModal(null)
     } catch (err) {
-      // Não deixa um evento "órfão" no Google se o backend falhou
       if (createdNow && google.googleEventId) {
-        try { await cancelMeetEvent(google.googleEventId) } catch { /* ignora */ }
+        await rollbackGoogleEvent(google.googleEventId)
       }
       throw err
     }
@@ -326,7 +344,7 @@ export default function PsicologaAgendamentos() {
         />
       )}
 
-      {toast && <div className="ag-toast" role="status">{toast}</div>}
+      {toast && <div className="ag-toast" aria-live="polite">{toast}</div>}
     </>
   )
 }

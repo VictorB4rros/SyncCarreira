@@ -54,8 +54,7 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token')
 
     if (token) {
-      // Padrão Bearer Token — confirmar com o backend se usa este formato
-      // TODO: verificar se o backend espera "Bearer <token>" ou só "<token>"
+      // Padrão Bearer Token — confirmado no API_CONTRACT.md (Authorization: Bearer <token>)
       config.headers.Authorization = `Bearer ${token}`
     }
 
@@ -81,11 +80,13 @@ api.interceptors.response.use(
     const status = error.response?.status
 
     if (status === 401) {
-      // Token expirado ou inválido — limpa a sessão e redireciona para login
-      // TODO: substituir o window.location por navigate() do React Router
-      //       se preferir não recarregar a página
+      // Token expirado ou inválido — limpa a sessão e redireciona para login.
+      // Usamos window.location (e não navigate()) de propósito: este arquivo fica
+      // fora da árvore do React, e o recarregamento zera o estado do AuthContext.
       localStorage.removeItem('token')
-      window.location.href = '/login'
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login'
+      }
     }
 
     if (status === 403) {

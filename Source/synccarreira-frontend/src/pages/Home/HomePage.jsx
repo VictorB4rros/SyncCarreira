@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getTrails, getQuestionsByTrail, getAnswers } from '../../services/trailService'
 import AppHeader from '../../components/AppHeader/AppHeader.jsx'
+import { isPsychologist } from '../../utils/roles'
 import './HomePage.css'
 
 // ─── Card de trilha com progresso ─────────────────────────────
@@ -51,6 +52,10 @@ function TrailCard({ trail, studentId, onEnter, refreshKey }) {
   const isComplete = progress?.pct === 100
   const isStarted  = progress?.answered > 0
 
+  let buttonLabel = 'Iniciar'
+  if (isComplete)     buttonLabel = 'Revisar'
+  else if (isStarted) buttonLabel = 'Continuar'
+
   return (
     <div className={`hp-trail-card${isComplete ? ' hp-trail-card--done' : ''}`}>
       <div className="hp-trail-card__icon" aria-hidden="true">
@@ -84,7 +89,7 @@ function TrailCard({ trail, studentId, onEnter, refreshKey }) {
         className={`hp-trail-card__btn${isComplete ? ' hp-trail-card__btn--done' : ''}`}
         onClick={() => onEnter(trail.id)}
       >
-        {isComplete ? 'Revisar' : isStarted ? 'Continuar' : 'Iniciar'}
+        {buttonLabel}
       </button>
     </div>
   )
@@ -95,10 +100,12 @@ function TrailCard({ trail, studentId, onEnter, refreshKey }) {
 export default function HomePage() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  // Psicóloga não responde trilhas: a Home dela leva para os agendamentos
+  const psicologa = isPsychologist(user)
 
   const [trails, setTrails]         = useState([])
-  const [loadingTrails, setLoading] = useState(true)
-  const [trailsError, setError]     = useState('')
+  const [loadingTrails, setLoadingTrails] = useState(true)
+  const [trailsError, setTrailsError] = useState('')
   // refreshKey muda ao ganhar foco — força TrailCards a recarregar progresso
   const [refreshKey, setRefreshKey] = useState(() => Date.now())
 
@@ -111,18 +118,22 @@ export default function HomePage() {
 
   // Carrega lista de trilhas uma vez
   useEffect(() => {
+    if (psicologa) {
+      setLoadingTrails(false)
+      return
+    }
     async function load() {
       try {
         const data = await getTrails()
         setTrails(data)
       } catch {
-        setError('Não foi possível carregar as trilhas.')
+        setTrailsError('Não foi possível carregar as trilhas.')
       } finally {
-        setLoading(false)
+        setLoadingTrails(false)
       }
     }
     load()
-  }, [])
+  }, [psicologa])
 
   // Ao entrar numa trilha, atualiza o refreshKey ao voltar via navigate
   function handleEnterTrail(id) {
@@ -147,9 +158,20 @@ export default function HomePage() {
             <h1 className="hp-title">
               Bem-vindo, <span>{user?.nome ?? 'Usuário'}</span>!
             </h1>
+            <span className="hp-role">{psicologa ? 'Psicóloga / Orientadora' : 'Aluno'}</span>
             <p className="hp-sub">
-              Continue sua jornada de autoconhecimento.
+              {psicologa
+                ? 'Acompanhe seus alunos e organize as sessões de orientação.'
+                : 'Continue sua jornada de autoconhecimento.'}
             </p>
+            {psicologa && (
+              <button
+                className="hp-btn-cadastro"
+                onClick={() => navigate('/agendamentos')}
+              >
+                Ver agendamentos
+              </button>
+            )}
             <button
               className="hp-btn-cadastro"
               onClick={() => navigate('/cadastro')}
@@ -158,7 +180,8 @@ export default function HomePage() {
             </button>
           </div>
 
-          {/* Seção de trilhas */}
+          {/* Seção de trilhas (só para alunos) */}
+          {!psicologa && (
           <section className="hp-trails">
             <h2 className="hp-trails__title">Suas trilhas</h2>
 
@@ -189,6 +212,7 @@ export default function HomePage() {
               />
             ))}
           </section>
+          )}
 
         </div>
       </main>

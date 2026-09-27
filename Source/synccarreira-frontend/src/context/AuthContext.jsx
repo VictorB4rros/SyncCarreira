@@ -8,7 +8,7 @@
  *  - authService.me() agora chama GET /users/{id}
  */
 
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import * as authService from '../services/authService'
 
 const AuthContext = createContext(null)
@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
   }, [])
 
   // ── Login ──────────────────────────────────────────────────
-  async function login(email, password) {
+  const login = useCallback(async (email, password) => {
     setLoading(true)
     try {
       const data = await authService.login(email, password)
@@ -55,18 +55,24 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   // ── Logout ─────────────────────────────────────────────────
-  async function logout() {
+  const logout = useCallback(async () => {
     await authService.logout()
     setUser(null)
-  }
+  }, [])
+
+  // useMemo evita criar um novo objeto a cada render (e re-render desnecessário dos consumidores)
+  const value = useMemo(
+    () => ({ user, loading, login, logout }),
+    [user, loading, login, logout]
+  )
 
   if (loadingInit) return null
 
   return (
-      <AuthContext.Provider value={{ user, loading, login, logout }}>
+      <AuthContext.Provider value={value}>
         {children}
       </AuthContext.Provider>
   )

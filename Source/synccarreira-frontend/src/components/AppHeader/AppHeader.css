@@ -42,11 +42,11 @@
   transition: background 0.15s, color 0.15s;
 }
 
-.sc-header__link:hover { color: var(--sc-roxo); }
+.sc-header__link:hover { color: #5a35e8; }
 
 .sc-header__link--active {
   background: var(--sc-roxo-soft);
-  color: var(--sc-roxo);
+  color: #5a35e8; /* contraste 5.7:1 sobre o roxo claro */
   font-weight: 600;
 }
 
