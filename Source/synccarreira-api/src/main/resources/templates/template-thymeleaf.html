@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:inline="text">Olá, [[${recipientName}]]!</p>
+	<p>O seu acesso à aplicação SyncCarreira foi liberado.</p>
+	<p th:inline="text">O seu login para acesso é: [[${email}]]</p>
+	<p>Para definir a sua senha, acesse este link <a th:href="@{${link}}">definir senha</a></p>
+    <p>IMPORTANTE: este link  é pessoal e intransferível. Ele irá expirar em 24 horas ou assim que o primeiro acesso for realizado.</p>
+    <p>Atenciosamente,</p>
+    <p>Time SyncCarreira</p>
+  </body>
+</html>

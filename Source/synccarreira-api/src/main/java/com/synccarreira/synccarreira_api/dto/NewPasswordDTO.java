@@ -1,6 +1,5 @@
 package com.synccarreira.synccarreira_api.dto;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,22 +9,16 @@ import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentInsertDTO {
+public class NewPasswordDTO {
 
     @NotBlank(message = "Campo obrigatório")
     @Getter
-    private String name;
+    @Setter
+    private String token;
 
-    @Email(message = "Favor entrar com email válido")
+    @NotBlank(message = "Campo obrigatório")
+    @Size(min = 8, message = "Deve ter no mínimo 8 caracteres")
     @Getter
-    private String email;
-
-    @Getter
-    private String schollarYear;
-
-    @Getter
-    private String schoolType;
-
-    @Getter
-    private String race;
+    @Setter
+    private String password;
 }

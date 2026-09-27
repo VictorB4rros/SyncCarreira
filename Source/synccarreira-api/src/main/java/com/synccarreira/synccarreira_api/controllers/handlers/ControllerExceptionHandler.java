@@ -2,10 +2,7 @@ package com.synccarreira.synccarreira_api.controllers.handlers;
 
 import com.synccarreira.synccarreira_api.dto.CustomError;
 import com.synccarreira.synccarreira_api.dto.ValidationError;
-import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
-import com.synccarreira.synccarreira_api.services.exceptions.ConflictException;
-import com.synccarreira.synccarreira_api.services.exceptions.DatabaseException;
-import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
+import com.synccarreira.synccarreira_api.services.exceptions.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -68,6 +65,13 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(BusinessException.class)
 	public ResponseEntity<CustomError> business(BusinessException e, HttpServletRequest request) {
 		HttpStatus status = HttpStatus.UNPROCESSABLE_CONTENT;
+		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(status).body(err);
+	}
+
+	@ExceptionHandler(EmailException.class)
+	public ResponseEntity<CustomError> email(EmailException e, HttpServletRequest request) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
 		CustomError err = new CustomError(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(status).body(err);
 	}

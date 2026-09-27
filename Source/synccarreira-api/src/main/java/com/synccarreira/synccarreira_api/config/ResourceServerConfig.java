@@ -34,6 +34,7 @@ public class ResourceServerConfig {
 	private static final String ANSWERS = "/answers/**";
 	private static final String CLASSES = "/classes/**";
 	private static final String STUDENTS = "/students/**";
+	private static final String AUTH = "/auth/**";
 	private static final String ADMIN = "ADMIN";
 
 	@Bean
@@ -53,6 +54,7 @@ public class ResourceServerConfig {
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers(HttpMethod.PUT, AUTH).permitAll()
 				.requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/users/**").permitAll()

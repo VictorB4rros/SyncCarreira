@@ -1,16 +1,19 @@
 package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.*;
+import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.Role;
 import com.synccarreira.synccarreira_api.entities.Student;
-import com.synccarreira.synccarreira_api.entities.User;
+import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
+import com.synccarreira.synccarreira_api.services.events.EmailEvent;
 import com.synccarreira.synccarreira_api.services.exceptions.DatabaseException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,10 +22,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class StudentService {
+
+    @Value("${email.password-recover.token.minutes}")
+    private Long tokenMinutes;
+
+    @Value("${email.password-recover.uri}")
+    private String recoverUri;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -30,10 +43,21 @@ public class StudentService {
 
     private final RoleRepository roleRepository;
 
-    public StudentService(final PasswordEncoder passwordEncoder, final StudentRepository studentRepository, final RoleRepository roleRepository) {
+    private final PasswordRecoverRepository passwordRecoverRepository;
+
+    private final ApplicationEventPublisher eventPublisher;
+
+    public StudentService(
+            final PasswordEncoder passwordEncoder,
+            final StudentRepository studentRepository,
+            final RoleRepository roleRepository,
+            final PasswordRecoverRepository passwordRecoverRepository,
+            final ApplicationEventPublisher eventPublisher) {
         this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
         this.roleRepository = roleRepository;
+        this.passwordRecoverRepository = passwordRecoverRepository;
+        this.eventPublisher = eventPublisher;
     }
 
     @Transactional(readOnly = true)
@@ -52,6 +76,23 @@ public class StudentService {
         Student entity = new Student();
         copyDtoToEntity(dto, entity);
         entity = studentRepository.save(entity);
+
+        String token = UUID.randomUUID().toString();
+
+        String subject = new String("SyncCarreira - Primeiro Acesso");
+        Map<String, Object> map = new HashMap<>();
+        map.put("recipientName", dto.getName());
+        map.put("email", dto.getEmail());
+        map.put("link", recoverUri + token);
+
+        PasswordRecover passwordRecover = new PasswordRecover();
+        passwordRecover.setEmail(dto.getEmail());
+        passwordRecover.setToken(token);
+        passwordRecover.setExpiration(Instant.now().plusSeconds(tokenMinutes * 60L));
+        passwordRecover = passwordRecoverRepository.save(passwordRecover);
+
+        eventPublisher.publishEvent(new EmailEvent(dto.getEmail(), subject, map));
+
         return new StudentDTO(entity);
     }
 
@@ -99,7 +140,6 @@ public class StudentService {
         entity.setSchoolType(dto.getSchoolType());
         entity.setScholarYear(dto.getSchollarYear());
         entity.setRace(dto.getRace());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
         Optional<Role> role = roleRepository.findById(1L);
         role.ifPresent(entity::addRole);
