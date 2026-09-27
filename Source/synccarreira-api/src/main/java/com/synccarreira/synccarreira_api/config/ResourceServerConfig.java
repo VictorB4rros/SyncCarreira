@@ -37,6 +37,7 @@ public class ResourceServerConfig {
 	private static final String PSYCHOLOGISTS = "/psychologists/**";
 	private static final String AUTH = "/auth/**";
 	private static final String ADMIN = "ADMIN";
+	private static final String USER = "USER";
 
 	@Bean
 	@Profile("test")
@@ -69,10 +70,10 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.POST, ANSWERS).permitAll()
-				.requestMatchers(HttpMethod.GET, ANSWERS).permitAll()
-				.requestMatchers(HttpMethod.PUT, ANSWERS).permitAll()
-				.requestMatchers(HttpMethod.DELETE, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.POST, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.PUT, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.DELETE, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.POST, PSYCHOLOGISTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.GET, PSYCHOLOGISTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PUT, PSYCHOLOGISTS).hasRole(ADMIN)
