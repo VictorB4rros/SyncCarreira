@@ -7,7 +7,6 @@ import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.UserRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
