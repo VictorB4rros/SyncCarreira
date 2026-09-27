@@ -42,6 +42,36 @@ function MeetButton({ appointment, big = false }) {
   )
 }
 
+/** Card de destaque da próxima sessão do aluno. */
+function NextSession({ appointment: a, email }) {
+  const live = isHappeningSoon(a)
+  const eyebrow = live ? 'Sua sessão está começando' : `Próxima sessão · ${timeUntil(a.dateTime)}`
+  const title = a.title || (a.scheduleType === 'GRUPO' ? 'Sessão em grupo' : 'Sessão individual')
+  const withWhom = a.psychologist?.name ? `Com ${a.psychologist.name}` : 'Com sua orientadora'
+
+  return (
+    <section className={`ag-next${live ? ' ag-next--live' : ''}`}>
+      <span className="ag-next__eyebrow">{eyebrow}</span>
+      <h2 className="ag-next__title">{title}</h2>
+      <p className="ag-next__when">{formatSessionDate(a)}</p>
+      <p className="ag-next__who">
+        {withWhom}
+        {a.scheduleType === 'GRUPO' && ` · em grupo (${a.students.length} participantes)`}
+      </p>
+      {a.description && <p className="ag-next__desc">{a.description}</p>}
+      <div className="ag-next__actions">
+        <MeetButton appointment={a} big />
+        <a className="ag-btn ag-btn--light" href={buildAddToCalendarUrl(a)} target="_blank" rel="noreferrer">
+          Adicionar ao Google Agenda
+        </a>
+      </div>
+      <p className="ag-next__hint">
+        O convite também foi enviado para <strong>{email}</strong>.
+      </p>
+    </section>
+  )
+}
+
 export default function AlunoAgendamentos() {
   const { user } = useAuth()
   const [appointments, setAppointments] = useState([])
@@ -99,29 +129,7 @@ export default function AlunoAgendamentos() {
         <>
           {/* Próxima sessão em destaque */}
           {next ? (
-            <section className={`ag-next${isHappeningSoon(next) ? ' ag-next--live' : ''}`}>
-              <span className="ag-next__eyebrow">
-                {isHappeningSoon(next) ? 'Sua sessão está começando' : `Próxima sessão · ${timeUntil(next.dateTime)}`}
-              </span>
-              <h2 className="ag-next__title">
-                {next.title || (next.scheduleType === 'GRUPO' ? 'Sessão em grupo' : 'Sessão individual')}
-              </h2>
-              <p className="ag-next__when">{formatSessionDate(next)}</p>
-              <p className="ag-next__who">
-                {next.psychologist?.name ? `Com ${next.psychologist.name}` : 'Com sua orientadora'}
-                {next.scheduleType === 'GRUPO' && ` · em grupo (${next.students.length} participantes)`}
-              </p>
-              {next.description && <p className="ag-next__desc">{next.description}</p>}
-              <div className="ag-next__actions">
-                <MeetButton appointment={next} big />
-                <a className="ag-btn ag-btn--light" href={buildAddToCalendarUrl(next)} target="_blank" rel="noreferrer">
-                  Adicionar ao Google Agenda
-                </a>
-              </div>
-              <p className="ag-next__hint">
-                O convite também foi enviado para <strong>{user.email}</strong>.
-              </p>
-            </section>
+            <NextSession appointment={next} email={user.email} />
           ) : (
             <div className="ag-empty ag-empty--card">
               Você não tem sessões agendadas no momento. Quando sua orientadora marcar uma,

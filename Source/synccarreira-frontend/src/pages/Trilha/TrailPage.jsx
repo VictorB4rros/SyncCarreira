@@ -34,6 +34,13 @@ const SAVE_DEBOUNCE = 300
 
 /** Labels da escala Likert */
 const LIKERT_LABELS = ['Discordo totalmente', 'Concordo totalmente']
+
+/** Texto lido pelo leitor de tela em cada botão da escala Likert. */
+function likertAriaLabel(val) {
+  if (val === 1) return `${val} — ${LIKERT_LABELS[0]}`
+  if (val === 5) return `${val} — ${LIKERT_LABELS[1]}`
+  return `${val} — `
+}
 const LIKERT_VALUES = [1, 2, 3, 4, 5]
 
 // ─── Sub-componentes ──────────────────────────────────────────
@@ -145,7 +152,7 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
                     type="button"
                     className={`tp-likert__btn${selectedValue === val ? ' tp-likert__btn--selected' : ''}`}
                     onClick={() => handleClick(val)}
-                    aria-label={`${val} — ${val === 1 ? LIKERT_LABELS[0] : val === 5 ? LIKERT_LABELS[1] : ''}`}
+                    aria-label={likertAriaLabel(val)}
                 >
                   {val}
                 </button>
@@ -384,16 +391,14 @@ export default function TrailPage() {
               {answeredCount} de {totalQuestions} perguntas
             </span>
             </div>
-            <div className="tp-progress-card__bar">
-              <div
-                  className="tp-progress-card__fill"
-                  style={{ width: `${progressPct}%` }}
-                  role="progressbar"
-                  aria-valuenow={progressPct}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-              />
-            </div>
+            <progress
+                className="tp-progress-card__bar"
+                value={progressPct}
+                max={100}
+                aria-label="Progresso da trilha"
+            >
+              {progressPct}%
+            </progress>
           </div>
 
           {/* ── Lista de perguntas ── */}

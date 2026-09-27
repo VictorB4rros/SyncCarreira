@@ -3,6 +3,7 @@ INSERT INTO tb_usuario (nome_usuario, email_usuario, senha_usuario) VALUES ('Fer
 
 INSERT INTO tb_role (autoridade_role) VALUES ('ROLE_USER');
 INSERT INTO tb_role (autoridade_role) VALUES ('ROLE_ADMIN');
+INSERT INTO tb_role (autoridade_role) VALUES ('ROLE_PSICOLOGA');
 
 INSERT INTO tb_usuario_role (id_usuario , id_role) VALUES (1, 1);
 INSERT INTO tb_usuario_role (id_usuario , id_role) VALUES (2, 2);

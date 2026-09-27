@@ -60,7 +60,6 @@ export default function FeedbackModal({ appointment, onSave, onClose }) {
           placeholder="Pontos conversados, combinados e próximos passos…"
           value={text}
           onChange={e => setText(e.target.value)}
-          autoFocus
         />
         <span className="ag-counter">{text.length}/{MAX}</span>
       </div>

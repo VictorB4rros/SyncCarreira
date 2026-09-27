@@ -1,32 +1,54 @@
 /**
  * @file Modal.jsx
- * @description Modal simples e acessível (fecha com ESC ou clique no fundo).
+ * @description Modal acessível usando o elemento nativo <dialog>.
+ *
+ * - Fecha com ESC (tratado pelo próprio navegador via evento `cancel`)
+ * - Fecha ao clicar fora: o fundo é um <button> nativo (acessível por mouse,
+ *   teclado e toque), em vez de um <div> com onClick
+ * - Mantém o foco dentro do modal enquanto aberto (showModal)
  */
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 export default function Modal({ title, subtitle, onClose, children, footer, busy = false, wide = false }) {
+  const dialogRef = useRef(null)
+
+  // Abre como modal nativo (foco preso dentro + ESC) e trava o scroll da página
   useEffect(() => {
-    function onKey(e) { if (e.key === 'Escape' && !busy) onClose() }
-    document.addEventListener('keydown', onKey)
+    const dialog = dialogRef.current
+    if (dialog && !dialog.open && typeof dialog.showModal === 'function') {
+      dialog.showModal()
+    }
     document.body.style.overflow = 'hidden'
     return () => {
-      document.removeEventListener('keydown', onKey)
       document.body.style.overflow = ''
+      if (dialog?.open) dialog.close()
     }
-  }, [onClose, busy])
+  }, [])
+
+  // ESC dispara "cancel": deixamos o React decidir se pode fechar
+  function handleCancel(e) {
+    e.preventDefault()
+    if (!busy) onClose()
+  }
 
   return (
-    <div
-      className="ag-modal__backdrop"
-      onMouseDown={(e) => { if (e.target === e.currentTarget && !busy) onClose() }}
+    <dialog
+      ref={dialogRef}
+      className="ag-modal__dialog"
+      aria-labelledby="ag-modal-title"
+      onCancel={handleCancel}
     >
-      <div
-        className={`ag-modal${wide ? ' ag-modal--wide' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="ag-modal-title"
-      >
+      <button
+        type="button"
+        className="ag-modal__scrim"
+        aria-label="Fechar janela"
+        tabIndex={-1}
+        onClick={onClose}
+        disabled={busy}
+      />
+
+      <div className={`ag-modal${wide ? ' ag-modal--wide' : ''}`}>
         <div className="ag-modal__head">
           <div>
             <h2 id="ag-modal-title" className="ag-modal__title">{title}</h2>
@@ -45,6 +67,6 @@ export default function Modal({ title, subtitle, onClose, children, footer, busy
 
         {footer && <div className="ag-modal__foot">{footer}</div>}
       </div>
-    </div>
+    </dialog>
   )
 }
