@@ -98,7 +98,7 @@ public class StudentController {
     public ResponseEntity<StudentDTO> update(
             @Parameter(description = "Id do aluno.", required = true)
             @PathVariable Long id,
-            @Valid @RequestBody StudentUpdateDTO dto
+            @Valid @RequestBody StudentInsertDTO dto
     ) {
         StudentDTO result = studentService.update(id, dto);
         return ResponseEntity.ok(result);

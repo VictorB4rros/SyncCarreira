@@ -3,13 +3,10 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
-import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
-import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
-import com.synccarreira.synccarreira_api.services.events.EmailEvent;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import com.synccarreira.synccarreira_api.tests.PsychologistFactory;
 import jakarta.persistence.EntityNotFoundException;
@@ -21,8 +18,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,10 +38,7 @@ public class PsychologistServiceTests {
     private RoleRepository roleRepository;
 
     @Mock
-    private PasswordRecoverRepository passwordRecoverRepository;
-
-    @Mock
-    private ApplicationEventPublisher eventPublisher;
+    private PasswordRecoverService passwordRecoverService;
 
     private Long existingPsychologistId, nonExistingPsychologistId, psychologistRoleId;
     private Psychologist psychologist, psychologist1, expiredContractPsychologist;
@@ -57,9 +49,6 @@ public class PsychologistServiceTests {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(service, "tokenMinutes", 1440L);
-        ReflectionTestUtils.setField(service, "recoverUri", "http://localhost:3000/new-password?token=");
-
         existingPsychologistId = 1L;
         nonExistingPsychologistId = 100L;
         psychologistRoleId = 3L;
@@ -122,7 +111,6 @@ public class PsychologistServiceTests {
         Mockito.when(psychologistRepository.existsByNameAndCrp(psychologistInsertDTO.getName(), psychologistInsertDTO.getCrp())).thenReturn(false);
         Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
         Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
-        Mockito.when(passwordRecoverRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         PsychologistDTO result = service.create(psychologistInsertDTO);
 
@@ -132,13 +120,7 @@ public class PsychologistServiceTests {
         Assertions.assertEquals(psychologist.getEmail(), result.email());
         Assertions.assertEquals(psychologist.getCrp(), result.crp());
         Assertions.assertEquals(1, result.roles().size());
-        Mockito.verify(passwordRecoverRepository).save(Mockito.argThat((PasswordRecover passwordRecover) ->
-                psychologistInsertDTO.getEmail().equals(passwordRecover.getEmail())
-                        && passwordRecover.getToken() != null
-                        && passwordRecover.getExpiration() != null));
-        Mockito.verify(eventPublisher).publishEvent(Mockito.argThat((EmailEvent event) ->
-                psychologistInsertDTO.getEmail().equals(event.to())
-                        && psychologistInsertDTO.getName().equals(event.templateModel().get("recipientName"))));
+        Mockito.verify(passwordRecoverService).sendFirstAccessEmail(psychologistInsertDTO.getName(), psychologistInsertDTO.getEmail());
     }
 
     @Test
@@ -150,7 +132,7 @@ public class PsychologistServiceTests {
         });
 
         Mockito.verify(psychologistRepository, Mockito.never()).save(any());
-        Mockito.verify(eventPublisher, Mockito.never()).publishEvent(any());
+        Mockito.verify(passwordRecoverService, Mockito.never()).sendFirstAccessEmail(any(), any());
     }
 
     @Test

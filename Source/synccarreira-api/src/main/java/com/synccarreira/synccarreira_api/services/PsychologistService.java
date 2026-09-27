@@ -3,49 +3,34 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
-import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
-import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
-import com.synccarreira.synccarreira_api.services.events.EmailEvent;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PsychologistService {
-
-    @Value("${email.password-recover.token.minutes}")
-    private Long tokenMinutes;
-
-    @Value("${email.password-recover.uri}")
-    private String recoverUri;
 
     private final PsychologistRepository psychologistRepository;
 
     private final RoleRepository roleRepository;
 
-    private final PasswordRecoverRepository passwordRecoverRepository;
-
-    private final ApplicationEventPublisher eventPublisher;
+    private final PasswordRecoverService passwordRecoverService;
 
     public PsychologistService(
             final PsychologistRepository psychologistRepository,
             final RoleRepository roleRepository,
-            final PasswordRecoverRepository passwordRecoverRepository,
-            final ApplicationEventPublisher eventPublisher) {
+            final PasswordRecoverService passwordRecoverService) {
         this.psychologistRepository = psychologistRepository;
         this.roleRepository = roleRepository;
-        this.passwordRecoverRepository = passwordRecoverRepository;
-        this.eventPublisher = eventPublisher;
+        this.passwordRecoverService = passwordRecoverService;
     }
 
     @Transactional(readOnly = true)
@@ -73,21 +58,7 @@ public class PsychologistService {
         copyDtoToEntity(dto, psychologist);
         psychologist = psychologistRepository.save(psychologist);
 
-        String token = UUID.randomUUID().toString();
-
-        String subject = "SyncCarreira - Primeiro Acesso";
-        Map<String, Object> map = new HashMap<>();
-        map.put("recipientName", dto.getName());
-        map.put("email", dto.getEmail());
-        map.put("link", recoverUri + token);
-
-        PasswordRecover passwordRecover = new PasswordRecover();
-        passwordRecover.setEmail(dto.getEmail());
-        passwordRecover.setToken(token);
-        passwordRecover.setExpiration(Instant.now().plusSeconds(tokenMinutes * 60L));
-        passwordRecover = passwordRecoverRepository.save(passwordRecover);
-
-        eventPublisher.publishEvent(new EmailEvent(dto.getEmail(), subject, map));
+        passwordRecoverService.sendFirstAccessEmail(dto.getName(), dto.getEmail());
 
         return new PsychologistDTO(psychologist);
     }
