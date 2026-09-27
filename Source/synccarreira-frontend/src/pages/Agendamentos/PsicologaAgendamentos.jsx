@@ -28,6 +28,17 @@ import {
 } from '../../services/googleCalendarService'
 import { getAllStudents } from '../../services/studentService'
 
+/**
+ * Remove do Google um evento recém-criado quando o backend falhou (evita evento "órfão").
+ * Fica fora do componente porque não depende de estado. Nunca rejeita: se nem o rollback
+ * funcionar, o erro original (do backend) é o que importa mostrar.
+ * @param {string} googleEventId
+ * @returns {Promise<void>}
+ */
+function rollbackGoogleEvent(googleEventId) {
+  return cancelMeetEvent(googleEventId).catch(() => undefined)
+}
+
 const TABS = [
   { id: 'AGENDADA',  label: 'Próximas'   },
   { id: 'REALIZADA', label: 'Realizadas' },
@@ -147,15 +158,6 @@ export default function PsicologaAgendamentos() {
     setToast(payload.syncGoogle ? 'Sessão agendada! Convite com link do Meet enviado aos alunos.' : 'Sessão agendada.')
   }
 
-  /** Remove do Google um evento recém-criado quando o backend falhou (evita evento "órfão"). */
-  async function rollbackGoogleEvent(googleEventId) {
-    try {
-      await cancelMeetEvent(googleEventId)
-    } catch {
-      // se nem o rollback funcionar, o erro original (do backend) é o que importa mostrar
-    }
-  }
-
   async function handleSaveSession(form) {
     const editing = modal?.appointment
     const { google, createdNow } = await syncSessionWithGoogle(form, editing)
@@ -164,7 +166,9 @@ export default function PsicologaAgendamentos() {
       await persistSession(editing, { ...form, ...google, psychologist })
       setModal(null)
     } catch (err) {
-      if (createdNow && google.googleEventId) await rollbackGoogleEvent(google.googleEventId)
+      if (createdNow && google.googleEventId) {
+        await rollbackGoogleEvent(google.googleEventId)
+      }
       throw err
     }
   }
