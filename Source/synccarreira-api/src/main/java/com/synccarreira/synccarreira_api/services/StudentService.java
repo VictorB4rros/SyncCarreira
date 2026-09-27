@@ -37,8 +37,6 @@ public class StudentService {
     @Value("${email.password-recover.uri}")
     private String recoverUri;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final StudentRepository studentRepository;
 
     private final RoleRepository roleRepository;
@@ -48,12 +46,10 @@ public class StudentService {
     private final ApplicationEventPublisher eventPublisher;
 
     public StudentService(
-            final PasswordEncoder passwordEncoder,
             final StudentRepository studentRepository,
             final RoleRepository roleRepository,
             final PasswordRecoverRepository passwordRecoverRepository,
             final ApplicationEventPublisher eventPublisher) {
-        this.passwordEncoder = passwordEncoder;
         this.studentRepository = studentRepository;
         this.roleRepository = roleRepository;
         this.passwordRecoverRepository = passwordRecoverRepository;
@@ -79,7 +75,7 @@ public class StudentService {
 
         String token = UUID.randomUUID().toString();
 
-        String subject = new String("SyncCarreira - Primeiro Acesso");
+        String subject = "SyncCarreira - Primeiro Acesso";
         Map<String, Object> map = new HashMap<>();
         map.put("recipientName", dto.getName());
         map.put("email", dto.getEmail());

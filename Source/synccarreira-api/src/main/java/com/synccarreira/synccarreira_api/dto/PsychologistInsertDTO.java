@@ -30,10 +30,4 @@ public class PsychologistInsertDTO {
     @NotNull(message = "Campo obrigatório")
     @Getter
     private LocalDate contractExpirationDate;
-
-    @NotBlank(message = "Campo obrigatório")
-    @Size(min = 8, message = "Deve ter no mínimo 8 caracteres")
-    @Getter
-    @Setter
-    private String password;
 }
