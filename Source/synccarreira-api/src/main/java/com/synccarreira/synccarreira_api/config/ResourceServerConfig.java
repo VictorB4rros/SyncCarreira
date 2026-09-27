@@ -34,6 +34,7 @@ public class ResourceServerConfig {
 	private static final String ANSWERS = "/answers/**";
 	private static final String CLASSES = "/classes/**";
 	private static final String STUDENTS = "/students/**";
+	private static final String PSYCHOLOGISTS = "/psychologists/**";
 	private static final String AUTH = "/auth/**";
 	private static final String ADMIN = "ADMIN";
 
@@ -68,19 +69,19 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.POST, STUDENTS).permitAll()
-				.requestMatchers(HttpMethod.GET, STUDENTS).permitAll()
-				.requestMatchers(HttpMethod.PUT, STUDENTS).permitAll()
-				.requestMatchers(HttpMethod.DELETE, STUDENTS).permitAll()
-				.requestMatchers(HttpMethod.PATCH, STUDENTS).permitAll()
 				.requestMatchers(HttpMethod.POST, ANSWERS).permitAll()
 				.requestMatchers(HttpMethod.GET, ANSWERS).permitAll()
 				.requestMatchers(HttpMethod.PUT, ANSWERS).permitAll()
 				.requestMatchers(HttpMethod.DELETE, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.POST, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PATCH, STUDENTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, INSTITUTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.GET, INSTITUTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PUT, INSTITUTIONS).hasRole(ADMIN)

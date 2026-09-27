@@ -3,21 +3,17 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
-import com.synccarreira.synccarreira_api.dto.StudentInsertDTO;
 import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
-import com.synccarreira.synccarreira_api.entities.Student;
 import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.services.events.EmailEvent;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,8 +31,6 @@ public class PsychologistService {
 
     private final PsychologistRepository psychologistRepository;
 
-    private final PasswordEncoder passwordEncoder;
-
     private final RoleRepository roleRepository;
 
     private final PasswordRecoverRepository passwordRecoverRepository;
@@ -45,12 +39,10 @@ public class PsychologistService {
 
     public PsychologistService(
             final PsychologistRepository psychologistRepository,
-            final PasswordEncoder passwordEncoder,
             final RoleRepository roleRepository,
             final PasswordRecoverRepository passwordRecoverRepository,
             final ApplicationEventPublisher eventPublisher) {
         this.psychologistRepository = psychologistRepository;
-        this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
         this.passwordRecoverRepository = passwordRecoverRepository;
         this.eventPublisher = eventPublisher;
