@@ -64,8 +64,13 @@ public class AuthService {
         if (result.isEmpty()) {
             throw new ResourceNotFoundException("Token inválido");
         }
-        User user = userRepository.findByEmail(result.getFirst().getEmail());
+        String email = result.getFirst().getEmail();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("Usuário não encontrado");
+        }
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         userRepository.save(user);
+        passwordRecoverRepository.deleteByEmail(email);
     }
 }

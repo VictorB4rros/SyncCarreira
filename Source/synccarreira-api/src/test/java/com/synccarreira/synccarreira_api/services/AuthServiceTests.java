@@ -136,6 +136,7 @@ class AuthServiceTests {
         Instant after = Instant.now();
         Mockito.verify(passwordRecoverRepository).searchValidTokens(eq(validToken), captor.capture());
         Mockito.verify(userRepository).save(user);
+        Mockito.verify(passwordRecoverRepository).deleteByEmail(existingEmail);
 
         Assertions.assertEquals(encodedPassword, user.getPassword());
         Assertions.assertFalse(captor.getValue().isBefore(before));
@@ -153,5 +154,20 @@ class AuthServiceTests {
         Mockito.verify(userRepository, Mockito.never()).findByEmail(anyString());
         Mockito.verify(passwordEncoder, Mockito.never()).encode(anyString());
         Mockito.verify(userRepository, Mockito.never()).save(any());
+        Mockito.verify(passwordRecoverRepository, Mockito.never()).deleteByEmail(anyString());
+    }
+
+    @Test
+    void saveNewPasswordShouldReturnResourceNotFoundExceptionWhenTokenIsValidAndUserDoesNotExist() {
+        Mockito.when(passwordRecoverRepository.searchValidTokens(eq(validToken), any(Instant.class))).thenReturn(List.of(passwordRecover));
+        Mockito.when(userRepository.findByEmail(existingEmail)).thenReturn(null);
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.saveNewPassword(validTokenNewPasswordDTO);
+        });
+
+        Mockito.verify(passwordEncoder, Mockito.never()).encode(anyString());
+        Mockito.verify(userRepository, Mockito.never()).save(any());
+        Mockito.verify(passwordRecoverRepository, Mockito.never()).deleteByEmail(anyString());
     }
 }
