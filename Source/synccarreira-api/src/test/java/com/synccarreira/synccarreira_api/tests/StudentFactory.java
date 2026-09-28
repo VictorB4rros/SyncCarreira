@@ -1,7 +1,9 @@
 package com.synccarreira.synccarreira_api.tests;
 
+import com.synccarreira.synccarreira_api.dto.StudentDTO;
 import com.synccarreira.synccarreira_api.dto.StudentDetailsDTO;
 import com.synccarreira.synccarreira_api.dto.StudentInsertDTO;
+import com.synccarreira.synccarreira_api.dto.StudentScoreDTO;
 import com.synccarreira.synccarreira_api.entities.Role;
 import com.synccarreira.synccarreira_api.entities.Student;
 
@@ -47,6 +49,24 @@ public class StudentFactory {
                 "Particular",
                 "Preta"
         );
+    }
+
+    public static StudentInsertDTO createInvalidStudentInsertDTO() {
+        return new StudentInsertDTO(
+                "",
+                "email-invalido",
+                "3º ano do Ensino Médio",
+                "Pública",
+                "Parda"
+        );
+    }
+
+    public static StudentDTO createStudentDTO() {
+        return new StudentDTO(createStudent());
+    }
+
+    public static StudentScoreDTO createStudentScoreDTO() {
+        return new StudentScoreDTO(createStudent());
     }
 
     public static StudentDetailsDTO createStudentDetailsDTO() {
