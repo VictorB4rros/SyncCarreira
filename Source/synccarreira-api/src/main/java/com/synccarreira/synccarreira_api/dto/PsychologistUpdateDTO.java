@@ -22,9 +22,6 @@ public class PsychologistUpdateDTO {
     @Getter
     private String email;
 
-    @Getter
-    private Long roleId;
-
     @NotBlank(message = "Campo obrigatório")
     @Getter
     private String crp;

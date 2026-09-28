@@ -33,7 +33,11 @@ public class ResourceServerConfig {
 	private static final String INSTITUTIONS = "/institutions/**";
 	private static final String ANSWERS = "/answers/**";
 	private static final String CLASSES = "/classes/**";
+	private static final String STUDENTS = "/students/**";
+	private static final String PSYCHOLOGISTS = "/psychologists/**";
+	private static final String AUTH = "/auth/**";
 	private static final String ADMIN = "ADMIN";
+	private static final String USER = "USER";
 
 	@Bean
 	@Profile("test")
@@ -52,6 +56,7 @@ public class ResourceServerConfig {
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
+				.requestMatchers(HttpMethod.PUT, AUTH).permitAll()
 				.requestMatchers(HttpMethod.POST, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.GET, "/users/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
@@ -65,18 +70,19 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/psychologists/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/students/**").permitAll()
-				.requestMatchers(HttpMethod.POST, ANSWERS).permitAll()
-				.requestMatchers(HttpMethod.GET, ANSWERS).permitAll()
-				.requestMatchers(HttpMethod.PUT, ANSWERS).permitAll()
-				.requestMatchers(HttpMethod.DELETE, ANSWERS).permitAll()
+				.requestMatchers(HttpMethod.POST, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.PUT, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.DELETE, ANSWERS).hasRole(USER)
+				.requestMatchers(HttpMethod.POST, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, PSYCHOLOGISTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PATCH, STUDENTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, INSTITUTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.GET, INSTITUTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PUT, INSTITUTIONS).hasRole(ADMIN)

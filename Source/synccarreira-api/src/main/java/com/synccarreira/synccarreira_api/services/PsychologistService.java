@@ -9,26 +9,29 @@ import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PsychologistService {
 
-    private static final String PSYCHOLOGIST_ROLE = "ROLE_PSICOLOGA";
+    private final PsychologistRepository psychologistRepository;
 
-    @Autowired
-    private PsychologistRepository psychologistRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordRecoverService passwordRecoverService;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    public PsychologistService(
+            final PsychologistRepository psychologistRepository,
+            final RoleRepository roleRepository,
+            final PasswordRecoverService passwordRecoverService) {
+        this.psychologistRepository = psychologistRepository;
+        this.roleRepository = roleRepository;
+        this.passwordRecoverService = passwordRecoverService;
+    }
 
     @Transactional(readOnly = true)
     public List<PsychologistDTO> findAll() {
@@ -54,6 +57,9 @@ public class PsychologistService {
         Psychologist psychologist = new Psychologist();
         copyDtoToEntity(dto, psychologist);
         psychologist = psychologistRepository.save(psychologist);
+
+        passwordRecoverService.sendFirstAccessEmail(dto.getName(), dto.getEmail());
+
         return new PsychologistDTO(psychologist);
     }
 
@@ -88,9 +94,9 @@ public class PsychologistService {
         entity.setEmail(dto.getEmail());
         entity.setContractExpirationDate(dto.getContractExpirationDate());
         entity.setCrp(dto.getCrp());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.getRoles().clear();
-        entity.addRole(psychologistRole());
+        Optional<Role> role = roleRepository.findById(3L);
+        role.ifPresent(entity::addRole);
     }
 
     private void copyDtoToEntity(PsychologistUpdateDTO dto, Psychologist entity) {
@@ -99,20 +105,7 @@ public class PsychologistService {
         entity.setContractExpirationDate(dto.getContractExpirationDate());
         entity.setCrp(dto.getCrp());
         entity.getRoles().clear();
-        entity.addRole(psychologistRole());
-    }
-
-    /**
-     * Toda psicóloga recebe a role ROLE_PSICOLOGA, buscada pelo NOME.
-     * Antes a role vinha do roleId enviado pelo front: se o id não existisse,
-     * a conta era salva sem role e o login falhava (a consulta de login usa INNER JOIN).
-     */
-    private Role psychologistRole() {
-        Role role = roleRepository.findByAuthority(PSYCHOLOGIST_ROLE);
-        if (role == null) {
-            throw new IllegalStateException(
-                    "A role " + PSYCHOLOGIST_ROLE + " não está cadastrada na tabela tb_role.");
-        }
-        return role;
+        Optional<Role> role = roleRepository.findById(3L);
+        role.ifPresent(entity::addRole);
     }
 }

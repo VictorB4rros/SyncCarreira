@@ -3,18 +3,15 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.*;
 import com.synccarreira.synccarreira_api.entities.Role;
 import com.synccarreira.synccarreira_api.entities.Student;
-import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.DatabaseException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,14 +21,20 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final PasswordRecoverService passwordRecoverService;
+
+    public StudentService(
+            final StudentRepository studentRepository,
+            final RoleRepository roleRepository,
+            final PasswordRecoverService passwordRecoverService) {
+        this.studentRepository = studentRepository;
+        this.roleRepository = roleRepository;
+        this.passwordRecoverService = passwordRecoverService;
+    }
 
     @Transactional(readOnly = true)
     public Page<StudentDetailsDTO> findAll(Pageable pageable) {
@@ -49,11 +52,14 @@ public class StudentService {
         Student entity = new Student();
         copyDtoToEntity(dto, entity);
         entity = studentRepository.save(entity);
+
+        passwordRecoverService.sendFirstAccessEmail(dto.getName(), dto.getEmail());
+
         return new StudentDTO(entity);
     }
 
     @Transactional
-    public StudentDTO update(Long id, @Valid StudentUpdateDTO dto) {
+    public StudentDTO update(Long id, @Valid StudentInsertDTO dto) {
         try {
             Student entity = studentRepository.getReferenceById(id);
             copyDtoToEntity(dto, entity);
@@ -78,6 +84,11 @@ public class StudentService {
         }
     }
 
+    @Transactional
+    public void setSchoolClass(Long studentId, Long classId) {
+        studentRepository.setSchoolClass(studentId, classId);
+    }
+
     @Transactional(readOnly = true)
     public StudentScoreDTO getScore(Long id) {
         Student student = studentRepository.findById(id)
@@ -90,19 +101,9 @@ public class StudentService {
         entity.setEmail(dto.getEmail());
         entity.setSchoolType(dto.getSchoolType());
         entity.setScholarYear(dto.getSchollarYear());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.setRace(dto.getRace());
         entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
-        role.ifPresent(entity::addRole);
-    }
-
-    private void copyDtoToEntity(StudentUpdateDTO dto, Student entity) {
-        entity.setName(dto.getName());
-        entity.setEmail(dto.getEmail());
-        entity.setSchoolType(dto.getSchoolType());
-        entity.setScholarYear(dto.getSchollarYear());
-        entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
+        Optional<Role> role = roleRepository.findById(1L);
         role.ifPresent(entity::addRole);
     }
 }

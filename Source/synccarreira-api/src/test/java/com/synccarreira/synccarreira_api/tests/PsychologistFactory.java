@@ -23,20 +23,22 @@ public class PsychologistFactory {
         psychologist.setPassword("hash-antigo");
         psychologist.setCrp("06/00029");
         psychologist.setContractExpirationDate(LocalDate.now().plusYears(1));
-        // role antiga (ex.: ROLE_ADMIN) — o update deve trocar por ROLE_PSICOLOGA
-        psychologist.addRole(new Role(2L, "ROLE_ADMIN"));
+        psychologist.addRole(new Role(3L, "ROLE_PSICOLOGA"));
         return psychologist;
     }
 
-    /** roleId 2 de propósito: o service deve IGNORAR o roleId e usar ROLE_PSICOLOGA. */
+    public static Psychologist createExpiredContractPsychologist() {
+        Psychologist psychologist = createPsychologist();
+        psychologist.setContractExpirationDate(LocalDate.now().minusDays(1));
+        return psychologist;
+    }
+
     public static PsychologistInsertDTO createPsychologistInsertDTO() {
         return new PsychologistInsertDTO(
                 "Lorena Souza",
                 "lorena.psi@gmail.com",
-                2L,
                 "06/00029",
-                LocalDate.now().plusYears(1),
-                "senha12345"
+                LocalDate.now().plusYears(1)
         );
     }
 
@@ -44,7 +46,6 @@ public class PsychologistFactory {
         return new PsychologistUpdateDTO(
                 "Lorena Souza Lima",
                 "lorena.lima@gmail.com",
-                2L,
                 "06/00030",
                 LocalDate.now().plusYears(2)
         );

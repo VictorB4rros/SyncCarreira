@@ -1,37 +1,44 @@
 package com.synccarreira.synccarreira_api.services;
 
+import com.synccarreira.synccarreira_api.dto.NewPasswordDTO;
+import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.User;
+import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.UserRepository;
+import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.List;
 
 @Service
 public class AuthService {
 
     private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    // Mensagem genérica de propósito: não revela se o e-mail existe ou não (evita enumeração de usuários)
     private static final String NOT_AUTHENTICATED = "Usuário não autenticado.";
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    /**
-     * Retorna o usuário dono do token JWT da requisição atual.
-     * Lança AuthenticationCredentialsNotFoundException (401) se não houver token válido
-     * ou se o usuário do token não existir mais.
-     * Erros de banco não são mais engolidos aqui: aparecem no log como 500.
-     */
+    private final PasswordRecoverRepository passwordRecoverRepository;
+
+    public AuthService(final PasswordEncoder passwordEncoder, final UserRepository userRepository, final PasswordRecoverRepository passwordRecoverRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.passwordRecoverRepository = passwordRecoverRepository;
+    }
+
     protected User authenticated() {
         String username;
         try {
@@ -49,5 +56,21 @@ public class AuthService {
             throw new AuthenticationCredentialsNotFoundException(NOT_AUTHENTICATED);
         }
         return user;
+    }
+
+    @Transactional
+    public void saveNewPassword(@Valid NewPasswordDTO dto) {
+        List<PasswordRecover> result = passwordRecoverRepository.searchValidTokens(dto.getToken(), Instant.now());
+        if (result.isEmpty()) {
+            throw new ResourceNotFoundException("Token inválido");
+        }
+        String email = result.getFirst().getEmail();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("Usuário não encontrado");
+        }
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(user);
+        passwordRecoverRepository.deleteByEmail(email);
     }
 }
