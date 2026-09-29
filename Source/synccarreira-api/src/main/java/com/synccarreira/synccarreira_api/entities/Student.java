@@ -30,7 +30,7 @@ public class Student extends User {
     @Setter
     private String race;
 
-    @OneToMany(mappedBy = "student")
+    @ManyToMany(mappedBy = "students")
     @Getter
     private List<Appointment> appointments = new ArrayList<>();
 

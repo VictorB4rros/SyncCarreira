@@ -1,4 +1,5 @@
-create table tb_agendamento (data_horario datetime(6), fk_aluno bigint, fk_psicologa bigint, id_agendamento bigint not null auto_increment, status_agendamento varchar(255), tipo_agendamento varchar(255), primary key (id_agendamento)) engine=InnoDB;
+create table tb_agendamento (duracao_minutos integer not null, data_feedback datetime(6), data_horario datetime(6) not null, fk_psicologa bigint not null, id_agendamento bigint not null auto_increment, descricao TEXT, feedback TEXT, google_event_id varchar(255), link_calendar varchar(1000), link_meet varchar(255), motivo_cancelamento varchar(1000), status_agendamento enum ('AGENDADA','CANCELADA','REALIZADA') not null, tipo_agendamento enum ('GRUPO','INDIVIDUAL') not null, titulo varchar(255) not null, primary key (id_agendamento)) engine=InnoDB;
+create table tb_agendamento_aluno (fk_agendamento bigint not null, fk_aluno bigint not null, primary key (fk_agendamento, fk_aluno)) engine=InnoDB;
 create table tb_aluno (score_artes float(53), score_biologicas float(53), score_exatas float(53), score_humanas float(53), fk_id_turma bigint, id_usuario bigint not null, ano_escolaridade varchar(255), raca varchar(255), tipo_escola varchar(255), primary key (id_usuario)) engine=InnoDB;
 create table tb_instituicao (ativo bit, id_instituicao bigint not null auto_increment, cnpj_instituicao varchar(255), nome_instituicao varchar(255), primary key (id_instituicao)) engine=InnoDB;
 create table tb_opcao_pergunta (peso_arte float(53) not null, peso_biologicas float(53) not null, peso_exatas float(53) not null, peso_humanas float(53) not null, fk_pergunta bigint not null, id_opcao_pergunta bigint not null auto_increment, texto_opcao varchar(255) not null, primary key (id_opcao_pergunta)) engine=InnoDB;
@@ -12,7 +13,8 @@ create table tb_usuario (id_usuario bigint not null auto_increment, email_usuari
 create table tb_usuario_role (id_role bigint not null, id_usuario bigint not null, primary key (id_role, id_usuario)) engine=InnoDB;
 alter table tb_usuario add constraint UKfudv57wn1m68hm816yebp0sai unique (email_usuario);
 alter table tb_agendamento add constraint FK2pkscigsktxf1gq7m4ecyet1y foreign key (fk_psicologa) references tb_psicologa (id_usuario);
-alter table tb_agendamento add constraint FK40co6nywx32kdmexmjadsachu foreign key (fk_aluno) references tb_aluno (id_usuario);
+alter table tb_agendamento_aluno add constraint FK_agendamento_aluno_aluno foreign key (fk_aluno) references tb_aluno (id_usuario);
+alter table tb_agendamento_aluno add constraint FK_agendamento_aluno_agendamento foreign key (fk_agendamento) references tb_agendamento (id_agendamento);
 alter table tb_aluno add constraint FKl0qmothm2h3us93k5xo0xmnnu foreign key (fk_id_turma) references tb_turma (id_turma);
 alter table tb_aluno add constraint FKs1ml6rp1f469yvboa9exanpu0 foreign key (id_usuario) references tb_usuario (id_usuario);
 alter table tb_opcao_pergunta add constraint FK6ukx0o1vvkmc7ft3rcb98qklf foreign key (fk_pergunta) references tb_pergunta (id_pergunta);
