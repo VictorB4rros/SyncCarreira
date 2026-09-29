@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,7 +120,7 @@ public class AppointmentService {
         }
         appointment.setScheduleStatus(ScheduleStatus.REALIZADA);
         appointment.setFeedback(dto.feedback());
-        appointment.setFeedbackDate(LocalDateTime.now());
+        appointment.setFeedbackDate(LocalDateTime.now(ZoneId.of("America/Sao_Paulo")));
         appointment = appointmentRepository.save(appointment);
         return new AppointmentDTO(appointment);
     }

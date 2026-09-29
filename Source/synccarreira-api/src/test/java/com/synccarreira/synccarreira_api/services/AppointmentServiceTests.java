@@ -61,18 +61,20 @@ public class AppointmentServiceTests {
     private Psychologist psychologist, otherPsychologist;
     private User admin;
     private Student student, secondStudent;
-    private Long existingAppointmentId, nonExistingAppointmentId;
+    private Long existingAppointmentId, nonExistingAppointmentId, psychologistId, studentId;
 
     @BeforeEach
     void setUp() {
         appointment = AppointmentFactory.createAppointment();
         psychologist = PsychologistFactory.createPsychologist();
+        psychologistId = psychologist.getId();
         otherPsychologist = PsychologistFactory.createPsychologist();
         otherPsychologist.setId(2L);
         admin = new User();
         admin.setId(99L);
         admin.addRole(new Role(2L, "ROLE_ADMIN"));
         student = StudentFactory.createStudent();
+        studentId = student.getId();
         secondStudent = AppointmentFactory.createSecondStudent();
         existingAppointmentId = 1L;
         nonExistingAppointmentId = 100L;
@@ -81,10 +83,10 @@ public class AppointmentServiceTests {
     @Test
     void findByPsychologistShouldReturnAppointmentDTOListWhenLoggedUserIsTheSamePsychologist() {
         Mockito.when(authService.authenticated()).thenReturn(psychologist);
-        Mockito.when(appointmentRepository.findByPsychologistIdOrderByDateTimeAsc(psychologist.getId()))
+        Mockito.when(appointmentRepository.findByPsychologistIdOrderByDateTimeAsc(psychologistId))
                 .thenReturn(List.of(appointment));
 
-        List<AppointmentDTO> result = service.findByPsychologist(psychologist.getId());
+        List<AppointmentDTO> result = service.findByPsychologist(psychologistId);
 
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals(appointment.getId(), result.getFirst().id());
@@ -95,9 +97,9 @@ public class AppointmentServiceTests {
     @Test
     void findByStudentShouldReturnAppointmentDTOListWhenLoggedUserIsTheSameStudent() {
         Mockito.when(authService.authenticated()).thenReturn(student);
-        Mockito.when(appointmentRepository.findByStudentId(student.getId())).thenReturn(List.of(appointment));
+        Mockito.when(appointmentRepository.findByStudentId(studentId)).thenReturn(List.of(appointment));
 
-        List<AppointmentDTO> result = service.findByStudent(student.getId());
+        List<AppointmentDTO> result = service.findByStudent(studentId);
 
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals(appointment.getTitle(), result.getFirst().title());
@@ -107,7 +109,7 @@ public class AppointmentServiceTests {
     void findByPsychologistShouldThrowForbiddenExceptionWhenLoggedUserIsAnotherPsychologist() {
         Mockito.when(authService.authenticated()).thenReturn(otherPsychologist);
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.findByPsychologist(psychologist.getId()));
+        Assertions.assertThrows(ForbiddenException.class, () -> service.findByPsychologist(psychologistId));
         Mockito.verify(appointmentRepository, Mockito.never()).findByPsychologistIdOrderByDateTimeAsc(any());
     }
 
@@ -115,14 +117,14 @@ public class AppointmentServiceTests {
     void findByStudentShouldThrowForbiddenExceptionWhenLoggedUserIsAnotherStudent() {
         Mockito.when(authService.authenticated()).thenReturn(secondStudent);
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.findByStudent(student.getId()));
+        Assertions.assertThrows(ForbiddenException.class, () -> service.findByStudent(studentId));
         Mockito.verify(appointmentRepository, Mockito.never()).findByStudentId(any());
     }
 
     @Test
     void findByPsychologistShouldReturnAppointmentDTOListWhenLoggedUserIsAdmin() {
         Mockito.when(authService.authenticated()).thenReturn(admin);
-        Mockito.when(appointmentRepository.findByPsychologistIdOrderByDateTimeAsc(psychologist.getId()))
+        Mockito.when(appointmentRepository.findByPsychologistIdOrderByDateTimeAsc(psychologistId))
                 .thenReturn(List.of(appointment));
 
         List<AppointmentDTO> result = service.findByPsychologist(psychologist.getId());
@@ -286,20 +288,22 @@ public class AppointmentServiceTests {
     @Test
     void cancelShouldThrowIllegalStateExceptionWhenAppointmentIsAlreadyDone() {
         Appointment done = AppointmentFactory.createAppointmentWithStatus(ScheduleStatus.REALIZADA);
+        AppointmentCancelDTO dto = new AppointmentCancelDTO("Imprevisto");
         Mockito.when(appointmentRepository.findById(existingAppointmentId)).thenReturn(Optional.of(done));
         Mockito.when(authService.authenticated()).thenReturn(psychologist);
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> service.cancel(existingAppointmentId, new AppointmentCancelDTO("Imprevisto")));
+                () -> service.cancel(existingAppointmentId, dto));
     }
 
     @Test
     void cancelShouldThrowForbiddenExceptionWhenLoggedUserIsAnotherPsychologist() {
+        AppointmentCancelDTO dto = new AppointmentCancelDTO("Imprevisto");
         Mockito.when(appointmentRepository.findById(existingAppointmentId)).thenReturn(Optional.of(appointment));
         Mockito.when(authService.authenticated()).thenReturn(otherPsychologist);
 
         Assertions.assertThrows(ForbiddenException.class,
-                () -> service.cancel(existingAppointmentId, new AppointmentCancelDTO("Imprevisto")));
+                () -> service.cancel(existingAppointmentId, dto));
         Mockito.verify(appointmentRepository, Mockito.never()).save(any());
     }
 
@@ -318,21 +322,23 @@ public class AppointmentServiceTests {
 
     @Test
     void registerFeedbackShouldThrowIllegalStateExceptionWhenAppointmentIsCancelled() {
+        AppointmentFeedbackDTO dto = new AppointmentFeedbackDTO("Sessão produtiva.");
         Appointment cancelled = AppointmentFactory.createAppointmentWithStatus(ScheduleStatus.CANCELADA);
         Mockito.when(appointmentRepository.findById(existingAppointmentId)).thenReturn(Optional.of(cancelled));
         Mockito.when(authService.authenticated()).thenReturn(psychologist);
 
         Assertions.assertThrows(IllegalStateException.class,
-                () -> service.registerFeedback(existingAppointmentId, new AppointmentFeedbackDTO("Sessão produtiva.")));
+                () -> service.registerFeedback(existingAppointmentId, dto));
     }
 
     @Test
     void registerFeedbackShouldThrowForbiddenExceptionWhenLoggedUserIsAnotherPsychologist() {
+        AppointmentFeedbackDTO dto = new AppointmentFeedbackDTO("Sessão produtiva.");
         Mockito.when(appointmentRepository.findById(existingAppointmentId)).thenReturn(Optional.of(appointment));
         Mockito.when(authService.authenticated()).thenReturn(otherPsychologist);
 
         Assertions.assertThrows(ForbiddenException.class,
-                () -> service.registerFeedback(existingAppointmentId, new AppointmentFeedbackDTO("Sessão produtiva.")));
+                () -> service.registerFeedback(existingAppointmentId, dto));
         Mockito.verify(appointmentRepository, Mockito.never()).save(any());
     }
 }

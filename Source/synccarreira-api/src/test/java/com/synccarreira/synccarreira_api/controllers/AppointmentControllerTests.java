@@ -58,7 +58,7 @@ public class AppointmentControllerTests {
     private List<AppointmentDTO> dtoList;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         existingAppointmentId = 1L;
         nonExistingAppointmentId = 100L;
         existingPsychologistId = 1L;
@@ -79,7 +79,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void findByPsychologistShouldReturnAppointmentDTOList() throws Exception {
+    void findByPsychologistShouldReturnAppointmentDTOList() throws Exception {
         when(service.findByPsychologist(existingPsychologistId)).thenReturn(dtoList);
 
         ResultActions result = mockMvc.perform(get("/appointments/psychologist/{id}", existingPsychologistId)
@@ -100,7 +100,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void findByPsychologistShouldReturnForbiddenWhenAccessingAnotherPsychologistAgenda() throws Exception {
+    void findByPsychologistShouldReturnForbiddenWhenAccessingAnotherPsychologistAgenda() throws Exception {
         when(service.findByPsychologist(otherPsychologistId))
                 .thenThrow(new ForbiddenException("Acesso negado: só é permitido acessar a própria agenda."));
 
@@ -113,7 +113,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void findByStudentShouldReturnAppointmentDTOList() throws Exception {
+    void findByStudentShouldReturnAppointmentDTOList() throws Exception {
         when(service.findByStudent(existingStudentId)).thenReturn(dtoList);
 
         ResultActions result = mockMvc.perform(get("/appointments/student/{id}", existingStudentId)
@@ -128,7 +128,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void findByStudentShouldReturnEmptyListWhenStudentHasNoAppointments() throws Exception {
+    void findByStudentShouldReturnEmptyListWhenStudentHasNoAppointments() throws Exception {
         when(service.findByStudent(existingStudentId)).thenReturn(List.of());
 
         ResultActions result = mockMvc.perform(get("/appointments/student/{id}", existingStudentId)
@@ -139,7 +139,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void insertShouldReturnCreatedAndAppointmentDTOWhenDataIsValid() throws Exception {
+    void insertShouldReturnCreatedAndAppointmentDTOWhenDataIsValid() throws Exception {
         when(service.insert(any())).thenReturn(appointmentDTO);
         String jsonBody = objectMapper.writeValueAsString(appointmentInsertDTO);
 
@@ -156,7 +156,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void insertShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
+    void insertShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidAppointmentInsertDTO);
 
         ResultActions result = mockMvc.perform(post("/appointments")
@@ -175,7 +175,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void insertShouldReturnNotFoundWhenPsychologistDoesNotExist() throws Exception {
+    void insertShouldReturnNotFoundWhenPsychologistDoesNotExist() throws Exception {
         when(service.insert(any())).thenThrow(new ResourceNotFoundException("Psicóloga não encontrada. ID: 1"));
         String jsonBody = objectMapper.writeValueAsString(appointmentInsertDTO);
 
@@ -190,7 +190,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void insertShouldReturnUnprocessableEntityWhenStudentCountDoesNotMatchScheduleType() throws Exception {
+    void insertShouldReturnUnprocessableEntityWhenStudentCountDoesNotMatchScheduleType() throws Exception {
         when(service.insert(any())).thenThrow(new BusinessException("Sessões individuais devem ter exatamente 1 aluno."));
         String jsonBody = objectMapper.writeValueAsString(appointmentInsertDTO);
 
@@ -204,7 +204,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnAppointmentDTOWhenIdExists() throws Exception {
+    void updateShouldReturnAppointmentDTOWhenIdExists() throws Exception {
         when(service.update(eq(existingAppointmentId), any())).thenReturn(appointmentDTO);
         String jsonBody = objectMapper.writeValueAsString(appointmentInsertDTO);
 
@@ -220,7 +220,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         when(service.update(eq(nonExistingAppointmentId), any()))
                 .thenThrow(new ResourceNotFoundException("Agendamento não encontrado. ID: " + nonExistingAppointmentId));
         String jsonBody = objectMapper.writeValueAsString(appointmentInsertDTO);
@@ -236,7 +236,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnConflictWhenAppointmentIsNotScheduled() throws Exception {
+    void updateShouldReturnConflictWhenAppointmentIsNotScheduled() throws Exception {
         when(service.update(eq(existingAppointmentId), any()))
                 .thenThrow(new IllegalStateException("Apenas sessões agendadas podem ser editadas. Status atual: CANCELADA."));
         String jsonBody = objectMapper.writeValueAsString(appointmentInsertDTO);
@@ -252,7 +252,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
+    void updateShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidAppointmentInsertDTO);
 
         ResultActions result = mockMvc.perform(put("/appointments/{id}", existingAppointmentId)
@@ -265,7 +265,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void cancelShouldReturnAppointmentDTOWhenIdExists() throws Exception {
+    void cancelShouldReturnAppointmentDTOWhenIdExists() throws Exception {
         when(service.cancel(eq(existingAppointmentId), any())).thenReturn(canceledAppointmentDTO);
         String jsonBody = objectMapper.writeValueAsString(appointmentCancelDTO);
 
@@ -280,7 +280,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void cancelShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void cancelShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         when(service.cancel(eq(nonExistingAppointmentId), any()))
                 .thenThrow(new ResourceNotFoundException("Agendamento não encontrado. ID: " + nonExistingAppointmentId));
         String jsonBody = objectMapper.writeValueAsString(appointmentCancelDTO);
@@ -295,7 +295,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void cancelShouldReturnConflictWhenAppointmentIsNotScheduled() throws Exception {
+    void cancelShouldReturnConflictWhenAppointmentIsNotScheduled() throws Exception {
         when(service.cancel(eq(existingAppointmentId), any()))
                 .thenThrow(new IllegalStateException("Apenas sessões agendadas podem ser canceladas. Status atual: REALIZADA."));
         String jsonBody = objectMapper.writeValueAsString(appointmentCancelDTO);
@@ -310,7 +310,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void cancelShouldReturnUnprocessableEntityWhenCancelReasonIsBlank() throws Exception {
+    void cancelShouldReturnUnprocessableEntityWhenCancelReasonIsBlank() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidAppointmentCancelDTO);
 
         ResultActions result = mockMvc.perform(patch("/appointments/{id}/cancel", existingAppointmentId)
@@ -324,7 +324,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void registerFeedbackShouldReturnAppointmentDTOWhenIdExists() throws Exception {
+    void registerFeedbackShouldReturnAppointmentDTOWhenIdExists() throws Exception {
         when(service.registerFeedback(eq(existingAppointmentId), any())).thenReturn(completedAppointmentDTO);
         String jsonBody = objectMapper.writeValueAsString(appointmentFeedbackDTO);
 
@@ -339,7 +339,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void registerFeedbackShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void registerFeedbackShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         when(service.registerFeedback(eq(nonExistingAppointmentId), any()))
                 .thenThrow(new ResourceNotFoundException("Agendamento não encontrado. ID: " + nonExistingAppointmentId));
         String jsonBody = objectMapper.writeValueAsString(appointmentFeedbackDTO);
@@ -354,7 +354,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void registerFeedbackShouldReturnConflictWhenAppointmentIsCanceled() throws Exception {
+    void registerFeedbackShouldReturnConflictWhenAppointmentIsCanceled() throws Exception {
         when(service.registerFeedback(eq(existingAppointmentId), any()))
                 .thenThrow(new IllegalStateException("Não é possível registrar feedback de uma sessão cancelada."));
         String jsonBody = objectMapper.writeValueAsString(appointmentFeedbackDTO);
@@ -369,7 +369,7 @@ public class AppointmentControllerTests {
     }
 
     @Test
-    public void registerFeedbackShouldReturnUnprocessableEntityWhenFeedbackIsBlank() throws Exception {
+    void registerFeedbackShouldReturnUnprocessableEntityWhenFeedbackIsBlank() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidAppointmentFeedbackDTO);
 
         ResultActions result = mockMvc.perform(put("/appointments/{id}/feedback", existingAppointmentId)
