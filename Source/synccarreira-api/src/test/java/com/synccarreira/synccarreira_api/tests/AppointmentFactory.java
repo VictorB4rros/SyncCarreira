@@ -1,5 +1,8 @@
 package com.synccarreira.synccarreira_api.tests;
 
+import com.synccarreira.synccarreira_api.dto.AppointmentCancelDTO;
+import com.synccarreira.synccarreira_api.dto.AppointmentDTO;
+import com.synccarreira.synccarreira_api.dto.AppointmentFeedbackDTO;
 import com.synccarreira.synccarreira_api.dto.AppointmentInsertDTO;
 import com.synccarreira.synccarreira_api.entities.Appointment;
 import com.synccarreira.synccarreira_api.entities.Student;
@@ -63,5 +66,44 @@ public class AppointmentFactory {
 
     public static AppointmentInsertDTO createGroupAppointmentInsertDTO() {
         return createAppointmentInsertDTO(ScheduleType.GRUPO, List.of(1L, 2L));
+    }
+
+    public static AppointmentDTO createAppointmentDTO() {
+        return new AppointmentDTO(createAppointment());
+    }
+
+    public static AppointmentDTO createAppointmentDTOWithStatus(ScheduleStatus status) {
+        return new AppointmentDTO(createAppointmentWithStatus(status));
+    }
+
+    public static AppointmentInsertDTO createInvalidAppointmentInsertDTO() {
+        return new AppointmentInsertDTO(
+                "",
+                null,
+                LocalDateTime.now().minusDays(1),
+                0,
+                null,
+                null,
+                List.of(),
+                null,
+                null,
+                null
+        );
+    }
+
+    public static AppointmentCancelDTO createAppointmentCancelDTO() {
+        return new AppointmentCancelDTO("Aluno não poderá comparecer.");
+    }
+
+    public static AppointmentCancelDTO createInvalidAppointmentCancelDTO() {
+        return new AppointmentCancelDTO("");
+    }
+
+    public static AppointmentFeedbackDTO createAppointmentFeedbackDTO() {
+        return new AppointmentFeedbackDTO("Aluno demonstrou interesse pela área de exatas.");
+    }
+
+    public static AppointmentFeedbackDTO createInvalidAppointmentFeedbackDTO() {
+        return new AppointmentFeedbackDTO("");
     }
 }
