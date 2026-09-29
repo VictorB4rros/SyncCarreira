@@ -7,12 +7,14 @@ import com.synccarreira.synccarreira_api.dto.AppointmentInsertDTO;
 import com.synccarreira.synccarreira_api.entities.Appointment;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Student;
+import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.entities.enums.ScheduleStatus;
 import com.synccarreira.synccarreira_api.entities.enums.ScheduleType;
 import com.synccarreira.synccarreira_api.repositories.AppointmentRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
+import com.synccarreira.synccarreira_api.services.exceptions.ForbiddenException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +27,8 @@ import java.util.Set;
 @Service
 public class AppointmentService {
 
+    private static final String ROLE_ADMIN = "ROLE_ADMIN";
+
     private final AppointmentRepository appointmentRepository;
 
     private final PsychologistRepository psychologistRepository;
@@ -33,19 +37,24 @@ public class AppointmentService {
 
     private final PsychologistService psychologistService;
 
+    private final AuthService authService;
+
     public AppointmentService(
             final AppointmentRepository appointmentRepository,
             final PsychologistRepository psychologistRepository,
             final StudentRepository studentRepository,
-            final PsychologistService psychologistService) {
+            final PsychologistService psychologistService,
+            final AuthService authService) {
         this.appointmentRepository = appointmentRepository;
         this.psychologistRepository = psychologistRepository;
         this.studentRepository = studentRepository;
         this.psychologistService = psychologistService;
+        this.authService = authService;
     }
 
     @Transactional(readOnly = true)
     public List<AppointmentDTO> findByPsychologist(Long psychologistId) {
+        validateSelfAccess(psychologistId);
         return appointmentRepository.findByPsychologistIdOrderByDateTimeAsc(psychologistId)
                 .stream()
                 .map(AppointmentDTO::new)
@@ -54,6 +63,7 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public List<AppointmentDTO> findByStudent(Long studentId) {
+        validateSelfAccess(studentId);
         return appointmentRepository.findByStudentId(studentId)
                 .stream()
                 .map(AppointmentDTO::new)
@@ -72,6 +82,11 @@ public class AppointmentService {
     @Transactional
     public AppointmentDTO update(Long id, AppointmentInsertDTO dto) {
         Appointment appointment = findEntityById(id);
+        Long currentPsychologistId = appointment.getPsychologist().getId();
+        validateSelfAccess(currentPsychologistId);
+        if (!currentPsychologistId.equals(dto.psychologistId())) {
+            validateSelfAccess(dto.psychologistId());
+        }
         if (appointment.getScheduleStatus() != ScheduleStatus.AGENDADA) {
             throw new IllegalStateException(
                     "Apenas sessões agendadas podem ser editadas. Status atual: " + appointment.getScheduleStatus() + ".");
@@ -84,6 +99,7 @@ public class AppointmentService {
     @Transactional
     public AppointmentDTO cancel(Long id, AppointmentCancelDTO dto) {
         Appointment appointment = findEntityById(id);
+        validateSelfAccess(appointment.getPsychologist().getId());
         if (appointment.getScheduleStatus() != ScheduleStatus.AGENDADA) {
             throw new IllegalStateException(
                     "Apenas sessões agendadas podem ser canceladas. Status atual: " + appointment.getScheduleStatus() + ".");
@@ -97,6 +113,7 @@ public class AppointmentService {
     @Transactional
     public AppointmentDTO registerFeedback(Long id, AppointmentFeedbackDTO dto) {
         Appointment appointment = findEntityById(id);
+        validateSelfAccess(appointment.getPsychologist().getId());
         if (appointment.getScheduleStatus() == ScheduleStatus.CANCELADA) {
             throw new IllegalStateException("Não é possível registrar feedback de uma sessão cancelada.");
         }
@@ -105,6 +122,16 @@ public class AppointmentService {
         appointment.setFeedbackDate(LocalDateTime.now());
         appointment = appointmentRepository.save(appointment);
         return new AppointmentDTO(appointment);
+    }
+
+    private void validateSelfAccess(Long requestedUserId) {
+        User user = authService.authenticated();
+        if (user.hasRole(ROLE_ADMIN)) {
+            return;
+        }
+        if (!user.getId().equals(requestedUserId)) {
+            throw new ForbiddenException("Acesso negado: só é permitido acessar a própria agenda.");
+        }
     }
 
     private Appointment findEntityById(Long id) {
