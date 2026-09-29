@@ -36,8 +36,10 @@ public class ResourceServerConfig {
 	private static final String STUDENTS = "/students/**";
 	private static final String PSYCHOLOGISTS = "/psychologists/**";
 	private static final String AUTH = "/auth/**";
+	private static final String APPOINTMENTS = "/appointments/**";
 	private static final String ADMIN = "ADMIN";
 	private static final String USER = "USER";
+	private static final String PSYCHOLOGIST = "PSICOLOGA";
 
 	@Bean
 	@Profile("test")
@@ -90,7 +92,12 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, CLASSES).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.GET, CLASSES).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PUT, CLASSES).hasRole(ADMIN)
-				.requestMatchers(HttpMethod.DELETE, CLASSES).hasRole(ADMIN));
+				.requestMatchers(HttpMethod.DELETE, CLASSES).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, "/appointments/psychologist/**").hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.GET, "/appointments/student/**").hasAnyRole(USER, ADMIN)
+				.requestMatchers(HttpMethod.POST, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.PUT, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.PATCH, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
