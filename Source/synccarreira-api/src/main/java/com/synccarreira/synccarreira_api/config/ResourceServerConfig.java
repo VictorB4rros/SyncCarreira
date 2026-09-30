@@ -83,7 +83,7 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.PUT, PSYCHOLOGISTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.DELETE, PSYCHOLOGISTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, STUDENTS).hasRole(ADMIN)
-				.requestMatchers(HttpMethod.GET, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, STUDENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PUT, STUDENTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.DELETE, STUDENTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PATCH, STUDENTS).hasRole(ADMIN)
