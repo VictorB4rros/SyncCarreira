@@ -1,6 +1,7 @@
 package com.synccarreira.synccarreira_api.repositories;
 
 import com.synccarreira.synccarreira_api.entities.Trail;
+import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -17,4 +18,6 @@ public interface TrailRepository extends JpaRepository<Trail, Long> {
     Optional<Trail> findBySequentialOrder(@Param("order") Integer order);
 
     List<Trail> findAllByOrderBySequentialOrderAsc();
+
+    Optional<Trail> findByName(TrailName name);
 }

@@ -5,6 +5,7 @@ import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
+import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import com.synccarreira.synccarreira_api.projections.AnsweredQuestionsProjection;
 import com.synccarreira.synccarreira_api.projections.PanelStudentProjection;
 import com.synccarreira.synccarreira_api.projections.TrailQuestionCountProjection;
@@ -61,7 +62,10 @@ public class PsychologistPanelService {
         validateSelfAccess(psychologistId);
         Long institutionId = findInstitutionId(psychologistId);
 
-        List<Trail> trails = trailRepository.findAllByOrderBySequentialOrderAsc();
+        List<Trail> trails = trailRepository.findAllByOrderBySequentialOrderAsc()
+                .stream()
+                .filter(trail -> trail.getName() != TrailName.INFORMACAO)
+                .toList();
         Map<Long, Long> totalQuestionsByTrail = questionRepository.countQuestionsByTrail()
                 .stream()
                 .collect(Collectors.toMap(TrailQuestionCountProjection::trailId, TrailQuestionCountProjection::totalQuestions));

@@ -181,7 +181,7 @@ public class PsychologistPanelServiceTests {
     }
 
     @Test
-    void findPanelShouldNotConcludeTrailWithoutQuestions() {
+    void findPanelShouldIgnoreInformationTrailWhenCalculatingProgress() {
         Mockito.when(authService.authenticated()).thenReturn(psychologist);
         mockPanelData();
         Mockito.when(trailRepository.findAllByOrderBySequentialOrderAsc())
@@ -189,12 +189,10 @@ public class PsychologistPanelServiceTests {
 
         PanelDTOs.StudentStatus ana = service.findPanel(psychologistId).students().get(0);
 
-        PanelDTOs.TrailProgress emptyTrail = ana.trails().get(3);
-        Assertions.assertEquals(0, emptyTrail.totalQuestions());
-        Assertions.assertEquals(0, emptyTrail.progressPercentage());
-        Assertions.assertEquals(ProgressStatus.NAO_INICIADA, emptyTrail.status());
-        Assertions.assertEquals(ProgressStatus.EM_ANDAMENTO, ana.journeyStatus());
-        Assertions.assertEquals(TrailName.INFORMACAO, ana.currentTrail());
+        Assertions.assertEquals(3, ana.trails().size());
+        Assertions.assertTrue(ana.trails().stream().noneMatch(trail -> trail.trailName() == TrailName.INFORMACAO));
+        Assertions.assertEquals(3, ana.totalTrails());
+        Assertions.assertEquals(ProgressStatus.CONCLUIDA, ana.journeyStatus());
     }
 
     @Test

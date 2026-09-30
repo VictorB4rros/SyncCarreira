@@ -213,3 +213,34 @@ INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Neutro', 2.5, 2.5, 2.5, 2.5, 30);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo', 4.0, 1.0, 1.0, 4.0, 30);
 INSERT INTO tb_opcao_pergunta (texto_opcao, peso_humanas, peso_biologicas, peso_exatas, peso_arte, fk_pergunta) VALUES ('Concordo totalmente', 4.5, 0.5, 0.5, 4.5, 30);
+
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Direito', 'https://www.aurum.com.br/blog/direito-digital/', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Direito', 'https://www.guiadacarreira.com.br/carreira/direito-penal/', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Psicologia', 'https://www.guiadacarreira.com.br/carreira/psicologia-clinica/', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Psicologia', 'https://www.gupy.io/blog/psicologia-organizacional', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Jornalismo', 'https://www.guiadacarreira.com.br/carreira/jornalismo/', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Jornalismo', 'https://abraji.org.br/', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Jornalismo', 'https://portal.comunique-se.com.br/', 'HUMANAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Jornalismo', 'https://ajor.org.br/', 'HUMANAS');
+
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Administração', 'https://www.gupy.io/blog/recursos-humanos', 'EXATAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Logística', 'https://brasilescola.uol.com.br/geografia/transportes.htm', 'EXATAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Logística', 'https://www.fazcomex.com.br/blog/logistica-internacional-o-que-e/', 'EXATAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Logística', 'https://blog.unopar.com.br/areas-da-logistica/', 'EXATAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Economia', 'https://www.ipea.gov.br/', 'EXATAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Arquitetura e Urbanismo', 'https://www.archdaily.com.br/br/tag/restauracao', 'EXATAS');
+
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Educação Física', 'https://www.confef.org.br/', 'BIOLOGICAS');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Agronomia', 'https://blog.unopar.com.br/areas-da-agronomia/', 'BIOLOGICAS');
+
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Publicidade e Propaganda', 'https://rockcontent.com/br/blog/copywriting/', 'ARTES');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Marketing', 'https://rockcontent.com/br/blog/branding/', 'ARTES');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Marketing', 'https://blog.unopar.com.br/areas-do-marketing/', 'ARTES');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Moda', 'https://www.abit.org.br/', 'ARTES');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Gastronomia', 'https://www.abrasel.com.br/', 'ARTES');
+INSERT INTO tb_link_informacao (topico_link, url_link, area_conhecimento) VALUES ('Gastronomia', 'https://blog.unopar.com.br/areas-da-gastronomia/', 'ARTES');
+
+INSERT INTO tb_link_informacao (topico_link, url_link) VALUES ('ENEM', 'https://www.gov.br/inep/pt-br/areas-de-atuacao/avaliacao-e-exames-educacionais/enem');
+INSERT INTO tb_link_informacao (topico_link, url_link) VALUES ('SISU', 'https://acessounico.mec.gov.br/sisu');
+INSERT INTO tb_link_informacao (topico_link, url_link) VALUES ('ProUni', 'https://acessounico.mec.gov.br/prouni');
+INSERT INTO tb_link_informacao (topico_link, url_link) VALUES ('FIES', 'https://acessounico.mec.gov.br/fies');
