@@ -2,11 +2,14 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
+import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
+import com.synccarreira.synccarreira_api.repositories.InstitutionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
+import com.synccarreira.synccarreira_api.tests.InstitutionFactory;
 import com.synccarreira.synccarreira_api.tests.PsychologistFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -39,8 +42,12 @@ public class PsychologistServiceTests {
     @Mock
     private PasswordRecoverService passwordRecoverService;
 
-    private Long existingPsychologistId, nonExistingPsychologistId, psychologistRoleId;
+    @Mock
+    private InstitutionRepository institutionRepository;
+
+    private Long existingPsychologistId, nonExistingPsychologistId, psychologistRoleId, existingInstitutionId;
     private Psychologist psychologist, psychologist1, expiredContractPsychologist;
+    private Institution institution;
     private Role psychologistRole;
     private PsychologistInsertDTO psychologistInsertDTO;
     private List<Psychologist> psychologistList;
@@ -50,12 +57,14 @@ public class PsychologistServiceTests {
         existingPsychologistId = 1L;
         nonExistingPsychologistId = 100L;
         psychologistRoleId = 3L;
+        existingInstitutionId = 1L;
 
         psychologist = PsychologistFactory.createPsychologist();
         psychologist1 = PsychologistFactory.createPsychologist();
         expiredContractPsychologist = PsychologistFactory.createExpiredContractPsychologist();
         psychologistRole = PsychologistFactory.createPsychologistRole();
         psychologistInsertDTO = PsychologistFactory.createPsychologistInsertDTO();
+        institution = InstitutionFactory.createInstitution();
         psychologist1.setId(2L);
         psychologist1.setName("Mariana Alves");
 
@@ -108,6 +117,7 @@ public class PsychologistServiceTests {
         Mockito.when(psychologistRepository.existsByNameAndCrp(psychologistInsertDTO.getName(), psychologistInsertDTO.getCrp())).thenReturn(false);
         Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
         Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
+        Mockito.when(institutionRepository.findById(existingInstitutionId)).thenReturn(Optional.of(institution));
 
         PsychologistDTO result = service.create(psychologistInsertDTO);
 
@@ -137,6 +147,7 @@ public class PsychologistServiceTests {
         Mockito.when(psychologistRepository.findById(existingPsychologistId)).thenReturn(Optional.of(psychologist));
         Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
         Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
+        Mockito.when(institutionRepository.findById(existingInstitutionId)).thenReturn(Optional.of(institution));
 
         PsychologistDTO result = service.update(existingPsychologistId, psychologistInsertDTO);
 
