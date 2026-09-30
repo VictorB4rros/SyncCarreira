@@ -2,9 +2,10 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
-import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
+import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
+import com.synccarreira.synccarreira_api.repositories.InstitutionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
@@ -24,13 +25,17 @@ public class PsychologistService {
 
     private final PasswordRecoverService passwordRecoverService;
 
+    private final InstitutionRepository institutionRepository;
+
     public PsychologistService(
             final PsychologistRepository psychologistRepository,
             final RoleRepository roleRepository,
-            final PasswordRecoverService passwordRecoverService) {
+            final PasswordRecoverService passwordRecoverService,
+            final InstitutionRepository institutionRepository) {
         this.psychologistRepository = psychologistRepository;
         this.roleRepository = roleRepository;
         this.passwordRecoverService = passwordRecoverService;
+        this.institutionRepository = institutionRepository;
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +69,7 @@ public class PsychologistService {
     }
 
     @Transactional
-    public PsychologistDTO update(Long id, PsychologistUpdateDTO dto) {
+    public PsychologistDTO update(Long id, PsychologistInsertDTO dto) {
         Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
         copyDtoToEntity(dto, psychologist);
         psychologist = psychologistRepository.save(psychologist);
@@ -94,16 +99,8 @@ public class PsychologistService {
         entity.setEmail(dto.getEmail());
         entity.setContractExpirationDate(dto.getContractExpirationDate());
         entity.setCrp(dto.getCrp());
-        entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(3L);
-        role.ifPresent(entity::addRole);
-    }
-
-    private void copyDtoToEntity(PsychologistUpdateDTO dto, Psychologist entity) {
-        entity.setName(dto.getName());
-        entity.setEmail(dto.getEmail());
-        entity.setContractExpirationDate(dto.getContractExpirationDate());
-        entity.setCrp(dto.getCrp());
+        Optional<Institution> institution = institutionRepository.findById(dto.getInstitutionId());
+        institution.ifPresent(entity::setInstitution);
         entity.getRoles().clear();
         Optional<Role> role = roleRepository.findById(3L);
         role.ifPresent(entity::addRole);

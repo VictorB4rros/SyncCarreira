@@ -25,6 +25,9 @@ public class PsychologistInsertDTO {
     @Getter
     private String crp;
 
+    @Getter
+    private Long institutionId;
+
     @NotNull(message = "Campo obrigatório")
     @Getter
     private LocalDate contractExpirationDate;
