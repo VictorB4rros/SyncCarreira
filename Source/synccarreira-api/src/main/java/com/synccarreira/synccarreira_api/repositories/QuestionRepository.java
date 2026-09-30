@@ -1,7 +1,7 @@
 package com.synccarreira.synccarreira_api.repositories;
 
-import com.synccarreira.synccarreira_api.entities.Answer;
 import com.synccarreira.synccarreira_api.entities.Question;
+import com.synccarreira.synccarreira_api.projections.TrailQuestionCountProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,4 +20,9 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Query(value = "SELECT q.id FROM Question q WHERE q.id IN :answerIds")
     List<Long> findByAnswers(@Param("answerIds") List<Long> answerIds);
+
+    @Query("SELECT new com.synccarreira.synccarreira_api.projections.TrailQuestionCountProjection(q.trail.id, COUNT(q)) " +
+            "FROM Question q " +
+            "GROUP BY q.trail.id")
+    List<TrailQuestionCountProjection> countQuestionsByTrail();
 }

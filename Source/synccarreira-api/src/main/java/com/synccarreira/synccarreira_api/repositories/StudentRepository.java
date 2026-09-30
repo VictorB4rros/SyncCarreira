@@ -2,6 +2,7 @@ package com.synccarreira.synccarreira_api.repositories;
 
 import com.synccarreira.synccarreira_api.dto.StudentDetailsDTO;
 import com.synccarreira.synccarreira_api.entities.Student;
+import com.synccarreira.synccarreira_api.projections.PanelStudentProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -27,5 +28,10 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             WHERE id_usuario = :studentId""")
     void setSchoolClass(@Param("studentId") Long studentId, @Param("classId") Long classId);
 
-    List<Student> findByDeterminedSchoolClassInstitutionId(Long institutionId);
+    @Query("SELECT new com.synccarreira.synccarreira_api.projections.PanelStudentProjection(obj.id, obj.name, c.id, c.name) " +
+            "FROM Student obj " +
+            "JOIN obj.determinedSchoolClass c " +
+            "WHERE c.institution.id = :institutionId " +
+            "ORDER BY c.name, obj.name")
+    List<PanelStudentProjection> searchPanelStudentsByInstitution(@Param("institutionId") Long institutionId);
 }
