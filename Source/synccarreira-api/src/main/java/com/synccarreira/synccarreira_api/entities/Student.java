@@ -39,7 +39,7 @@ public class Student extends User {
     private List<Answer> answerList = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "fk_id_turma")
+    @JoinColumn(name = "fk_id_turma", nullable = false)
     @Getter
     @Setter
     private SchoolClass determinedSchoolClass;

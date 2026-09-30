@@ -9,6 +9,8 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
+
 public interface StudentRepository extends JpaRepository<Student, Long> {
 
     @Query(value = "SELECT new com.synccarreira.synccarreira_api.dto.StudentDetailsDTO(obj.id, obj.name, obj.email, obj.scholarYear, obj.schoolType, obj.race, c.name, i.legalName) " +
@@ -24,4 +26,6 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             SET fk_id_turma = :classId
             WHERE id_usuario = :studentId""")
     void setSchoolClass(@Param("studentId") Long studentId, @Param("classId") Long classId);
+
+    List<Student> findByDeterminedSchoolClassInstitutionId(Long institutionId);
 }

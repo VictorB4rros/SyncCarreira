@@ -48,7 +48,7 @@ public class PsychologistService {
 
     @Transactional(readOnly = true)
     public PsychologistDTO findById(Long id) {
-        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado na base de dados."));
         return new PsychologistDTO(psychologist);
     }
 
