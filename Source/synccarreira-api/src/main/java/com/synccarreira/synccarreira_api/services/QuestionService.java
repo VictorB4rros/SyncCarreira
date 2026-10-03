@@ -9,6 +9,7 @@ import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
+import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,24 @@ public class QuestionService {
 
     private static final int LIMIT_QUESTIONS_PER_TRAIL = 10;
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final QuestionRepository questionRepository;
 
-    @Autowired
-    private TrailRepository trailRepository;
+    private final TrailRepository trailRepository;
 
-    @Autowired
-    private PsychologistRepository psychologistRepository;
+    private final PsychologistService psychologistService;
 
-    @Autowired
-    private PsychologistService psychologistService;
+    private final TrailService trailService;
+
+    public QuestionService(
+            final QuestionRepository questionRepository,
+            final TrailRepository trailRepository,
+            final PsychologistService psychologistService,
+            final TrailService trailService) {
+        this.questionRepository = questionRepository;
+        this.trailRepository = trailRepository;
+        this.psychologistService = psychologistService;
+        this.trailService = trailService;
+    }
 
     @Transactional(readOnly = true)
     public List<QuestionDTO> findAll() {
@@ -50,6 +58,9 @@ public class QuestionService {
 
     @Transactional(readOnly = true)
     public List<QuestionDTO> findByTrail(Long trailId) {
+        if (!trailService.canAccess(trailId)) {
+            throw new BusinessException("Trilha não liberada. Termine a trilha anterior para avançar.");
+        }
         return questionRepository.findByTrailId(trailId)
                 .stream()
                 .map(QuestionDTO::new)
