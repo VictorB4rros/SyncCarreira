@@ -2,17 +2,14 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.QuestionOptionDTO;
 import com.synccarreira.synccarreira_api.dto.QuestionDTO;
-import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
-import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
