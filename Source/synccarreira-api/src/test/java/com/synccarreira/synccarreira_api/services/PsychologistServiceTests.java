@@ -2,12 +2,14 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
-import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
+import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
+import com.synccarreira.synccarreira_api.repositories.InstitutionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
+import com.synccarreira.synccarreira_api.tests.InstitutionFactory;
 import com.synccarreira.synccarreira_api.tests.PsychologistFactory;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
@@ -40,11 +42,14 @@ public class PsychologistServiceTests {
     @Mock
     private PasswordRecoverService passwordRecoverService;
 
-    private Long existingPsychologistId, nonExistingPsychologistId, psychologistRoleId;
+    @Mock
+    private InstitutionRepository institutionRepository;
+
+    private Long existingPsychologistId, nonExistingPsychologistId, psychologistRoleId, existingInstitutionId;
     private Psychologist psychologist, psychologist1, expiredContractPsychologist;
+    private Institution institution;
     private Role psychologistRole;
     private PsychologistInsertDTO psychologistInsertDTO;
-    private PsychologistUpdateDTO psychologistUpdateDTO;
     private List<Psychologist> psychologistList;
 
     @BeforeEach
@@ -52,13 +57,14 @@ public class PsychologistServiceTests {
         existingPsychologistId = 1L;
         nonExistingPsychologistId = 100L;
         psychologistRoleId = 3L;
+        existingInstitutionId = 1L;
 
         psychologist = PsychologistFactory.createPsychologist();
         psychologist1 = PsychologistFactory.createPsychologist();
         expiredContractPsychologist = PsychologistFactory.createExpiredContractPsychologist();
         psychologistRole = PsychologistFactory.createPsychologistRole();
         psychologistInsertDTO = PsychologistFactory.createPsychologistInsertDTO();
-        psychologistUpdateDTO = PsychologistFactory.createPsychologistUpdateDTO();
+        institution = InstitutionFactory.createInstitution();
         psychologist1.setId(2L);
         psychologist1.setName("Mariana Alves");
 
@@ -111,6 +117,7 @@ public class PsychologistServiceTests {
         Mockito.when(psychologistRepository.existsByNameAndCrp(psychologistInsertDTO.getName(), psychologistInsertDTO.getCrp())).thenReturn(false);
         Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
         Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
+        Mockito.when(institutionRepository.findById(existingInstitutionId)).thenReturn(Optional.of(institution));
 
         PsychologistDTO result = service.create(psychologistInsertDTO);
 
@@ -140,15 +147,16 @@ public class PsychologistServiceTests {
         Mockito.when(psychologistRepository.findById(existingPsychologistId)).thenReturn(Optional.of(psychologist));
         Mockito.when(roleRepository.findById(psychologistRoleId)).thenReturn(Optional.of(psychologistRole));
         Mockito.when(psychologistRepository.save(any())).thenReturn(psychologist);
+        Mockito.when(institutionRepository.findById(existingInstitutionId)).thenReturn(Optional.of(institution));
 
-        PsychologistDTO result = service.update(existingPsychologistId, psychologistUpdateDTO);
+        PsychologistDTO result = service.update(existingPsychologistId, psychologistInsertDTO);
 
         Assertions.assertNotNull(result);
         Assertions.assertEquals(existingPsychologistId, result.id());
-        Assertions.assertEquals(psychologistUpdateDTO.getName(), result.name());
-        Assertions.assertEquals(psychologistUpdateDTO.getEmail(), result.email());
-        Assertions.assertEquals(psychologistUpdateDTO.getCrp(), result.crp());
-        Assertions.assertEquals(psychologistUpdateDTO.getContractExpirationDate(), result.contractExpirationDate());
+        Assertions.assertEquals(psychologistInsertDTO.getName(), result.name());
+        Assertions.assertEquals(psychologistInsertDTO.getEmail(), result.email());
+        Assertions.assertEquals(psychologistInsertDTO.getCrp(), result.crp());
+        Assertions.assertEquals(psychologistInsertDTO.getContractExpirationDate(), result.contractExpirationDate());
         Assertions.assertEquals(1, result.roles().size());
     }
 
@@ -157,7 +165,7 @@ public class PsychologistServiceTests {
         Mockito.when(psychologistRepository.findById(nonExistingPsychologistId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> {
-            service.update(nonExistingPsychologistId, psychologistUpdateDTO);
+            service.update(nonExistingPsychologistId, psychologistInsertDTO);
         });
     }
 

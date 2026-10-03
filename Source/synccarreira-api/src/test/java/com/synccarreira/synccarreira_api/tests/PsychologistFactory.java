@@ -1,7 +1,7 @@
 package com.synccarreira.synccarreira_api.tests;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
-import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
+import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
 
@@ -16,12 +16,14 @@ public class PsychologistFactory {
     }
 
     public static Psychologist createPsychologist() {
+        Institution institution = InstitutionFactory.createInstitution();
         Psychologist psychologist = new Psychologist();
         psychologist.setId(1L);
         psychologist.setName("Lorena Souza");
         psychologist.setEmail("lorena.psi@gmail.com");
         psychologist.setPassword("hash-antigo");
         psychologist.setCrp("06/00029");
+        psychologist.setInstitution(institution);
         psychologist.setContractExpirationDate(LocalDate.now().plusYears(1));
         psychologist.addRole(new Role(3L, "ROLE_PSICOLOGA"));
         return psychologist;
@@ -38,16 +40,8 @@ public class PsychologistFactory {
                 "Lorena Souza",
                 "lorena.psi@gmail.com",
                 "06/00029",
+                1L,
                 LocalDate.now().plusYears(1)
-        );
-    }
-
-    public static PsychologistUpdateDTO createPsychologistUpdateDTO() {
-        return new PsychologistUpdateDTO(
-                "Lorena Souza Lima",
-                "lorena.lima@gmail.com",
-                "06/00030",
-                LocalDate.now().plusYears(2)
         );
     }
 }

@@ -1,5 +1,6 @@
 package com.synccarreira.synccarreira_api.entities;
 
+import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "tb_aluno")
@@ -39,7 +43,7 @@ public class Student extends User {
     private List<Answer> answerList = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "fk_id_turma")
+    @JoinColumn(name = "fk_id_turma", nullable = false)
     @Getter
     @Setter
     private SchoolClass determinedSchoolClass;
@@ -59,4 +63,22 @@ public class Student extends User {
     @Column(name = "score_artes")
     @Getter @Setter
     private Double artsScore = 0.0;
+
+    public List<KnowledgeArea> highestScoreAreas() {
+        Map<KnowledgeArea, Double> scores = new EnumMap<>(KnowledgeArea.class);
+        scores.put(KnowledgeArea.HUMANAS, valueOrZero(humanitiesScore));
+        scores.put(KnowledgeArea.BIOLOGICAS, valueOrZero(biologicalSciencesScore));
+        scores.put(KnowledgeArea.EXATAS, valueOrZero(exactSciencesScore));
+        scores.put(KnowledgeArea.ARTES, valueOrZero(artsScore));
+
+        double highestScore = Collections.max(scores.values());
+        return scores.entrySet().stream()
+                .filter(entry -> entry.getValue() == highestScore)
+                .map(Map.Entry::getKey)
+                .toList();
+    }
+
+    private static double valueOrZero(Double score) {
+        return score != null ? score : 0.0;
+    }
 }

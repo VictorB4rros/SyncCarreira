@@ -37,6 +37,8 @@ public class ResourceServerConfig {
 	private static final String PSYCHOLOGISTS = "/psychologists/**";
 	private static final String AUTH = "/auth/**";
 	private static final String APPOINTMENTS = "/appointments/**";
+	private static final String PSYCHOLOGIST_PANEL = "/psychologist-panel/**";
+	private static final String INFORMATION_LINKS = "/information-links/**";
 	private static final String ADMIN = "ADMIN";
 	private static final String USER = "USER";
 	private static final String PSYCHOLOGIST = "PSICOLOGA";
@@ -81,7 +83,7 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.PUT, PSYCHOLOGISTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.DELETE, PSYCHOLOGISTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, STUDENTS).hasRole(ADMIN)
-				.requestMatchers(HttpMethod.GET, STUDENTS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, STUDENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PUT, STUDENTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.DELETE, STUDENTS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.PATCH, STUDENTS).hasRole(ADMIN)
@@ -97,7 +99,9 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/appointments/student/**").hasAnyRole(USER, ADMIN)
 				.requestMatchers(HttpMethod.POST, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PUT, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
-				.requestMatchers(HttpMethod.PATCH, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN));
+				.requestMatchers(HttpMethod.PATCH, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.GET, PSYCHOLOGIST_PANEL).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasRole(USER));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();

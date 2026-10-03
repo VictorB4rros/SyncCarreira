@@ -24,6 +24,10 @@ public record PsychologistDTO(
         @NotNull(message = "Campo obrigatório")
         LocalDate contractExpirationDate,
 
+        Long institutionId,
+
+        String institutionName,
+
         boolean isContractValid,
 
         Set<RoleDTO> roles
@@ -36,6 +40,8 @@ public record PsychologistDTO(
                 entity.getEmail(),
                 entity.getCrp(),
                 entity.getContractExpirationDate(),
+                entity.getInstitution().getId(),
+                entity.getInstitution().getLegalName(),
                 entity.isContractValid(),
                 new HashSet<>()
         );
