@@ -76,23 +76,6 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.findByTrail(trailId));
     }
 
-    @GetMapping("/psychologist/{psychologistId}")
-    @Operation(summary = "Busca uma lista de perguntas pelo id do(a) psicólogo(a) que as criou.")
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Perguntas encontrada com sucesso."
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Not found.",
-                    content = @Content
-            )
-    })
-    public ResponseEntity<List<QuestionDTO>> findByPsychologist(@PathVariable Long psychologistId) {
-        return ResponseEntity.ok(questionService.findByPsychologist(psychologistId));
-    }
-
     @PostMapping
     @Operation(summary = "Cria uma nova pergunta.")
     @ApiResponses(value = {
