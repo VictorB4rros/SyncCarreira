@@ -14,8 +14,6 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     List<Question> findByTrailId(Long trailId);
 
-    List<Question> findByPsychologistId(Long psychologist);
-
     long countByTrailId(Long trailId);
 
     @Query(value = "SELECT q.id FROM Question q WHERE q.id IN :answerIds")

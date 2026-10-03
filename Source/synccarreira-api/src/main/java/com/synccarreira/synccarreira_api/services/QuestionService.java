@@ -56,23 +56,10 @@ public class QuestionService {
                 .toList();
     }
 
-    @Transactional(readOnly = true)
-    public List<QuestionDTO> findByPsychologist(Long psychologistId) {
-        return questionRepository.findByPsychologistId(psychologistId)
-                .stream()
-                .map(QuestionDTO::new)
-                .toList();
-    }
-
     @Transactional
     public QuestionDTO createQuestion(QuestionDTO dto) {
-        psychologistService.validateIfContractIsActive(dto.psychologistId());
-
         Trail trail = trailRepository.findById(dto.trailId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trailId()));
-
-        Psychologist psychologist = psychologistRepository.findById(dto.psychologistId())
-                .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psychologistId()));
 
         long total = questionRepository.countByTrailId(dto.trailId());
         if (total >= LIMIT_QUESTIONS_PER_TRAIL) {
@@ -85,7 +72,6 @@ public class QuestionService {
         question.setContent(dto.content());
         question.setQuestionType(dto.questionType());
         question.setTrail(trail);
-        question.setPsychologist(psychologist);
 
         if (question.acceptsOptions()) {
             validateOptions(dto.options());
@@ -98,20 +84,14 @@ public class QuestionService {
 
     @Transactional
     public QuestionDTO updateQuestion(Long id, QuestionDTO dto) {
-        psychologistService.validateIfContractIsActive(dto.psychologistId());
-
         Question question = questionRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Pergunta não encontrada. ID: " + id));
 
         Trail trail = trailRepository.findById(dto.trailId())
                 .orElseThrow(() -> new EntityNotFoundException("Trilha não encontrada. ID: " + dto.trailId()));
 
-        Psychologist psychologist = psychologistRepository.findById(dto.psychologistId())
-                .orElseThrow(() -> new EntityNotFoundException("Psicóloga não encontrada. ID: " + dto.psychologistId()));
-
         question.setContent(dto.content());
         question.setQuestionType(dto.questionType());
         question.setTrail(trail);
-        question.setPsychologist(psychologist);
 
         question.getOptions().clear();
         if (question.acceptsOptions()) {
