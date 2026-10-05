@@ -6,6 +6,7 @@ import com.synccarreira.synccarreira_api.entities.enums.QuestionType;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import com.synccarreira.synccarreira_api.projections.AnsweredQuestionsProjection;
 import com.synccarreira.synccarreira_api.projections.PanelStudentProjection;
+import com.synccarreira.synccarreira_api.projections.SubmittedSynthesisProjection;
 import com.synccarreira.synccarreira_api.projections.TrailQuestionCountProjection;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,6 +34,9 @@ public class PsychologistPanelQueriesTests {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private SynthesisRepository synthesisRepository;
 
     private Institution institution;
     private Trail trail;
@@ -69,6 +73,9 @@ public class PsychologistPanelQueriesTests {
         persistAnswer(bruno, technology);
         persistAnswer(otherInstitutionStudent, agree);
 
+        persistSynthesis(ana);
+        persistSynthesis(otherInstitutionStudent);
+
         entityManager.flush();
         entityManager.clear();
     }
@@ -104,6 +111,21 @@ public class PsychologistPanelQueriesTests {
                 .findFirst()
                 .orElseThrow();
         Assertions.assertEquals(2L, trailCount.totalQuestions());
+    }
+
+    @Test
+    void findSubmittedByInstitutionShouldReturnOnlySynthesesOfStudentsOfInstitution() {
+        List<SubmittedSynthesisProjection> result = synthesisRepository.findSubmittedByInstitution(institution.getId());
+
+        Assertions.assertEquals(1, result.size());
+        Assertions.assertEquals(ana.getId(), result.getFirst().studentId());
+        Assertions.assertEquals(trail.getId(), result.getFirst().trailId());
+    }
+
+    @Test
+    void existsByStudentIdAndTrailIdShouldReturnWhetherStudentSubmittedSynthesisOfTrail() {
+        Assertions.assertTrue(synthesisRepository.existsByStudentIdAndTrailId(ana.getId(), trail.getId()));
+        Assertions.assertFalse(synthesisRepository.existsByStudentIdAndTrailId(bruno.getId(), trail.getId()));
     }
 
     private static Long answeredQuestionsOf(List<AnsweredQuestionsProjection> result, Long studentId) {
@@ -149,6 +171,15 @@ public class PsychologistPanelQueriesTests {
         option.setArtsWeight(0.0);
         option.setQuestion(question);
         return entityManager.persist(option);
+    }
+
+    private void persistSynthesis(Student student) {
+        Synthesis synthesis = new Synthesis();
+        synthesis.setContent("Percebi que gosto mais de áreas criativas do que imaginava.");
+        synthesis.setStudent(student);
+        synthesis.setTrail(trail);
+        synthesis.setCreatedAt(Instant.now());
+        entityManager.persist(synthesis);
     }
 
     private void persistAnswer(Student student, QuestionOption option) {

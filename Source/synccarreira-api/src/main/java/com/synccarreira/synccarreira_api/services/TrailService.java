@@ -10,6 +10,7 @@ import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
+import com.synccarreira.synccarreira_api.repositories.SynthesisRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +34,9 @@ public class TrailService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private SynthesisRepository synthesisRepository;
 
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
@@ -101,10 +105,22 @@ public class TrailService {
                         "Trilha anterior (ordem " + previousOrder + ") não encontrada."));
 
         UserDTO userDto = userService.findMe();
-        List<Answer> answers = answerRepository.findByStudentAndTrail(userDto.getId(), previousTrail.getId());
+        return isConcluded(previousTrail, userDto.getId());
+    }
+
+    // Uma trilha está concluída quando o aluno respondeu todas as perguntas dela e enviou a síntese
+    @Transactional(readOnly = true)
+    public boolean isConcluded(Trail trail, Long studentId) {
+        return areAllQuestionsAnswered(trail, studentId)
+                && synthesisRepository.existsByStudentIdAndTrailId(studentId, trail.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean areAllQuestionsAnswered(Trail trail, Long studentId) {
+        List<Answer> answers = answerRepository.findByStudentAndTrail(studentId, trail.getId());
         List<Long> answeredIds = new ArrayList<>();
         answers.forEach(answer -> answeredIds.add(answer.getQuestionOption().getQuestion().getId()));
 
-        return previousTrail.isConcluded(answeredIds);
+        return trail.areAllQuestionsAnswered(answeredIds);
     }
 }

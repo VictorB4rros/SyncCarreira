@@ -46,10 +46,10 @@ public class PsychologistPanelControllerTests {
         psychologistWithoutInstitutionId = 3L;
 
         PanelDTOs.TrailProgress trailProgress = new PanelDTOs.TrailProgress(
-                1L, TrailName.AUTOCONHECIMENTO, 1, 5, 10, 50, ProgressStatus.EM_ANDAMENTO);
+                1L, TrailName.AUTOCONHECIMENTO, 1, 5, 10, 50, false, ProgressStatus.EM_ANDAMENTO);
         PanelDTOs.StudentStatus studentStatus = new PanelDTOs.StudentStatus(
                 1L, "Ana Souza", 1L, "3º ano A", 5, 10, 50, 0, 1,
-                TrailName.AUTOCONHECIMENTO, ProgressStatus.EM_ANDAMENTO, List.of(trailProgress));
+                TrailName.AUTOCONHECIMENTO, false, ProgressStatus.EM_ANDAMENTO, List.of(trailProgress));
         panelSummary = new PanelDTOs.PanelSummary(1, 0, 1, 0, List.of(studentStatus));
     }
 
@@ -69,6 +69,8 @@ public class PsychologistPanelControllerTests {
         result.andExpect(jsonPath("$.students[0].trails[0].trailName").value("AUTOCONHECIMENTO"));
         result.andExpect(jsonPath("$.students[0].trails[0].answeredQuestions").value(5));
         result.andExpect(jsonPath("$.students[0].trails[0].progressPercentage").value(50));
+        result.andExpect(jsonPath("$.students[0].trails[0].synthesisSubmitted").value(false));
+        result.andExpect(jsonPath("$.students[0].finalSynthesisSubmitted").value(false));
     }
 
     @Test
