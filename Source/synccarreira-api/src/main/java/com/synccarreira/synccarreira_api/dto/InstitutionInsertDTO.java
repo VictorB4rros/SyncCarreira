@@ -1,0 +1,19 @@
+package com.synccarreira.synccarreira_api.dto;
+
+import com.synccarreira.synccarreira_api.entities.enums.InstitutionType;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record InstitutionInsertDTO(
+        @NotBlank(message = "Campo obrigatório")
+        String legalName,
+
+        String tradeName,
+
+        @NotBlank(message = "Campo obrigatório")
+        String cnpj,
+
+        @NotNull(message = "Campo obrigatório")
+        InstitutionType type
+) {
+}

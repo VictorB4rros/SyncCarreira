@@ -34,12 +34,16 @@ public class StudentDTO {
     @Getter
     private String schoolType;
 
+    @Getter
+    private String race;
+
     public StudentDTO(Student entity) {
         this.id = entity.getId();
         this.name = entity.getName();
         this.email = entity.getEmail();
         entity.getRoles().forEach(role -> this.roles.add(new RoleDTO(role)));
-        this.schollarYear = entity.getSchollarYear();
+        this.schollarYear = entity.getScholarYear();
         this.schoolType = entity.getSchoolType();
+        this.race = entity.getRace();
     }
 }

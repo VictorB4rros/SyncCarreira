@@ -28,7 +28,7 @@ export default function Footer() {
       </span>
 
       <nav className="sc-footer__links" aria-label="Links institucionais">
-        {/* TODO: substituir os botões por <Link> quando as páginas existirem */}
+        {/* Páginas institucionais ainda não publicadas — quando existirem, trocar por <Link> */}
         <button type="button">Privacidade</button>
         <button type="button">Termos de Uso</button>
         <button type="button">Suporte</button>

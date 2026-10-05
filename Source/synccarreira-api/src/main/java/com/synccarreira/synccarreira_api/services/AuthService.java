@@ -1,33 +1,76 @@
 package com.synccarreira.synccarreira_api.services;
 
+import com.synccarreira.synccarreira_api.dto.NewPasswordDTO;
+import com.synccarreira.synccarreira_api.entities.PasswordRecover;
 import com.synccarreira.synccarreira_api.entities.User;
+import com.synccarreira.synccarreira_api.repositories.PasswordRecoverRepository;
 import com.synccarreira.synccarreira_api.repositories.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.List;
 
 @Service
 public class AuthService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private static final Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    @Autowired
-    private UserRepository userRepository;
+    private static final String NOT_AUTHENTICATED = "Usuário não autenticado.";
+
+    private final PasswordEncoder passwordEncoder;
+
+    private final UserRepository userRepository;
+
+    private final PasswordRecoverRepository passwordRecoverRepository;
+
+    public AuthService(final PasswordEncoder passwordEncoder, final UserRepository userRepository, final PasswordRecoverRepository passwordRecoverRepository) {
+        this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
+        this.passwordRecoverRepository = passwordRecoverRepository;
+    }
 
     protected User authenticated() {
+        String username;
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
-            String username = jwtPrincipal.getClaim("username");
-            return userRepository.findByEmail(username);
+            username = jwtPrincipal.getClaim("username");
         }
         catch (Exception e) {
-            throw new UsernameNotFoundException("Invalid user");
+            log.warn("Não foi possível ler o usuário do token JWT", e);
+            throw new AuthenticationCredentialsNotFoundException(NOT_AUTHENTICATED, e);
         }
+
+        User user = userRepository.findByEmail(username);
+        if (user == null) {
+            throw new AuthenticationCredentialsNotFoundException(NOT_AUTHENTICATED);
+        }
+        return user;
+    }
+
+    @Transactional
+    public void saveNewPassword(@Valid NewPasswordDTO dto) {
+        List<PasswordRecover> result = passwordRecoverRepository.searchValidTokens(dto.getToken(), Instant.now());
+        if (result.isEmpty()) {
+            throw new ResourceNotFoundException("Token inválido");
+        }
+        String email = result.getFirst().getEmail();
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new ResourceNotFoundException("Usuário não encontrado");
+        }
+        user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        userRepository.save(user);
+        passwordRecoverRepository.deleteByEmail(email);
     }
 }

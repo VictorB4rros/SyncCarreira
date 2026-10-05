@@ -173,6 +173,17 @@
   accent-color: var(--sc-roxo);
 }
 
+/* ── Aviso de recuperação de senha ─────────────────────────── */
+.lp-info {
+  margin: -10px 0 18px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: var(--sc-text);
+  background: var(--sc-roxo-soft);
+  border-radius: var(--sc-radius-sm);
+}
+
 /* ── Botão principal ───────────────────────────────────────── */
 .lp-btn {
   width: 100%;

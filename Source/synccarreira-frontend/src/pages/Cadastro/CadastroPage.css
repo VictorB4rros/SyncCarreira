@@ -1,9 +1,3 @@
-/* ═══════════════════════════════════════════════════════════════
-   src/pages/Cadastro/CadastroPage.css
-   Estilos exclusivos da página de cadastro.
-   Usa variáveis de src/styles/variables.css (via global.css).
-   ═══════════════════════════════════════════════════════════════ */
-
 /* ── Estrutura ─────────────────────────────────────────────── */
 .cp-root {
   min-height: 100vh;
@@ -82,6 +76,9 @@
 
 /* ── Seleção de perfil ─────────────────────────────────────── */
 .cp-perfis {
+  border: 0;
+  padding: 0;
+  min-width: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
