@@ -55,6 +55,7 @@ public class SynthesisServiceTests {
     private Student student;
     private Trail trail, informationTrail;
     private Long nonExistingTrailId;
+    private SynthesisInsertDTO dto, invalidDto;
 
     @BeforeEach
     void setUp() {
@@ -62,6 +63,8 @@ public class SynthesisServiceTests {
         trail = TrailFactory.createTrail();
         informationTrail = SynthesisFactory.createInformationTrail();
         nonExistingTrailId = 100L;
+        dto = SynthesisFactory.createSynthesisInsertDTO(trail.getId());
+        invalidDto = SynthesisFactory.createSynthesisInsertDTO(nonExistingTrailId);
     }
 
     private void mockLoggedStudent() {
@@ -128,7 +131,7 @@ public class SynthesisServiceTests {
         Mockito.when(trailService.canAccess(trail.getId())).thenReturn(false);
 
         Assertions.assertThrows(ForbiddenException.class,
-                () -> service.insert(SynthesisFactory.createSynthesisInsertDTO(trail.getId())));
+                () -> service.insert(dto));
         Mockito.verify(synthesisRepository, Mockito.never()).saveAndFlush(any());
     }
 
@@ -140,7 +143,7 @@ public class SynthesisServiceTests {
         Mockito.when(trailService.areAllQuestionsAnswered(trail, student.getId())).thenReturn(false);
 
         Assertions.assertThrows(BusinessException.class,
-                () -> service.insert(SynthesisFactory.createSynthesisInsertDTO(trail.getId())));
+                () -> service.insert(dto));
         Mockito.verify(synthesisRepository, Mockito.never()).saveAndFlush(any());
     }
 
@@ -150,7 +153,7 @@ public class SynthesisServiceTests {
         Mockito.when(synthesisRepository.existsByStudentIdAndTrailId(student.getId(), trail.getId())).thenReturn(true);
 
         Assertions.assertThrows(ConflictException.class,
-                () -> service.insert(SynthesisFactory.createSynthesisInsertDTO(trail.getId())));
+                () -> service.insert(dto));
         Mockito.verify(synthesisRepository, Mockito.never()).saveAndFlush(any());
     }
 
@@ -161,7 +164,7 @@ public class SynthesisServiceTests {
         Mockito.when(synthesisRepository.saveAndFlush(any())).thenThrow(DataIntegrityViolationException.class);
 
         Assertions.assertThrows(ConflictException.class,
-                () -> service.insert(SynthesisFactory.createSynthesisInsertDTO(trail.getId())));
+                () -> service.insert(dto));
     }
 
     @Test
@@ -170,7 +173,7 @@ public class SynthesisServiceTests {
         Mockito.when(trailRepository.findById(nonExistingTrailId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class,
-                () -> service.insert(SynthesisFactory.createSynthesisInsertDTO(nonExistingTrailId)));
+                () -> service.insert(invalidDto));
     }
 
     @Test
@@ -179,6 +182,6 @@ public class SynthesisServiceTests {
         Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class,
-                () -> service.insert(SynthesisFactory.createSynthesisInsertDTO(trail.getId())));
+                () -> service.insert(dto));
     }
 }

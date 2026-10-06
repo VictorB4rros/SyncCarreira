@@ -23,20 +23,24 @@ import java.util.List;
 @Service
 public class TrailService {
 
-    @Autowired
-    private TrailRepository trailRepository;
+    private final TrailRepository trailRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private AnswerRepository answerRepository;
+    private final AnswerRepository answerRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final SynthesisRepository synthesisRepository;
 
-    @Autowired
-    private SynthesisRepository synthesisRepository;
+    public TrailService(
+            final TrailRepository trailRepository,
+            final UserService userService,
+            final AnswerRepository answerRepository,
+            final SynthesisRepository synthesisRepository) {
+        this.trailRepository = trailRepository;
+        this.userService = userService;
+        this.answerRepository = answerRepository;
+        this.synthesisRepository = synthesisRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
@@ -108,15 +112,18 @@ public class TrailService {
         return isConcluded(previousTrail, userDto.getId());
     }
 
-    // Uma trilha está concluída quando o aluno respondeu todas as perguntas dela e enviou a síntese
     @Transactional(readOnly = true)
-    public boolean isConcluded(Trail trail, Long studentId) {
-        return areAllQuestionsAnswered(trail, studentId)
+    public boolean areAllQuestionsAnswered(Trail trail, Long studentId) {
+        return checkAllQuestionsAnswered(trail, studentId);
+    }
+
+    // Uma trilha está concluída quando o aluno respondeu todas as perguntas dela e enviou a síntese
+    private boolean isConcluded(Trail trail, Long studentId) {
+        return checkAllQuestionsAnswered(trail, studentId)
                 && synthesisRepository.existsByStudentIdAndTrailId(studentId, trail.getId());
     }
 
-    @Transactional(readOnly = true)
-    public boolean areAllQuestionsAnswered(Trail trail, Long studentId) {
+    private boolean checkAllQuestionsAnswered(Trail trail, Long studentId) {
         List<Answer> answers = answerRepository.findByStudentAndTrail(studentId, trail.getId());
         List<Long> answeredIds = new ArrayList<>();
         answers.forEach(answer -> answeredIds.add(answer.getQuestionOption().getQuestion().getId()));
