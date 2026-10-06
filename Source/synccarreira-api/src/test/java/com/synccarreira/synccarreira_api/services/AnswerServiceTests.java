@@ -54,7 +54,7 @@ public class AnswerServiceTests {
         student = StudentFactory.createStudent();
         question = QuestionFactory.createQuestion();
         option = question.getOptions().getFirst();
-        dto = new AnswerInsertDTO(option.getOptionText(), student.getId(), option.getId());
+        dto = new AnswerInsertDTO(student.getId(), option.getId());
         nonExistingId = 100L;
     }
 
@@ -76,6 +76,8 @@ public class AnswerServiceTests {
         AnswerDTO result = service.insert(dto);
 
         Assertions.assertEquals(10L, result.getId());
+        // O conteúdo da resposta vem do texto da opção escolhida
+        Assertions.assertEquals(option.getOptionText(), result.getContent());
         InOrder inOrder = Mockito.inOrder(answerRepository);
         inOrder.verify(answerRepository).deleteByStudentAndQuestion(student.getId(), question.getId());
         inOrder.verify(answerRepository).save(any());
@@ -85,7 +87,7 @@ public class AnswerServiceTests {
     void insertShouldRecalculateScoreUsingOnlyCurrentAnswers() {
         mockValidInsert();
         // Depois da substituição, só a nova resposta (peso 1.0 em exatas) existe para o aluno
-        Answer currentAnswer = new Answer(10L, option.getOptionText(), student, option);
+        Answer currentAnswer = new Answer(10L, student, option);
         Mockito.when(answerRepository.findByStudentId(student.getId())).thenReturn(List.of(currentAnswer));
 
         service.insert(dto);
@@ -100,7 +102,7 @@ public class AnswerServiceTests {
     @Test
     void insertShouldThrowResourceNotFoundExceptionWhenQuestionOptionDoesNotExist() {
         Mockito.when(questionOptionRepository.findById(nonExistingId)).thenReturn(Optional.empty());
-        AnswerInsertDTO invalidDto = new AnswerInsertDTO("Matemática", student.getId(), nonExistingId);
+        AnswerInsertDTO invalidDto = new AnswerInsertDTO(student.getId(), nonExistingId);
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.insert(invalidDto));
         Mockito.verify(answerRepository, Mockito.never()).deleteByStudentAndQuestion(anyLong(), anyLong());

@@ -112,7 +112,6 @@ public class AnswerRepositoryTests {
 
     private void persistAnswer(Student student, QuestionOption option) {
         Answer answer = new Answer();
-        answer.setContent(option.getOptionText());
         answer.setStudent(student);
         answer.setQuestionOption(option);
         entityManager.persist(answer);

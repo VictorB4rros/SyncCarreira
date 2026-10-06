@@ -44,7 +44,6 @@ public class AnswerService {
     }
 
     private void copyDtoToEntity(AnswerInsertDTO dto, Answer entity) {
-        entity.setContent(dto.getContent());
         QuestionOption questionOption = questionOptionRepository.findById(dto.getQuestionOptionId()).orElseThrow(() -> new ResourceNotFoundException("Question option not found"));
         Student student = studentRepository.findById(dto.getStudentId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         entity.setQuestionOption(questionOption);
