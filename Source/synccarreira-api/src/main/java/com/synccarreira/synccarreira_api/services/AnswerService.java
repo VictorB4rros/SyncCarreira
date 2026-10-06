@@ -37,6 +37,7 @@ public class AnswerService {
     public AnswerDTO insert(AnswerInsertDTO dto) {
         Answer entity = new Answer();
         copyDtoToEntity(dto, entity);
+        answerRepository.deleteByStudentAndQuestion(entity.getStudent().getId(), entity.getQuestionOption().getQuestion().getId());
         entity = answerRepository.save(entity);
         recalculateStudentScore(entity.getStudent());
         return new AnswerDTO(entity);
