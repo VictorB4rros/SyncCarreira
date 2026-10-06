@@ -9,11 +9,13 @@ import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import com.synccarreira.synccarreira_api.projections.AnsweredQuestionsProjection;
 import com.synccarreira.synccarreira_api.projections.PanelStudentProjection;
+import com.synccarreira.synccarreira_api.projections.SubmittedSynthesisProjection;
 import com.synccarreira.synccarreira_api.projections.TrailQuestionCountProjection;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
+import com.synccarreira.synccarreira_api.repositories.SynthesisRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
 import com.synccarreira.synccarreira_api.services.exceptions.ForbiddenException;
@@ -55,6 +57,9 @@ public class PsychologistPanelServiceTests {
     private AnswerRepository answerRepository;
 
     @Mock
+    private SynthesisRepository synthesisRepository;
+
+    @Mock
     private AuthService authService;
 
     private Psychologist psychologist, otherPsychologist;
@@ -64,6 +69,7 @@ public class PsychologistPanelServiceTests {
     private List<TrailQuestionCountProjection> questionCounts;
     private List<PanelStudentProjection> students;
     private List<AnsweredQuestionsProjection> answeredQuestions;
+    private List<SubmittedSynthesisProjection> submittedSyntheses;
 
     @BeforeEach
     void setUp() {
@@ -80,7 +86,8 @@ public class PsychologistPanelServiceTests {
         trails = List.of(
                 createTrail(1L, TrailName.AUTOCONHECIMENTO, 1),
                 createTrail(2L, TrailName.INFLUENCIAS, 2),
-                createTrail(3L, TrailName.PLANO_DE_FUTURO, 3));
+                createTrail(3L, TrailName.PLANO_DE_FUTURO, 3),
+                createTrail(4L, TrailName.INFORMACAO, 4));
         questionCounts = List.of(
                 new TrailQuestionCountProjection(1L, 4L),
                 new TrailQuestionCountProjection(2L, 2L),
@@ -97,6 +104,13 @@ public class PsychologistPanelServiceTests {
                 new AnsweredQuestionsProjection(10L, 3L, 2L),
                 new AnsweredQuestionsProjection(11L, 1L, 4L),
                 new AnsweredQuestionsProjection(11L, 2L, 1L));
+        // Ana enviou as sínteses das três trilhas e a síntese final (trilha de informação); Bruno, só a da trilha 1
+        submittedSyntheses = List.of(
+                new SubmittedSynthesisProjection(10L, 1L),
+                new SubmittedSynthesisProjection(10L, 2L),
+                new SubmittedSynthesisProjection(10L, 3L),
+                new SubmittedSynthesisProjection(10L, 4L),
+                new SubmittedSynthesisProjection(11L, 1L));
     }
 
     private static Trail createTrail(Long id, TrailName name, Integer order) {
@@ -112,6 +126,7 @@ public class PsychologistPanelServiceTests {
         Mockito.when(trailRepository.findAllByOrderBySequentialOrderAsc()).thenReturn(trails);
         Mockito.when(questionRepository.countQuestionsByTrail()).thenReturn(questionCounts);
         Mockito.when(answerRepository.countAnsweredQuestionsByInstitution(institutionId)).thenReturn(answeredQuestions);
+        Mockito.when(synthesisRepository.findSubmittedByInstitution(institutionId)).thenReturn(submittedSyntheses);
         Mockito.when(studentRepository.searchPanelStudentsByInstitution(institutionId)).thenReturn(students);
     }
 
@@ -131,7 +146,7 @@ public class PsychologistPanelServiceTests {
     }
 
     @Test
-    void findPanelShouldMarkJourneyAsConcludedWhenStudentAnsweredAllQuestionsOfAllTrails() {
+    void findPanelShouldMarkJourneyAsConcludedWhenStudentConcludedAllTrailsAndSubmittedFinalSynthesis() {
         Mockito.when(authService.authenticated()).thenReturn(psychologist);
         mockPanelData();
 
@@ -141,7 +156,46 @@ public class PsychologistPanelServiceTests {
         Assertions.assertEquals(3, ana.concludedTrails());
         Assertions.assertEquals(8, ana.answeredQuestions());
         Assertions.assertEquals(100, ana.progressPercentage());
+        Assertions.assertTrue(ana.finalSynthesisSubmitted());
         Assertions.assertNull(ana.currentTrail());
+        ana.trails().forEach(trail -> Assertions.assertTrue(trail.synthesisSubmitted()));
+    }
+
+    @Test
+    void findPanelShouldKeepTrailInProgressWhenStudentAnsweredAllQuestionsButDidNotSubmitSynthesis() {
+        Mockito.when(authService.authenticated()).thenReturn(psychologist);
+        mockPanelData();
+        // Ana respondeu todas as perguntas da trilha 3, mas não enviou a síntese dela
+        Mockito.when(synthesisRepository.findSubmittedByInstitution(institutionId)).thenReturn(List.of(
+                new SubmittedSynthesisProjection(10L, 1L),
+                new SubmittedSynthesisProjection(10L, 2L)));
+
+        PanelDTOs.StudentStatus ana = service.findPanel(psychologistId).students().get(0);
+
+        PanelDTOs.TrailProgress futurePlanTrail = ana.trails().get(2);
+        Assertions.assertEquals(100, futurePlanTrail.progressPercentage());
+        Assertions.assertFalse(futurePlanTrail.synthesisSubmitted());
+        Assertions.assertEquals(ProgressStatus.EM_ANDAMENTO, futurePlanTrail.status());
+        Assertions.assertEquals(2, ana.concludedTrails());
+        Assertions.assertEquals(TrailName.PLANO_DE_FUTURO, ana.currentTrail());
+        Assertions.assertEquals(ProgressStatus.EM_ANDAMENTO, ana.journeyStatus());
+    }
+
+    @Test
+    void findPanelShouldPointToInformationTrailWhenOnlyFinalSynthesisIsMissing() {
+        Mockito.when(authService.authenticated()).thenReturn(psychologist);
+        mockPanelData();
+        Mockito.when(synthesisRepository.findSubmittedByInstitution(institutionId)).thenReturn(List.of(
+                new SubmittedSynthesisProjection(10L, 1L),
+                new SubmittedSynthesisProjection(10L, 2L),
+                new SubmittedSynthesisProjection(10L, 3L)));
+
+        PanelDTOs.StudentStatus ana = service.findPanel(psychologistId).students().get(0);
+
+        Assertions.assertEquals(3, ana.concludedTrails());
+        Assertions.assertFalse(ana.finalSynthesisSubmitted());
+        Assertions.assertEquals(TrailName.INFORMACAO, ana.currentTrail());
+        Assertions.assertEquals(ProgressStatus.EM_ANDAMENTO, ana.journeyStatus());
     }
 
     @Test
@@ -184,8 +238,6 @@ public class PsychologistPanelServiceTests {
     void findPanelShouldIgnoreInformationTrailWhenCalculatingProgress() {
         Mockito.when(authService.authenticated()).thenReturn(psychologist);
         mockPanelData();
-        Mockito.when(trailRepository.findAllByOrderBySequentialOrderAsc())
-                .thenReturn(List.of(trails.get(0), trails.get(1), trails.get(2), createTrail(4L, TrailName.INFORMACAO, 4)));
 
         PanelDTOs.StudentStatus ana = service.findPanel(psychologistId).students().get(0);
 

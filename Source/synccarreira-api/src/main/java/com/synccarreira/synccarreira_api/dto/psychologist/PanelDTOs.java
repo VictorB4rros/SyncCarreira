@@ -17,6 +17,7 @@ public final class PanelDTOs {
             long answeredQuestions,
             long totalQuestions,
             int progressPercentage,
+            boolean synthesisSubmitted,
             ProgressStatus status
     ) {
     }
@@ -32,6 +33,7 @@ public final class PanelDTOs {
             int concludedTrails,
             int totalTrails,
             TrailName currentTrail,
+            boolean finalSynthesisSubmitted,
             ProgressStatus journeyStatus,
             List<TrailProgress> trails
     ) {

@@ -39,6 +39,7 @@ public class ResourceServerConfig {
 	private static final String APPOINTMENTS = "/appointments/**";
 	private static final String PSYCHOLOGIST_PANEL = "/psychologist-panel/**";
 	private static final String INFORMATION_LINKS = "/information-links/**";
+	private static final String SYNTHESES = "/syntheses/**";
 	private static final String ADMIN = "ADMIN";
 	private static final String USER = "USER";
 	private static final String PSYCHOLOGIST = "PSICOLOGA";
@@ -101,7 +102,9 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.PUT, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PATCH, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.GET, PSYCHOLOGIST_PANEL).hasAnyRole(PSYCHOLOGIST, ADMIN)
-				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasRole(USER));
+				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasRole(USER)
+				.requestMatchers(HttpMethod.POST, SYNTHESES).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, SYNTHESES).hasRole(USER));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();

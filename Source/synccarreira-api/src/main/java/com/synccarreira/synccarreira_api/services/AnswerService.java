@@ -37,13 +37,13 @@ public class AnswerService {
     public AnswerDTO insert(AnswerInsertDTO dto) {
         Answer entity = new Answer();
         copyDtoToEntity(dto, entity);
+        answerRepository.deleteByStudentAndQuestion(entity.getStudent().getId(), entity.getQuestionOption().getQuestion().getId());
         entity = answerRepository.save(entity);
         recalculateStudentScore(entity.getStudent());
         return new AnswerDTO(entity);
     }
 
     private void copyDtoToEntity(AnswerInsertDTO dto, Answer entity) {
-        entity.setContent(dto.getContent());
         QuestionOption questionOption = questionOptionRepository.findById(dto.getQuestionOptionId()).orElseThrow(() -> new ResourceNotFoundException("Question option not found"));
         Student student = studentRepository.findById(dto.getStudentId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
         entity.setQuestionOption(questionOption);
