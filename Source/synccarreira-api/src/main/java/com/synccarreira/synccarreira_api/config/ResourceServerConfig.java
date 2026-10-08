@@ -41,6 +41,7 @@ public class ResourceServerConfig {
 	private static final String INFORMATION_LINKS = "/information-links/**";
 	private static final String SYNTHESES = "/syntheses/**";
 	private static final String JOURNEY = "/journey/**";
+	private static final String QUESTIONS = "/questions/**";
 	private static final String ADMIN = "ADMIN";
 	private static final String USER = "USER";
 	private static final String PSYCHOLOGIST = "PSICOLOGA";
@@ -72,10 +73,10 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/trails/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/trails/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.POST, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.GET, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.PUT, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.DELETE, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
 				.requestMatchers(HttpMethod.POST, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.GET, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.PUT, ANSWERS).hasRole(USER)
