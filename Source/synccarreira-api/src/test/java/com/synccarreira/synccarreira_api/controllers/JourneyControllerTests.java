@@ -39,7 +39,7 @@ public class JourneyControllerTests {
     private JourneyDoubtDTO notInDoubtDTO, inDoubtDTO;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         existingStudentId = 1L;
         doubtFlaggedAt = Instant.parse("2026-10-01T13:30:00Z");
 
@@ -48,7 +48,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void findDoubtShouldReturnJourneyDoubtDTOWhenStudentHasNotFlaggedDoubt() throws Exception {
+    void findDoubtShouldReturnJourneyDoubtDTOWhenStudentHasNotFlaggedDoubt() throws Exception {
         when(service.findDoubt()).thenReturn(notInDoubtDTO);
 
         ResultActions result = mockMvc.perform(get("/journey/doubt")
@@ -61,7 +61,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void findDoubtShouldReturnJourneyDoubtDTOWhenStudentHasFlaggedDoubt() throws Exception {
+    void findDoubtShouldReturnJourneyDoubtDTOWhenStudentHasFlaggedDoubt() throws Exception {
         when(service.findDoubt()).thenReturn(inDoubtDTO);
 
         ResultActions result = mockMvc.perform(get("/journey/doubt")
@@ -74,7 +74,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void findDoubtShouldReturnNotFoundWhenStudentDoesNotExist() throws Exception {
+    void findDoubtShouldReturnNotFoundWhenStudentDoesNotExist() throws Exception {
         when(service.findDoubt()).thenThrow(ResourceNotFoundException.class);
 
         ResultActions result = mockMvc.perform(get("/journey/doubt")
@@ -84,7 +84,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void flagDoubtShouldReturnJourneyDoubtDTOWhenJourneyIsConcluded() throws Exception {
+    void flagDoubtShouldReturnJourneyDoubtDTOWhenJourneyIsConcluded() throws Exception {
         when(service.flagDoubt()).thenReturn(inDoubtDTO);
 
         ResultActions result = mockMvc.perform(post("/journey/doubt")
@@ -97,7 +97,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void flagDoubtShouldReturnNotFoundWhenStudentDoesNotExist() throws Exception {
+    void flagDoubtShouldReturnNotFoundWhenStudentDoesNotExist() throws Exception {
         when(service.flagDoubt()).thenThrow(ResourceNotFoundException.class);
 
         ResultActions result = mockMvc.perform(post("/journey/doubt")
@@ -107,7 +107,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void flagDoubtShouldReturnConflictWhenDoubtWasAlreadyFlagged() throws Exception {
+    void flagDoubtShouldReturnConflictWhenDoubtWasAlreadyFlagged() throws Exception {
         when(service.flagDoubt()).thenThrow(ConflictException.class);
 
         ResultActions result = mockMvc.perform(post("/journey/doubt")
@@ -117,7 +117,7 @@ public class JourneyControllerTests {
     }
 
     @Test
-    public void flagDoubtShouldReturnUnprocessableContentWhenJourneyIsNotConcluded() throws Exception {
+    void flagDoubtShouldReturnUnprocessableContentWhenJourneyIsNotConcluded() throws Exception {
         when(service.flagDoubt()).thenThrow(BusinessException.class);
 
         ResultActions result = mockMvc.perform(post("/journey/doubt")
