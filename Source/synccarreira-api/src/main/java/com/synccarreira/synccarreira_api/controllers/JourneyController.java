@@ -22,6 +22,22 @@ public class JourneyController {
         this.journeyService = journeyService;
     }
 
+    @GetMapping("/doubt")
+    @Operation(summary = "Informa se o aluno logado já sinalizou que está em dúvida sobre a escolha profissional, e quando.")
+    @ApiResponse(
+            responseCode = "200",
+            description = "Sinalização de dúvida encontrada com sucesso.",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = JourneyDoubtDTO.class)) }
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Aluno não encontrado.",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CustomError.class)) }
+    )
+    public ResponseEntity<JourneyDoubtDTO> findDoubt() {
+        return ResponseEntity.ok(journeyService.findDoubt());
+    }
+
     @PostMapping("/doubt")
     @Operation(summary = "Sinaliza que o aluno logado concluiu a jornada e ainda está em dúvida sobre a escolha profissional. As psicólogas da instituição do aluno são avisadas por e-mail.")
     @ApiResponse(

@@ -109,6 +109,7 @@ public class PsychologistPanelService {
                 countByJourneyStatus(students, ProgressStatus.NAO_INICIADA),
                 countByJourneyStatus(students, ProgressStatus.EM_ANDAMENTO),
                 countByJourneyStatus(students, ProgressStatus.CONCLUIDA),
+                (int) students.stream().filter(PanelDTOs.StudentStatus::inDoubt).count(),
                 students);
     }
 
@@ -170,6 +171,8 @@ public class PsychologistPanelService {
                 currentTrailName,
                 finalSynthesisSubmitted,
                 journeyStatus(answeredQuestions, concludedTrails, trails.size(), finalSynthesisSubmitted),
+                Boolean.TRUE.equals(student.inDoubt()),
+                student.doubtFlaggedAt(),
                 trailProgressList);
     }
 

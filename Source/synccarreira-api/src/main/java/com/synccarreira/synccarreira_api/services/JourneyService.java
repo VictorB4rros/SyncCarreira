@@ -70,6 +70,12 @@ public class JourneyService {
         this.eventPublisher = eventPublisher;
     }
 
+    @Transactional(readOnly = true)
+    public JourneyDoubtDTO findDoubt() {
+        Student student = loggedStudent();
+        return new JourneyDoubtDTO(student.getId(), Boolean.TRUE.equals(student.getInDoubt()), student.getDoubtFlaggedAt());
+    }
+
     @Transactional
     public JourneyDoubtDTO flagDoubt() {
         Student student = loggedStudent();

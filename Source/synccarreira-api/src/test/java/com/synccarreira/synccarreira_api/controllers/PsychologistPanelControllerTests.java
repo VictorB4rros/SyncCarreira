@@ -49,8 +49,8 @@ public class PsychologistPanelControllerTests {
                 1L, TrailName.AUTOCONHECIMENTO, 1, 5, 10, 50, false, ProgressStatus.EM_ANDAMENTO);
         PanelDTOs.StudentStatus studentStatus = new PanelDTOs.StudentStatus(
                 1L, "Ana Souza", 1L, "3º ano A", 5, 10, 50, 0, 1,
-                TrailName.AUTOCONHECIMENTO, false, ProgressStatus.EM_ANDAMENTO, List.of(trailProgress));
-        panelSummary = new PanelDTOs.PanelSummary(1, 0, 1, 0, List.of(studentStatus));
+                TrailName.AUTOCONHECIMENTO, false, ProgressStatus.EM_ANDAMENTO, false, null, List.of(trailProgress));
+        panelSummary = new PanelDTOs.PanelSummary(1, 0, 1, 0, 0, List.of(studentStatus));
     }
 
     @Test

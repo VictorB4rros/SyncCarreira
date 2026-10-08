@@ -106,6 +106,7 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasRole(USER)
 				.requestMatchers(HttpMethod.POST, SYNTHESES).hasRole(USER)
 				.requestMatchers(HttpMethod.GET, SYNTHESES).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, JOURNEY).hasRole(USER)
 				.requestMatchers(HttpMethod.POST, JOURNEY).hasRole(USER));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));

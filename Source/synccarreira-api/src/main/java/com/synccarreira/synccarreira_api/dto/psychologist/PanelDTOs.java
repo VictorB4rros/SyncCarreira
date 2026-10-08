@@ -3,6 +3,7 @@ package com.synccarreira.synccarreira_api.dto.psychologist;
 import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 
+import java.time.Instant;
 import java.util.List;
 
 public final class PanelDTOs {
@@ -35,6 +36,9 @@ public final class PanelDTOs {
             TrailName currentTrail,
             boolean finalSynthesisSubmitted,
             ProgressStatus journeyStatus,
+            // true quando o aluno concluiu a jornada e sinalizou que ainda está em dúvida sobre a escolha profissional
+            boolean inDoubt,
+            Instant doubtFlaggedAt,
             List<TrailProgress> trails
     ) {
     }
@@ -44,6 +48,7 @@ public final class PanelDTOs {
             int notStartedStudents,
             int inProgressStudents,
             int concludedStudents,
+            int inDoubtStudents,
             List<StudentStatus> students
     ) {
     }
