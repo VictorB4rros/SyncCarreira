@@ -138,6 +138,8 @@ public class ResourceServerConfig {
 		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
 		corsConfig.setAllowCredentials(true);
 		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		// Permite que o front leia o nome do arquivo nos downloads de relatórios
+		corsConfig.setExposedHeaders(Arrays.asList("Content-Disposition"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConfig);
