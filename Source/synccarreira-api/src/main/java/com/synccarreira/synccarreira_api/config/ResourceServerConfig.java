@@ -40,6 +40,8 @@ public class ResourceServerConfig {
 	private static final String PSYCHOLOGIST_PANEL = "/psychologist-panel/**";
 	private static final String INFORMATION_LINKS = "/information-links/**";
 	private static final String SYNTHESES = "/syntheses/**";
+	private static final String JOURNEY = "/journey/**";
+	private static final String QUESTIONS = "/questions/**";
 	private static final String ADMIN = "ADMIN";
 	private static final String USER = "USER";
 	private static final String PSYCHOLOGIST = "PSICOLOGA";
@@ -71,10 +73,10 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/trails/**").permitAll()
 				.requestMatchers(HttpMethod.PUT, "/trails/**").permitAll()
 				.requestMatchers(HttpMethod.DELETE, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.POST, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.GET, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.PUT, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.DELETE, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
 				.requestMatchers(HttpMethod.POST, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.GET, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.PUT, ANSWERS).hasRole(USER)
@@ -104,7 +106,9 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, PSYCHOLOGIST_PANEL).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasRole(USER)
 				.requestMatchers(HttpMethod.POST, SYNTHESES).hasRole(USER)
-				.requestMatchers(HttpMethod.GET, SYNTHESES).hasRole(USER));
+				.requestMatchers(HttpMethod.GET, SYNTHESES).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, JOURNEY).hasRole(USER)
+				.requestMatchers(HttpMethod.POST, JOURNEY).hasRole(USER));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();

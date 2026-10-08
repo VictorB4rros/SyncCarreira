@@ -95,9 +95,9 @@ public class PsychologistPanelServiceTests {
 
         // Ana concluiu tudo, Bruno está no meio da trilha 2 e Carla ainda não começou
         students = List.of(
-                new PanelStudentProjection(10L, "Ana", 1L, "3º ano A"),
-                new PanelStudentProjection(11L, "Bruno", 1L, "3º ano A"),
-                new PanelStudentProjection(12L, "Carla", 2L, "3º ano B"));
+                new PanelStudentProjection(10L, "Ana", 1L, "3º ano A", false, null),
+                new PanelStudentProjection(11L, "Bruno", 1L, "3º ano A", false, null),
+                new PanelStudentProjection(12L, "Carla", 2L, "3º ano B", false, null));
         answeredQuestions = List.of(
                 new AnsweredQuestionsProjection(10L, 1L, 4L),
                 new AnsweredQuestionsProjection(10L, 2L, 2L),
