@@ -14,4 +14,6 @@ public interface InformationLinkRepository extends JpaRepository<InformationLink
     List<InformationLink> findByKnowledgeAreaInOrderByTopicAscIdAsc(Collection<KnowledgeArea> knowledgeAreas);
 
     List<InformationLink> findByKnowledgeAreaIsNullOrderByTopicAscIdAsc();
+
+    List<InformationLink> findAllByOrderByTopicAscIdAsc();
 }

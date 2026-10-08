@@ -1,8 +1,10 @@
 package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.InformationLinkDTO;
+import com.synccarreira.synccarreira_api.dto.InformationLinkInsertDTO;
 import com.synccarreira.synccarreira_api.dto.InformationTrailDTO;
 import com.synccarreira.synccarreira_api.dto.StudentScoreDTO;
+import com.synccarreira.synccarreira_api.entities.InformationLink;
 import com.synccarreira.synccarreira_api.entities.Student;
 import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.entities.User;
@@ -62,6 +64,30 @@ public class InformationLinkService {
                 .toList();
 
         return new InformationTrailDTO(recommendedAreas, new StudentScoreDTO(student), careerLinks, universityAccessLinks);
+    }
+
+    @Transactional(readOnly = true)
+    public List<InformationLinkDTO> findAll() {
+        return informationLinkRepository.findAllByOrderByTopicAscIdAsc()
+                .stream()
+                .map(InformationLinkDTO::new)
+                .toList();
+    }
+
+    @Transactional
+    public InformationLinkDTO create(InformationLinkInsertDTO dto) {
+        InformationLink entity = new InformationLink();
+        entity.setTopic(dto.topic().trim());
+        entity.setUrl(dto.url().trim());
+        entity.setKnowledgeArea(dto.knowledgeArea());
+        return new InformationLinkDTO(informationLinkRepository.save(entity));
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        InformationLink entity = informationLinkRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Link não encontrado. ID: " + id));
+        informationLinkRepository.delete(entity);
     }
 
     private void validateInformationTrailAccess() {

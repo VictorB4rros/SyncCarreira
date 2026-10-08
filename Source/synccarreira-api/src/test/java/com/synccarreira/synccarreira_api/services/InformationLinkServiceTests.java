@@ -1,5 +1,7 @@
 package com.synccarreira.synccarreira_api.services;
 
+import com.synccarreira.synccarreira_api.dto.InformationLinkDTO;
+import com.synccarreira.synccarreira_api.dto.InformationLinkInsertDTO;
 import com.synccarreira.synccarreira_api.dto.InformationTrailDTO;
 import com.synccarreira.synccarreira_api.entities.InformationLink;
 import com.synccarreira.synccarreira_api.entities.Student;
@@ -129,5 +131,60 @@ public class InformationLinkServiceTests {
         Mockito.when(trailRepository.findByName(TrailName.INFORMACAO)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.findForLoggedStudent());
+    }
+
+    @Test
+    void findAllShouldReturnAllLinks() {
+        Mockito.when(informationLinkRepository.findAllByOrderByTopicAscIdAsc())
+                .thenReturn(List.of(humanitiesLink, biologicalLink, prouniLink));
+
+        List<InformationLinkDTO> result = service.findAll();
+
+        Assertions.assertEquals(3, result.size());
+        Assertions.assertEquals("Direito", result.getFirst().topic());
+        Assertions.assertNull(result.get(2).knowledgeArea());
+    }
+
+    @Test
+    void createShouldSaveTrimmedLinkAndReturnDTO() {
+        InformationLinkInsertDTO dto = new InformationLinkInsertDTO("  Medicina  ", " https://www.cfm.org.br/ ", KnowledgeArea.BIOLOGICAS);
+        Mockito.when(informationLinkRepository.save(any())).thenAnswer(invocation -> {
+            InformationLink saved = invocation.getArgument(0);
+            saved.setId(10L);
+            return saved;
+        });
+
+        InformationLinkDTO result = service.create(dto);
+
+        Assertions.assertEquals(10L, result.id());
+        Assertions.assertEquals("Medicina", result.topic());
+        Assertions.assertEquals("https://www.cfm.org.br/", result.url());
+        Assertions.assertEquals(KnowledgeArea.BIOLOGICAS, result.knowledgeArea());
+    }
+
+    @Test
+    void createShouldSaveUniversityAccessLinkWhenKnowledgeAreaIsNull() {
+        InformationLinkInsertDTO dto = new InformationLinkInsertDTO("Vestibular", "https://www.vestibular.com.br/", null);
+        Mockito.when(informationLinkRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        InformationLinkDTO result = service.create(dto);
+
+        Assertions.assertNull(result.knowledgeArea());
+    }
+
+    @Test
+    void deleteShouldDeleteLinkWhenIdExists() {
+        Mockito.when(informationLinkRepository.findById(1L)).thenReturn(Optional.of(biologicalLink));
+
+        Assertions.assertDoesNotThrow(() -> service.delete(1L));
+        Mockito.verify(informationLinkRepository).delete(biologicalLink);
+    }
+
+    @Test
+    void deleteShouldThrowResourceNotFoundExceptionWhenIdDoesNotExist() {
+        Mockito.when(informationLinkRepository.findById(99L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.delete(99L));
+        Mockito.verify(informationLinkRepository, Mockito.never()).delete(any());
     }
 }
