@@ -20,7 +20,7 @@ import './LoginPage.css'
 
 /**
  * LoginPage
- * Página de login com campos de e-mail, senha e opção "Lembrar de mim".
+ * Página de login com campos de e-mail e senha e orientação de recuperação.
  *
  * @returns {JSX.Element}
  */
@@ -31,7 +31,6 @@ export default function LoginPage() {
   // ── Estados do formulário ────────────────────────────────────
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
-  const [lembrar, setLembrar]   = useState(false)
   const [showPass, setShowPass] = useState(false)
   const [error, setError]       = useState('')
   const [showRecoverHint, setShowRecoverHint] = useState(false)
@@ -133,16 +132,8 @@ export default function LoginPage() {
               </div>
             </div>
 
-            {/* Linha: lembrar de mim + esqueceu a senha */}
+            {/* Orientação para recuperação de acesso */}
             <div className="lp-row">
-              <label className="lp-check">
-                <input
-                  type="checkbox"
-                  checked={lembrar}
-                  onChange={e => setLembrar(e.target.checked)}
-                />
-                <span>Lembrar de mim</span>
-              </label>
               <button
                 type="button"
                 className="lp-link"

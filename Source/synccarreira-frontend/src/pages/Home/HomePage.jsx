@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getTrails, getQuestionsByTrail, getAnswers } from '../../services/trailService'
 import AppHeader from '../../components/AppHeader/AppHeader.jsx'
-import { isPsychologist } from '../../utils/roles'
+import { isAdministrator, isPsychologist } from '../../utils/roles'
 import './HomePage.css'
 
 // ─── Card de trilha com progresso ─────────────────────────────
@@ -102,6 +102,7 @@ export default function HomePage() {
   const navigate = useNavigate()
   // Psicóloga não responde trilhas: a Home dela leva para os agendamentos
   const psicologa = isPsychologist(user)
+  const administradora = isAdministrator(user)
 
   const [trails, setTrails]         = useState([])
   const [loadingTrails, setLoadingTrails] = useState(true)
@@ -172,12 +173,14 @@ export default function HomePage() {
                 Ver agendamentos
               </button>
             )}
-            <button
-              className="hp-btn-cadastro"
-              onClick={() => navigate('/alunos')}
-            >
-              Gerenciar usuários
-            </button>
+            {administradora && (
+              <button
+                className="hp-btn-cadastro"
+                onClick={() => navigate('/gestao')}
+              >
+                Gestão de usuários
+              </button>
+            )}
           </div>
 
           {/* Seção de trilhas (só para alunos) */}

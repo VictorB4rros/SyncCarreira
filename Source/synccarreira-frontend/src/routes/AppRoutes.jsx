@@ -22,6 +22,13 @@ function StaffRoute({ children }) {
         : <Navigate to="/home" replace />
 }
 
+function AdminRoute({ children }) {
+    const { user } = useAuth()
+    return user && isAdministrator(user)
+        ? children
+        : <Navigate to={user ? "/home" : "/login"} replace />
+}
+
 export default function AppRoutes() {
     return (
         <Routes>
@@ -34,7 +41,10 @@ export default function AppRoutes() {
                 <PrivateRoute><TrailPage /></PrivateRoute>
             } />
 
-            <Route path="/alunos" element={<AccountManagementPage />} />
+            <Route path="/gestao" element={
+                <AdminRoute><AccountManagementPage /></AdminRoute>
+            } />
+            <Route path="/alunos" element={<Navigate to="/gestao" replace />} />
             <Route path="/alunos/:id" element={
                 <PrivateRoute><StaffRoute><StudentDetailPage /></StaffRoute></PrivateRoute>
             } />
