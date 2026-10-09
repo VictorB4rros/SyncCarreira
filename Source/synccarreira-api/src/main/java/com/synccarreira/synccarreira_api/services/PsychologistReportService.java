@@ -201,6 +201,6 @@ public class PsychologistReportService {
                 .replaceAll("\\p{M}", "")
                 .toLowerCase(Locale.ROOT)
                 .replaceAll("[^a-z0-9]+", "-")
-                .replaceAll("^-|-$", "");
+                .replaceAll("(?:^-)|(?:-$)", "");
     }
 }
