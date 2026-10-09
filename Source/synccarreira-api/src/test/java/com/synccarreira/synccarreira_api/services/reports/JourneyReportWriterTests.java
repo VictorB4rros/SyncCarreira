@@ -27,7 +27,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 public class JourneyReportWriterTests {
@@ -162,16 +165,29 @@ public class JourneyReportWriterTests {
         return cell.getNumericCellValue();
     }
 
-    // Retorna os valores das células de from (inclusivo) a to (exclusivo): texto como String e número como Double
+    // Retorna o valor da célula: texto como String e número como Double
+    private static Object cellValue(Cell cell) {
+        return switch (cell.getCellType()) {
+            case STRING -> cell.getStringCellValue();
+            case NUMERIC -> cell.getNumericCellValue();
+            default -> throw new AssertionError("Tipo de célula inesperado em " + cell.getAddress() + ": " + cell.getCellType());
+        };
+    }
+
+    // Retorna os valores das células de from (inclusivo) a to (exclusivo)
     private static List<Object> values(Row row, int from, int to) {
         List<Object> result = new ArrayList<>();
         for (int i = from; i < to; i++) {
-            Cell cell = row.getCell(i);
-            result.add(switch (cell.getCellType()) {
-                case STRING -> cell.getStringCellValue();
-                case NUMERIC -> cell.getNumericCellValue();
-                default -> throw new AssertionError("Tipo de célula inesperado na coluna " + i + ": " + cell.getCellType());
-            });
+            result.add(cellValue(row.getCell(i)));
+        }
+        return result;
+    }
+
+    // Nas abas de campo/valor, retorna os valores dos campos informados
+    private static Map<String, Object> values(Sheet sheet, Set<String> fields) {
+        Map<String, Object> result = new HashMap<>();
+        for (String field : fields) {
+            result.put(field, cellValue(valueOf(sheet, field)));
         }
         return result;
     }
@@ -384,20 +400,23 @@ public class JourneyReportWriterTests {
     void writeStudentReportShouldWriteStudentDataInStudentSheet() throws IOException {
         Sheet student = read(writer.writeStudentReport(bruno)).getSheet("Aluno");
 
+        Map<String, Object> expected = Map.ofEntries(
+                Map.entry("Nome", "Bruno Lima"),
+                Map.entry("E-mail", "bruno.lima@gmail.com"),
+                Map.entry("Instituição", "E.E. Pedro II"),
+                Map.entry("Turma", "3º ano A"),
+                Map.entry("Ano letivo", 2026.0),
+                Map.entry("Ano de escolaridade", "3º ano do Ensino Médio"),
+                Map.entry("Tipo de escola", "Particular"),
+                Map.entry("Raça/cor", "Branca"),
+                Map.entry("Pontuação em Humanas", 3.0),
+                Map.entry("Pontuação em Exatas", 12.25),
+                Map.entry("Pontuação em Biológicas", 1.5),
+                Map.entry("Pontuação em Artes", 0.0),
+                Map.entry("Áreas de maior afinidade", "Exatas"));
+
         Assertions.assertEquals(List.of("Campo", "Valor"), headers(student));
-        Assertions.assertEquals("Bruno Lima", text(valueOf(student, "Nome")));
-        Assertions.assertEquals("bruno.lima@gmail.com", text(valueOf(student, "E-mail")));
-        Assertions.assertEquals("E.E. Pedro II", text(valueOf(student, "Instituição")));
-        Assertions.assertEquals("3º ano A", text(valueOf(student, "Turma")));
-        Assertions.assertEquals(2026, number(valueOf(student, "Ano letivo")));
-        Assertions.assertEquals("3º ano do Ensino Médio", text(valueOf(student, "Ano de escolaridade")));
-        Assertions.assertEquals("Particular", text(valueOf(student, "Tipo de escola")));
-        Assertions.assertEquals("Branca", text(valueOf(student, "Raça/cor")));
-        Assertions.assertEquals(3.0, number(valueOf(student, "Pontuação em Humanas")));
-        Assertions.assertEquals(12.25, number(valueOf(student, "Pontuação em Exatas")));
-        Assertions.assertEquals(1.5, number(valueOf(student, "Pontuação em Biológicas")));
-        Assertions.assertEquals(0.0, number(valueOf(student, "Pontuação em Artes")));
-        Assertions.assertEquals("Exatas", text(valueOf(student, "Áreas de maior afinidade")));
+        Assertions.assertEquals(expected, values(student, expected.keySet()));
         assertGeneratedNow(valueOf(student, "Relatório gerado em"));
     }
 
