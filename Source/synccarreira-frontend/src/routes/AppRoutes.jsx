@@ -4,9 +4,10 @@ import LoginPage    from '../pages/Login/LoginPage.jsx'
 import CadastroPage from '../pages/Cadastro/CadastroPage.jsx'
 import HomePage     from '../pages/Home/HomePage.jsx'
 import TrailPage    from '../pages/Trilha/TrailPage.jsx'
-import StudentListPage from '../pages/psicologas/StudentListPage.jsx'
-import StudentDetailPage from '../pages/psicologas/StudentDetailPage.jsx'
-import StudentFormPage from '../pages/psicologas/StudentFormPage.jsx'
+import StudentListPage from '../pages/Psicologas/studentlistPage.jsx'
+import StudentDetailPage from '../pages/Psicologas/studentdetailPage.jsx'
+import StudentFormPage from '../pages/Psicologas/studentformPage.jsx'
+import AgendamentosPage from '../pages/Agendamentos/AgendamentosPage.jsx'
 
 function PrivateRoute({ children }) {
     const { user } = useAuth()
@@ -33,6 +34,9 @@ export default function AppRoutes() {
             } />
             <Route path="/alunos/:id/editar" element={
                 <PrivateRoute><StudentFormPage /></PrivateRoute>
+            } />
+            <Route path="/agendamentos" element={
+                <PrivateRoute><AgendamentosPage /></PrivateRoute>
             } />
 
             <Route path="*" element={<Navigate to="/login" replace />} />

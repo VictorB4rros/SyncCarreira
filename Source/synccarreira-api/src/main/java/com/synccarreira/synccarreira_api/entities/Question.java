@@ -39,12 +39,6 @@ public class Question {
     @Setter
     private Trail trail;
 
-    @ManyToOne
-    @JoinColumn(name = "fk_psicologa")
-    @Getter
-    @Setter
-    private Psychologist psychologist;
-
     // Opções só existem para perguntas que não são do tipo ABERTA
     @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
     @Getter

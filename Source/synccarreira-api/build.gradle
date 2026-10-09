@@ -2,6 +2,8 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '4.0.5'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'jacoco'
+    id 'org.sonarqube' version '7.4.0.8496'
 }
 
 group = 'com.synccarreira'
@@ -26,6 +28,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-webmvc'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'org.springframework.retry:spring-retry:2.0.13'
+	implementation 'org.springframework.boot:spring-boot-starter-aspectj'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.h2database:h2'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -34,6 +40,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-validation-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-mail-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-thymeleaf-test'
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 	testAnnotationProcessor 'org.projectlombok:lombok'
@@ -41,4 +49,51 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+    dependsOn test // Garante que os testes rodem antes de gerar o relatório
+    reports {
+        xml.required = true // Necessário para o SonarCloud ler a cobertura
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('reports/jacoco/html')
+    }
+	afterEvaluate {
+		classDirectories.setFrom(files(classDirectories.files.collect {
+			fileTree(dir: it, exclude: [
+					"com/synccarreira/synccarreira_api/SynccarreiraApiApplication.class",
+			        "com/synccarreira/synccarreira_api/config/**",
+					"com/synccarreira/synccarreira_api/entities/**",
+			        "com/synccarreira/synccarreira_api/services/exceptions/**",
+					"com/synccarreira/synccarreira_api/controllers/handlers/**",
+			        "com/synccarreira/synccarreira_api/dto/**"
+			])
+		}))
+	}
+}
+
+sonar {
+    properties {
+        property "sonar.projectKey", "synccarreira"
+        property "sonar.organization", "synccarreira"
+        property "sonar.host.url", "https://sonarcloud.io"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
+		property "sonar.coverage.exclusions", [
+				"**/SynccarreiraApiApplication.class",
+				"**/config/**",
+			    "**/entities/**",
+			    "**/dto/**",
+			    "**/services/exceptions/**",
+			    "**/controllers/handlers/**"
+		].join(",")
+    }
+}
+
+tasks.named('sonar') {
+	dependsOn tasks.named('test')
+	dependsOn tasks.named('jacocoTestReport')
 }

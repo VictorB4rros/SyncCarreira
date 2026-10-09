@@ -23,6 +23,12 @@ public class Psychologist extends User {
     @Setter
     private LocalDate contractExpirationDate;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_id_instituicao")
+    @Getter
+    @Setter
+    private Institution institution;
+
     @OneToMany(mappedBy = "psychologist")
     @Getter
     private List<Appointment> appointments = new ArrayList<>();

@@ -18,11 +18,6 @@ public class Answer {
     @Setter
     private Long id;
 
-    @Column(name = "conteudo")
-    @Getter
-    @Setter
-    private String content;
-
     @ManyToOne
     @JoinColumn(name = "fk_usuario")
     @Getter

@@ -2,17 +2,14 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.PsychologistDTO;
 import com.synccarreira.synccarreira_api.dto.PsychologistInsertDTO;
-import com.synccarreira.synccarreira_api.dto.PsychologistUpdateDTO;
-import com.synccarreira.synccarreira_api.dto.StudentInsertDTO;
+import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.Psychologist;
 import com.synccarreira.synccarreira_api.entities.Role;
-import com.synccarreira.synccarreira_api.entities.Student;
+import com.synccarreira.synccarreira_api.repositories.InstitutionRepository;
 import com.synccarreira.synccarreira_api.repositories.PsychologistRepository;
 import com.synccarreira.synccarreira_api.repositories.RoleRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,14 +19,24 @@ import java.util.Optional;
 @Service
 public class PsychologistService {
 
-    @Autowired
-    private PsychologistRepository psychologistRepository;
+    private final PsychologistRepository psychologistRepository;
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
+    private final RoleRepository roleRepository;
 
-    @Autowired
-    private RoleRepository roleRepository;
+    private final PasswordRecoverService passwordRecoverService;
+
+    private final InstitutionRepository institutionRepository;
+
+    public PsychologistService(
+            final PsychologistRepository psychologistRepository,
+            final RoleRepository roleRepository,
+            final PasswordRecoverService passwordRecoverService,
+            final InstitutionRepository institutionRepository) {
+        this.psychologistRepository = psychologistRepository;
+        this.roleRepository = roleRepository;
+        this.passwordRecoverService = passwordRecoverService;
+        this.institutionRepository = institutionRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<PsychologistDTO> findAll() {
@@ -41,7 +48,7 @@ public class PsychologistService {
 
     @Transactional(readOnly = true)
     public PsychologistDTO findById(Long id) {
-        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
+        Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado na base de dados."));
         return new PsychologistDTO(psychologist);
     }
 
@@ -55,11 +62,14 @@ public class PsychologistService {
         Psychologist psychologist = new Psychologist();
         copyDtoToEntity(dto, psychologist);
         psychologist = psychologistRepository.save(psychologist);
+
+        passwordRecoverService.sendFirstAccessEmail(dto.getName(), dto.getEmail());
+
         return new PsychologistDTO(psychologist);
     }
 
     @Transactional
-    public PsychologistDTO update(Long id, PsychologistUpdateDTO dto) {
+    public PsychologistDTO update(Long id, PsychologistInsertDTO dto) {
         Psychologist psychologist = psychologistRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Resource not found."));
         copyDtoToEntity(dto, psychologist);
         psychologist = psychologistRepository.save(psychologist);
@@ -89,19 +99,10 @@ public class PsychologistService {
         entity.setEmail(dto.getEmail());
         entity.setContractExpirationDate(dto.getContractExpirationDate());
         entity.setCrp(dto.getCrp());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        Optional<Institution> institution = institutionRepository.findById(dto.getInstitutionId());
+        institution.ifPresent(entity::setInstitution);
         entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
-        role.ifPresent(entity::addRole);
-    }
-
-    private void copyDtoToEntity(PsychologistUpdateDTO dto, Psychologist entity) {
-        entity.setName(dto.getName());
-        entity.setEmail(dto.getEmail());
-        entity.setContractExpirationDate(dto.getContractExpirationDate());
-        entity.setCrp(dto.getCrp());
-        entity.getRoles().clear();
-        Optional<Role> role = roleRepository.findById(dto.getRoleId());
+        Optional<Role> role = roleRepository.findById(3L);
         role.ifPresent(entity::addRole);
     }
 }

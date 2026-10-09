@@ -34,6 +34,7 @@ export default function LoginPage() {
   const [lembrar, setLembrar]   = useState(false)
   const [showPass, setShowPass] = useState(false)
   const [error, setError]       = useState('')
+  const [showRecoverHint, setShowRecoverHint] = useState(false)
 
   // ── Submissão do formulário ──────────────────────────────────
 
@@ -142,9 +143,25 @@ export default function LoginPage() {
                 />
                 <span>Lembrar de mim</span>
               </label>
-              {/* TODO: implementar fluxo de recuperação de senha */}
-              <button type="button" className="lp-link">Esqueceu a senha?</button>
+              {/* O backend não tem endpoint de redefinição: as contas são criadas
+                  pelo administrador, então orientamos o usuário a procurá-lo. */}
+              <button
+                type="button"
+                className="lp-link"
+                aria-expanded={showRecoverHint}
+                aria-controls="lp-recover-hint"
+                onClick={() => setShowRecoverHint(v => !v)}
+              >
+                Esqueceu a senha?
+              </button>
             </div>
+
+            {showRecoverHint && (
+              <p id="lp-recover-hint" className="lp-info" aria-live="polite">
+                Para redefinir sua senha, fale com a sua orientadora ou com o
+                administrador da sua escola/instituição.
+              </p>
+            )}
 
             {/* Botão de submit com estado de loading */}
             <button type="submit" className="lp-btn" disabled={loading}>

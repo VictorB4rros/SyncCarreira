@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudentUpdateDTO {
+public class StudentDetailsDTO {
+
+    @Getter
+    private Long id;
 
     @NotBlank(message = "Campo obrigatório")
     @Getter
@@ -19,11 +22,17 @@ public class StudentUpdateDTO {
     private String email;
 
     @Getter
-    private Long roleId;
-
-    @Getter
-    private String schollarYear;
+    private String scholarYear;
 
     @Getter
     private String schoolType;
+
+    @Getter
+    private String race;
+
+    @Getter
+    private String className;
+
+    @Getter
+    private String institutionName;
 }

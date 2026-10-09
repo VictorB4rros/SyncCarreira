@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,11 @@ import java.net.URI;
 @Tag(name = "Alunos", description = "Endpoints para interagir com os alunos da aplicação.")
 public class StudentController {
 
-    @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
+
+    public StudentController(final StudentService studentService) {
+        this.studentService = studentService;
+    }
 
     @Operation(summary = "Busca todos os alunos cadastrados.")
     @ApiResponses(value = {
@@ -35,8 +37,8 @@ public class StudentController {
             )
     })
     @GetMapping
-    public ResponseEntity<Page<StudentDTO>> findAll(Pageable pageable) {
-        Page<StudentDTO> dto = studentService.findAll(pageable);
+    public ResponseEntity<Page<StudentDetailsDTO>> findAll(Pageable pageable) {
+        Page<StudentDetailsDTO> dto = studentService.findAll(pageable);
         return ResponseEntity.ok(dto);
     }
 
@@ -96,7 +98,7 @@ public class StudentController {
     public ResponseEntity<StudentDTO> update(
             @Parameter(description = "Id do aluno.", required = true)
             @PathVariable Long id,
-            @Valid @RequestBody StudentUpdateDTO dto
+            @Valid @RequestBody StudentInsertDTO dto
     ) {
         StudentDTO result = studentService.update(id, dto);
         return ResponseEntity.ok(result);
@@ -140,5 +142,23 @@ public class StudentController {
     })
     public ResponseEntity<StudentScoreDTO> getScore(@PathVariable Long id) {
         return ResponseEntity.ok(studentService.getScore(id));
+    }
+
+    @PatchMapping("/class")
+    @Operation(summary = "Aloca um aluno numa turma.")
+    @ApiResponse(
+            responseCode = "204",
+            description = "Aluno alocado na turma com sucesso."
+    )
+    public ResponseEntity<Void> setSchoolClass(
+            @Parameter(description = "Id do aluno que será alocado na turma.", required = true)
+            @RequestParam(value="studentId")
+            Long studentId,
+            @Parameter(description = "Id da turma à qual o aluno pertence.", required = true)
+            @RequestParam(value="classId")
+            Long classId
+    ) {
+        studentService.setSchoolClass(studentId, classId);
+        return ResponseEntity.noContent().build();
     }
 }

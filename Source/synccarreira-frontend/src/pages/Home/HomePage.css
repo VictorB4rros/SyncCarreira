@@ -90,6 +90,17 @@
 
 .hp-sub { font-size: 14px; color: var(--sc-muted); margin-bottom: 0; }
 
+.hp-role {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--sc-roxo-soft);
+  color: #5a35e8; /* contraste 5.7:1 sobre o roxo claro */
+  font-size: 12px;
+  font-weight: 600;
+}
+
 .hp-btn-cadastro {
   margin-top: 20px;
   width: 100%;

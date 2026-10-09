@@ -1,0 +1,350 @@
+/**
+ * @file PsicologaAgendamentos.jsx
+ * @description RF-08 — Agendamento de sessões pela psicóloga/orientadora.
+ *
+ * Permite criar, editar e cancelar sessões individuais ou em grupo.
+ * Quando a conta Google está conectada, cada ação é refletida no Google Agenda
+ * da psicóloga (com link do Google Meet) e o aluno é avisado pelo próprio Google.
+ *
+ * Ordem das operações (para não deixar Google e sistema desencontrados):
+ *   criar    → cria evento no Google → salva no backend (se falhar, remove o evento)
+ *   editar   → atualiza evento no Google → atualiza no backend
+ *   cancelar → remove evento no Google → marca como cancelada no backend
+ */
+
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useAuth } from '../../context/AuthContext.jsx'
+import SessionCard, { MeetIcon } from './components/SessionCard.jsx'
+import SessionFormModal from './components/SessionFormModal.jsx'
+import CancelModal from './components/CancelModal.jsx'
+import FeedbackModal from './components/FeedbackModal.jsx'
+import {
+  getPsychologistAppointments, createAppointment, updateAppointment,
+  cancelAppointment, sendFeedback, displayStatus, USE_MOCK,
+} from '../../services/appointmentService'
+import {
+  isGoogleConfigured, isGoogleConnected, connectGoogle, disconnectGoogle,
+  createMeetEvent, updateMeetEvent, cancelMeetEvent, preloadGoogle,
+} from '../../services/googleCalendarService'
+import { getAllStudents } from '../../services/studentService'
+
+/**
+ * Remove do Google um evento recém-criado quando o backend falhou (evita evento "órfão").
+ * Fica fora do componente porque não depende de estado. Nunca rejeita: se nem o rollback
+ * funcionar, o erro original (do backend) é o que importa mostrar.
+ * @param {string} googleEventId
+ * @returns {Promise<void>}
+ */
+function rollbackGoogleEvent(googleEventId) {
+  return cancelMeetEvent(googleEventId).catch(() => undefined)
+}
+
+const TABS = [
+  { id: 'AGENDADA',  label: 'Próximas'   },
+  { id: 'REALIZADA', label: 'Realizadas' },
+  { id: 'CANCELADA', label: 'Canceladas' },
+]
+
+export default function PsicologaAgendamentos() {
+  const { user } = useAuth()
+  const psychologist = useMemo(
+    () => ({ id: user?.id, name: user?.nome, email: user?.email }),
+    [user]
+  )
+
+  const [appointments, setAppointments] = useState([])
+  const [loading, setLoading]           = useState(true)
+  const [loadError, setLoadError]       = useState('')
+
+  const [students, setStudents]               = useState([])
+  const [loadingStudents, setLoadingStudents] = useState(true)
+
+  const [tab, setTab]             = useState('AGENDADA')
+  const [googleOn, setGoogleOn]   = useState(isGoogleConnected())
+  const [googleMsg, setGoogleMsg] = useState('')
+  const [toast, setToast]         = useState('')
+
+  // Modais: { type: 'form'|'cancel'|'feedback', appointment? }
+  const [modal, setModal] = useState(null)
+
+  // ── Carregamento ────────────────────────────────────────────
+  const load = useCallback(async () => {
+    setLoading(true)
+    setLoadError('')
+    try {
+      setAppointments(await getPsychologistAppointments(psychologist.id))
+    } catch (err) {
+      setLoadError(err.message)
+    } finally {
+      setLoading(false)
+    }
+  }, [psychologist.id])
+
+  useEffect(() => { load() }, [load])
+
+  useEffect(() => {
+    preloadGoogle()
+    getAllStudents()
+      .then(setStudents)
+      .catch(() => setStudents([]))
+      .finally(() => setLoadingStudents(false))
+  }, [])
+
+  useEffect(() => {
+    if (!toast) return
+    const t = setTimeout(() => setToast(''), 4000)
+    return () => clearTimeout(t)
+  }, [toast])
+
+  // ── Google ──────────────────────────────────────────────────
+  async function ensureGoogle() {
+    if (isGoogleConnected()) return
+    await connectGoogle(psychologist.email)
+    setGoogleOn(true)
+  }
+
+  async function handleConnectGoogle() {
+    setGoogleMsg('')
+    try {
+      await ensureGoogle()
+    } catch (err) {
+      setGoogleMsg(err.message)
+    }
+  }
+
+  function handleDisconnectGoogle() {
+    disconnectGoogle()
+    setGoogleOn(false)
+  }
+
+  // ── Ações ───────────────────────────────────────────────────
+  function replaceInList(updated) {
+    setAppointments(list =>
+      list.map(a => (a.id === updated.id ? updated : a))
+          .sort((x, y) => new Date(x.dateTime) - new Date(y.dateTime)))
+  }
+
+  /**
+   * Cria ou atualiza o evento no Google Agenda (quando a opção está marcada).
+   * @returns {{ google: Object, createdNow: boolean }} dados do Google + se o evento acabou de ser criado
+   */
+  async function syncSessionWithGoogle(form, editing) {
+    const current = {
+      googleEventId: editing?.googleEventId ?? null,
+      meetLink:      editing?.meetLink ?? null,
+      calendarLink:  editing?.calendarLink ?? null,
+    }
+    if (!form.syncGoogle) return { google: current, createdNow: false }
+
+    await ensureGoogle()
+    if (current.googleEventId) {
+      const google = await updateMeetEvent(current.googleEventId, { ...form, meetLink: current.meetLink })
+      return { google, createdNow: false }
+    }
+    return { google: await createMeetEvent(form), createdNow: true }
+  }
+
+  /** Salva no backend (ou no mock) e atualiza a lista na tela. */
+  async function persistSession(editing, payload) {
+    if (editing) {
+      replaceInList(await updateAppointment(editing.id, payload))
+      setToast(payload.syncGoogle ? 'Sessão atualizada e alunos avisados pelo Google Agenda.' : 'Sessão atualizada.')
+      return
+    }
+    const created = await createAppointment(payload)
+    setAppointments(list =>
+      [...list, created].sort((x, y) => new Date(x.dateTime) - new Date(y.dateTime)))
+    setTab('AGENDADA')
+    setToast(payload.syncGoogle ? 'Sessão agendada! Convite com link do Meet enviado aos alunos.' : 'Sessão agendada.')
+  }
+
+  async function handleSaveSession(form) {
+    const editing = modal?.appointment
+    const { google, createdNow } = await syncSessionWithGoogle(form, editing)
+
+    try {
+      await persistSession(editing, { ...form, ...google, psychologist })
+      setModal(null)
+    } catch (err) {
+      if (createdNow && google.googleEventId) {
+        await rollbackGoogleEvent(google.googleEventId)
+      }
+      throw err
+    }
+  }
+
+  async function handleCancelSession(reason) {
+    const a = modal.appointment
+    if (a.googleEventId && isGoogleConfigured()) {
+      await ensureGoogle()
+      await cancelMeetEvent(a.googleEventId)
+    }
+    replaceInList(await cancelAppointment(a.id, reason))
+    setModal(null)
+    setToast('Sessão cancelada. Os alunos foram avisados.')
+  }
+
+  async function handleSaveFeedback(text) {
+    replaceInList(await sendFeedback(modal.appointment.id, text))
+    setModal(null)
+    setToast('Feedback enviado. Ele já aparece na área do aluno.')
+  }
+
+  // ── Agrupamento por aba ─────────────────────────────────────
+  const grouped = useMemo(() => {
+    const g = { AGENDADA: [], REALIZADA: [], CANCELADA: [] }
+    appointments.forEach(a => g[displayStatus(a)].push(a))
+    g.REALIZADA.reverse() // mais recentes primeiro
+    g.CANCELADA.reverse()
+    return g
+  }, [appointments])
+
+  const pendingFeedback = grouped.REALIZADA.filter(a => !a.feedback).length
+  const visible = grouped[tab]
+
+  return (
+    <>
+      {/* Cabeçalho da página */}
+      <div className="ag-page-head">
+        <div>
+          <h1 className="ag-h1">Agendamentos</h1>
+          <p className="ag-sub">Crie e acompanhe sessões individuais ou em grupo com seus alunos.</p>
+        </div>
+        <button className="ag-btn ag-btn--primary" onClick={() => setModal({ type: 'form' })}>
+          + Nova sessão
+        </button>
+      </div>
+
+      {/* Status da integração Google */}
+      <div className={`ag-google${googleOn ? ' ag-google--on' : ''}`}>
+        <span className="ag-google__logo" aria-hidden="true">
+          <svg viewBox="0 0 48 48" width="20" height="20">
+            <path fill="#4285F4" d="M45.1 24.5c0-1.6-.1-3.1-.4-4.5H24v8.5h11.8c-.5 2.8-2.1 5.1-4.4 6.7v5.6h7.1c4.2-3.8 6.6-9.5 6.6-16.3z"/>
+            <path fill="#34A853" d="M24 46c5.9 0 10.9-2 14.5-5.3l-7.1-5.6c-2 1.3-4.5 2.1-7.4 2.1-5.7 0-10.5-3.8-12.2-9H4.5v5.7C8.1 41 15.5 46 24 46z"/>
+            <path fill="#FBBC05" d="M11.8 28.2c-.4-1.3-.7-2.7-.7-4.2s.3-2.9.7-4.2v-5.7H4.5C3 17.1 2 20.4 2 24s1 6.9 2.5 9.9l7.3-5.7z"/>
+            <path fill="#EA4335" d="M24 10.8c3.2 0 6.1 1.1 8.4 3.3l6.3-6.3C34.9 4.2 29.9 2 24 2 15.5 2 8.1 7 4.5 14.1l7.3 5.7c1.7-5.2 6.5-9 12.2-9z"/>
+          </svg>
+        </span>
+        <div className="ag-google__text">
+          {!isGoogleConfigured() && (
+            <><strong>Google Agenda não configurado.</strong> As sessões serão salvas sem link do Meet. Defina <code>VITE_GOOGLE_CLIENT_ID</code> no .env.</>
+          )}
+          {isGoogleConfigured() && !googleOn && (
+            <><strong>Conecte seu Google Agenda</strong> para gerar o link do Meet e enviar o convite aos alunos automaticamente.</>
+          )}
+          {isGoogleConfigured() && googleOn && (
+            <><strong>Google Agenda conectado.</strong> Novas sessões geram link do Meet e convite por e-mail.</>
+          )}
+          {googleMsg && <span className="ag-google__err">{googleMsg}</span>}
+        </div>
+        {isGoogleConfigured() && (
+          googleOn
+            ? <button className="ag-btn ag-btn--ghost ag-btn--sm" onClick={handleDisconnectGoogle}>Desconectar</button>
+            : <button className="ag-btn ag-btn--outline ag-btn--sm" onClick={handleConnectGoogle}>Conectar Google</button>
+        )}
+      </div>
+
+      {USE_MOCK && (
+        <div className="ag-note">
+          Modo demonstração: os agendamentos estão sendo salvos só neste navegador
+          (<code>VITE_APPOINTMENTS_MOCK=true</code>) até o backend expor <code>/appointments</code>.
+        </div>
+      )}
+
+      {/* Abas */}
+      <div className="ag-tabs" role="tablist">
+        {TABS.map(t => (
+          <button
+            key={t.id}
+            role="tab"
+            aria-selected={tab === t.id}
+            className={`ag-tab${tab === t.id ? ' ag-tab--on' : ''}`}
+            onClick={() => setTab(t.id)}
+          >
+            {t.label}
+            <span className="ag-tab__count">{grouped[t.id].length}</span>
+            {t.id === 'REALIZADA' && pendingFeedback > 0 && (
+              <span className="ag-tab__dot" title={`${pendingFeedback} sem feedback`} />
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Lista */}
+      <section className="ag-list" aria-live="polite">
+        {loading && <div className="ag-state"><div className="ag-spinner" />Carregando sessões…</div>}
+
+        {!loading && loadError && (
+          <div className="ag-state ag-state--error">
+            {loadError}
+            <button className="ag-btn ag-btn--ghost ag-btn--sm" onClick={load}>Tentar de novo</button>
+          </div>
+        )}
+
+        {!loading && !loadError && visible.length === 0 && (
+          <div className="ag-empty">
+            {tab === 'AGENDADA' && <>Nenhuma sessão futura. <button className="ag-link" onClick={() => setModal({ type: 'form' })}>Agende a primeira</button>.</>}
+            {tab === 'REALIZADA' && 'As sessões que já aconteceram aparecem aqui para você registrar o feedback.'}
+            {tab === 'CANCELADA' && 'Nenhuma sessão cancelada.'}
+          </div>
+        )}
+
+        {!loading && !loadError && visible.map(a => (
+          <SessionCard key={a.id} appointment={a} viewer="psicologa">
+            {tab === 'AGENDADA' && (
+              <>
+                {a.meetLink && (
+                  <a className="ag-btn ag-btn--meet ag-btn--sm" href={a.meetLink} target="_blank" rel="noreferrer">
+                    <MeetIcon /> Abrir Meet
+                  </a>
+                )}
+                <button className="ag-btn ag-btn--outline ag-btn--sm"
+                        onClick={() => setModal({ type: 'form', appointment: a })}>Editar</button>
+                <button className="ag-btn ag-btn--ghost-danger ag-btn--sm"
+                        onClick={() => setModal({ type: 'cancel', appointment: a })}>Cancelar</button>
+              </>
+            )}
+            {tab === 'REALIZADA' && (
+              <>
+                <button
+                  className={`ag-btn ag-btn--sm ${a.feedback ? 'ag-btn--outline' : 'ag-btn--primary'}`}
+                  onClick={() => setModal({ type: 'feedback', appointment: a })}
+                >
+                  {a.feedback ? 'Editar feedback' : 'Enviar feedback'}
+                </button>
+                {a.feedback && <span className="ag-card__ok">✓ Feedback enviado</span>}
+              </>
+            )}
+          </SessionCard>
+        ))}
+      </section>
+
+      {/* Modais */}
+      {modal?.type === 'form' && (
+        <SessionFormModal
+          initial={modal.appointment}
+          students={students}
+          loadingStudents={loadingStudents}
+          onSubmit={handleSaveSession}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.type === 'cancel' && (
+        <CancelModal
+          appointment={modal.appointment}
+          onConfirm={handleCancelSession}
+          onClose={() => setModal(null)}
+        />
+      )}
+      {modal?.type === 'feedback' && (
+        <FeedbackModal
+          appointment={modal.appointment}
+          onSave={handleSaveFeedback}
+          onClose={() => setModal(null)}
+        />
+      )}
+
+      {toast && <div className="ag-toast" aria-live="polite">{toast}</div>}
+    </>
+  )
+}

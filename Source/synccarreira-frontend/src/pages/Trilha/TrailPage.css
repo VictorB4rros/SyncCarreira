@@ -186,17 +186,32 @@
 }
 
 .tp-progress-card__bar {
+  /* <progress> nativo estilizado (mesmo visual da barra anterior) */
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
   height: 10px;
+  border: none;
   background: var(--sc-border);
   border-radius: 99px;
   overflow: hidden;
 }
 
-.tp-progress-card__fill {
-  height: 100%;
+.tp-progress-card__bar::-webkit-progress-bar {
+  background: var(--sc-border);
+  border-radius: 99px;
+}
+
+.tp-progress-card__bar::-webkit-progress-value {
   background: linear-gradient(90deg, var(--sc-roxo), #9b7eff);
   border-radius: 99px;
   transition: width 0.5s ease;
+}
+
+.tp-progress-card__bar::-moz-progress-bar {
+  background: linear-gradient(90deg, var(--sc-roxo), #9b7eff);
+  border-radius: 99px;
 }
 
 /* ── Cartão de pergunta ────────────────────────────────────── */

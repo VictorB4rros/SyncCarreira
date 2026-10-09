@@ -34,7 +34,47 @@ const SAVE_DEBOUNCE = 300
 
 /** Labels da escala Likert */
 const LIKERT_LABELS = ['Discordo totalmente', 'Concordo totalmente']
+
+/** Texto lido pelo leitor de tela em cada botão da escala Likert. */
+function likertAriaLabel(val) {
+  if (val === 1) return `${val} — ${LIKERT_LABELS[0]}`
+  if (val === 5) return `${val} — ${LIKERT_LABELS[1]}`
+  return `${val} — `
+}
 const LIKERT_VALUES = [1, 2, 3, 4, 5]
+
+// ─── Helpers de carregamento ──────────────────────────────────
+
+/** Mensagem exibida quando o GET /answers falha (deixa claro se o problema é do backend). */
+function describeAnswersError(err, userId) {
+  if (!err.response) {
+    return '🚨 [NETWORK ERROR] Sem resposta do servidor. Verifica se o backend local está de pé.'
+  }
+  const status = err.response.status
+  const url = err.config?.url || '/answers'
+  if (status === 403) {
+    return `🚨 [BACKEND ERROR] O endpoint GET ${url} retornou HTTP 403 Forbidden para o Aluno ID: ${userId}. O backend está bloqueando o acesso de leitura histórico deste perfil!`
+  }
+  return `🚨 [BACKEND ERROR] Erro inesperado HTTP ${status} no endpoint GET ${url}`
+}
+
+/**
+ * Converte a lista de respostas do backend em { [questionId]: optionId },
+ * descobrindo a pergunta de cada resposta pela opção escolhida.
+ */
+function buildAnswerMap(answersData, questionsData) {
+  const answerMap = {}
+  if (!Array.isArray(answersData)) return answerMap
+
+  for (const ans of answersData) {
+    const optId = ans.questionOptionDTO?.id
+    const matchingQuestion = optId
+      ? questionsData.find(q => q.options?.some(o => o.id === optId))
+      : null
+    if (matchingQuestion) answerMap[matchingQuestion.id] = optId
+  }
+  return answerMap
+}
 
 // ─── Sub-componentes ──────────────────────────────────────────
 
@@ -47,7 +87,7 @@ function SaveFeedback({ status }) {
   if (status === 'saving')
     return (
         <div className="tp-question__save-feedback tp-question__save-feedback--saving">
-          <span className="tp-save-spinner" />
+          <span className="tp-save-spinner" />{' '}
           Salvando…
         </div>
     )
@@ -57,7 +97,7 @@ function SaveFeedback({ status }) {
         <div className="tp-question__save-feedback tp-question__save-feedback--saved">
           <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
-          </svg>
+          </svg>{' '}
           Resposta salva
         </div>
     )
@@ -145,7 +185,7 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
                     type="button"
                     className={`tp-likert__btn${selectedValue === val ? ' tp-likert__btn--selected' : ''}`}
                     onClick={() => handleClick(val)}
-                    aria-label={`${val} — ${val === 1 ? LIKERT_LABELS[0] : val === 5 ? LIKERT_LABELS[1] : ''}`}
+                    aria-label={likertAriaLabel(val)}
                 >
                   {val}
                 </button>
@@ -220,38 +260,11 @@ export default function TrailPage() {
         console.log('[TrailPage] Respostas carregadas:', answersData?.length)
       } catch (answersErr) {
         console.error('[TrailPage] Falha ao carregar respostas (Pegamos o erro):', answersErr)
-
-        if (answersErr.response) {
-          const status = answersErr.response.status
-          const url = answersErr.config?.url || '/answers'
-
-          if (status === 403) {
-            setBackendError(`🚨 [BACKEND ERROR] O endpoint GET ${url} retornou HTTP 403 Forbidden para o Aluno ID: ${user.id}. O backend está bloqueando o acesso de leitura histórico deste perfil!`)
-          } else {
-            setBackendError(`🚨 [BACKEND ERROR] Erro inesperado HTTP ${status} no endpoint GET ${url}`)
-          }
-        } else {
-          setBackendError('🚨 [NETWORK ERROR] Sem resposta do servidor. Verifica se o backend local está de pé.')
-        }
+        setBackendError(describeAnswersError(answersErr, user.id))
       }
 
       // 3. Monta o mapa se as respostas existirem
-      const answerMap = {}
-      if (Array.isArray(answersData)) {
-        for (const ans of answersData) {
-          const optId = ans.questionOptionDTO?.id
-          if (!optId) continue
-
-          const matchingQuestion = questionsData.find(q =>
-              q.options?.some(o => o.id === optId)
-          )
-          if (matchingQuestion) {
-            answerMap[matchingQuestion.id] = optId
-          }
-        }
-      }
-
-      setAnswers(answerMap)
+      setAnswers(buildAnswerMap(answersData, questionsData))
       setLoadingPage(false)
     }
 
@@ -384,16 +397,14 @@ export default function TrailPage() {
               {answeredCount} de {totalQuestions} perguntas
             </span>
             </div>
-            <div className="tp-progress-card__bar">
-              <div
-                  className="tp-progress-card__fill"
-                  style={{ width: `${progressPct}%` }}
-                  role="progressbar"
-                  aria-valuenow={progressPct}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-              />
-            </div>
+            <progress
+                className="tp-progress-card__bar"
+                value={progressPct}
+                max={100}
+                aria-label="Progresso da trilha"
+            >
+              {progressPct}%
+            </progress>
           </div>
 
           {/* ── Lista de perguntas ── */}
