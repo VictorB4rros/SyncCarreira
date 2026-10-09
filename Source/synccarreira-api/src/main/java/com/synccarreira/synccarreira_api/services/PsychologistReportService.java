@@ -167,7 +167,7 @@ public class PsychologistReportService {
     }
 
     private static void validateInstitution(SchoolClass schoolClass, Long institutionId, String message) {
-        Institution institution = schoolClass.getInstitution();
+        Institution institution = schoolClass != null ? schoolClass.getInstitution() : null;
         if (institution == null || !institution.getId().equals(institutionId)) {
             throw new ForbiddenException(message);
         }

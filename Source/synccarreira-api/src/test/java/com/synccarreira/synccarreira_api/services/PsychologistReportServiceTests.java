@@ -411,6 +411,16 @@ public class PsychologistReportServiceTests {
     }
 
     @Test
+    void generateStudentReportShouldThrowForbiddenExceptionWhenStudentHasNoSchoolClass() {
+        ana.setDeterminedSchoolClass(null);
+        Mockito.when(panelService.findAccessibleInstitutionId(psychologistId)).thenReturn(institutionId);
+        Mockito.when(studentRepository.findById(ana.getId())).thenReturn(Optional.of(ana));
+
+        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, ana.getId()));
+        Mockito.verifyNoInteractions(synthesisRepository, reportWriter);
+    }
+
+    @Test
     void generateStudentReportShouldThrowForbiddenExceptionWhenLoggedUserCannotAccessPanel() {
         Mockito.when(panelService.findAccessibleInstitutionId(psychologistId)).thenThrow(ForbiddenException.class);
 
