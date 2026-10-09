@@ -74,7 +74,7 @@ public class PsychologistReportServiceTests {
     @Captor
     private ArgumentCaptor<List<PanelStudentProjection>> panelStudentsCaptor;
 
-    private Long psychologistId, institutionId, schoolClassId, nonExistingSchoolClassId, nonExistingStudentId;
+    private Long psychologistId, institutionId, schoolClassId, nonExistingSchoolClassId, nonExistingStudentId, studentId;
     private Institution institution;
     private SchoolClass schoolClass, otherInstitutionSchoolClass;
     private Student ana, bruno;
@@ -114,6 +114,8 @@ public class PsychologistReportServiceTests {
         bruno.setBiologicalSciencesScore(0.0);
         bruno.setArtsScore(0.0);
         bruno.setDeterminedSchoolClass(schoolClass);
+
+        studentId = ana.getId();
 
         anaStatus = new PanelDTOs.StudentStatus(
                 ana.getId(), ana.getName(), schoolClassId, schoolClass.getName(), 8, 8, 100, 3, 3,
@@ -406,7 +408,7 @@ public class PsychologistReportServiceTests {
         Mockito.when(panelService.findAccessibleInstitutionId(psychologistId)).thenReturn(institutionId);
         Mockito.when(studentRepository.findById(ana.getId())).thenReturn(Optional.of(ana));
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, ana.getId()));
+        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, studentId));
         Mockito.verifyNoInteractions(synthesisRepository, reportWriter);
     }
 
@@ -416,7 +418,7 @@ public class PsychologistReportServiceTests {
         Mockito.when(panelService.findAccessibleInstitutionId(psychologistId)).thenReturn(institutionId);
         Mockito.when(studentRepository.findById(ana.getId())).thenReturn(Optional.of(ana));
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, ana.getId()));
+        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, studentId));
         Mockito.verifyNoInteractions(synthesisRepository, reportWriter);
     }
 
@@ -424,7 +426,7 @@ public class PsychologistReportServiceTests {
     void generateStudentReportShouldThrowForbiddenExceptionWhenLoggedUserCannotAccessPanel() {
         Mockito.when(panelService.findAccessibleInstitutionId(psychologistId)).thenThrow(ForbiddenException.class);
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, ana.getId()));
+        Assertions.assertThrows(ForbiddenException.class, () -> service.generateStudentReport(psychologistId, studentId));
         Mockito.verifyNoInteractions(studentRepository, synthesisRepository, reportWriter);
     }
 
@@ -432,7 +434,7 @@ public class PsychologistReportServiceTests {
     void generateStudentReportShouldThrowResourceNotFoundExceptionWhenPsychologistDoesNotExist() {
         Mockito.when(panelService.findAccessibleInstitutionId(psychologistId)).thenThrow(ResourceNotFoundException.class);
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.generateStudentReport(psychologistId, ana.getId()));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.generateStudentReport(psychologistId, studentId));
         Mockito.verifyNoInteractions(studentRepository, synthesisRepository, reportWriter);
     }
 }

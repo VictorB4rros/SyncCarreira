@@ -360,8 +360,8 @@ public class JourneyReportWriter {
                     cell.setCellValue(text.isBlank() ? "-" : text);
                     cell.setCellStyle(styles.text);
                 }
-                case WrappedText text -> {
-                    cell.setCellValue(text.value());
+                case WrappedText(String text) -> {
+                    cell.setCellValue(text);
                     cell.setCellStyle(styles.wrappedText);
                 }
                 case Boolean flag -> {
@@ -372,8 +372,8 @@ public class JourneyReportWriter {
                     cell.setCellValue(LocalDateTime.ofInstant(instant, ZONE));
                     cell.setCellStyle(styles.dateTime);
                 }
-                case Percentage percentage -> {
-                    cell.setCellValue(percentage.value() / 100.0);
+                case Percentage(int percentage) -> {
+                    cell.setCellValue(percentage / 100.0);
                     cell.setCellStyle(styles.percentage);
                 }
                 case Double number -> {

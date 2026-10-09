@@ -25,6 +25,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -161,6 +162,20 @@ public class JourneyReportWriterTests {
         return cell.getNumericCellValue();
     }
 
+    // Retorna os valores das células de from (inclusivo) a to (exclusivo): texto como String e número como Double
+    private static List<Object> values(Row row, int from, int to) {
+        List<Object> result = new ArrayList<>();
+        for (int i = from; i < to; i++) {
+            Cell cell = row.getCell(i);
+            result.add(switch (cell.getCellType()) {
+                case STRING -> cell.getStringCellValue();
+                case NUMERIC -> cell.getNumericCellValue();
+                default -> throw new AssertionError("Tipo de célula inesperado na coluna " + i + ": " + cell.getCellType());
+            });
+        }
+        return result;
+    }
+
     private static String format(Cell cell) {
         return cell.getCellStyle().getDataFormatString();
     }
@@ -171,8 +186,8 @@ public class JourneyReportWriterTests {
     }
 
     private static void assertGeneratedNow(Cell cell) {
-        LocalDateTime generatedAt = dateTime(cell);
-        LocalDateTime now = LocalDateTime.now(ZONE);
+        ZonedDateTime generatedAt = dateTime(cell).atZone(ZONE);
+        ZonedDateTime now = ZonedDateTime.now(ZONE);
         Assertions.assertTrue(Duration.between(generatedAt, now).abs().toMinutes() < 1,
                 "Data de geração inesperada: " + generatedAt);
     }
@@ -224,63 +239,52 @@ public class JourneyReportWriterTests {
 
     @Test
     void writeClassReportShouldWriteJourneyStatusOfStudentInStudentsSheet() throws IOException {
-        Row bruno = read(writer.writeClassReport(classReport)).getSheet("Alunos").getRow(2);
+        Row brunoRow = read(writer.writeClassReport(classReport)).getSheet("Alunos").getRow(2);
 
-        Assertions.assertEquals("bruno.lima@gmail.com", text(bruno.getCell(1)));
-        Assertions.assertEquals("3º ano do Ensino Médio", text(bruno.getCell(2)));
-        Assertions.assertEquals("Particular", text(bruno.getCell(3)));
-        Assertions.assertEquals("Branca", text(bruno.getCell(4)));
-        Assertions.assertEquals("Em andamento", text(bruno.getCell(5)));
-        Assertions.assertEquals(0.58, number(bruno.getCell(6)), 0.0001);
-        Assertions.assertEquals("0%", format(bruno.getCell(6)));
-        Assertions.assertEquals(7, number(bruno.getCell(7)));
-        Assertions.assertEquals(12, number(bruno.getCell(8)));
-        Assertions.assertEquals(1, number(bruno.getCell(9)));
-        Assertions.assertEquals(3, number(bruno.getCell(10)));
-        Assertions.assertEquals("Influências", text(bruno.getCell(11)));
-        Assertions.assertEquals("Não", text(bruno.getCell(12)));
-        Assertions.assertEquals("Não", text(bruno.getCell(13)));
-        Assertions.assertEquals("-", text(bruno.getCell(14)));
+        Assertions.assertEquals(List.of(
+                "bruno.lima@gmail.com", "3º ano do Ensino Médio", "Particular", "Branca", "Em andamento",
+                0.58, 7.0, 12.0, 1.0, 3.0, "Influências", "Não", "Não", "-"), values(brunoRow, 1, 15));
+        Assertions.assertEquals("0%", format(brunoRow.getCell(6)));
     }
 
     @Test
     void writeClassReportShouldWriteScoresAndHighestScoreAreasInStudentsSheet() throws IOException {
         Sheet students = read(writer.writeClassReport(classReport)).getSheet("Alunos");
-        Row ana = students.getRow(1);
-        Row bruno = students.getRow(2);
+        Row anaRow = students.getRow(1);
+        Row brunoRow = students.getRow(2);
 
-        Assertions.assertEquals(3.0, number(bruno.getCell(15)));
-        Assertions.assertEquals(12.25, number(bruno.getCell(16)));
-        Assertions.assertEquals(1.5, number(bruno.getCell(17)));
-        Assertions.assertEquals(0.0, number(bruno.getCell(18)));
-        Assertions.assertEquals("0.00", format(bruno.getCell(16)));
-        Assertions.assertEquals("Exatas", text(bruno.getCell(19)));
-        Assertions.assertEquals("Humanas, Biológicas, Exatas, Artes", text(ana.getCell(19)));
+        Assertions.assertEquals(3.0, number(brunoRow.getCell(15)));
+        Assertions.assertEquals(12.25, number(brunoRow.getCell(16)));
+        Assertions.assertEquals(1.5, number(brunoRow.getCell(17)));
+        Assertions.assertEquals(0.0, number(brunoRow.getCell(18)));
+        Assertions.assertEquals("0.00", format(brunoRow.getCell(16)));
+        Assertions.assertEquals("Exatas", text(brunoRow.getCell(19)));
+        Assertions.assertEquals("Humanas, Biológicas, Exatas, Artes", text(anaRow.getCell(19)));
     }
 
     @Test
     void writeClassReportShouldWriteConcludedJourneyAndDoubtInStudentsSheet() throws IOException {
-        Row ana = read(writer.writeClassReport(classReport)).getSheet("Alunos").getRow(1);
+        Row anaRow = read(writer.writeClassReport(classReport)).getSheet("Alunos").getRow(1);
 
-        Assertions.assertEquals("Concluída", text(ana.getCell(5)));
-        Assertions.assertEquals(1.0, number(ana.getCell(6)));
+        Assertions.assertEquals("Concluída", text(anaRow.getCell(5)));
+        Assertions.assertEquals(1.0, number(anaRow.getCell(6)));
         // Quem concluiu a jornada não tem trilha atual
-        Assertions.assertEquals("-", text(ana.getCell(11)));
-        Assertions.assertEquals("Sim", text(ana.getCell(12)));
-        Assertions.assertEquals("Sim", text(ana.getCell(13)));
-        Assertions.assertEquals(DOUBT_FLAGGED_AT_LOCAL, dateTime(ana.getCell(14)));
-        Assertions.assertEquals("dd/mm/yyyy hh:mm", format(ana.getCell(14)));
+        Assertions.assertEquals("-", text(anaRow.getCell(11)));
+        Assertions.assertEquals("Sim", text(anaRow.getCell(12)));
+        Assertions.assertEquals("Sim", text(anaRow.getCell(13)));
+        Assertions.assertEquals(DOUBT_FLAGGED_AT_LOCAL, dateTime(anaRow.getCell(14)));
+        Assertions.assertEquals("dd/mm/yyyy hh:mm", format(anaRow.getCell(14)));
     }
 
     @Test
     void writeClassReportShouldWriteDashWhenValueIsMissingOrBlank() throws IOException {
-        Row carla = read(writer.writeClassReport(classReport)).getSheet("Alunos").getRow(3);
+        Row carlaRow = read(writer.writeClassReport(classReport)).getSheet("Alunos").getRow(3);
 
-        Assertions.assertEquals("-", text(carla.getCell(3)));
-        Assertions.assertEquals("-", text(carla.getCell(4)));
-        Assertions.assertEquals("Não iniciada", text(carla.getCell(5)));
-        Assertions.assertEquals("Autoconhecimento", text(carla.getCell(11)));
-        Assertions.assertEquals("-", text(carla.getCell(19)));
+        Assertions.assertEquals("-", text(carlaRow.getCell(3)));
+        Assertions.assertEquals("-", text(carlaRow.getCell(4)));
+        Assertions.assertEquals("Não iniciada", text(carlaRow.getCell(5)));
+        Assertions.assertEquals("Autoconhecimento", text(carlaRow.getCell(11)));
+        Assertions.assertEquals("-", text(carlaRow.getCell(19)));
     }
 
     @Test
