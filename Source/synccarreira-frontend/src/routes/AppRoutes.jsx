@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import LoginPage    from '../pages/Login/LoginPage.jsx'
-import CadastroPage from '../pages/Cadastro/CadastroPage.jsx'
+import NewPasswordPage from '../pages/NewPassword/NewPasswordPage.jsx'
 import HomePage     from '../pages/Home/HomePage.jsx'
 import TrailPage    from '../pages/Trilha/TrailPage.jsx'
 import AccountManagementPage from '../pages/Psicologas/AccountManagementPage.jsx'
@@ -26,7 +26,7 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route path="/login"    element={<LoginPage />} />
-            <Route path="/cadastro" element={<CadastroPage />} />
+            <Route path="/new-password" element={<NewPasswordPage />} />
             <Route path="/home" element={
                 <PrivateRoute><HomePage /></PrivateRoute>
             } />

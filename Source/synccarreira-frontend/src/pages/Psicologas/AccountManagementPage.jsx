@@ -260,7 +260,7 @@ export default function AccountManagementPage() {
                         <h1>{managementView === 'usuarios' ? 'Usuários' : 'Turmas'}</h1>
                         <p className="students-description">
                             {managementView === 'usuarios'
-                                ? 'Cadastros de alunos e psicólogas conectados à API.'
+                                ? 'Gerencie os cadastros de alunos e psicólogas.'
                                 : 'Turmas vinculadas às instituições cadastradas.'}
                         </p>
                     </div>
@@ -272,10 +272,6 @@ export default function AccountManagementPage() {
                         <span aria-hidden="true">+</span> {managementView === 'usuarios' ? 'Novo cadastro' : 'Nova turma'}
                     </button>
                 </div>
-
-                <p className="students-notice" role="status">
-                    Rota aberta temporariamente para desenvolvimento. A API continua exigindo autenticação; alterações exigem ROLE_ADMIN.
-                </p>
 
                 <div className="students-profile-switch" role="group" aria-label="Área de gestão">
                     <button
@@ -319,7 +315,6 @@ export default function AccountManagementPage() {
                 <section className="students-summary" aria-label="Resumo dos cadastros">
                     <div><span>{managementView === 'usuarios' ? 'Cadastros encontrados' : 'Turmas cadastradas'}</span><strong>{managementView === 'usuarios' ? accounts.length : classes.length}</strong></div>
                     <div><span>{managementView === 'usuarios' ? 'Perfil selecionado' : 'Ano escolar'}</span><strong>{managementView === 'usuarios' ? (profile === 'aluno' ? 'Aluno' : 'Psicóloga') : 'Por turma'}</strong></div>
-                    <div><span>Fonte</span><strong>API</strong></div>
                 </section>
 
                 {error && <p className="students-error" role="alert">{error}</p>}

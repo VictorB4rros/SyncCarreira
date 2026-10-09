@@ -8,12 +8,12 @@
  *
  * Dependências:
  *  - AuthContext: fornece a função login() e o estado loading
- *  - React Router: useNavigate para redirecionamento, Link para /cadastro
+ *  - React Router: useNavigate para redirecionamento
  *  - Footer: componente de rodapé reutilizável
  */
 
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import Footer from '../../components/Footer/Footer.jsx'
 import './LoginPage.css'
@@ -143,8 +143,6 @@ export default function LoginPage() {
                 />
                 <span>Lembrar de mim</span>
               </label>
-              {/* O backend não tem endpoint de redefinição: as contas são criadas
-                  pelo administrador, então orientamos o usuário a procurá-lo. */}
               <button
                 type="button"
                 className="lp-link"
@@ -158,8 +156,8 @@ export default function LoginPage() {
 
             {showRecoverHint && (
               <p id="lp-recover-hint" className="lp-info" aria-live="polite">
-                Para redefinir sua senha, fale com a sua orientadora ou com o
-                administrador da sua escola/instituição.
+                Se você não conseguir acessar sua conta ou o link de primeiro acesso
+                tiver expirado, contate o administrador.
               </p>
             )}
 
@@ -169,11 +167,6 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Link para cadastro */}
-          <p className="lp-footer-text">
-            Não tem uma conta?{' '}
-            <Link to="/cadastro" className="lp-link">Criar conta</Link>
-          </p>
         </div>
 
         {/* Banner promocional */}

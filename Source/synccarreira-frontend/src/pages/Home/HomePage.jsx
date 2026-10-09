@@ -174,9 +174,9 @@ export default function HomePage() {
             )}
             <button
               className="hp-btn-cadastro"
-              onClick={() => navigate('/cadastro')}
+              onClick={() => navigate('/alunos')}
             >
-              Cadastrar novo usuário
+              Gerenciar usuários
             </button>
           </div>
 

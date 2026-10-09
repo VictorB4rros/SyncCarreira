@@ -65,7 +65,7 @@
 
 .students-summary {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 30px;
     border: 1px solid #dfe7e2;
     background: #fff;
@@ -81,7 +81,7 @@
 
 .students-summary > div + div { border-left: 1px solid #e7ede9; }
 .students-summary span { color: #687a74; font-size: 13px; }
-.students-summary strong { color: #20332e; font-size: 25px; font-weight: 650; }
+.students-summary strong { color: #40534c; font-size: 17px; font-weight: 600; }
 
 .students-notice {
     margin-top: 16px;
@@ -275,7 +275,7 @@
     .students-heading .students-primary { min-height: 38px; padding: 0 11px; white-space: nowrap; }
     .students-summary > div { min-height: 76px; padding: 14px 12px; gap: 8px; align-items: flex-start; flex-direction: column; }
     .students-summary span { font-size: 11px; }
-    .students-summary strong { font-size: 21px; }
+    .students-summary strong { font-size: 16px; }
     .students-tools { align-items: stretch; flex-direction: column; gap: 10px; }
     .students-search { max-width: none; }
     .students-filters { align-self: flex-start; }
