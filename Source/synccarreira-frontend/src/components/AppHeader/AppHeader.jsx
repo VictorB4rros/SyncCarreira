@@ -9,10 +9,11 @@
 
 import { NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
+import { isAdministrator, isPsychologist } from '../../utils/roles.js'
 import './AppHeader.css'
 
 export default function AppHeader() {
-  const { logout } = useAuth()
+  const { user, logout } = useAuth()
   const navigate = useNavigate()
 
   async function handleLogout() {
@@ -33,6 +34,9 @@ export default function AppHeader() {
       <nav className="sc-header__nav" aria-label="Navegação principal">
         <NavLink to="/home" className={linkClass}>Início</NavLink>
         <NavLink to="/agendamentos" className={linkClass}>Agendamentos</NavLink>
+        {(isAdministrator(user) || isPsychologist(user)) && (
+          <NavLink to="/alunos" className={linkClass}>Alunos</NavLink>
+        )}
       </nav>
 
       <button className="sc-header__logout" onClick={handleLogout}>
