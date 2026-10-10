@@ -67,7 +67,6 @@ public class ResourceServerConfig {
 				.requestMatchers("/error").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 				.requestMatchers(HttpMethod.PUT, AUTH).permitAll()
-				// Todo usuário logado carrega os próprios dados; o restante de /users é só do ADMIN
 				.requestMatchers(HttpMethod.GET, "/users/me").authenticated()
 				.requestMatchers(USERS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, "/trails/*/can-access").hasRole(USER)

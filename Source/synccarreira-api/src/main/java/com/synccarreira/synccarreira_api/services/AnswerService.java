@@ -19,17 +19,20 @@ import java.util.List;
 @Service
 public class AnswerService {
 
-    @Autowired
-    private AnswerRepository answerRepository;
+    private final AnswerRepository answerRepository;
 
-    @Autowired
-    private QuestionOptionRepository questionOptionRepository;
+    private final QuestionOptionRepository questionOptionRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
-    @Autowired
-    private AuthService authService;
+    private final AuthService authService;
+
+    public AnswerService(final AnswerRepository answerRepository, final QuestionOptionRepository questionOptionRepository, final StudentRepository studentRepository, final AuthService authService) {
+        this.answerRepository = answerRepository;
+        this.questionOptionRepository = questionOptionRepository;
+        this.studentRepository = studentRepository;
+        this.authService = authService;
+    }
 
     // O aluno é sempre o usuário do token: ninguém lê ou grava respostas de outro aluno
     @Transactional(readOnly = true)
