@@ -30,6 +30,8 @@ public class ResourceServerConfig {
 	@Value("${cors.origins}")
 	private String corsOrigins;
 
+	private static final String USERS = "/users/**";
+	private static final String TRAILS = "/trails/**";
 	private static final String INSTITUTIONS = "/institutions/**";
 	private static final String ANSWERS = "/answers/**";
 	private static final String CLASSES = "/classes/**";
@@ -39,6 +41,9 @@ public class ResourceServerConfig {
 	private static final String APPOINTMENTS = "/appointments/**";
 	private static final String PSYCHOLOGIST_PANEL = "/psychologist-panel/**";
 	private static final String INFORMATION_LINKS = "/information-links/**";
+	private static final String SYNTHESES = "/syntheses/**";
+	private static final String JOURNEY = "/journey/**";
+	private static final String QUESTIONS = "/questions/**";
 	private static final String ADMIN = "ADMIN";
 	private static final String USER = "USER";
 	private static final String PSYCHOLOGIST = "PSICOLOGA";
@@ -59,21 +64,20 @@ public class ResourceServerConfig {
 
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(authorize -> authorize
+				.requestMatchers("/error").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 				.requestMatchers(HttpMethod.PUT, AUTH).permitAll()
-				.requestMatchers(HttpMethod.POST, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/trails").permitAll()
-				.requestMatchers(HttpMethod.POST, "/trails/*/can-access").hasRole("USER")
-				.requestMatchers(HttpMethod.GET, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/questions/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/questions/**").permitAll()
+				.requestMatchers(HttpMethod.GET, "/users/me").authenticated()
+				.requestMatchers(USERS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, "/trails/*/can-access").hasRole(USER)
+				.requestMatchers(HttpMethod.GET, TRAILS).permitAll()
+				.requestMatchers(HttpMethod.POST, TRAILS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, TRAILS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, TRAILS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, QUESTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.GET, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.PUT, QUESTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, QUESTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.GET, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.PUT, ANSWERS).hasRole(USER)
@@ -101,7 +105,14 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.PUT, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PATCH, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.GET, PSYCHOLOGIST_PANEL).hasAnyRole(PSYCHOLOGIST, ADMIN)
-				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasRole(USER));
+				.requestMatchers(HttpMethod.GET, "/information-links/me").hasRole(USER)
+				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.POST, INFORMATION_LINKS).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.DELETE, INFORMATION_LINKS).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.POST, SYNTHESES).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, SYNTHESES).hasRole(USER)
+				.requestMatchers(HttpMethod.GET, JOURNEY).hasRole(USER)
+				.requestMatchers(HttpMethod.POST, JOURNEY).hasRole(USER));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
@@ -128,6 +139,8 @@ public class ResourceServerConfig {
 		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
 		corsConfig.setAllowCredentials(true);
 		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		// Permite que o front leia o nome do arquivo nos downloads de relatórios
+		corsConfig.setExposedHeaders(Arrays.asList("Content-Disposition"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConfig);

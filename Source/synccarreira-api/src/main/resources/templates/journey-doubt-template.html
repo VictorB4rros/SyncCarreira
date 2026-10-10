@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  </head>
+  <body>
+    <p th:inline="text">Olá, [[${recipientName}]]!</p>
+    <p th:inline="text">O aluno [[${studentName}]] concluiu a jornada no SyncCarreira e sinalizou que ainda está em dúvida sobre a sua escolha profissional.</p>
+    <p>Dados do aluno:</p>
+    <ul>
+      <li th:inline="text">Nome: [[${studentName}]]</li>
+      <li th:inline="text">E-mail: [[${studentEmail}]]</li>
+      <li th:inline="text">Turma: [[${schoolClassName}]]</li>
+      <li th:inline="text">Instituição: [[${institutionName}]]</li>
+      <li th:inline="text">Dúvida sinalizada em: [[${flaggedAt}]]</li>
+    </ul>
+    <p>Como o aluno já terminou todas as trilhas e enviou todas as sínteses, recomendamos priorizar o atendimento dele.</p>
+    <p>Atenciosamente,</p>
+    <p>Time SyncCarreira</p>
+  </body>
+</html>

@@ -44,4 +44,12 @@ public class InformationLinkRepositoryTests {
         Assertions.assertEquals(List.of("ENEM", "FIES", "ProUni", "SISU"),
                 result.stream().map(InformationLink::getTopic).toList());
     }
+
+    @Test
+    void findAllShouldReturnLinksOfAllAreasAndUniversityAccessLinks() {
+        List<InformationLink> result = repository.findAllByOrderByTopicAscIdAsc();
+
+        Assertions.assertEquals(26, result.size());
+        Assertions.assertEquals(4, result.stream().filter(link -> link.getKnowledgeArea() == null).count());
+    }
 }

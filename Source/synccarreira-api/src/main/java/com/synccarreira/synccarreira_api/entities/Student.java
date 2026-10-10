@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -43,7 +44,7 @@ public class Student extends User {
     private List<Answer> answerList = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "fk_id_turma", nullable = false)
+    @JoinColumn(name = "fk_id_turma", nullable = true)
     @Getter
     @Setter
     private SchoolClass determinedSchoolClass;
@@ -63,6 +64,14 @@ public class Student extends User {
     @Column(name = "score_artes")
     @Getter @Setter
     private Double artsScore = 0.0;
+
+    @Column(name = "em_duvida", nullable = false)
+    @Getter @Setter
+    private Boolean inDoubt = false;
+
+    @Column(name = "data_sinalizacao_duvida")
+    @Getter @Setter
+    private Instant doubtFlaggedAt;
 
     public List<KnowledgeArea> highestScoreAreas() {
         Map<KnowledgeArea, Double> scores = new EnumMap<>(KnowledgeArea.class);

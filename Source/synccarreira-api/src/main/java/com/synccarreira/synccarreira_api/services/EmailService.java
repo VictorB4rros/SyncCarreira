@@ -18,6 +18,10 @@ import java.util.Map;
 @Service
 public class EmailService {
 
+    public static final String FIRST_ACCESS_TEMPLATE = "template-thymeleaf.html";
+
+    public static final String JOURNEY_DOUBT_TEMPLATE = "journey-doubt-template.html";
+
     private final JavaMailSender emailSender;
 
     private final SpringTemplateEngine thymeleafTemplateEngine;
@@ -36,16 +40,21 @@ public class EmailService {
         emailSender.send(message);
     }
 
+    // Sem template informado, usa o template do e-mail de primeiro acesso
+    public void sendMessageUsingThymeleafTemplate(String to, String subject, Map<String, Object> templateModel) {
+        sendMessageUsingThymeleafTemplate(to, subject, FIRST_ACCESS_TEMPLATE, templateModel);
+    }
+
     @Retryable(
             retryFor = { MailException.class, EmailException.class },
             noRetryFor = MailAuthenticationException.class,
             maxAttempts = 3,
             backoff = @Backoff(delay = 2000, multiplier = 2))
-    public void sendMessageUsingThymeleafTemplate(String to, String subject, Map<String, Object> templateModel) {
+    public void sendMessageUsingThymeleafTemplate(String to, String subject, String templateName, Map<String, Object> templateModel) {
         try {
             Context thymeleafContext = new Context();
             thymeleafContext.setVariables(templateModel);
-            String htmlBody = thymeleafTemplateEngine.process("template-thymeleaf.html", thymeleafContext);
+            String htmlBody = thymeleafTemplateEngine.process(templateName, thymeleafContext);
             sendHtmlMessage(to, subject, htmlBody);
         } catch (MessagingException e) {
             throw new EmailException("Falha no envio do e-mail.");

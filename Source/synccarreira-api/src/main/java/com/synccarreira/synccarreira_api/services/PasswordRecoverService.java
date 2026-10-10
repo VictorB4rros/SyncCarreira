@@ -50,6 +50,6 @@ public class PasswordRecoverService {
         map.put("email", email);
         map.put("link", recoverUri + token);
 
-        eventPublisher.publishEvent(new EmailEvent(email, FIRST_ACCESS_SUBJECT, map));
+        eventPublisher.publishEvent(new EmailEvent(email, FIRST_ACCESS_SUBJECT, EmailService.FIRST_ACCESS_TEMPLATE, map));
     }
 }

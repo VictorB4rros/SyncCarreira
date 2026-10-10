@@ -10,6 +10,7 @@ import com.synccarreira.synccarreira_api.entities.Trail;
 import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
 import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
+import com.synccarreira.synccarreira_api.repositories.SynthesisRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,17 +23,24 @@ import java.util.List;
 @Service
 public class TrailService {
 
-    @Autowired
-    private TrailRepository trailRepository;
+    private final TrailRepository trailRepository;
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private AnswerRepository answerRepository;
+    private final AnswerRepository answerRepository;
 
-    @Autowired
-    private QuestionRepository questionRepository;
+    private final SynthesisRepository synthesisRepository;
+
+    public TrailService(
+            final TrailRepository trailRepository,
+            final UserService userService,
+            final AnswerRepository answerRepository,
+            final SynthesisRepository synthesisRepository) {
+        this.trailRepository = trailRepository;
+        this.userService = userService;
+        this.answerRepository = answerRepository;
+        this.synthesisRepository = synthesisRepository;
+    }
 
     @Transactional(readOnly = true)
     public List<TrailDTO> findAll() {
@@ -101,10 +109,25 @@ public class TrailService {
                         "Trilha anterior (ordem " + previousOrder + ") não encontrada."));
 
         UserDTO userDto = userService.findMe();
-        List<Answer> answers = answerRepository.findByStudentAndTrail(userDto.getId(), previousTrail.getId());
+        return isConcluded(previousTrail, userDto.getId());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean areAllQuestionsAnswered(Trail trail, Long studentId) {
+        return checkAllQuestionsAnswered(trail, studentId);
+    }
+
+    // Uma trilha está concluída quando o aluno respondeu todas as perguntas dela e enviou a síntese
+    private boolean isConcluded(Trail trail, Long studentId) {
+        return checkAllQuestionsAnswered(trail, studentId)
+                && synthesisRepository.existsByStudentIdAndTrailId(studentId, trail.getId());
+    }
+
+    private boolean checkAllQuestionsAnswered(Trail trail, Long studentId) {
+        List<Answer> answers = answerRepository.findByStudentAndTrail(studentId, trail.getId());
         List<Long> answeredIds = new ArrayList<>();
         answers.forEach(answer -> answeredIds.add(answer.getQuestionOption().getQuestion().getId()));
 
-        return previousTrail.isConcluded(answeredIds);
+        return trail.areAllQuestionsAnswered(answeredIds);
     }
 }

@@ -23,7 +23,7 @@ public class EmailEventListener {
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void onEmailEvent(EmailEvent event) {
         try {
-            emailService.sendMessageUsingThymeleafTemplate(event.to(), event.subject(), event.templateModel());
+            emailService.sendMessageUsingThymeleafTemplate(event.to(), event.subject(), event.templateName(), event.templateModel());
         } catch (Exception e) {
             log.error("Falha ao enviar e-mail para {}: {}", event.to(), e.getMessage(), e);
         }

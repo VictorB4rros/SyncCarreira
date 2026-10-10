@@ -4,6 +4,7 @@ import com.synccarreira.synccarreira_api.entities.Psychologist;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -14,4 +15,6 @@ public interface PsychologistRepository extends JpaRepository<Psychologist, Long
 
     // Busca por CRP — útil para autenticação ou consultas específicas
     Optional<Psychologist> findByCrp(String crp);
+
+    List<Psychologist> findByInstitutionId(Long institutionId);
 }
