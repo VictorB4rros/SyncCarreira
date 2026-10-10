@@ -30,6 +30,8 @@ public class ResourceServerConfig {
 	@Value("${cors.origins}")
 	private String corsOrigins;
 
+	private static final String USERS = "/users/**";
+	private static final String TRAILS = "/trails/**";
 	private static final String INSTITUTIONS = "/institutions/**";
 	private static final String ANSWERS = "/answers/**";
 	private static final String CLASSES = "/classes/**";
@@ -65,19 +67,18 @@ public class ResourceServerConfig {
 				.requestMatchers("/error").permitAll()
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll()
 				.requestMatchers(HttpMethod.PUT, AUTH).permitAll()
-				.requestMatchers(HttpMethod.POST, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.GET, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/users/**").permitAll()
-				.requestMatchers(HttpMethod.POST, "/trails").permitAll()
-				.requestMatchers(HttpMethod.POST, "/trails/*/can-access").hasRole("USER")
-				.requestMatchers(HttpMethod.GET, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.PUT, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.DELETE, "/trails/**").permitAll()
-				.requestMatchers(HttpMethod.POST, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				// Todo usuário logado carrega os próprios dados; o restante de /users é só do ADMIN
+				.requestMatchers(HttpMethod.GET, "/users/me").authenticated()
+				.requestMatchers(USERS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, "/trails/*/can-access").hasRole(USER)
+				.requestMatchers(HttpMethod.GET, TRAILS).permitAll()
+				.requestMatchers(HttpMethod.POST, TRAILS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.PUT, TRAILS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, TRAILS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.POST, QUESTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.GET, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
-				.requestMatchers(HttpMethod.PUT, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
-				.requestMatchers(HttpMethod.DELETE, QUESTIONS).hasAnyRole(PSYCHOLOGIST, ADMIN, USER)
+				.requestMatchers(HttpMethod.PUT, QUESTIONS).hasRole(ADMIN)
+				.requestMatchers(HttpMethod.DELETE, QUESTIONS).hasRole(ADMIN)
 				.requestMatchers(HttpMethod.POST, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.GET, ANSWERS).hasRole(USER)
 				.requestMatchers(HttpMethod.PUT, ANSWERS).hasRole(USER)

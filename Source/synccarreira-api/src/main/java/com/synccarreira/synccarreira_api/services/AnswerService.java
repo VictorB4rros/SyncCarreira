@@ -5,6 +5,7 @@ import com.synccarreira.synccarreira_api.dto.AnswerInsertDTO;
 import com.synccarreira.synccarreira_api.entities.Answer;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.Student;
+import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
 import com.synccarreira.synccarreira_api.repositories.QuestionOptionRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
@@ -27,9 +28,14 @@ public class AnswerService {
     @Autowired
     private StudentRepository studentRepository;
 
+    @Autowired
+    private AuthService authService;
+
+    // O aluno é sempre o usuário do token: ninguém lê ou grava respostas de outro aluno
     @Transactional(readOnly = true)
-    public List<AnswerDTO> findByStudentAndTrail(Long studentId, Long trailId) {
-        List<Answer> result = answerRepository.findByStudentAndTrail(studentId, trailId);
+    public List<AnswerDTO> findForLoggedStudent(Long trailId) {
+        Student student = loggedStudent();
+        List<Answer> result = answerRepository.findByStudentAndTrail(student.getId(), trailId);
         return result.stream().map(AnswerDTO::new).toList();
     }
 
@@ -45,7 +51,7 @@ public class AnswerService {
 
     private void copyDtoToEntity(AnswerInsertDTO dto, Answer entity) {
         QuestionOption questionOption = questionOptionRepository.findById(dto.getQuestionOptionId()).orElseThrow(() -> new ResourceNotFoundException("Question option not found"));
-        Student student = studentRepository.findById(dto.getStudentId()).orElseThrow(() -> new ResourceNotFoundException("Student not found"));
+        Student student = loggedStudent();
         entity.setQuestionOption(questionOption);
         entity.setStudent(student);
     }
@@ -71,5 +77,11 @@ public class AnswerService {
         student.setArtsScore(arts);
 
         studentRepository.save(student);
+    }
+
+    private Student loggedStudent() {
+        User user = authService.authenticated();
+        return studentRepository.findById(user.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Aluno não encontrado. ID: " + user.getId()));
     }
 }

@@ -129,10 +129,8 @@ public class QuestionController {
                     content = @Content
             )
     })
-    public ResponseEntity<Void> deleteQuestionById(
-            @PathVariable Long id,
-            @RequestParam(name = "psychologistId") Long psychologistId) {
-        questionService.deleteQuestionById(id, psychologistId);
+    public ResponseEntity<Void> deleteQuestionById(@PathVariable Long id) {
+        questionService.deleteQuestionById(id);
         return ResponseEntity.noContent().build();
     }
 }
