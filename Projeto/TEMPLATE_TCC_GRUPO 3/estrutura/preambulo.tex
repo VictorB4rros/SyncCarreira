@@ -43,6 +43,7 @@
 \usepackage{simplecd}                   % Pacote para gerar capa do CD
 \usepackage[final]{pdfpages}            % Pacote para incluir um PDF dentro de outro (ficha catalográfica)
 \usepackage{amssymb}                    % Símbolos matemáticos (ex: \checkmark)
+\usepackage{tabularx}                   % Tabelas/quadros com colunas de largura automática
 
 
 
@@ -53,6 +54,21 @@
 % \usepackage{abntex-ifpi/tikz-uml}	% Desativado: carrega pgflibraryfadings que bloqueia o PDF no Windows
 
 
+
+
+
+%% Ambiente "Quadro" (ABNT): informações textuais/qualitativas, distinto de Tabela
+%% Usa a sintaxe do pacote float (que redefine o \newfloat do memoir)
+\floatstyle{plaintop}
+\newfloat{quadro}{htbp}{loq}
+\floatstyle{plain}
+\providecommand{\quadroautorefname}{Quadro}
+\floatname{quadro}{Quadro}
+\newcommand{\listofquadrosname}{Lista de quadros}
+\newlistof{listofquadros}{loq}{\listofquadrosname}
+\newlistentry{quadro}{loq}{0}
+\renewcommand{\cftquadroname}{Quadro\space}
+\renewcommand*{\cftquadroaftersnum}{\hfill--\hfill}
 
 
 

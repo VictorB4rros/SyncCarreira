@@ -1,137 +1,153 @@
 % ----------------------------------------------------------
-% Introdução
+% Capítulo 1 -- Introdução
 % ----------------------------------------------------------
-\chapter{Introdução}
+\chapter{Introdução}\label{cap:introducao}
 
-\section{Objetivos}
+% TODO: inserir texto introdutório do capítulo após a conclusão dos demais capítulos.
 
-O presente trabalho tem como objetivo geral desenvolver o \textit{SyncCarreira}, um \textit{software} proprietário do tipo \textit{SaaS} (\textit{Software as a Service}) destinado à automação e gestão de processos de orientação vocacional em instituições de ensino. A plataforma visa otimizar o fluxo de trabalho de psicólogos escolares, substituindo os métodos manuais de aplicação e correção de testes por um sistema digital integrado, e, simultaneamente, proporcionar aos alunos do ensino médio uma experiência mais interativa e acessível para a realização dos testes, consulta de seu histórico e acompanhamento profissional contínuo.
+\section{Objetivos}\label{sec:objetivos}
+
+\subsection{Objetivo Geral}
+
+O objetivo geral deste trabalho consiste em desenvolver a plataforma \textit{SyncCarreira}, um \textit{software} proprietário estruturado no modelo \textit{Software as a Service} (SaaS) destinado à automação e à gestão dos processos de orientação vocacional em instituições de ensino. A solução digital visa otimizar o gerenciamento da relação entre profissionais de psicologia escolar / mentores e jovens alunos, substituindo os métodos operacionais manuais por um sistema integrado.
+
+A plataforma digitaliza a jornada de escolha de carreira, garantindo que o estudante seja acompanhado de forma longitudinal e contínua durante todo o processo. Adicionalmente, o sistema tem como finalidade aprimorar o fluxo de trabalho do profissional, fornecendo ferramentas gerenciais que permitem a visualização de progresso e o agendamento otimizado de sessões.
+
+Por conseguinte, a ferramenta tecnológica propõe-se a proporcionar aos jovens uma experiência mais interativa e acessível para a realização das atividades e consulta de seus históricos, elevando significativamente a eficiência do acompanhamento vocacional.
 
 \subsection{Objetivos Específicos}
 
-Para alcançar o propósito central, o projeto se desdobra nos seguintes objetivos específicos: automatizar a aplicação e correção de testes vocacionais por meio do desenvolvimento de um módulo digital que elimine a necessidade de processos manuais com papel e caneta, reduzindo a margem de erro humano e agilizando a obtenção dos resultados; possibilitar a customização de testes pela equipe de psicologia, implementando funcionalidades que permitam aos profissionais criar novos testes vocacionais, adaptar perguntas existentes e configurar baterias de avaliação personalizadas de acordo com as necessidades específicas de cada aluno ou turma; centralizar e digitalizar registros por meio da criação de um banco de dados centralizado e escalável para armazenar, de forma segura e organizada, o perfil dos alunos, todo o histórico de seus resultados e o \textit{feedback} registrado sobre cada teste realizado; implementar funcionalidades de gestão e análise que forneçam à equipe de psicologia ferramentas para administração de alunos, agendamento de sessões de acompanhamento e análise de dados, permitindo o reconhecimento de padrões e um acompanhamento mais qualificado dos estudantes; promover a reflexão do aluno sobre seus resultados por meio do desenvolvimento de um mecanismo que, ao final de cada teste, permita ao estudante registrar sua concordância ou não com os resultados obtidos, incentivando a autoanálise e gerando insumos valiosos para as sessões de acompanhamento com o psicólogo; e, por fim, garantir a customização e escalabilidade da plataforma, estruturando-a para que possa atender a múltiplas turmas e instituições sem perda de \textit{performance}, utilizando infraestrutura em nuvem.
+Para alcançar o propósito central, o projeto se desdobra nos seguintes objetivos específicos:
 
-\section{Problema e Solução Proposta}
+\begin{itemize}
+    \item estruturar a jornada do aluno em cinco trilhas sequenciais e obrigatórias --- autoconhecimento, influências, informação, projeto de futuro e síntese ---, de modo que o acesso a cada etapa seja condicionado à conclusão da etapa anterior;
+    \item assegurar a autonomia e a livre expressão do estudante por meio do registro obrigatório de uma síntese textual, sem restrição de conteúdo, ao final de cada trilha concluída;
+    \item fornecer à psicóloga um painel de acompanhamento por turma que exiba o progresso de cada aluno em cada trilha, preservando o sigilo do conteúdo individual das respostas no nível gerencial;
+    \item implementar um mecanismo automático de sinalização (\textit{flag}) que identifique, sem intervenção manual, alunos que concluíram a jornada mas permaneceram em situação de dúvida ou indecisão, priorizando-os para atendimento;
+    \item viabilizar o agendamento, a edição e o cancelamento de sessões de orientação individuais ou em grupo, com notificação automática ao aluno por meio de integração com o Google Calendar;
+    \item possibilitar a curadoria, pela psicóloga, de \textit{links} de fontes externas confiáveis --- como Enem, ProUni, políticas de cotas e portais de cursos --- a serem exibidos aos alunos na trilha de Informação;
+    \item apresentar, ao final da jornada, um leque de áreas e carreiras sugeridas como ponto de partida para reflexão, vedada a geração de qualquer diagnóstico fechado de carreira;
+    \item disponibilizar ao aluno o histórico completo de suas respostas e sínteses, incluindo o de ciclos (jornadas) anteriores, garantindo uma visão contínua de sua evolução;
+    \item permitir a gestão administrativa de múltiplas instituições parceiras, com isolamento completo dos dados entre elas; e
+    \item garantir a conformidade da plataforma com a Lei Geral de Proteção de Dados (LGPD), em especial quanto à criptografia de dados sensíveis de menores de idade e à possibilidade de exclusão total de dados mediante solicitação.
+\end{itemize}
 
-A plataforma \textit{SyncCarreira} atua na automação e otimização dos processos de orientação vocacional para estudantes do Ensino Médio, oferecendo uma jornada personalizada e ferramentas especializadas que conferem ao sistema um diferencial competitivo frente às soluções convencionais disponíveis no mercado. O trabalho de orientação vocacional é complexo, envolvendo diversos testes que podem ser aplicados aos estudantes para ajudá-los num momento que pode ser difícil para muitos deles: a escolha da carreira que seguirão por muitos anos de suas vidas.
+\section{Problema e Solução Proposta}\label{sec:problema-solucao}
 
-O grande desafio da orientação vocacional atual é que ela ainda depende, em grande parte, de processos manuais. Os psicólogos utilizam diversos testes e inventários para auxiliar os estudantes, mas como essas ferramentas são aplicadas em papel, o profissional precisa analisar e tabular os resultados de cada aluno um por um. O \textit{SyncCarreira} surge como uma solução para simplificar esse fluxo, permitindo que os psicólogos otimizem seu tempo e foquem no que é essencial: o acompanhamento terapêutico e as conversas com os estudantes, automatizando as tarefas burocráticas e repetitivas.
+A orientação vocacional é uma etapa determinante na trajetória de estudantes do Ensino Médio, por envolver decisões que impactam de forma duradoura sua vida acadêmica e profissional. Em muitas instituições de ensino, no entanto, esse processo permanece pouco estruturado: cada psicólogo(a) escolar ou mentor(a) organiza manualmente o acompanhamento de suas turmas, sem uma ferramenta que centralize o histórico dos estudantes, padronize o percurso de reflexão proposto a eles ou sinalize, de forma objetiva, quais alunos necessitam de atenção prioritária. Esse cenário sobrecarrega a profissional com tarefas de organização e triagem, reduzindo o tempo disponível para a atividade que exige sua formação específica: a escuta ativa e a interpretação qualificada do processo de escolha de cada estudante.
 
-A aplicação possui dois tipos de perfis: psicólogos e estudantes, cada um com suas respectivas informações de cadastro e acessos. O perfil psicólogo é o que possui maior controle e ingerência sobre o que acontece na aplicação. Ele tem acesso ao histórico e resultados de todos os estudantes que estão associados a ele, tem controle sobre quais testes são enviados a quais estudantes, pode alterar, criar e excluir testes, além de agendar horários e enviar notificações para que os estudantes selecionados executem os testes. Em suma, o perfil do psicólogo define o fluxo da orientação vocacional que é aplicado dentro do aplicativo. Por outro lado, o perfil estudante tem acesso apenas ao seu próprio histórico de resultados nos testes e suas avaliações psicológicas, garantindo o sigilo necessário a esses usuários.
+O \textit{SyncCarreira} propõe-se a preencher essa lacuna por meio de uma plataforma \textit{web} que estrutura a jornada de autoconhecimento do aluno em cinco trilhas sequenciais e obrigatórias --- autoconhecimento, influências, informação, projeto de futuro e síntese ---, liberadas progressivamente à medida que cada etapa é concluída. Ao final de cada trilha, o estudante registra uma síntese textual livre, sem restrição de conteúdo, o que preserva sua autonomia de expressão e gera, ao mesmo tempo, um insumo qualitativo para o trabalho da psicóloga. Ao término da jornada, o sistema apresenta um leque de áreas e carreiras sugeridas, sempre como ponto de partida para reflexão, nunca como um diagnóstico fechado --- decisão que reflete o entendimento de que a escolha profissional é um processo contínuo e multideterminado, e não o resultado de um teste psicométrico único.
 
-Haverá a opção de alterar o idioma da aplicação para o inglês para uma possível implementação do sistema em escolas e outras instituições bilíngues. Adicionalmente, será possível para os psicólogos cadastrarem perfis de tipos de personalidades, que serão associadas aos estudantes com base nos resultados de seus testes e orientações vocacionais. Essas informações poderão ser agrupadas em relatórios, para que se possa ter uma visão geral da orientação.
+A plataforma organiza suas funcionalidades em torno de três perfis de usuário, cada um com permissões e responsabilidades específicas. O Administrador é responsável pela configuração inicial do ecossistema: cadastra e gerencia as instituições parceiras (escolas e ONGs) e cria as contas de psicólogas e alunos, garantindo que os dados de cada instituição permaneçam isolados entre si. A Psicóloga, atuando como orientadora, tem uma visão gerencial do progresso das turmas sob sua responsabilidade: acompanha o avanço dos alunos pelo painel de status, recebe alertas automáticos sobre estudantes que concluíram a jornada mas permanecem em dúvida, prioriza esses casos para sessões de orientação individuais ou em grupo --- com aviso automático ao aluno via Google Calendar ---, cura os \textit{links} externos exibidos na trilha de Informação, emite relatórios de turma e individuais, e envia \textit{feedbacks} textuais personalizados. É importante destacar que o sistema não substitui a atuação profissional da psicóloga: o conteúdo das trilhas corresponde a um banco de questões fixo, previamente aprovado e validado pela equipe de psicologia, e o sistema não fornece nem valida, por si próprio, qualquer conteúdo psicológico proprietário.
 
-Tanto o perfil psicólogo quanto o perfil estudante poderão enviar \textit{feedbacks} personalizados, para que haja uma comunicação efetiva entre os usuários mesmo quando não for possível o encontro presencial para orientação. O perfil de estudante poderá personalizar seus interesses prévios, para que se possa ter uma noção geral inicial de tendências a carreiras ou áreas de atuação. Agendamentos de testes e de encontros poderão ser visualizados pelos perfis e podem ser aceitos ou recusados, conforme a necessidade de horários de cada usuário.
+O Aluno, por sua vez, é o protagonista da jornada. Em um ambiente seguro e sequencial, percorre as cinco trilhas na ordem obrigatória, registra suas sínteses reflexivas, consulta a qualquer momento o panorama de sua jornada --- incluindo o histórico de ciclos anteriores ---, acessa os \textit{links} curados pela psicóloga, visualiza seus agendamentos e os \textit{feedbacks} recebidos, e personaliza informações de perfil e interesses que contextualizam sua experiência na plataforma. Em síntese, o \textit{SyncCarreira} busca, de um lado, oferecer ao estudante um espaço estruturado e não impositivo de reflexão sobre seu futuro e, de outro, fornecer à equipe de orientação os dados necessários para atuar de forma precisa e personalizada junto a cada aluno.
 
-Em suma, o \textit{SyncCarreira} traz benefícios tanto para os estudantes em fase de escolha de carreira quanto para os psicólogos, facilitando a comunicação, automatizando processos, ajudando os profissionais da área da Psicologia a se concentrarem mais nas partes fundamentais do trabalho e menos nas partes burocráticas, contribuindo para o sucesso de todos envolvidos.
+\section{Justificativa}\label{sec:justificativa}
 
-\section{Justificativa}
+A relevância do projeto \textit{SyncCarreira} fundamenta-se, em primeiro lugar, no descompasso entre a obrigação legal de oferta de acompanhamento psicológico nas escolas brasileiras e o ritmo de sua efetivação. A Lei nº 13.935/2019 tornou obrigatória a prestação de serviços de Psicologia e de Serviço Social na rede pública de educação básica \cite{brasil2019lei13935}. Passados mais de seis anos de sua promulgação, contudo, documento produzido conjuntamente pelo Conselho Federal de Psicologia e pelo Conselho Federal de Serviço Social reconhece que a efetivação da lei nos estados e municípios permanece um processo em curso, dependente de mobilização contínua das categorias profissionais e de articulação junto ao poder público para a criação de vagas, a dotação orçamentária e a regulamentação local \cite{cfpcfess2022}. Nesse cenário de implementação ainda parcial e desigual entre municípios, cada psicóloga escolar tende a acompanhar um número elevado de estudantes, o que torna a organização manual do progresso de cada turma --- por meio de planilhas dispersas e anotações não centralizadas --- um fator limitante para a qualidade e a agilidade do atendimento. É precisamente essa lacuna operacional, e não a atividade clínica em si, que o \textit{SyncCarreira} se propõe a preencher, ao automatizar a estruturação da jornada, a sinalização de casos prioritários e a organização dos dados de cada estudante.
 
-A relevância do projeto \textit{SyncCarreira} fundamenta-se na urgente necessidade de modernização tecnológica em um setor vital para o desenvolvimento estudantil: a orientação vocacional. Atualmente, a persistência de métodos manuais baseados em suporte físico (papel e caneta) cria um gargalo operacional que limita a atuação do psicólogo escolar e compromete a agilidade do processo. A automação proposta por este trabalho justifica-se, primordialmente, pela otimização da eficiência operacional, uma vez que a digitalização da aplicação e correção de testes elimina tarefas burocráticas e repetitivas. Ao reduzir a margem de erro humano e acelerar a entrega de resultados, a solução permite que o profissional direcione seu foco para a dimensão analítica e terapêutica, oferecendo um suporte mais estratégico e humanizado ao orientando.
+Sob a ótica psicológica, estudo empírico conduzido com adolescentes brasileiros do Ensino Médio identifica as dificuldades de tomada de decisão de carreira como a demanda mais recorrente nos serviços de orientação profissional, associando a indecisão vocacional a menores níveis de autoeficácia e de maturidade para a escolha profissional entre os estudantes \cite{silva2021}. O mesmo estudo reforça que a maturidade vocacional é uma característica que se desenvolve progressivamente, e não um estado que se atinge de forma pontual ou por meio de um único instrumento de avaliação \cite{silva2021}. Esse achado sustenta diretamente duas decisões de projeto do \textit{SyncCarreira}: a divisão da jornada em trilhas sequenciais, que respeitam o tempo de elaboração do aluno e o conduzem progressivamente pelo processo de autoconhecimento, e a vedação a qualquer diagnóstico fechado de carreira ao final da jornada, que poderia reforçar, em vez de reduzir, a sensação de indecisão diante de uma resposta única e definitiva.
 
-Sob a ótica social e educacional, o desenvolvimento desta plataforma responde aos desafios enfrentados por jovens em fase pré-vestibular, período de intensa pressão psíquica e escolhas determinantes. Ao oferecer uma interface interativa e acessível, o \textit{SyncCarreira} promove maior engajamento dos estudantes, alinhando a prática da psicologia escolar à realidade digital da geração atual. Além disso, a centralização do histórico de resultados em um banco de dados seguro garante a continuidade do acompanhamento profissional, transformando a orientação vocacional em uma jornada documentada e longitudinal, o que confere maior robustez ao processo de autoconhecimento do aluno.
+Do ponto de vista técnico e institucional, a importância do \textit{software} se estende à sua concepção multi-institucional: ao permitir que o Administrador cadastre múltiplas escolas e ONGs parceiras com isolamento completo de dados entre elas, a plataforma viabiliza sua adoção por instituições de diferentes portes e contextos, incluindo organizações sociais com recursos limitados para o atendimento individualizado de grandes turmas. Por tratar dados sensíveis de estudantes que, em sua maioria, são menores de idade, o tratamento dessas informações está sujeito ao regramento específico do art. 14 da Lei Geral de Proteção de Dados (LGPD), que exige que o tratamento de dados de crianças e adolescentes observe seu melhor interesse e, quando aplicável, o consentimento específico dos responsáveis legais \cite{brasil2018lgpd}. A criptografia de respostas e sínteses e a possibilidade de exclusão total de dados mediante solicitação, previstas nos requisitos do sistema, respondem diretamente a essa exigência legal.
 
-Do ponto de vista técnico e institucional, a importância do \textit{software} estende-se pela sua arquitetura como modelo \textit{Software as a Service} (\textit{SaaS}) e sua escalabilidade em nuvem. Tais características conferem ao projeto uma extensão significativa, permitindo que instituições de diferentes portes e contextos --- incluindo escolas bilíngues, dada a funcionalidade de internacionalização --- adotem o sistema com baixo custo de infraestrutura inicial. A capacidade de customização de testes e a geração de relatórios gerenciais não apenas organizam a gestão de informações sensíveis, em conformidade com o sigilo profissional, mas também fornecem insumos valiosos para que as instituições identifiquem padrões de interesse e aprimorem suas diretrizes pedagógicas.
-
-Para compreender a gravidade do problema gerado por escolhas profissionais precipitadas, os microdados do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (INEP) revelam um cenário alarmante de abandono. Acompanhando a trajetória dos estudantes ingressantes no Ensino Superior no ano de 2015, nos gráficos abaixo \cite{inep2026}:
+Para dimensionar a gravidade do problema decorrente de escolhas profissionais precipitadas, os microdados do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (INEP) revelam um cenário expressivo de abandono ao longo da trajetória de estudantes ingressantes no Ensino Superior a partir de 2015, conforme ilustram as Figuras \ref{fig_grafico_inep1}, \ref{fig_grafico_inep2} e \ref{fig_grafico_inep3} \cite{inep2024}.
 
 \begin{figure}[H]
     \centering
     \caption{Gráfico 1 -- Trajetória histórica de estudantes do Ensino Superior.}
     \label{fig_grafico_inep1}
     \includegraphics[width=0.85\textwidth]{img/graf-1-trajetoria-historica-ensino-superior.png}
-    \legend{Fonte: \citeonline{inep2026}.}
+    \legend{Fonte: \citeonline{inep2024}.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \caption{Gráfico 2 -- Taxa de conclusão anual no Ensino Superior dos ingressantes de 2015.}
     \label{fig_grafico_inep2}
-    \includegraphics[width=0.85\textwidth]{img/graf-2-taxa-conclusao-anual.png}
-    \legend{Fonte: \citeonline{inep2026}.}
+    \includegraphics[width=0.75\textwidth]{img/graf-2-taxa-conclusao-anual.png}
+    \legend{Fonte: \citeonline{inep2024}.}
 \end{figure}
 
 \begin{figure}[H]
     \centering
     \caption{Gráfico 3 -- Taxa de desistência anual acumulada no Ensino Superior (Coorte de Ingressantes em 2015).}
     \label{fig_grafico_inep3}
-    \includegraphics[width=0.85\textwidth]{img/graf-3-taxa-desistencia-acumulada.png}
-    \legend{Fonte: \citeonline{inep2026}.}
+    \includegraphics[width=0.75\textwidth]{img/graf-3-taxa-desistencia-acumulada.png}
+    \legend{Fonte: \citeonline{inep2024}.}
 \end{figure}
 
-Os números apresentados evidenciam que grande parte do problema da evasão universitária, que gera desperdício de tempo para o aluno e perda financeira para o sistema educacional, tem raiz na transição do Ensino Médio para o Superior. A escolha baseada em impulso, pressão externa ou falta de autoconhecimento resulta em frustrações futuras.
+Os números apresentados evidenciam que parcela expressiva do problema da evasão universitária --- que representa desperdício de tempo para o estudante e perda de recursos para o sistema educacional --- tem raízes na transição do Ensino Médio para o Ensino Superior. Escolhas baseadas em impulso, pressão externa ou falta de autoconhecimento tendem a resultar em frustrações futuras e em abandono do curso. No ecossistema escolar, a psicóloga é a profissional capacitada para mitigar esse risco por meio da orientação vocacional; contudo, quando restrita a processos manuais e dispersos de acompanhamento, ela dispõe de menos tempo para sua principal atribuição --- a interpretação psicológica e a escuta ativa do aluno. É nesse contexto que se insere o \textit{SyncCarreira}, como ferramenta de suporte à atuação profissional, e não como substituto dela.
 
-No ecossistema escolar, a psicóloga é a profissional capacitada para mitigar esse risco através da Orientação Vocacional. Entretanto, ao ficarem restritas a processos analógicos (como a aplicação de testes em papel e a tabulação de planilhas de resultados), as profissionais deixam de aplicar sua principal especialidade: a interpretação psicológica e a escuta ativa do aluno. Os dados mostram que a falta dessa orientação qualificada deságua nas estatísticas de evasão nos anos seguintes.
+\section{Análise da Concorrência}\label{sec:concorrencia}
 
-\section{Análise da Concorrência}
+Para o desenvolvimento estrutural e visual do sistema, foi realizado um estudo de \textit{benchmarking} com o intuito de identificar as principais soluções disponíveis no mercado que tangenciam o escopo de orientação vocacional e mapeamento de perfil de estudantes. Compreender o cenário competitivo é uma etapa fundamental para o posicionamento de qualquer solução tecnológica, já que, conforme apontam \citeonline{kotler2012}, o planejamento de estratégias eficazes exige que a organização pesquise e compreenda o mais profundamente possível a atuação de seus concorrentes.
 
-Para o desenvolvimento estrutural e visual do sistema, foi realizado um estudo de \textit{benchmarking} com o intuito de identificar as principais soluções disponíveis no mercado que tangenciam o escopo de testes vocacionais e mapeamento de perfil. Compreender o cenário atual do mercado é uma etapa fundamental para o desenvolvimento e o posicionamento de qualquer solução tecnológica. Conforme apontam \citeonline{kotler2012}, o planejamento de estratégias eficazes exige que a organização pesquise e compreenda o mais profundamente possível a atuação dos seus concorrentes.
-
-A análise a seguir foca em quatro plataformas amplamente utilizadas pelo público jovem --- 16Personalities, Descomplica, CareerExplorer e Qual Carreira --- destacando seus pontos fortes e as lacunas que a aplicação desenvolvida neste projeto se propõe a preencher no contexto escolar.
+A seleção das plataformas analisadas seguiu os seguintes critérios de inclusão: (i) disponibilidade em língua portuguesa e uso ativo por estudantes brasileiros do Ensino Médio ou em fase de escolha de curso superior; (ii) oferta de algum instrumento de autoavaliação vocacional ou de personalidade, ainda que não seja o foco exclusivo da plataforma; e (iii) relevância de mercado, evidenciada por volume expressivo de usuários ou por associação a marcas consolidadas no setor educacional brasileiro. Foram excluídas plataformas voltadas exclusivamente a públicos corporativos (recrutamento e seleção de profissionais já formados) e ferramentas sem versão em português. A partir desses critérios, foram selecionadas quatro plataformas amplamente utilizadas pelo público jovem --- 16Personalities, Descomplica, Qual Carreira e CareerExplorer ---, cujos pontos fortes e lacunas são discutidos a seguir, em contraste com a proposta do \textit{SyncCarreira} para o contexto escolar.
 
 \subsection{16 Personalities}
 
-O 16Personalities é uma plataforma global de mapeamento de personalidade baseada na teoria de traços e nos conceitos de Myers-Briggs. Embora não seja estritamente um teste vocacional voltado para a escolha de carreiras, é uma ferramenta amplamente utilizada por jovens em fase de autodescoberta.
+O 16Personalities é uma plataforma global de mapeamento de personalidade baseada na teoria de traços e nos conceitos de Myers-Briggs. Embora não seja estritamente um teste vocacional voltado à escolha de carreiras, é uma ferramenta amplamente utilizada por jovens em fase de autodescoberta.
 
-A plataforma destaca-se excepcionalmente pela sua Interface de Usuário (UI) e Experiência do Usuário (UX). A utilização de uma escala de concordância visual (Escala Likert) torna o preenchimento fluido, rápido e menos cansativo para o jovem. Além disso, a devolutiva dos resultados é gamificada, utilizando avatares e descrições de fácil compreensão, gerando alta identificação.
+A plataforma destaca-se pela sua interface e experiência de usuário. A utilização de uma escala de concordância visual (escala Likert) torna o preenchimento fluido e menos cansativo para o público jovem. Além disso, a devolutiva dos resultados é gamificada, com uso de avatares e descrições de fácil compreensão, o que gera alta identificação por parte do usuário.
 
 \begin{figure}[H]
     \centering
     \caption{Interface do teste de personalidade da plataforma 16Personalities.}
     \label{fig_16personalities}
-    \includegraphics[width=0.80\textwidth]{img/fig-1-16personalities.png}
-    \legend{Fonte: 16PERSONALITIES (2026).}
+    \includegraphics[width=0.85\textwidth]{img/fig-1-16personalities.png}
+    \legend{Fonte: \citeonline{16personalities2026}.}
 \end{figure}
 
 \subsection{Descomplica}
 
-O Descomplica é uma das maiores plataformas de educação \textit{online} do Brasil, com forte atuação na preparação para o ENEM e grandes vestibulares. Como parte de sua jornada de atração e engajamento, a plataforma disponibiliza testes vocacionais rápidos para os estudantes.
+O Descomplica é uma das maiores plataformas de educação \textit{online} do Brasil, com forte atuação na preparação para o Enem e para grandes vestibulares. Como parte de sua jornada de atração e engajamento, a plataforma disponibiliza testes vocacionais rápidos aos estudantes.
 
-A principal vantagem é a acessibilidade e a linguagem altamente alinhada à realidade do estudante do Ensino Médio brasileiro. A plataforma consegue vincular de forma imediata o resultado de um teste de perfil com opções de cursos superiores reais e tendências de mercado, facilitando a visualização dos próximos passos acadêmicos do aluno.
+Sua principal vantagem é a linguagem acessível e alinhada à realidade do estudante brasileiro do Ensino Médio. A plataforma vincula, de forma imediata, o resultado de um teste de perfil a opções de cursos superiores reais e a tendências de mercado, facilitando a visualização dos próximos passos acadêmicos do aluno.
 
 \begin{figure}[H]
     \centering
     \caption{Interface do teste vocacional da plataforma Descomplica.}
     \label{fig_descomplica}
-    \includegraphics[width=0.80\textwidth]{img/fig-2-descomplica.png}
-    \legend{Fonte: DESCOMPLICA (2026).}
+    \includegraphics[width=0.85\textwidth]{img/fig-2-descomplica.png}
+    \legend{Fonte: \citeonline{descomplica2026}.}
 \end{figure}
 
 \subsection{Qual Carreira}
 
-A plataforma Qual Carreira é uma ferramenta \textit{web} focada em orientação vocacional, auxiliando milhares de usuários a filtrar as centenas de graduações existentes e sugerindo aquelas que melhor se adequam à sua personalidade e objetivos. Além disso, funciona como um portal de conteúdo e notícias, mantendo seu público, composto majoritariamente por estudantes e universitários, sempre informado sobre temas essenciais, como calendários de provas e atualizações no sistema educacional brasileiro.
+A plataforma Qual Carreira é uma ferramenta \textit{web} focada em orientação vocacional, que auxilia usuários a filtrar as centenas de graduações existentes e sugere aquelas que melhor se adequam ao seu perfil e a seus objetivos. Funciona também como portal de conteúdo e notícias, mantendo seu público --- composto majoritariamente por estudantes e universitários --- informado sobre temas como calendários de provas e atualizações do sistema educacional brasileiro.
 
 \begin{figure}[H]
     \centering
     \caption{Interface do teste vocacional da plataforma Qual Carreira.}
     \label{fig_qualcarreira}
-    \includegraphics[width=0.80\textwidth]{img/fig-3-qualcarreira.png}
-    \legend{Fonte: QUALCARREIRA (2026).}
+    \includegraphics[width=0.70\textwidth]{img/fig-3-qualcarreira.png}
+    \legend{Fonte: \citeonline{qualcarreira2026}.}
 \end{figure}
 
 \subsection{CareerExplorer}
 
-A plataforma \textit{web} CareerExplorer é uma referência em sistemas de orientação de carreira. Utiliza uma interface moderna e altamente atrativa, gerando relatórios personalizados para seus usuários. Além disso, a ferramenta sugere certificações e cursos alinhados aos objetivos individuais, tendo como um de seus grandes diferenciais a alta taxa de personalização. Seu foco abrange um amplo espectro de usuários, desde universidades e jovens recém-saídos do ensino médio, até jovens adultos em dúvida sobre a graduação e profissionais que buscam uma transição de carreira.
+A plataforma \textit{web} CareerExplorer é uma referência internacional em sistemas de orientação de carreira. Utiliza uma interface moderna e gera relatórios personalizados para seus usuários, além de sugerir certificações e cursos alinhados aos objetivos individuais --- um de seus principais diferenciais é a alta taxa de personalização do resultado. Seu público é amplo, variando de jovens recém-saídos do Ensino Médio a profissionais em transição de carreira.
 
 \begin{figure}[H]
     \centering
     \caption{Interface do teste vocacional da plataforma CareerExplorer.}
     \label{fig_careerexplorer}
-    \includegraphics[width=0.80\textwidth]{img/fig-4-careerexplorer.png}
-    \legend{Fonte: CARREREXPLORER (2026).}
+    \includegraphics[width=0.85\textwidth]{img/fig-4-careerexplorer.png}
+    \legend{Fonte: \citeonline{careerexplorer2026}.}
 \end{figure}
 
 \subsection{Comparativo}
 
-Abaixo, o \autoref{quadro-comparativo} resume as funcionalidades da plataforma frente às soluções de mercado:
+O \autoref{quadro-comparativo} resume as funcionalidades das plataformas concorrentes em contraste com a proposta do \textit{SyncCarreira}. A verificação de cada recurso foi realizada exclusivamente na versão gratuita de cada plataforma concorrente, conforme indicado na linha ``Plano analisado''; a ausência de marcação ($\checkmark$) indica que o recurso não foi identificado nessa versão, podendo estar disponível em planos pagos não avaliados neste estudo.
 
-\begin{table}[H]
+\begin{quadro}[H]
 \ABNTEXfontereduzida
-\caption[Comparação de Recursos entre os Projetos]{Comparação de Recursos entre os Projetos.}
+\caption{Comparação de recursos entre os projetos.}
 \label{quadro-comparativo}
-\begin{tabular}{|p{4cm}|c|c|c|c|c|}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.8cm}|*{5}{>{\centering\arraybackslash}X|}}
 \hline
-\textbf{Funcionalidades Principais} & \textbf{16pers.} & \textbf{Descomplica} & \textbf{Qual Carreira} & \textbf{CareerExplorer} & \textbf{SyncCarreira} \\
+\textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Nossa Solução} \\
 \hline
 Login (Aluno/Psicóloga) & $\checkmark$ & $\checkmark$ &  & $\checkmark$ & $\checkmark$ \\
 \hline
@@ -153,6 +169,8 @@ Cadastro de Testes Próprios &  &  &  &  & $\checkmark$ \\
 \hline
 Multi-idioma (Inglês) & $\checkmark$ &  &  & $\checkmark$ & $\checkmark$ \\
 \hline
-\end{tabular}
-\legend{Fonte: Autores (2026).}
-\end{table}
+\textbf{Plano analisado} & Gratuito & Gratuito & Gratuito & Gratuito & -- \\
+\hline
+\end{tabularx}
+\legend{Fonte: Autoria própria (2026).}
+\end{quadro}
