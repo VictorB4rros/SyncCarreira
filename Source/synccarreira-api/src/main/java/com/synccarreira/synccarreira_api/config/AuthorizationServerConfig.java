@@ -7,7 +7,6 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,14 +56,18 @@ public class AuthorizationServerConfig {
 	@Value("${security.jwt.duration}")
 	private Integer jwtDurationSeconds;
 
-	@Autowired
-	private UserDetailsService userDetailsService;
-	
-	@Autowired
-	private WebSecurityConfig webSecurityConfig;
+	private final UserDetailsService userDetailsService;
 
-	@Autowired
-	private CorsConfigurationSource corsConfigurationSource;
+	private final WebSecurityConfig webSecurityConfig;
+
+	private final CorsConfigurationSource corsConfigurationSource;
+
+	public AuthorizationServerConfig(UserDetailsService userDetailsService, WebSecurityConfig webSecurityConfig,
+			CorsConfigurationSource corsConfigurationSource) {
+		this.userDetailsService = userDetailsService;
+		this.webSecurityConfig = webSecurityConfig;
+		this.corsConfigurationSource = corsConfigurationSource;
+	}
 
 	@Bean
 	@Order(2)
