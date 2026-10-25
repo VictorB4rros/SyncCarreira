@@ -1,0 +1,2845 @@
+diff --git a/Source/synccarreira-frontend/src/App.jsx b/Source/synccarreira-frontend/src/App.jsx
+index 437510d..7b72d90 100644
+--- a/Source/synccarreira-frontend/src/App.jsx
++++ b/Source/synccarreira-frontend/src/App.jsx
+@@ -1,5 +1,5 @@
+ import { AuthProvider } from './context/AuthContext.jsx'
+-import AppRoutes from './routes/AppRoutes.jsx'
++import AppRoutes from './routes/AppRoutes'
+ 
+ function App() {
+   return (
+diff --git a/Source/synccarreira-frontend/src/auth/RequireRole.tsx b/Source/synccarreira-frontend/src/auth/RequireRole.tsx
+new file mode 100644
+index 0000000..35a2835
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/auth/RequireRole.tsx
+@@ -0,0 +1,178 @@
++/**
++ * @file RequireRole.tsx
++ * @description Guardas de rota (RBAC) do SyncCarreira.
++ *
++ * Perfis reais do backend (ResourceServerConfig):
++ *  - ROLE_ADMIN     → gestão (usuários, instituições, turmas, psicólogas, alunos)
++ *  - ROLE_PSICOLOGA → painel de acompanhamento, agenda, feedbacks, curadoria de links
++ *  - ROLE_USER      → aluno (jornada, trilhas, sínteses, resultados, sessões)
++ *
++ * Correções em relação ao AppRoutes.jsx / utils/roles.js antigos:
++ *  1. `isStudent()` devolvia true para QUALQUER usuário que não fosse psicóloga — inclusive ADMIN.
++ *     Agora aluno é exclusivamente quem tem ROLE_USER.
++ *  2. Roles inexistentes no backend (ROLE_STUDENT, ROLE_ALUNO) eram aceitas. Removidas.
++ *  3. `perfil = roles[0]` vinha de um Set Java (ordem não garantida). A decisão agora usa a lista
++ *     completa de authorities, com precedência explícita ADMIN > PSICOLOGA > USER.
++ *  4. Acesso negado redirecionava para /home, que levava ADMIN ao fluxo do aluno (403 em /students/me)
++ *     e podia gerar loop. Agora vai para a home do próprio perfil.
++ *  5. Usuário autenticado sem nenhum perfil reconhecido via tela própria (com "Sair"), sem loop.
++ */
++
++import type { ReactNode } from 'react'
++import { Navigate, Outlet, useLocation } from 'react-router-dom'
++import { LogOut, ShieldAlert } from 'lucide-react'
++import { useAuth } from '../context/AuthContext'
++import { ROLES, type AuthUser, type RoleAuthority } from '../types/api'
++
++// ─── Contexto de autenticação (AuthContext.jsx ainda é JS) ───────
++
++export interface AuthContextValue {
++  user: AuthUser | null
++  loading: boolean
++  login: (email: string, password: string) => Promise<{ success: boolean; message?: string }>
++  logout: () => Promise<void>
++}
++
++/** `useAuth` tipado — remover o cast quando o AuthContext for migrado para TS. */
++export function useTypedAuth(): AuthContextValue {
++  return useAuth() as unknown as AuthContextValue
++}
++
++// ─── Helpers de perfil ───────────────────────────────────────────
++
++const KNOWN_ROLES: readonly RoleAuthority[] = [ROLES.ADMIN, ROLES.PSICOLOGA, ROLES.USER]
++
++/** Ordem de precedência quando o usuário acumula perfis. */
++const ROLE_PRECEDENCE: readonly RoleAuthority[] = [ROLES.ADMIN, ROLES.PSICOLOGA, ROLES.USER]
++
++export const HOME_PATH_BY_ROLE: Record<RoleAuthority, string> = {
++  [ROLES.ADMIN]: '/admin',
++  [ROLES.PSICOLOGA]: '/psicologa',
++  [ROLES.USER]: '/aluno',
++}
++
++function isKnownRole(value: unknown): value is RoleAuthority {
++  return typeof value === 'string' && (KNOWN_ROLES as readonly string[]).includes(value)
++}
++
++/** Todas as authorities reconhecidas do usuário. */
++export function getUserRoles(user: AuthUser | null | undefined): RoleAuthority[] {
++  if (!user) return []
++  const fromRoles = Array.isArray(user.roles) ? user.roles.map((r) => r?.authority) : []
++  const source = fromRoles.length > 0 ? fromRoles : [user.perfil]
++  return Array.from(new Set(source.filter(isKnownRole)))
++}
++
++export function hasAnyRole(
++  user: AuthUser | null | undefined,
++  allowed: readonly RoleAuthority[],
++): boolean {
++  const roles = getUserRoles(user)
++  return allowed.some((role) => roles.includes(role))
++}
++
++/** Perfil principal (ADMIN > PSICOLOGA > USER) ou null se nenhum for reconhecido. */
++export function getPrimaryRole(user: AuthUser | null | undefined): RoleAuthority | null {
++  const roles = getUserRoles(user)
++  return ROLE_PRECEDENCE.find((role) => roles.includes(role)) ?? null
++}
++
++export function getHomePath(user: AuthUser | null | undefined): string {
++  const role = getPrimaryRole(user)
++  return role ? HOME_PATH_BY_ROLE[role] : '/login'
++}
++
++export const isAdmin = (user: AuthUser | null | undefined) => hasAnyRole(user, [ROLES.ADMIN])
++export const isPsychologist = (user: AuthUser | null | undefined) =>
++  hasAnyRole(user, [ROLES.PSICOLOGA])
++export const isStudent = (user: AuthUser | null | undefined) => hasAnyRole(user, [ROLES.USER])
++
++// ─── Telas auxiliares ────────────────────────────────────────────
++
++/** Usuário autenticado cujo token não traz nenhum perfil conhecido. */
++function NoRoleScreen() {
++  const { user, logout } = useTypedAuth()
++
++  return (
++    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-6 font-['Plus_Jakarta_Sans',Inter,sans-serif]">
++      <div
++        role="alert"
++        className="max-w-md w-full bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center space-y-4"
++      >
++        <div className="mx-auto w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
++          <ShieldAlert className="w-6 h-6" aria-hidden="true" />
++        </div>
++        <h1 className="text-lg font-bold text-slate-900">Perfil de acesso não encontrado</h1>
++        <p className="text-sm text-slate-600 leading-relaxed">
++          A conta <strong className="text-slate-800">{user?.email}</strong> está autenticada, mas não
++          possui um perfil válido (Administrador, Psicóloga ou Aluno). Procure a coordenação da sua
++          instituição.
++        </p>
++        <button
++          type="button"
++          onClick={() => void logout()}
++          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#6D28D9] hover:bg-[#5B21B6] text-white text-sm font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-purple-500/30"
++        >
++          <LogOut className="w-4 h-4" aria-hidden="true" />
++          Sair
++        </button>
++      </div>
++    </div>
++  )
++}
++
++// ─── Guardas ─────────────────────────────────────────────────────
++
++interface RequireRoleProps {
++  /** Perfis com acesso. Omitido = qualquer usuário autenticado com perfil válido. */
++  allow?: readonly RoleAuthority[]
++  /** Conteúdo protegido. Omitido = renderiza <Outlet /> (uso como layout route). */
++  children?: ReactNode
++}
++
++/**
++ * Protege rotas por perfil.
++ *  - Não autenticado      → /login (guardando a rota de origem)
++ *  - Sem perfil válido    → tela de orientação com "Sair"
++ *  - Perfil não permitido → home do próprio perfil (state.forbiddenFrom informa a rota negada)
++ */
++export function RequireRole({ allow, children }: RequireRoleProps) {
++  const { user } = useTypedAuth()
++  const location = useLocation()
++
++  if (!user) {
++    const from = location.pathname + location.search
++    return <Navigate to={`/login?from=${encodeURIComponent(from)}`} replace state={{ from }} />
++  }
++
++  const primaryRole = getPrimaryRole(user)
++  if (!primaryRole) return <NoRoleScreen />
++
++  if (allow && allow.length > 0 && !hasAnyRole(user, allow)) {
++    return (
++      <Navigate
++        to={HOME_PATH_BY_ROLE[primaryRole]}
++        replace
++        state={{ forbiddenFrom: location.pathname }}
++      />
++    )
++  }
++
++  return children ? <>{children}</> : <Outlet />
++}
++
++/** Rotas só para visitantes (ex.: /login). Logado → home do próprio perfil. */
++export function RequireGuest({ children }: { children?: ReactNode }) {
++  const { user } = useTypedAuth()
++  if (user && getPrimaryRole(user)) return <Navigate to={getHomePath(user)} replace />
++  return children ? <>{children}</> : <Outlet />
++}
++
++/** Redireciona para a home do perfil atual (ou /login). */
++export function RedirectToHome() {
++  const { user } = useTypedAuth()
++  if (user && !getPrimaryRole(user)) return <NoRoleScreen />
++  return <Navigate to={getHomePath(user)} replace />
++}
++
++export default RequireRole
+diff --git a/Source/synccarreira-frontend/src/layouts/PsychologistLayout.tsx b/Source/synccarreira-frontend/src/layouts/PsychologistLayout.tsx
+new file mode 100644
+index 0000000..db1dca4
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/layouts/PsychologistLayout.tsx
+@@ -0,0 +1,545 @@
++/**
++ * @file PsychologistLayout.tsx
++ * @description Casca do "Painel da Psicóloga" (ROLE_PSICOLOGA), extraída de 01-painel-dashboard.html:
++ *  - Sidebar fixa branca (w-64) com marca, navegação, selo LGPD, perfil e ações
++ *  - Top Bar fixa (h-16) com busca (Ctrl+K), status do Google Calendar e CTA "Nova Orientação"
++ *  - <Outlet /> na área central (<main>)
++ *
++ * Paleta: brand-700 #6D28D9 · brand-600 #7C3AED · brand-100 #EDE9FE · brand-200 #DDD6FE
++ *         fundo #F8FAFC · texto #0F172A · alerta #D97706/#FEF3C7 · sucesso #059669/#ECFDF5
++ * Fonte:  Plus Jakarta Sans (fallback Inter)
++ */
++
++import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
++import { NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
++import {
++  AlertCircle,
++  BarChart3,
++  BookOpen,
++  Brain,
++  CalendarDays,
++  Infinity as InfinityIcon,
++  LayoutDashboard,
++  Loader2,
++  LogOut,
++  Menu,
++  Plus,
++  Route as RouteIcon,
++  Search,
++  Settings,
++  ShieldCheck,
++  User,
++  Users,
++  X,
++  type LucideIcon,
++} from 'lucide-react'
++import api, { getErrorMessage } from '../services/api'
++import {
++  connectGoogle,
++  isGoogleConfigured,
++  isGoogleConnected,
++} from '../services/googleCalendarService'
++import { useTypedAuth } from '../auth/RequireRole'
++import type { PanelSummary } from '../types/api'
++
++const BASE = '/psicologa'
++const FONT = "font-['Plus_Jakarta_Sans',Inter,sans-serif]"
++const SEARCH_MIN_LENGTH = 2
++const SEARCH_MAX_LENGTH = 80
++
++// ─── Navegação (mesma ordem do HTML de referência) ───────────────
++
++interface NavItemConfig {
++  to: string
++  label: string
++  icon: LucideIcon
++  end?: boolean
++  /** Exibe o badge de alunos com dúvida sinalizada. */
++  showPendingBadge?: boolean
++}
++
++const NAV_ITEMS: NavItemConfig[] = [
++  { to: `${BASE}/perfil`, label: 'Perfil', icon: User },
++  { to: BASE, label: 'Visão Geral', icon: LayoutDashboard, end: true },
++  { to: `${BASE}/turmas`, label: 'Turmas', icon: Users },
++  { to: `${BASE}/trilhas`, label: 'Trilhas', icon: RouteIcon },
++  { to: `${BASE}/orientacoes`, label: 'Orientações', icon: Brain, showPendingBadge: true },
++  { to: `${BASE}/agenda`, label: 'Agenda', icon: CalendarDays },
++  { to: `${BASE}/relatorios`, label: 'Relatórios', icon: BarChart3 },
++  { to: `${BASE}/conteudos`, label: 'Conteúdos', icon: BookOpen },
++]
++
++// ─── Helpers ─────────────────────────────────────────────────────
++
++function initialsOf(name?: string | null): string {
++  if (!name) return '?'
++  const parts = name.trim().split(/\s+/).filter((p) => !/^(dra?|sr|sra)\.?$/i.test(p))
++  const first = parts[0]?.[0] ?? ''
++  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
++  return (first + last).toUpperCase() || '?'
++}
++
++const plural = (n: number, singular: string, pluralForm: string) => (n === 1 ? singular : pluralForm)
++
++// ─── Dados do painel (badge "N pendentes") ───────────────────────
++
++type LoadState<T> =
++  | { status: 'loading' }
++  | { status: 'success'; data: T }
++  | { status: 'error'; message: string }
++
++function usePendingGuidance(psychologistId: number | undefined) {
++  const [state, setState] = useState<LoadState<number>>({ status: 'loading' })
++  const [reloadKey, setReloadKey] = useState(0)
++
++  useEffect(() => {
++    if (!psychologistId) return
++    const controller = new AbortController()
++    setState({ status: 'loading' })
++
++    api
++      .get<PanelSummary>(`/psychologist-panel/${psychologistId}`, {
++        signal: controller.signal,
++        suppressGlobalError: true,
++      })
++      .then(({ data }) => setState({ status: 'success', data: data.inDoubtStudents }))
++      .catch((err: unknown) => {
++        if (controller.signal.aborted) return
++        setState({ status: 'error', message: getErrorMessage(err) })
++      })
++
++    return () => controller.abort()
++  }, [psychologistId, reloadKey])
++
++  return { state, reload: () => setReloadKey((k) => k + 1) }
++}
++
++// ─── Status do Google Calendar ───────────────────────────────────
++
++function useGoogleCalendarStatus(loginHint?: string) {
++  const configured = isGoogleConfigured()
++  const [connected, setConnected] = useState<boolean>(() => isGoogleConnected())
++  const [connecting, setConnecting] = useState(false)
++  const [error, setError] = useState<string | null>(null)
++
++  // O token do Google vive só em memória e expira: reavalia periodicamente e ao voltar à aba
++  useEffect(() => {
++    if (!configured) return
++    const sync = () => setConnected(isGoogleConnected())
++    const interval = window.setInterval(sync, 30_000)
++    window.addEventListener('focus', sync)
++    return () => {
++      window.clearInterval(interval)
++      window.removeEventListener('focus', sync)
++    }
++  }, [configured])
++
++  const connect = useCallback(async () => {
++    setConnecting(true)
++    setError(null)
++    try {
++      await connectGoogle(loginHint)
++      setConnected(isGoogleConnected())
++    } catch (err) {
++      setError(getErrorMessage(err, 'Não foi possível conectar ao Google Calendar.'))
++    } finally {
++      setConnecting(false)
++    }
++  }, [loginHint])
++
++  return { configured, connected, connecting, error, connect }
++}
++
++// ─── Componentes visuais ─────────────────────────────────────────
++
++function BrandMark() {
++  return (
++    <div className="h-16 px-5 border-b border-slate-200 flex items-center gap-3 shrink-0">
++      <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-[#6D28D9] to-[#8B5CF6] flex items-center justify-center text-white shadow-sm shrink-0">
++        <InfinityIcon className="w-5 h-5" aria-hidden="true" />
++      </div>
++      <div className="flex flex-col min-w-0">
++        <span className="font-bold text-base text-[#0F172A] tracking-tight leading-tight">SyncCarreira</span>
++        <span className="text-xs font-semibold text-[#7C3AED] leading-none mt-0.5">Orientação &amp; Psicologia</span>
++      </div>
++    </div>
++  )
++}
++
++function PendingBadge({ state, onRetry }: { state: LoadState<number>; onRetry: () => void }) {
++  if (state.status === 'loading') {
++    return <span className="w-16 h-5 rounded-full bg-slate-100 animate-pulse" aria-label="Carregando pendências" />
++  }
++  if (state.status === 'error') {
++    return (
++      <span
++        role="button"
++        tabIndex={0}
++        title={`${state.message} Clique para tentar novamente.`}
++        onClick={(e) => {
++          e.preventDefault()
++          onRetry()
++        }}
++        onKeyDown={(e) => {
++          if (e.key === 'Enter' || e.key === ' ') {
++            e.preventDefault()
++            onRetry()
++          }
++        }}
++        className="text-rose-500 hover:text-rose-600 p-0.5 rounded"
++      >
++        <AlertCircle className="w-4 h-4" aria-hidden="true" />
++        <span className="sr-only">Erro ao carregar pendências. Tentar novamente.</span>
++      </span>
++    )
++  }
++  if (state.data <= 0) return null
++  return (
++    <span className="bg-[#FEF3C7] text-[#D97706] font-semibold text-xs px-2 py-0.5 rounded-full border border-[#FDE68A] whitespace-nowrap">
++      {state.data} {plural(state.data, 'pendente', 'pendentes')}
++    </span>
++  )
++}
++
++function SidebarNav({
++  pending,
++  onRetryPending,
++  onNavigate,
++}: {
++  pending: LoadState<number>
++  onRetryPending: () => void
++  onNavigate: () => void
++}) {
++  return (
++    <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Navegação principal">
++      {NAV_ITEMS.map(({ to, label, icon: Icon, end, showPendingBadge }) => (
++        <NavLink
++          key={to}
++          to={to}
++          end={end}
++          onClick={onNavigate}
++          className={({ isActive }) =>
++            [
++              'flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors group focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/30',
++              isActive
++                ? 'rounded-r-xl bg-[#EDE9FE] text-[#6D28D9] font-bold border-l-4 border-[#6D28D9] shadow-xs'
++                : 'rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium',
++            ].join(' ')
++          }
++        >
++          {({ isActive }) => (
++            <>
++              <span className="flex items-center gap-3 min-w-0">
++                <Icon
++                  className={`w-[18px] h-[18px] shrink-0 ${
++                    isActive ? 'text-[#6D28D9]' : 'text-slate-500 group-hover:text-slate-700'
++                  }`}
++                  aria-hidden="true"
++                />
++                <span className="truncate">{label}</span>
++              </span>
++              {showPendingBadge && <PendingBadge state={pending} onRetry={onRetryPending} />}
++            </>
++          )}
++        </NavLink>
++      ))}
++    </nav>
++  )
++}
++
++function SidebarFooter({
++  name,
++  email,
++  loggingOut,
++  onLogout,
++  onNavigate,
++}: {
++  name: string
++  email: string
++  loggingOut: boolean
++  onLogout: () => void
++  onNavigate: () => void
++}) {
++  return (
++    <div className="bg-[#F8FAFC] border-t border-slate-200 p-4 space-y-3 shrink-0">
++      <div className="bg-purple-50 text-purple-900 border border-purple-100 rounded-lg py-1.5 px-2.5 text-xs flex items-center gap-2 font-medium">
++        <ShieldCheck className="w-4 h-4 text-[#6D28D9] shrink-0" aria-hidden="true" />
++        <span>Ambiente Seguro LGPD</span>
++      </div>
++
++      <div className="flex items-center gap-2.5 pt-1">
++        <div className="relative shrink-0">
++          <div className="w-9 h-9 rounded-full bg-[#EDE9FE] text-[#6D28D9] ring-2 ring-[#DDD6FE] flex items-center justify-center text-xs font-bold">
++            {initialsOf(name)}
++          </div>
++          <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-white rounded-full" aria-hidden="true" />
++        </div>
++        <div className="flex flex-col min-w-0">
++          <span className="text-xs font-bold text-slate-900 truncate" title={name}>{name}</span>
++          <span className="text-[11px] text-slate-500 truncate" title={email}>Psicóloga • {email}</span>
++        </div>
++      </div>
++
++      <div className="flex items-center justify-between pt-2 border-t border-slate-200/80 text-xs">
++        <NavLink
++          to={`${BASE}/perfil`}
++          onClick={onNavigate}
++          className="text-slate-600 hover:text-[#6D28D9] font-medium flex items-center gap-1 transition-colors"
++        >
++          <Settings className="w-3.5 h-3.5" aria-hidden="true" />
++          Editar Perfil
++        </NavLink>
++        <button
++          type="button"
++          onClick={onLogout}
++          disabled={loggingOut}
++          className="text-slate-500 hover:text-rose-600 font-medium flex items-center gap-1 transition-colors disabled:opacity-60 disabled:cursor-wait"
++        >
++          {loggingOut ? (
++            <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
++          ) : (
++            <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
++          )}
++          {loggingOut ? 'Saindo...' : 'Sair'}
++        </button>
++      </div>
++    </div>
++  )
++}
++
++function SearchBox() {
++  const navigate = useNavigate()
++  const [searchParams] = useSearchParams()
++  const inputRef = useRef<HTMLInputElement>(null)
++  const [query, setQuery] = useState(() => searchParams.get('busca') ?? '')
++  const [error, setError] = useState<string | null>(null)
++  const isMac = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform)
++
++  // Atalho Ctrl+K / ⌘K
++  useEffect(() => {
++    const onKeyDown = (e: KeyboardEvent) => {
++      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
++        e.preventDefault()
++        inputRef.current?.focus()
++        inputRef.current?.select()
++      }
++    }
++    window.addEventListener('keydown', onKeyDown)
++    return () => window.removeEventListener('keydown', onKeyDown)
++  }, [])
++
++  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
++    e.preventDefault()
++    const term = query.trim()
++    if (term.length < SEARCH_MIN_LENGTH) {
++      setError(`Digite ao menos ${SEARCH_MIN_LENGTH} caracteres.`)
++      return
++    }
++    setError(null)
++    navigate(`${BASE}?busca=${encodeURIComponent(term)}`)
++  }
++
++  return (
++    <form role="search" onSubmit={handleSubmit} className="relative w-full max-w-96" noValidate>
++      <label htmlFor="psychologist-search" className="sr-only">
++        Buscar alunos, turmas ou avaliações
++      </label>
++      <Search
++        className="w-[18px] h-[18px] absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
++        aria-hidden="true"
++      />
++      <input
++        id="psychologist-search"
++        ref={inputRef}
++        type="search"
++        value={query}
++        maxLength={SEARCH_MAX_LENGTH}
++        onChange={(e) => {
++          setQuery(e.target.value)
++          if (error) setError(null)
++        }}
++        onKeyDown={(e) => {
++          if (e.key === 'Escape') {
++            setQuery('')
++            setError(null)
++            e.currentTarget.blur()
++          }
++        }}
++        aria-invalid={Boolean(error)}
++        aria-describedby={error ? 'psychologist-search-error' : undefined}
++        placeholder="Buscar alunos, turmas ou avaliações..."
++        className={`w-full bg-[#F8FAFC] border rounded-xl pl-9 pr-14 py-2 text-sm placeholder:text-slate-400 text-slate-800 focus:outline-none focus:ring-2 transition-all ${
++          error
++            ? 'border-rose-300 focus:ring-rose-500/20 focus:border-rose-500'
++            : 'border-slate-200 focus:ring-purple-500/20 focus:border-[#6D28D9]'
++        }`}
++      />
++      <kbd className="hidden sm:block absolute right-2.5 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-slate-400 bg-white border border-slate-200 px-1.5 py-0.5 rounded font-sans">
++        {isMac ? '⌘K' : 'Ctrl+K'}
++      </kbd>
++      {error && (
++        <p
++          id="psychologist-search-error"
++          role="alert"
++          className="absolute left-0 top-full mt-1 text-[11px] font-medium text-rose-600 bg-white border border-rose-100 rounded-md px-2 py-0.5 shadow-sm"
++        >
++          {error}
++        </p>
++      )}
++    </form>
++  )
++}
++
++function CalendarStatusPill({ email }: { email: string }) {
++  const { configured, connected, connecting, error, connect } = useGoogleCalendarStatus(email)
++  if (!configured) return null
++
++  if (connected) {
++    return (
++      <div className="hidden md:flex bg-[#ECFDF5] text-[#059669] border border-emerald-200 px-3 py-1.5 rounded-full text-xs font-semibold items-center gap-2 whitespace-nowrap">
++        <span className="relative flex h-2 w-2" aria-hidden="true">
++          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#10B981] opacity-75" />
++          <span className="relative inline-flex rounded-full h-2 w-2 bg-[#10B981]" />
++        </span>
++        <span>Google Calendar Conectado</span>
++      </div>
++    )
++  }
++
++  return (
++    <button
++      type="button"
++      onClick={() => void connect()}
++      disabled={connecting}
++      title={error ?? 'Conecte para criar sessões com link do Google Meet'}
++      className={`hidden md:flex px-3 py-1.5 rounded-full text-xs font-semibold items-center gap-2 whitespace-nowrap border transition-colors disabled:cursor-wait ${
++        error
++          ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100'
++          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
++      }`}
++    >
++      {connecting ? (
++        <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
++      ) : error ? (
++        <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
++      ) : (
++        <span className="h-2 w-2 rounded-full bg-slate-400" aria-hidden="true" />
++      )}
++      <span>
++        {connecting ? 'Conectando...' : error ? 'Falha ao conectar — tentar de novo' : 'Conectar Google Calendar'}
++      </span>
++    </button>
++  )
++}
++
++// ─── Layout ──────────────────────────────────────────────────────
++
++export default function PsychologistLayout() {
++  const { user, logout } = useTypedAuth()
++  const navigate = useNavigate()
++  const location = useLocation()
++  const [mobileOpen, setMobileOpen] = useState(false)
++  const [loggingOut, setLoggingOut] = useState(false)
++  const { state: pending, reload: reloadPending } = usePendingGuidance(user?.id)
++
++  const name = user?.nome || user?.name || 'Psicóloga'
++  const email = user?.email ?? ''
++
++  // Fecha o menu mobile ao trocar de rota
++  useEffect(() => setMobileOpen(false), [location.pathname])
++
++  // Esc fecha o menu mobile
++  useEffect(() => {
++    if (!mobileOpen) return
++    const onKeyDown = (e: KeyboardEvent) => e.key === 'Escape' && setMobileOpen(false)
++    window.addEventListener('keydown', onKeyDown)
++    return () => window.removeEventListener('keydown', onKeyDown)
++  }, [mobileOpen])
++
++  const handleLogout = async () => {
++    setLoggingOut(true)
++    try {
++      await logout()
++    } finally {
++      navigate('/login', { replace: true })
++    }
++  }
++
++  const closeMobile = () => setMobileOpen(false)
++
++  return (
++    <div className={`min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased ${FONT}`}>
++      {/* Overlay mobile */}
++      {mobileOpen && (
++        <div className="fixed inset-0 z-30 bg-slate-900/40 lg:hidden" onClick={closeMobile} aria-hidden="true" />
++      )}
++
++      {/* 1. SIDEBAR ESQUERDA FIXA */}
++      <aside
++        id="psychologist-sidebar"
++        className={`w-64 bg-white border-r border-slate-200 flex flex-col justify-between h-screen fixed left-0 top-0 z-40 shadow-sm transition-transform duration-200 lg:translate-x-0 ${
++          mobileOpen ? 'translate-x-0' : '-translate-x-full'
++        }`}
++      >
++        <div className="flex flex-col flex-1 overflow-y-auto min-h-0">
++          <div className="relative">
++            <BrandMark />
++            <button
++              type="button"
++              onClick={closeMobile}
++              className="lg:hidden absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"
++              aria-label="Fechar menu"
++            >
++              <X className="w-5 h-5" aria-hidden="true" />
++            </button>
++          </div>
++          <SidebarNav pending={pending} onRetryPending={reloadPending} onNavigate={closeMobile} />
++        </div>
++        <SidebarFooter
++          name={name}
++          email={email}
++          loggingOut={loggingOut}
++          onLogout={() => void handleLogout()}
++          onNavigate={closeMobile}
++        />
++      </aside>
++
++      {/* 2. TOP BAR FIXA */}
++      <header className="h-16 bg-white border-b border-slate-200 fixed top-0 left-0 lg:left-64 right-0 z-20 px-4 lg:px-8 flex items-center justify-between gap-4 shadow-xs">
++        <div className="flex items-center gap-3 flex-1 min-w-0">
++          <button
++            type="button"
++            onClick={() => setMobileOpen(true)}
++            className="lg:hidden p-2 -ml-1 rounded-lg text-slate-600 hover:bg-slate-100"
++            aria-label="Abrir menu"
++            aria-expanded={mobileOpen}
++            aria-controls="psychologist-sidebar"
++          >
++            <Menu className="w-5 h-5" aria-hidden="true" />
++          </button>
++          <SearchBox />
++        </div>
++
++        <div className="flex items-center gap-4 shrink-0">
++          <CalendarStatusPill email={email} />
++          <button
++            type="button"
++            onClick={() => navigate(`${BASE}/agenda?nova=1`)}
++            className="bg-[#6D28D9] hover:bg-[#5B21B6] text-white font-bold text-sm px-3 sm:px-4 py-2 rounded-xl shadow-sm transition flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-purple-500/30"
++          >
++            <Plus className="w-[18px] h-[18px]" aria-hidden="true" />
++            <span className="hidden sm:inline">Nova Orientação</span>
++          </button>
++        </div>
++      </header>
++
++      {/* 3. CONTEÚDO CENTRAL */}
++      <main className="lg:ml-64 pt-16 min-h-screen bg-[#F8FAFC]">
++        {/* HTML de referência: pt-20 (64px da top bar + 16px) e p-8 nas demais bordas */}
++        <div className="px-4 sm:px-6 lg:px-8 pt-4 pb-8 space-y-7">
++          <Outlet />
++        </div>
++      </main>
++    </div>
++  )
++}
+diff --git a/Source/synccarreira-frontend/src/layouts/StudentLayout.tsx b/Source/synccarreira-frontend/src/layouts/StudentLayout.tsx
+new file mode 100644
+index 0000000..f67e04d
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/layouts/StudentLayout.tsx
+@@ -0,0 +1,512 @@
++/**
++ * @file StudentLayout.tsx
++ * @description Casca do "Espaço do Estudante" (ROLE_USER), extraída de 01-minha-jornada-home.html:
++ *  - Sidebar fixa roxa (w-64) com marca, navegação, selo LGPD/CFP, aluno, turma e "Sair"
++ *  - Top Bar fixa translúcida (h-16) com breadcrumb, status da jornada, próxima sessão e avatar
++ *  - <Outlet /> na área central (<main>)
++ *
++ * Paleta (tokens Material do HTML):
++ *  primary #732993 · primary-container #8e44ad · primary-fixed #f8d8ff · primary-fixed-dim #ecb2ff
++ *  secondary #804698 · secondary-container #e7a6ff · on-secondary-container #6c3485
++ *  surface #fff7fb · surface-container #fde7ff · surface-container-low #ffefff
++ *  inverse-surface #491b5e · inverse-on-surface #feebff · on-surface #320047 · on-surface-variant #4e4350
++ *  outline #807381 · error #ba1a1a · error-container #ffdad6
++ * Fonte: Plus Jakarta Sans
++ *
++ * Logo: coloque o ícone em /public/logo-synccarreira.png (fallback automático para o ícone ∞).
++ */
++
++import { useEffect, useMemo, useState } from 'react'
++import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom'
++import {
++  BarChart3,
++  BookOpen,
++  CalendarDays,
++  ChevronRight,
++  Compass,
++  HandHeart,
++  Infinity as InfinityIcon,
++  Loader2,
++  LogOut,
++  Menu,
++  RefreshCw,
++  ShieldCheck,
++  User,
++  Video,
++  X,
++  type LucideIcon,
++} from 'lucide-react'
++import api, { getErrorMessage } from '../services/api'
++import { useTypedAuth } from '../auth/RequireRole'
++import type {
++  AppointmentDTO,
++  FeedbackDTO,
++  JourneyRecordDTO,
++  JourneyStatusDTO,
++} from '../types/api'
++
++const BASE = '/aluno'
++const FONT = "font-['Plus_Jakarta_Sans',Inter,sans-serif]"
++const LOGO_SRC = '/logo-synccarreira.png'
++
++// ─── Navegação (mesma ordem do HTML de referência) ───────────────
++
++interface NavItemConfig {
++  to: string
++  label: string
++  icon: LucideIcon
++  end?: boolean
++  showUnreadBadge?: boolean
++}
++
++const NAV_ITEMS: NavItemConfig[] = [
++  { to: BASE, label: 'Minha Jornada', icon: Compass, end: true },
++  { to: `${BASE}/resultados`, label: 'Resultados', icon: BarChart3 },
++  { to: `${BASE}/conteudos`, label: 'Hub de Conteúdos', icon: BookOpen },
++  { to: `${BASE}/sessoes`, label: 'Minhas Sessões', icon: CalendarDays },
++  { to: `${BASE}/feedbacks`, label: 'Feedbacks', icon: HandHeart, showUnreadBadge: true },
++]
++
++/** Rótulo do último nível do breadcrumb por rota. */
++const BREADCRUMB_LABELS: Array<[RegExp, string]> = [
++  [/^\/aluno\/?$/, 'Minha Jornada'],
++  [/^\/aluno\/trilhas/, 'Trilhas'],
++  [/^\/aluno\/trilha\//, 'Trilha'],
++  [/^\/aluno\/resultados/, 'Resultados'],
++  [/^\/aluno\/conteudos/, 'Hub de Conteúdos'],
++  [/^\/aluno\/sessoes/, 'Minhas Sessões'],
++  [/^\/aluno\/feedbacks/, 'Feedbacks'],
++  [/^\/aluno\/perfil/, 'Meu Perfil'],
++]
++
++// ─── Helpers ─────────────────────────────────────────────────────
++
++const plural = (n: number, singular: string, pluralForm: string) => (n === 1 ? singular : pluralForm)
++
++/** LocalDateTime ("2026-10-26T14:30:00") é interpretado no fuso local, como o backend grava. */
++function parseLocalDateTime(value: string): Date | null {
++  const date = new Date(value)
++  return Number.isNaN(date.getTime()) ? null : date
++}
++
++function formatSessionDate(date: Date): string {
++  const startOfDay = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime()
++  const diffDays = Math.round((startOfDay(date) - startOfDay(new Date())) / 86_400_000)
++  const time = date.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
++
++  if (diffDays === 0) return `Hoje às ${time}`
++  if (diffDays === 1) return `Amanhã às ${time}`
++  if (diffDays > 1 && diffDays < 7) {
++    const weekday = date.toLocaleDateString('pt-BR', { weekday: 'long' })
++    return `${weekday.charAt(0).toUpperCase()}${weekday.slice(1)} às ${time}`
++  }
++  return `${date.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit' })} às ${time}`
++}
++
++function pickNextSession(appointments: AppointmentDTO[]): AppointmentDTO | null {
++  const now = Date.now()
++  return (
++    appointments
++      .filter((a) => a.scheduleStatus === 'AGENDADA')
++      .map((a) => ({ a, date: parseLocalDateTime(a.dateTime) }))
++      .filter((x): x is { a: AppointmentDTO; date: Date } => x.date !== null)
++      // Sessão em andamento continua sendo "a próxima" até terminar
++      .filter(({ a, date }) => date.getTime() + (a.durationMinutes ?? 0) * 60_000 > now)
++      .sort((x, y) => x.date.getTime() - y.date.getTime())[0]?.a ?? null
++  )
++}
++
++/** Turma/instituição da jornada mais recente (o aluno não tem acesso a GET /students). */
++function latestRecord(records: JourneyRecordDTO[]): JourneyRecordDTO | null {
++  return [...records].sort((x, y) => (y.journeyNumber ?? 0) - (x.journeyNumber ?? 0))[0] ?? null
++}
++
++// ─── Dados da casca ──────────────────────────────────────────────
++
++interface ShellData {
++  journey: JourneyStatusDTO | null
++  record: JourneyRecordDTO | null
++  nextSession: AppointmentDTO | null
++  unreadFeedbacks: number
++}
++
++type ShellState =
++  | { status: 'loading' }
++  | { status: 'ready'; data: ShellData; partialError: string | null }
++
++function useStudentShellData(studentId: number | undefined, pathname: string) {
++  const [state, setState] = useState<ShellState>({ status: 'loading' })
++  const [reloadKey, setReloadKey] = useState(0)
++
++  // Recarrega ao trocar de seção (ex.: depois de concluir uma trilha ou ler um feedback)
++  const section = pathname.split('/')[2] ?? ''
++
++  useEffect(() => {
++    if (!studentId) return
++    const controller = new AbortController()
++    const opts = { signal: controller.signal, suppressGlobalError: true }
++
++    Promise.allSettled([
++      api.get<JourneyStatusDTO>('/journeys/me/current', opts),
++      api.get<JourneyRecordDTO[]>('/journeys/me', opts),
++      api.get<AppointmentDTO[]>(`/appointments/student/${studentId}`, opts),
++      api.get<FeedbackDTO[]>('/feedbacks/me', opts),
++    ]).then(([journey, records, appointments, feedbacks]) => {
++      if (controller.signal.aborted) return
++
++      const failures = [journey, records, appointments, feedbacks].filter(
++        (r): r is PromiseRejectedResult => r.status === 'rejected',
++      )
++
++      setState({
++        status: 'ready',
++        data: {
++          journey: journey.status === 'fulfilled' ? journey.value.data : null,
++          record: records.status === 'fulfilled' ? latestRecord(records.value.data ?? []) : null,
++          nextSession:
++            appointments.status === 'fulfilled' ? pickNextSession(appointments.value.data ?? []) : null,
++          unreadFeedbacks:
++            feedbacks.status === 'fulfilled' ? (feedbacks.value.data ?? []).filter((f) => !f.read).length : 0,
++        },
++        partialError: failures.length > 0 ? getErrorMessage(failures[0].reason) : null,
++      })
++    })
++
++    return () => controller.abort()
++  }, [studentId, section, reloadKey])
++
++  return { state, reload: () => setReloadKey((k) => k + 1) }
++}
++
++// ─── Componentes visuais ─────────────────────────────────────────
++
++function BrandLogo() {
++  const [failed, setFailed] = useState(false)
++  if (failed) {
++    return (
++      <div className="h-8 w-8 rounded-lg bg-gradient-to-tr from-[#8e44ad] to-[#e7a6ff] flex items-center justify-center text-white shadow-sm shrink-0">
++        <InfinityIcon className="w-5 h-5" aria-hidden="true" />
++      </div>
++    )
++  }
++  return (
++    <img
++      src={LOGO_SRC}
++      alt="SyncCarreira"
++      className="h-8 w-auto object-contain shrink-0"
++      onError={() => setFailed(true)}
++    />
++  )
++}
++
++function UnreadBadge({ state }: { state: ShellState }) {
++  if (state.status === 'loading') {
++    return <span className="w-12 h-4 rounded-full bg-[#8e44ad]/60 animate-pulse" aria-label="Carregando feedbacks" />
++  }
++  const count = state.data.unreadFeedbacks
++  if (count <= 0) return null
++  return (
++    <span className="px-1 py-0.5 rounded-full bg-[#e7a6ff] text-[#6c3485] text-[11px] leading-[14px] font-semibold whitespace-nowrap">
++      {count} {plural(count, 'nova', 'novas')}
++    </span>
++  )
++}
++
++function SidebarNav({ shell, onNavigate }: { shell: ShellState; onNavigate: () => void }) {
++  return (
++    <nav className="flex flex-col gap-1 p-4 overflow-y-auto flex-1" aria-label="Navegação principal">
++      {NAV_ITEMS.map(({ to, label, icon: Icon, end, showUnreadBadge }) => (
++        <NavLink
++          key={to}
++          to={to}
++          end={end}
++          onClick={onNavigate}
++          className={({ isActive }) =>
++            [
++              'flex items-center justify-between gap-2 px-4 py-2 rounded-xl transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ecb2ff]',
++              isActive
++                ? 'bg-white text-[#732993] font-bold shadow-sm'
++                : 'text-[#f8d8ff] hover:bg-[#8e44ad] hover:text-white',
++            ].join(' ')
++          }
++        >
++          <span className="flex items-center gap-2 min-w-0">
++            <Icon className="w-5 h-5 shrink-0" aria-hidden="true" />
++            <span className="text-sm leading-5 font-semibold truncate">{label}</span>
++          </span>
++          {showUnreadBadge && <UnreadBadge state={shell} />}
++        </NavLink>
++      ))}
++    </nav>
++  )
++}
++
++function SidebarFooter({
++  name,
++  shell,
++  loggingOut,
++  onLogout,
++}: {
++  name: string
++  shell: ShellState
++  loggingOut: boolean
++  onLogout: () => void
++}) {
++  const record = shell.status === 'ready' ? shell.data.record : null
++
++  return (
++    <div className="p-4 bg-[#491b5e] text-[#feebff] flex flex-col gap-2 shrink-0">
++      <div className="flex items-center gap-1 p-1 rounded-lg bg-white/10 backdrop-blur-sm">
++        <ShieldCheck className="w-[18px] h-[18px] text-[#f8d8ff] shrink-0" aria-hidden="true" />
++        <div className="flex flex-col">
++          <span className="text-[11px] leading-[14px] font-semibold text-[#f8d8ff]">Ambiente Seguro</span>
++          <span className="text-xs leading-[18px] text-[#feebff]/80">LGPD &amp; Sigilo CFP</span>
++        </div>
++      </div>
++
++      <div className="flex items-center justify-between gap-2 pt-1 border-t border-[#807381]/30">
++        <div className="flex flex-col min-w-0">
++          <span className="text-xs leading-4 font-semibold text-[#feebff] truncate" title={name}>{name}</span>
++          {shell.status === 'loading' ? (
++            <>
++              <span className="mt-1 h-3 w-28 rounded bg-white/15 animate-pulse" />
++              <span className="mt-1 h-3 w-20 rounded bg-white/10 animate-pulse" />
++            </>
++          ) : (
++            <>
++              <span className="text-xs leading-[18px] text-[#feebff]/70 truncate">
++                {record?.schoolClassName ?? 'Turma não vinculada'}
++              </span>
++              {record?.institutionName && (
++                <span className="text-xs leading-[18px] text-[#feebff]/60 truncate">{record.institutionName}</span>
++              )}
++            </>
++          )}
++        </div>
++        <button
++          type="button"
++          onClick={onLogout}
++          disabled={loggingOut}
++          title="Sair da Plataforma"
++          aria-label="Sair da Plataforma"
++          className="p-1 rounded-lg text-[#feebff]/80 hover:text-[#ffdad6] hover:bg-[#ba1a1a]/20 transition-colors flex items-center justify-center disabled:cursor-wait disabled:opacity-60"
++        >
++          {loggingOut ? (
++            <Loader2 className="w-5 h-5 animate-spin" aria-hidden="true" />
++          ) : (
++            <LogOut className="w-5 h-5" aria-hidden="true" />
++          )}
++        </button>
++      </div>
++    </div>
++  )
++}
++
++function JourneyPill({ shell }: { shell: ShellState }) {
++  if (shell.status === 'loading') {
++    return <span className="hidden md:block h-6 w-44 rounded-full bg-[#fde7ff] animate-pulse" aria-label="Carregando jornada" />
++  }
++  const journey = shell.data.journey
++  if (!journey?.currentJourneyNumber) return null
++
++  const concluded = journey.currentJourneyConcluded
++  return (
++    <div className="hidden md:flex items-center gap-1 px-2 py-1 rounded-full bg-[#fde7ff] text-[#732993] text-[11px] leading-[14px] font-semibold whitespace-nowrap">
++      <span
++        className={`w-2 h-2 rounded-full ${concluded ? 'bg-emerald-600' : 'bg-[#732993] animate-pulse'}`}
++        aria-hidden="true"
++      />
++      <span>
++        Jornada #{journey.currentJourneyNumber} • {concluded ? 'Concluída' : 'Em Andamento'}
++      </span>
++    </div>
++  )
++}
++
++function NextSessionCard({ shell, onRetry }: { shell: ShellState; onRetry: () => void }) {
++  const base =
++    'hidden lg:flex items-center gap-1 px-2 py-1.5 rounded-xl bg-[#ffefff] text-[#320047] shadow-[0_2px_8px_-2px_rgba(91,44,111,0.05)]'
++
++  if (shell.status === 'loading') {
++    return (
++      <div className={base} aria-label="Carregando próxima sessão">
++        <Video className="w-[18px] h-[18px] text-[#732993]" aria-hidden="true" />
++        <div className="flex flex-col gap-1">
++          <span className="h-3 w-20 rounded bg-[#fde7ff] animate-pulse" />
++          <span className="h-3 w-28 rounded bg-[#fde7ff] animate-pulse" />
++        </div>
++      </div>
++    )
++  }
++
++  const session = shell.data.nextSession
++  const date = session ? parseLocalDateTime(session.dateTime) : null
++
++  return (
++    <Link to={`${BASE}/sessoes`} className={`${base} hover:bg-[#fde7ff] transition-colors`}>
++      <Video className="w-[18px] h-[18px] text-[#732993] shrink-0" aria-hidden="true" />
++      <div className="flex flex-col">
++        <span className="text-[11px] leading-[14px] font-semibold text-[#320047]">Próxima Sessão</span>
++        <span className="text-xs leading-[18px] text-[#4e4350]">
++          {session && date
++            ? `${formatSessionDate(date)}${session.meetLink ? ' (Meet)' : ''}`
++            : 'Nenhuma sessão agendada'}
++        </span>
++      </div>
++      {shell.partialError && (
++        <button
++          type="button"
++          onClick={(e) => {
++            e.preventDefault()
++            onRetry()
++          }}
++          title={`Alguns dados não carregaram: ${shell.partialError}`}
++          aria-label="Recarregar dados do cabeçalho"
++          className="ml-1 p-1 rounded-md text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors"
++        >
++          <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
++        </button>
++      )}
++    </Link>
++  )
++}
++
++// ─── Layout ──────────────────────────────────────────────────────
++
++export default function StudentLayout() {
++  const { user, logout } = useTypedAuth()
++  const navigate = useNavigate()
++  const location = useLocation()
++  const [mobileOpen, setMobileOpen] = useState(false)
++  const [loggingOut, setLoggingOut] = useState(false)
++  const { state: shell, reload } = useStudentShellData(user?.id, location.pathname)
++
++  const name = user?.nome || user?.name || 'Estudante'
++
++  const pageLabel = useMemo(
++    () => BREADCRUMB_LABELS.find(([pattern]) => pattern.test(location.pathname))?.[1] ?? 'Minha Jornada',
++    [location.pathname],
++  )
++
++  useEffect(() => setMobileOpen(false), [location.pathname])
++
++  useEffect(() => {
++    if (!mobileOpen) return
++    const onKeyDown = (e: KeyboardEvent) => e.key === 'Escape' && setMobileOpen(false)
++    window.addEventListener('keydown', onKeyDown)
++    return () => window.removeEventListener('keydown', onKeyDown)
++  }, [mobileOpen])
++
++  const handleLogout = async () => {
++    setLoggingOut(true)
++    try {
++      await logout()
++    } finally {
++      navigate('/login', { replace: true })
++    }
++  }
++
++  const closeMobile = () => setMobileOpen(false)
++
++  return (
++    <div className={`min-h-screen bg-[#fff7fb] text-[#320047] text-sm antialiased ${FONT}`}>
++      {mobileOpen && (
++        <div className="fixed inset-0 z-40 bg-[#320047]/40 lg:hidden" onClick={closeMobile} aria-hidden="true" />
++      )}
++
++      {/* 1. SIDEBAR ESQUERDA FIXA */}
++      <aside
++        id="student-sidebar"
++        className={`fixed left-0 top-0 h-screen w-64 bg-[#732993] z-50 flex flex-col justify-between text-white shadow-[0_1px_8px_rgba(0,0,0,0.08)] transition-transform duration-200 lg:translate-x-0 ${
++          mobileOpen ? 'translate-x-0' : '-translate-x-full'
++        }`}
++      >
++        <div className="flex flex-col flex-1 min-h-0">
++          <div className="p-6 flex items-center gap-2 bg-[#8e44ad]/20 relative">
++            <BrandLogo />
++            <div className="flex flex-col min-w-0">
++              <span className="text-lg leading-6 tracking-tight text-white font-bold">SyncCarreira</span>
++              <span className="text-[11px] leading-[14px] font-semibold text-[#ecb2ff]">Espaço do Estudante</span>
++            </div>
++            <button
++              type="button"
++              onClick={closeMobile}
++              className="lg:hidden absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-lg text-[#f8d8ff] hover:bg-[#8e44ad]"
++              aria-label="Fechar menu"
++            >
++              <X className="w-5 h-5" aria-hidden="true" />
++            </button>
++          </div>
++          <SidebarNav shell={shell} onNavigate={closeMobile} />
++        </div>
++        <SidebarFooter name={name} shell={shell} loggingOut={loggingOut} onLogout={() => void handleLogout()} />
++      </aside>
++
++      <div className="lg:pl-64">
++        {/* 2. TOP BAR FIXA */}
++        <header className="fixed top-0 left-0 lg:left-64 right-0 h-16 bg-white/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] z-30 flex items-center justify-between gap-4 px-4 lg:px-6">
++          <div className="flex items-center gap-2 min-w-0">
++            <button
++              type="button"
++              onClick={() => setMobileOpen(true)}
++              className="lg:hidden p-2 -ml-1 rounded-lg text-[#4e4350] hover:bg-[#fde7ff]"
++              aria-label="Abrir menu"
++              aria-expanded={mobileOpen}
++              aria-controls="student-sidebar"
++            >
++              <Menu className="w-5 h-5" aria-hidden="true" />
++            </button>
++            <div className="hidden sm:block">
++              <BrandLogo />
++            </div>
++            <nav aria-label="Você está em" className="min-w-0">
++              <ol className="flex items-center gap-1 text-[#4e4350] text-xs leading-4 font-medium">
++                <li className="hidden sm:block">
++                  <Link to={BASE} className="text-[#732993] font-semibold hover:underline">
++                    SyncCarreira
++                  </Link>
++                </li>
++                <li className="hidden sm:flex items-center gap-1" aria-hidden="true">
++                  <ChevronRight className="w-3.5 h-3.5" />
++                </li>
++                <li className="hidden md:block">Espaço do Estudante</li>
++                <li className="hidden md:flex items-center" aria-hidden="true">
++                  <ChevronRight className="w-3.5 h-3.5" />
++                </li>
++                <li className="text-[#320047] font-semibold truncate" aria-current="page">
++                  {pageLabel}
++                </li>
++              </ol>
++            </nav>
++          </div>
++
++          <div className="flex items-center gap-4 shrink-0">
++            <JourneyPill shell={shell} />
++            <NextSessionCard shell={shell} onRetry={reload} />
++            <Link
++              to={`${BASE}/perfil`}
++              className="relative flex items-center justify-center rounded-full focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ecb2ff]"
++              title="Meu perfil"
++              aria-label="Meu perfil"
++            >
++              <span className="w-8 h-8 rounded-full bg-[#732993] flex items-center justify-center">
++                <User className="w-[18px] h-[18px] text-white" aria-hidden="true" />
++              </span>
++              <span
++                className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full bg-[#804698] ring-2 ring-white"
++                aria-hidden="true"
++              />
++            </Link>
++          </div>
++        </header>
++
++        {/* 3. CONTEÚDO CENTRAL */}
++        <main className="w-full pt-16 bg-[#fff7fb] min-h-screen">
++          <div className="max-w-[1440px] w-full mx-auto px-4 lg:px-6 py-4 flex flex-col gap-6">
++            <Outlet />
++          </div>
++        </main>
++      </div>
++    </div>
++  )
++}
+diff --git a/Source/synccarreira-frontend/src/routes/AppRoutes.jsx b/Source/synccarreira-frontend/src/routes/AppRoutes.jsx
+deleted file mode 100644
+index 8c1e63d..0000000
+--- a/Source/synccarreira-frontend/src/routes/AppRoutes.jsx
++++ /dev/null
+@@ -1,105 +0,0 @@
+-import { Routes, Route, Navigate } from 'react-router-dom'
+-import { useAuth } from '../context/AuthContext.jsx'
+-import LoginPage    from '../pages/Login/LoginPage.jsx'
+-import NewPasswordPage from '../pages/NewPassword/NewPasswordPage.jsx'
+-import HomePage     from '../pages/Home/HomePage.jsx'
+-import TrailPage    from '../pages/Trilha/TrailPage.jsx'
+-import AccountManagementPage from '../pages/Psicologas/AccountManagementPage.jsx'
+-import StudentDetailPage from '../pages/Psicologas/studentdetailPage.jsx'
+-import StudentFormPage from '../pages/Psicologas/studentformPage.jsx'
+-import AgendamentosPage from '../pages/Agendamentos/AgendamentosPage.jsx'
+-import InformationLinkManagementPage from '../pages/Psicologas/InformationLinkManagementPage.jsx'
+-import JourneyResultPage from '../pages/ResultadoJornada/JourneyResultPage.jsx'
+-import StudentProfilePage from '../pages/Perfil/StudentProfilePage.jsx'
+-import StudentProfileGate from '../pages/Perfil/StudentProfileGate.jsx'
+-import ProgressDashboardPage from '../pages/Psicologas/ProgressDashboardPage.jsx'
+-import JourneyPanoramaPage from '../pages/Jornada/JourneyPanoramaPage.jsx'
+-import { isAdministrator, isPsychologist } from '../utils/roles.js'
+-
+-function PrivateRoute({ children }) {
+-    const { user } = useAuth()
+-    return user ? children : <Navigate to="/login" replace />
+-}
+-
+-function StaffRoute({ children }) {
+-    const { user } = useAuth()
+-    return user && (isAdministrator(user) || isPsychologist(user))
+-        ? children
+-        : <Navigate to="/home" replace />
+-}
+-
+-function AdminRoute({ children }) {
+-    const { user } = useAuth()
+-    return user && isAdministrator(user)
+-        ? children
+-        : <Navigate to={user ? "/home" : "/login"} replace />
+-}
+-
+-function PsychologistRoute({ children }) {
+-    const { user } = useAuth()
+-    return user && isPsychologist(user)
+-        ? children
+-        : <Navigate to={user ? "/home" : "/login"} replace />
+-}
+-
+-function HomeRoute() {
+-    const { user } = useAuth()
+-    return isPsychologist(user)
+-        ? <Navigate to="/painel-progresso" replace />
+-        : <StudentProfileGate><HomePage /></StudentProfileGate>
+-}
+-
+-function StudentRoute({ children }) {
+-    const { user } = useAuth()
+-    const studentRoles = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO']
+-    const isStudent = user?.roles?.some(role => studentRoles.includes(role.authority))
+-        || studentRoles.includes(user?.perfil)
+-    return user && isStudent
+-        ? children
+-        : <Navigate to={user ? "/home" : "/login"} replace />
+-}
+-
+-export default function AppRoutes() {
+-    return (
+-        <Routes>
+-            <Route path="/login"    element={<LoginPage />} />
+-            <Route path="/new-password" element={<NewPasswordPage />} />
+-            <Route path="/home" element={
+-                <PrivateRoute><HomeRoute /></PrivateRoute>
+-            } />
+-            <Route path="/trail/:trailId" element={
+-                <PrivateRoute><StudentProfileGate><TrailPage /></StudentProfileGate></PrivateRoute>
+-            } />
+-            <Route path="/perfil" element={
+-                <PrivateRoute><StudentRoute><StudentProfilePage /></StudentRoute></PrivateRoute>
+-            } />
+-            <Route path="/minha-jornada" element={
+-                <PrivateRoute><StudentRoute><StudentProfileGate><JourneyPanoramaPage /></StudentProfileGate></StudentRoute></PrivateRoute>
+-            } />
+-            <Route path="/resultado-jornada" element={
+-                <PrivateRoute><StudentRoute><StudentProfileGate><JourneyResultPage /></StudentProfileGate></StudentRoute></PrivateRoute>
+-            } />
+-
+-            <Route path="/gestao" element={
+-                <AdminRoute><AccountManagementPage /></AdminRoute>
+-            } />
+-            <Route path="/curadoria-links" element={
+-                <PrivateRoute><PsychologistRoute><InformationLinkManagementPage /></PsychologistRoute></PrivateRoute>
+-            } />
+-            <Route path="/painel-progresso" element={
+-                <PrivateRoute><PsychologistRoute><ProgressDashboardPage /></PsychologistRoute></PrivateRoute>
+-            } />
+-            <Route path="/alunos" element={<Navigate to="/gestao" replace />} />
+-            <Route path="/alunos/:id" element={
+-                <PrivateRoute><StaffRoute><StudentDetailPage /></StaffRoute></PrivateRoute>
+-            } />
+-            <Route path="/alunos/:id/editar" element={
+-                <PrivateRoute><StaffRoute><StudentFormPage /></StaffRoute></PrivateRoute>
+-            } />
+-            <Route path="/agendamentos" element={
+-                <PrivateRoute><AgendamentosPage /></PrivateRoute>
+-            } />
+-            <Route path="*" element={<Navigate to="/login" replace />} />
+-        </Routes>
+-    )
+-}
+diff --git a/Source/synccarreira-frontend/src/routes/AppRoutes.tsx b/Source/synccarreira-frontend/src/routes/AppRoutes.tsx
+new file mode 100644
+index 0000000..186adc0
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/routes/AppRoutes.tsx
+@@ -0,0 +1,245 @@
++/**
++ * @file AppRoutes.tsx
++ * @description Mapa de rotas com RBAC por perfil e layouts dedicados.
++ *
++ *  /login, /new-password        → públicas
++ *  /admin/*                     → ROLE_ADMIN
++ *  /psicologa/*                 → ROLE_PSICOLOGA  (PsychologistLayout)
++ *  /aluno/*                     → ROLE_USER       (StudentLayout)
++ *
++ * As rotas antigas (/home, /trail/:id, /agendamentos, /painel-progresso...) continuam funcionando
++ * via redirecionamento por perfil, porque as páginas legadas ainda navegam para elas.
++ * Remova o bloco "Rotas legadas" quando todas as páginas tiverem sido migradas.
++ */
++
++import { Suspense, lazy, type ComponentType, type ReactNode } from 'react'
++import { Link, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom'
++import { ArrowLeft, Compass, Construction, Loader2 } from 'lucide-react'
++import {
++  RedirectToHome,
++  RequireGuest,
++  RequireRole,
++  getHomePath,
++  getPrimaryRole,
++  useTypedAuth,
++} from '../auth/RequireRole'
++import PsychologistLayout from '../layouts/PsychologistLayout'
++import StudentLayout from '../layouts/StudentLayout'
++import { ROLES, type AuthUser } from '../types/api'
++
++// ─── Páginas (lazy: cada perfil só baixa o próprio código) ───────
++// As páginas ainda são JSX; o cast evita depender da inferência de tipos de arquivos .jsx.
++
++type AnyComponent = ComponentType<Record<string, unknown>>
++const page = (loader: () => Promise<unknown>) =>
++  lazy(loader as () => Promise<{ default: AnyComponent }>)
++
++const LoginPage = page(() => import('../pages/Login/LoginPage.jsx'))
++const NewPasswordPage = page(() => import('../pages/NewPassword/NewPasswordPage.jsx'))
++
++// Admin
++const AccountManagementPage = page(() => import('../pages/Psicologas/AccountManagementPage.jsx'))
++const StudentFormPage = page(() => import('../pages/Psicologas/studentformPage.jsx'))
++
++// Psicóloga + Admin
++const StudentDetailPage = page(() => import('../pages/Psicologas/studentdetailPage.jsx'))
++
++// Psicóloga
++const ProgressDashboardPage = page(() => import('../pages/Psicologas/ProgressDashboardPage.jsx'))
++const InformationLinkManagementPage = page(
++  () => import('../pages/Psicologas/InformationLinkManagementPage.jsx'),
++)
++
++// Psicóloga + Aluno (a página decide a visão pelo perfil)
++const AgendamentosPage = page(() => import('../pages/Agendamentos/AgendamentosPage.jsx'))
++
++// Aluno
++const StudentProfileGate = page(() => import('../pages/Perfil/StudentProfileGate.jsx'))
++const StudentProfilePage = page(() => import('../pages/Perfil/StudentProfilePage.jsx'))
++const JourneyPanoramaPage = page(() => import('../pages/Jornada/JourneyPanoramaPage.jsx'))
++const JourneyResultPage = page(() => import('../pages/ResultadoJornada/JourneyResultPage.jsx'))
++const TrailsHomePage = page(() => import('../pages/Home/HomePage.jsx'))
++const TrailPage = page(() => import('../pages/Trilha/TrailPage.jsx'))
++
++// ─── Estados de carregamento e fallback ──────────────────────────
++
++function PageLoader({ fullScreen = false }: { fullScreen?: boolean }) {
++  return (
++    <div
++      role="status"
++      aria-live="polite"
++      className={`flex items-center justify-center gap-3 text-slate-500 text-sm font-medium font-['Plus_Jakarta_Sans',Inter,sans-serif] ${
++        fullScreen ? 'min-h-screen bg-[#F8FAFC]' : 'py-24'
++      }`}
++    >
++      <Loader2 className="w-5 h-5 animate-spin text-[#6D28D9]" aria-hidden="true" />
++      Carregando...
++    </div>
++  )
++}
++
++/** Envolve cada tela lazy com seu próprio Suspense (o layout continua visível). */
++function Lazy({ children, fullScreen }: { children: ReactNode; fullScreen?: boolean }) {
++  return <Suspense fallback={<PageLoader fullScreen={fullScreen} />}>{children}</Suspense>
++}
++
++/** Telas dos itens de menu que ainda serão migradas nas próximas etapas. */
++function ComingSoon({ title }: { title: string }) {
++  return (
++    <section className="bg-white rounded-xl border border-slate-200 p-10 shadow-sm text-center space-y-3 max-w-xl mx-auto mt-10">
++      <div className="mx-auto w-12 h-12 rounded-xl bg-[#EDE9FE] text-[#6D28D9] flex items-center justify-center">
++        <Construction className="w-6 h-6" aria-hidden="true" />
++      </div>
++      <h1 className="text-lg font-bold text-slate-900">{title}</h1>
++      <p className="text-sm text-slate-500">Esta área está em construção e chega nas próximas etapas.</p>
++    </section>
++  )
++}
++
++function NotFound() {
++  const { user } = useTypedAuth()
++  return (
++    <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] p-6 font-['Plus_Jakarta_Sans',Inter,sans-serif]">
++      <div className="max-w-md w-full bg-white border border-slate-200 rounded-2xl shadow-sm p-8 text-center space-y-4">
++        <div className="mx-auto w-12 h-12 rounded-xl bg-[#EDE9FE] text-[#6D28D9] flex items-center justify-center">
++          <Compass className="w-6 h-6" aria-hidden="true" />
++        </div>
++        <h1 className="text-lg font-bold text-slate-900">Página não encontrada</h1>
++        <p className="text-sm text-slate-600">O endereço acessado não existe ou foi movido.</p>
++        <Link
++          to={user ? getHomePath(user) : '/login'}
++          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#6D28D9] hover:bg-[#5B21B6] text-white text-sm font-bold transition-colors"
++        >
++          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
++          {user ? 'Voltar ao início' : 'Ir para o login'}
++        </Link>
++      </div>
++    </div>
++  )
++}
++
++// ─── Redirecionamento de rotas legadas por perfil ────────────────
++
++type LegacyTargets = Partial<Record<'ADMIN' | 'PSICOLOGA' | 'USER', string>>
++
++/**
++ * Converte uma rota antiga na equivalente do perfil, preservando a query string
++ * (ex.: /agendamentos?nova=1 → /psicologa/agenda?nova=1). `:param` é substituído pelos params da URL.
++ */
++function LegacyRedirect({ targets }: { targets: LegacyTargets }) {
++  const { user } = useTypedAuth()
++  const params = useParams()
++  const { search } = useLocation()
++
++  if (!user) return <Navigate to="/login" replace />
++
++  const key = roleKey(user)
++  const template = key ? targets[key] : undefined
++  if (!template) return <RedirectToHome />
++
++  const path = template.replace(/:(\w+)/g, (_, name: string) => encodeURIComponent(params[name] ?? ''))
++  return <Navigate to={path + search} replace />
++}
++
++function roleKey(user: AuthUser): keyof LegacyTargets | null {
++  switch (getPrimaryRole(user)) {
++    case ROLES.ADMIN:
++      return 'ADMIN'
++    case ROLES.PSICOLOGA:
++      return 'PSICOLOGA'
++    case ROLES.USER:
++      return 'USER'
++    default:
++      return null
++  }
++}
++
++/** Páginas do aluno que exigem o perfil de afinidades preenchido. */
++function WithProfileGate({ children }: { children: ReactNode }) {
++  return <StudentProfileGate>{children}</StudentProfileGate>
++}
++
++// ─── Rotas ───────────────────────────────────────────────────────
++
++export default function AppRoutes() {
++  return (
++    <Routes>
++      {/* Públicas */}
++      <Route element={<RequireGuest />}>
++        <Route path="/login" element={<Lazy fullScreen><LoginPage /></Lazy>} />
++      </Route>
++      <Route path="/new-password" element={<Lazy fullScreen><NewPasswordPage /></Lazy>} />
++      <Route path="/" element={<RedirectToHome />} />
++
++      {/* ADMIN */}
++      <Route path="/admin" element={<RequireRole allow={[ROLES.ADMIN]} />}>
++        <Route index element={<Navigate to="gestao" replace />} />
++        <Route path="gestao" element={<Lazy fullScreen><AccountManagementPage /></Lazy>} />
++        <Route path="alunos/:id" element={<Lazy fullScreen><StudentDetailPage /></Lazy>} />
++        {/* PUT /students/{id} é exclusivo de ROLE_ADMIN no backend */}
++        <Route path="alunos/:id/editar" element={<Lazy fullScreen><StudentFormPage /></Lazy>} />
++      </Route>
++
++      {/* PSICÓLOGA */}
++      <Route
++        path="/psicologa"
++        element={
++          <RequireRole allow={[ROLES.PSICOLOGA]}>
++            <PsychologistLayout />
++          </RequireRole>
++        }
++      >
++        <Route index element={<Lazy><ProgressDashboardPage /></Lazy>} />
++        <Route path="perfil" element={<ComingSoon title="Meu Perfil" />} />
++        <Route path="turmas" element={<ComingSoon title="Turmas" />} />
++        <Route path="trilhas" element={<ComingSoon title="Trilhas" />} />
++        <Route path="orientacoes" element={<ComingSoon title="Orientações" />} />
++        <Route path="agenda" element={<Lazy><AgendamentosPage /></Lazy>} />
++        <Route path="relatorios" element={<ComingSoon title="Relatórios" />} />
++        <Route path="conteudos" element={<Lazy><InformationLinkManagementPage /></Lazy>} />
++        <Route path="alunos/:id" element={<Lazy><StudentDetailPage /></Lazy>} />
++      </Route>
++
++      {/* ALUNO */}
++      <Route
++        path="/aluno"
++        element={
++          <RequireRole allow={[ROLES.USER]}>
++            <StudentLayout />
++          </RequireRole>
++        }
++      >
++        <Route index element={<Lazy><WithProfileGate><JourneyPanoramaPage /></WithProfileGate></Lazy>} />
++        <Route path="trilhas" element={<Lazy><WithProfileGate><TrailsHomePage /></WithProfileGate></Lazy>} />
++        <Route path="trilha/:trailId" element={<Lazy><WithProfileGate><TrailPage /></WithProfileGate></Lazy>} />
++        <Route path="resultados" element={<Lazy><WithProfileGate><JourneyResultPage /></WithProfileGate></Lazy>} />
++        <Route path="conteudos" element={<ComingSoon title="Hub de Conteúdos" />} />
++        <Route path="sessoes" element={<Lazy><AgendamentosPage /></Lazy>} />
++        <Route path="feedbacks" element={<ComingSoon title="Feedbacks" />} />
++        <Route path="perfil" element={<Lazy><StudentProfilePage /></Lazy>} />
++      </Route>
++
++      {/* Rotas legadas — ainda usadas pelas páginas JSX via navigate()/Link */}
++      <Route path="/home" element={<RedirectToHome />} />
++      <Route path="/gestao" element={<LegacyRedirect targets={{ ADMIN: '/admin/gestao' }} />} />
++      <Route path="/painel-progresso" element={<LegacyRedirect targets={{ PSICOLOGA: '/psicologa' }} />} />
++      <Route path="/curadoria-links" element={<LegacyRedirect targets={{ PSICOLOGA: '/psicologa/conteudos' }} />} />
++      <Route
++        path="/agendamentos"
++        element={<LegacyRedirect targets={{ PSICOLOGA: '/psicologa/agenda', USER: '/aluno/sessoes' }} />}
++      />
++      <Route path="/alunos" element={<LegacyRedirect targets={{ ADMIN: '/admin/gestao' }} />} />
++      <Route
++        path="/alunos/:id"
++        element={<LegacyRedirect targets={{ ADMIN: '/admin/alunos/:id', PSICOLOGA: '/psicologa/alunos/:id' }} />}
++      />
++      <Route path="/alunos/:id/editar" element={<LegacyRedirect targets={{ ADMIN: '/admin/alunos/:id/editar' }} />} />
++      <Route path="/perfil" element={<LegacyRedirect targets={{ USER: '/aluno/perfil' }} />} />
++      <Route path="/minha-jornada" element={<LegacyRedirect targets={{ USER: '/aluno' }} />} />
++      <Route path="/resultado-jornada" element={<LegacyRedirect targets={{ USER: '/aluno/resultados' }} />} />
++      <Route path="/trail/:trailId" element={<LegacyRedirect targets={{ USER: '/aluno/trilha/:trailId' }} />} />
++
++      <Route path="*" element={<NotFound />} />
++    </Routes>
++  )
++}
+diff --git a/Source/synccarreira-frontend/src/services/api.js b/Source/synccarreira-frontend/src/services/api.js
+deleted file mode 100644
+index b16c908..0000000
+--- a/Source/synccarreira-frontend/src/services/api.js
++++ /dev/null
+@@ -1,107 +0,0 @@
+-/**
+- * @file api.js
+- * @description Instância central do Axios para comunicação com o backend.
+- *
+- * Todas as requisições HTTP da aplicação passam por esta instância.
+- * Ela é responsável por:
+- *  - Definir a URL base do backend (via variável de ambiente)
+- *  - Anexar automaticamente o token JWT em cada requisição
+- *  - Tratar erros globais de autenticação (token expirado, não autorizado)
+- *
+- * ─── Como usar ────────────────────────────────────────────────
+- * Nunca importe o axios diretamente nas páginas ou services.
+- * Sempre importe esta instância configurada:
+- *
+- * @example
+- * import api from './api'
+- * const data = await api.get('/usuarios')
+- * await api.post('/auth/login', { email, senha })
+- */
+-
+-import axios from 'axios'
+-
+-// ─── Configuração da URL base ─────────────────────────────────
+-//
+-// O endereço do backend é lido do arquivo .env na raiz do projeto.
+-// Crie o arquivo .env com o conteúdo:
+-//   VITE_API_URL=http://localhost:8080
+-//
+-// Em produção, substitua pelo endereço real do servidor.
+-// O fallback garante que a aplicação não quebre se o .env não existir.
+-const api = axios.create({
+-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8080',
+-
+-  // Timeout de 10 segundos — evita que requisições fiquem penduradas
+-  timeout: 10000,
+-
+-  headers: {
+-    'Content-Type': 'application/json',
+-  },
+-})
+-
+-// ─── Interceptor de Requisição (Request) ──────────────────────
+-//
+-// Executado ANTES de cada requisição ser enviada.
+-// Lê o token do localStorage e injeta no header Authorization.
+-//
+-// Fluxo:
+-//   1. Usuário faz login → token salvo no localStorage
+-//   2. Qualquer requisição seguinte → este interceptor adiciona o header
+-//   3. Backend valida o token e retorna os dados
+-//
+-api.interceptors.request.use(
+-  (config) => {
+-    const token = localStorage.getItem('token')
+-
+-    if (token) {
+-      // Padrão Bearer Token — confirmado no API_CONTRACT.md (Authorization: Bearer <token>)
+-      config.headers.Authorization = `Bearer ${token}`
+-    }
+-
+-    return config
+-  },
+-  (error) => {
+-    // Erro ao montar a requisição (ex: problema de rede antes de enviar)
+-    return Promise.reject(error)
+-  }
+-)
+-
+-// ─── Interceptor de Resposta (Response) ───────────────────────
+-//
+-// Executado APÓS cada resposta recebida do backend.
+-// Centraliza o tratamento de erros HTTP comuns.
+-//
+-api.interceptors.response.use(
+-  // Resposta com sucesso (2xx) — retorna normalmente
+-  (response) => response,
+-
+-  // Resposta com erro (4xx, 5xx)
+-  (error) => {
+-    const status = error.response?.status
+-
+-    if (status === 401) {
+-      // Token expirado ou inválido — limpa a sessão e redireciona para login.
+-      // Usamos window.location (e não navigate()) de propósito: este arquivo fica
+-      // fora da árvore do React, e o recarregamento zera o estado do AuthContext.
+-      localStorage.removeItem('token')
+-      if (!error.config?.suppressAuthRedirect && window.location.pathname !== '/login') {
+-        window.location.href = '/login'
+-      }
+-    }
+-
+-    if (status === 403) {
+-      // Usuário autenticado mas sem permissão para o recurso acessado
+-      console.warn('[API] Acesso negado — permissão insuficiente.')
+-    }
+-
+-    if (status >= 500) {
+-      // Erro interno do servidor
+-      console.error('[API] Erro no servidor:', error.response?.data)
+-    }
+-
+-    // Propaga o erro para o service/componente que fez a chamada
+-    return Promise.reject(error)
+-  }
+-)
+-
+-export default api
+\ No newline at end of file
+diff --git a/Source/synccarreira-frontend/src/services/api.ts b/Source/synccarreira-frontend/src/services/api.ts
+new file mode 100644
+index 0000000..b59f800
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/services/api.ts
+@@ -0,0 +1,324 @@
++/**
++ * @file api.ts
++ * @description Instância central do Axios do SyncCarreira.
++ *
++ *  - baseURL = raiz da API (VITE_API_URL), SEM prefixo /api/v1 — os controllers do
++ *    synccarreira-api são mapeados direto na raiz (/users, /students/me, /psychologist-panel...).
++ *  - Injeta `Authorization: Bearer <token>` em toda requisição.
++ *  - Normaliza TODO erro HTTP em `ApiError` (com `status`, `message`, `fieldErrors`),
++ *    preservando `response`/`config` para os services legados em JS que leem `err.response?.status`.
++ *  - Tratamento global:
++ *      401 → limpa sessão e redireciona para /login?reason=expired
++ *      403 → mensagem de permissão + evento global (para toast/banner)
++ *      409 → conflito de dados (duplicidade, estado concorrente)
++ *      422 → validação de campos (ValidationError.errors → fieldErrors) ou regra de negócio
++ *
++ * @example
++ * import api, { ApiError, getErrorMessage } from '@/services/api'
++ * try {
++ *   const { data } = await api.post<SchoolClassDTO>('/classes', payload)
++ * } catch (err) {
++ *   if (err instanceof ApiError && err.isValidation) setFieldErrors(err.fieldErrors)
++ *   else setError(getErrorMessage(err))
++ * }
++ */
++
++import axios, {
++  AxiosError,
++  type AxiosInstance,
++  type AxiosResponse,
++  type InternalAxiosRequestConfig,
++} from 'axios'
++import type { CustomError, OAuthErrorResponse, ValidationError } from '../types/api'
++
++// ─── Configuração ────────────────────────────────────────────────
++
++export const TOKEN_STORAGE_KEY = 'token'
++
++/** Raiz da API, sem barra final e sem /api/v1. */
++export const API_BASE_URL: string = (
++  (import.meta.env.VITE_API_URL as string | undefined) || 'http://localhost:8080'
++).replace(/\/+$/, '')
++
++/** Evento disparado em `window` para cada erro tratado globalmente (toasts, banners). */
++export const API_ERROR_EVENT = 'synccarreira:api-error'
++
++/** Opções extras aceitas por requisição. */
++declare module 'axios' {
++  interface AxiosRequestConfig {
++    /** Não redirecionar para /login em caso de 401 (ex.: checagem silenciosa de sessão). */
++    suppressAuthRedirect?: boolean
++    /** Não disparar o evento global de erro (a tela trata e exibe sozinha). */
++    suppressGlobalError?: boolean
++  }
++}
++
++// ─── Mensagens padrão ────────────────────────────────────────────
++
++const DEFAULT_MESSAGES: Record<number, string> = {
++  400: 'Requisição inválida. Revise os dados enviados.',
++  401: 'Sua sessão expirou. Faça login novamente.',
++  403: 'Você não tem permissão para acessar este recurso.',
++  404: 'Recurso não encontrado.',
++  409: 'Conflito: os dados já existem ou foram alterados por outra operação.',
++  422: 'Alguns campos estão inválidos. Revise e tente novamente.',
++  500: 'Erro interno no servidor. Tente novamente em instantes.',
++}
++
++const NETWORK_MESSAGE = 'Não foi possível conectar ao servidor. Verifique sua conexão.'
++const TIMEOUT_MESSAGE = 'O servidor demorou para responder. Tente novamente.'
++
++// ─── ApiError ────────────────────────────────────────────────────
++
++export type ApiErrorKind =
++  | 'network'
++  | 'timeout'
++  | 'unauthorized'
++  | 'forbidden'
++  | 'not_found'
++  | 'conflict'
++  | 'validation'
++  | 'business'
++  | 'bad_request'
++  | 'server'
++  | 'unknown'
++
++/**
++ * Erro normalizado de qualquer chamada HTTP.
++ * Mantém `response` e `config` do Axios por compatibilidade com o código legado.
++ */
++export class ApiError extends Error {
++  readonly status: number | null
++  readonly kind: ApiErrorKind
++  /** Erros por campo (somente 422 de Bean Validation). */
++  readonly fieldErrors: Record<string, string>
++  readonly path: string | null
++  readonly body: unknown
++  readonly response?: AxiosResponse
++  readonly config?: InternalAxiosRequestConfig
++  readonly isApiError = true as const
++
++  constructor(params: {
++    message: string
++    status: number | null
++    kind: ApiErrorKind
++    fieldErrors?: Record<string, string>
++    path?: string | null
++    body?: unknown
++    response?: AxiosResponse
++    config?: InternalAxiosRequestConfig
++  }) {
++    super(params.message)
++    this.name = 'ApiError'
++    this.status = params.status
++    this.kind = params.kind
++    this.fieldErrors = params.fieldErrors ?? {}
++    this.path = params.path ?? null
++    this.body = params.body
++    this.response = params.response
++    this.config = params.config
++  }
++
++  get isValidation(): boolean {
++    return this.kind === 'validation'
++  }
++
++  get isConflict(): boolean {
++    return this.kind === 'conflict'
++  }
++
++  get isForbidden(): boolean {
++    return this.kind === 'forbidden'
++  }
++
++  get isUnauthorized(): boolean {
++    return this.kind === 'unauthorized'
++  }
++
++  get isNetwork(): boolean {
++    return this.kind === 'network' || this.kind === 'timeout'
++  }
++}
++
++export function isApiError(err: unknown): err is ApiError {
++  return err instanceof ApiError
++}
++
++/** Mensagem pronta para exibir ao usuário, para qualquer erro. */
++export function getErrorMessage(err: unknown, fallback = 'Ocorreu um erro inesperado.'): string {
++  if (err instanceof ApiError) return err.message
++  if (err instanceof Error && err.message) return err.message
++  return fallback
++}
++
++/** Erros por campo (vazio se não for 422 de validação). */
++export function getFieldErrors(err: unknown): Record<string, string> {
++  return err instanceof ApiError ? err.fieldErrors : {}
++}
++
++// ─── Helpers internos ────────────────────────────────────────────
++
++function isValidationBody(body: unknown): body is ValidationError {
++  return (
++    typeof body === 'object' &&
++    body !== null &&
++    Array.isArray((body as ValidationError).errors)
++  )
++}
++
++function isCustomErrorBody(body: unknown): body is CustomError {
++  return typeof body === 'object' && body !== null && typeof (body as CustomError).error === 'string'
++}
++
++function isOAuthErrorBody(body: unknown): body is OAuthErrorResponse {
++  return (
++    typeof body === 'object' &&
++    body !== null &&
++    typeof (body as OAuthErrorResponse).error_description === 'string'
++  )
++}
++
++/** Downloads (.xlsx/.pdf) usam responseType 'blob': o corpo do erro chega como Blob JSON. */
++async function readBody(data: unknown): Promise<unknown> {
++  if (typeof Blob !== 'undefined' && data instanceof Blob) {
++    try {
++      const text = await data.text()
++      return text ? JSON.parse(text) : null
++    } catch {
++      return null
++    }
++  }
++  return data
++}
++
++function kindFromStatus(status: number, body: unknown): ApiErrorKind {
++  if (status === 401) return 'unauthorized'
++  if (status === 403) return 'forbidden'
++  if (status === 404) return 'not_found'
++  if (status === 409) return 'conflict'
++  if (status === 422) return isValidationBody(body) ? 'validation' : 'business'
++  if (status === 400) return 'bad_request'
++  if (status >= 500) return 'server'
++  return 'unknown'
++}
++
++function messageFrom(status: number, kind: ApiErrorKind, body: unknown): string {
++  // 422 de Bean Validation: "Dados inválidos" é genérico; a mensagem útil está nos campos
++  if (kind === 'validation') {
++    const first = (body as ValidationError).errors[0]
++    return first ? `${DEFAULT_MESSAGES[422]} (${first.message})` : DEFAULT_MESSAGES[422]
++  }
++  // 5xx: não expor detalhes internos
++  if (kind === 'server') return DEFAULT_MESSAGES[500]
++
++  if (isCustomErrorBody(body) && body.error.trim()) return body.error
++  if (isOAuthErrorBody(body)) return body.error_description as string
++  return DEFAULT_MESSAGES[status] ?? `Erro inesperado (HTTP ${status}).`
++}
++
++function emitGlobalError(error: ApiError): void {
++  if (typeof window === 'undefined' || error.config?.suppressGlobalError) return
++  window.dispatchEvent(new CustomEvent<ApiError>(API_ERROR_EVENT, { detail: error }))
++}
++
++// Evita vários redirecionamentos quando requisições paralelas recebem 401 ao mesmo tempo
++let redirectingToLogin = false
++
++function handleUnauthorized(config?: InternalAxiosRequestConfig): void {
++  localStorage.removeItem(TOKEN_STORAGE_KEY)
++  if (config?.suppressAuthRedirect || redirectingToLogin) return
++  if (window.location.pathname.startsWith('/login')) return
++
++  redirectingToLogin = true
++  const from = encodeURIComponent(window.location.pathname + window.location.search)
++  // window.location (e não navigate) de propósito: zera o estado do AuthContext
++  window.location.replace(`/login?reason=expired&from=${from}`)
++}
++
++async function normalizeError(error: AxiosError): Promise<ApiError> {
++  const config = error.config
++
++  // Sem resposta: rede caída, CORS, backend fora do ar ou timeout
++  if (!error.response) {
++    const isTimeout = error.code === AxiosError.ECONNABORTED || error.code === AxiosError.ETIMEDOUT
++    return new ApiError({
++      message: isTimeout ? TIMEOUT_MESSAGE : NETWORK_MESSAGE,
++      status: null,
++      kind: isTimeout ? 'timeout' : 'network',
++      config,
++    })
++  }
++
++  const { status } = error.response
++  const body = await readBody(error.response.data)
++  const kind = kindFromStatus(status, body)
++
++  const fieldErrors: Record<string, string> = {}
++  if (isValidationBody(body)) {
++    for (const { fieldName, message } of body.errors) fieldErrors[fieldName] = message
++  }
++
++  return new ApiError({
++    message: messageFrom(status, kind, body),
++    status,
++    kind,
++    fieldErrors,
++    path: isCustomErrorBody(body) ? body.path : config?.url ?? null,
++    body,
++    response: error.response,
++    config,
++  })
++}
++
++// ─── Instância ───────────────────────────────────────────────────
++
++const api: AxiosInstance = axios.create({
++  baseURL: API_BASE_URL,
++  timeout: 15000,
++  headers: { 'Content-Type': 'application/json' },
++})
++
++api.interceptors.request.use((config) => {
++  const token = localStorage.getItem(TOKEN_STORAGE_KEY)
++  if (token) config.headers.set('Authorization', `Bearer ${token}`)
++  return config
++})
++
++api.interceptors.response.use(
++  (response) => response,
++  async (error: unknown) => {
++    // Requisição cancelada pela própria tela (AbortController): não é erro de verdade
++    if (axios.isCancel(error)) return Promise.reject(error)
++    if (!axios.isAxiosError(error)) return Promise.reject(error)
++
++    const apiError = await normalizeError(error)
++
++    switch (apiError.kind) {
++      case 'unauthorized':
++        handleUnauthorized(apiError.config)
++        break
++      case 'forbidden':
++        console.warn('[API] 403 — permissão insuficiente:', apiError.path)
++        emitGlobalError(apiError)
++        break
++      case 'conflict':
++      case 'server':
++      case 'network':
++      case 'timeout':
++        emitGlobalError(apiError)
++        break
++      case 'validation':
++      case 'business':
++        // 422: a própria tela exibe (fieldErrors nos inputs / mensagem no formulário)
++        break
++      default:
++        break
++    }
++
++    if (apiError.kind === 'server') console.error('[API] Erro no servidor:', apiError.body)
++
++    return Promise.reject(apiError)
++  },
++)
++
++export default api
+diff --git a/Source/synccarreira-frontend/src/types/api.ts b/Source/synccarreira-frontend/src/types/api.ts
+new file mode 100644
+index 0000000..2e632ad
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/types/api.ts
+@@ -0,0 +1,720 @@
++/**
++ * @file api.ts
++ * @description Contratos TypeScript espelhando os DTOs do synccarreira-api (Spring Boot).
++ *
++ * Convenções de serialização (Jackson):
++ *  - `Long` / `Integer` / `Double`  → number
++ *  - `Instant`                      → string ISO-8601 com fuso (ex.: "2026-10-25T13:00:00Z")
++ *  - `LocalDateTime`                → string ISO-8601 sem fuso (ex.: "2026-10-26T14:30:00")
++ *  - `LocalDate`                    → string "yyyy-MM-dd"
++ *  - Campos de wrapper (Integer, Long, Double...) podem vir `null`; primitivos (int, boolean) nunca.
++ *
++ * ATENÇÃO: alguns nomes de campo reproduzem grafias do backend (`schollarYear` em StudentDTO /
++ * StudentInsertDTO vs. `scholarYear` em StudentDetailsDTO). Não "corrija" aqui sem corrigir lá.
++ */
++
++// ════════════════════════════════════════════════════════════════
++// Tipos utilitários
++// ════════════════════════════════════════════════════════════════
++
++/** java.time.Instant serializado. */
++export type IsoInstant = string
++/** java.time.LocalDateTime serializado (sem fuso). */
++export type IsoLocalDateTime = string
++/** java.time.LocalDate serializado ("yyyy-MM-dd"). */
++export type IsoLocalDate = string
++
++/** org.springframework.data.domain.Page<T> (formato padrão do Spring Data). */
++export interface Page<T> {
++  content: T[]
++  totalElements: number
++  totalPages: number
++  size: number
++  /** Índice da página atual (base 0). */
++  number: number
++  numberOfElements: number
++  first: boolean
++  last: boolean
++  empty: boolean
++}
++
++/** Parâmetros aceitos por endpoints com `Pageable`. */
++export interface PageableParams {
++  page?: number
++  size?: number
++  /** Ex.: "name,asc" */
++  sort?: string
++}
++
++// ════════════════════════════════════════════════════════════════
++// Enums (entities/enums)
++// ════════════════════════════════════════════════════════════════
++
++export const ROLES = {
++  ADMIN: 'ROLE_ADMIN',
++  PSICOLOGA: 'ROLE_PSICOLOGA',
++  USER: 'ROLE_USER',
++} as const
++export type RoleAuthority = (typeof ROLES)[keyof typeof ROLES]
++
++export type FeedbackType = 'JORNADA' | 'SESSAO'
++export type InstitutionType = 'PUBLICA' | 'PARTICULAR' | 'ONG'
++export type KnowledgeArea = 'HUMANAS' | 'BIOLOGICAS' | 'EXATAS' | 'ARTES'
++export type ProgressStatus = 'NAO_INICIADA' | 'EM_ANDAMENTO' | 'CONCLUIDA'
++export type QuestionType = 'MULTIPLA_ESCOLHA' | 'CHECKBOX' | 'LIKERT' | 'ABERTA'
++export type ScheduleStatus = 'AGENDADA' | 'CANCELADA' | 'REALIZADA'
++export type ScheduleType = 'INDIVIDUAL' | 'GRUPO'
++export type TrailName = 'AUTOCONHECIMENTO' | 'INFLUENCIAS' | 'INFORMACAO' | 'PLANO_DE_FUTURO'
++
++/** Rótulos de exibição (pt-BR) para os enums mais usados na UI. */
++export const TRAIL_LABELS: Record<TrailName, string> = {
++  AUTOCONHECIMENTO: 'Autoconhecimento',
++  INFLUENCIAS: 'Influências Externas',
++  INFORMACAO: 'Informação Profissional',
++  PLANO_DE_FUTURO: 'Projeto de Futuro',
++}
++
++export const KNOWLEDGE_AREA_LABELS: Record<KnowledgeArea, string> = {
++  HUMANAS: 'Ciências Humanas & Sociais',
++  BIOLOGICAS: 'Ciências Biológicas & Saúde',
++  EXATAS: 'Ciências Exatas & Tecnologia',
++  ARTES: 'Artes, Design & Comunicação',
++}
++
++export const PROGRESS_STATUS_LABELS: Record<ProgressStatus, string> = {
++  NAO_INICIADA: 'Não iniciada',
++  EM_ANDAMENTO: 'Em andamento',
++  CONCLUIDA: 'Concluída',
++}
++
++export const SCHEDULE_STATUS_LABELS: Record<ScheduleStatus, string> = {
++  AGENDADA: 'Agendada',
++  CANCELADA: 'Cancelada',
++  REALIZADA: 'Realizada',
++}
++
++// ════════════════════════════════════════════════════════════════
++// Limites de validação (constantes dos DTOs Java)
++// ════════════════════════════════════════════════════════════════
++
++export const VALIDATION_LIMITS = {
++  /** UserInsertDTO.password / NewPasswordDTO.password — @Size(min = 8) */
++  PASSWORD_MIN_LENGTH: 8,
++  /** StudentAffinityDTO.MIN / MAX */
++  AFFINITY_MIN: 0,
++  AFFINITY_MAX: 5,
++  /** SynthesisInsertDTO.MAX_CONTENT_LENGTH */
++  SYNTHESIS_MAX_LENGTH: 5000,
++  /** FeedbackDTO.MAX_CONTENT_LENGTH */
++  FEEDBACK_MAX_LENGTH: 5000,
++  /** InformationLinkInsertDTO */
++  LINK_TOPIC_MAX_LENGTH: 255,
++  LINK_URL_MAX_LENGTH: 500,
++  /** InformationLinkInsertDTO.url — @Pattern */
++  LINK_URL_PATTERN: /^\s*https?:\/\/\S+\s*$/,
++} as const
++
++// ════════════════════════════════════════════════════════════════
++// Erros (dto/CustomError, dto/ValidationError, dto/FieldMessage)
++// ════════════════════════════════════════════════════════════════
++
++/** Corpo padrão de erro do ControllerExceptionHandler. */
++export interface CustomError {
++  timestamp: IsoInstant
++  status: number
++  /** Mensagem legível (ex.: "Dados inválidos", "Recurso não encontrado"). */
++  error: string
++  path: string
++}
++
++export interface FieldMessage {
++  fieldName: string
++  message: string
++}
++
++/** 422 de Bean Validation (MethodArgumentNotValidException). */
++export interface ValidationError extends CustomError {
++  errors: FieldMessage[]
++}
++
++/** Erro do Authorization Server (POST /oauth2/token) — formato OAuth2, não CustomError. */
++export interface OAuthErrorResponse {
++  error: string
++  error_description?: string
++}
++
++// ════════════════════════════════════════════════════════════════
++// AUTH — /oauth2/token, /auth, /users/me
++// ════════════════════════════════════════════════════════════════
++
++/** Body form-urlencoded de POST /oauth2/token (grant customizado "password"). */
++export interface OAuthPasswordGrantRequest {
++  grant_type: 'password'
++  username: string
++  password: string
++}
++
++/** Resposta de POST /oauth2/token. */
++export interface OAuthTokenResponse {
++  access_token: string
++  token_type: 'Bearer'
++  expires_in: number
++  scope?: string
++}
++
++/** Claims do JWT emitido (AuthorizationServerConfig.tokenCustomizer). */
++export interface JwtClaims {
++  sub: string
++  username: string
++  authorities: RoleAuthority[]
++  exp: number
++  iat: number
++  iss?: string
++}
++
++/** dto/RoleDTO */
++export interface RoleDTO {
++  id: number
++  authority: RoleAuthority
++}
++
++/** dto/UserDTO — também retornado por GET /users/me. */
++export interface UserDTO {
++  id: number
++  name: string
++  email: string
++  roles: RoleDTO[]
++}
++
++/** PUT /auth/new-password (público — primeiro acesso / recuperação). */
++export interface NewPasswordDTO {
++  token: string
++  password: string
++}
++
++/**
++ * Usuário de sessão como o AuthContext o mantém hoje (authService.me()).
++ * `nome`/`perfil` são aliases legados; prefira `name`/`roles`.
++ */
++export interface AuthUser {
++  id: number
++  nome: string
++  name?: string
++  email: string
++  /** Legado: primeira authority do Set (ordem NÃO garantida). Não usar para RBAC. */
++  perfil?: string
++  roles: RoleDTO[]
++}
++
++// ════════════════════════════════════════════════════════════════
++// ADMIN — usuários, psicólogas, alunos, instituições, turmas, trilhas, perguntas
++// ════════════════════════════════════════════════════════════════
++
++/** POST /users */
++export interface UserInsertDTO {
++  name: string
++  email: string
++  roleId: number
++  password: string
++}
++
++/** PUT /users/{id} */
++export interface UserUpdateDTO {
++  name: string
++  email: string
++  roleId: number
++}
++
++/** dto/PsychologistDTO — GET /psychologists, /psychologists/{id} */
++export interface PsychologistDTO {
++  id: number
++  name: string
++  email: string
++  crp: string
++  contractExpirationDate: IsoLocalDate
++  institutionId: number | null
++  institutionName: string | null
++  isContractValid: boolean
++  roles: RoleDTO[]
++}
++
++/** POST /psychologists e PUT /psychologists/{id} */
++export interface PsychologistInsertDTO {
++  name: string
++  email: string
++  crp: string
++  institutionId?: number | null
++  contractExpirationDate: IsoLocalDate
++}
++
++/** dto/StudentDTO — GET /students/{id}, retorno de POST/PUT /students */
++export interface StudentDTO {
++  id: number
++  name: string
++  email: string
++  roles: RoleDTO[]
++  /** Grafia do backend: "schollarYear". */
++  schollarYear: string | null
++  schoolType: string | null
++  race: string | null
++}
++
++/** dto/StudentDetailsDTO — itens de GET /students (Page) */
++export interface StudentDetailsDTO {
++  id: number
++  name: string
++  email: string
++  scholarYear: string | null
++  schoolType: string | null
++  race: string | null
++  className: string | null
++  institutionName: string | null
++}
++
++/** POST /students e PUT /students/{id} */
++export interface StudentInsertDTO {
++  name: string
++  email: string
++  /** Grafia do backend: "schollarYear". */
++  schollarYear?: string | null
++  schoolType?: string | null
++  race?: string | null
++}
++
++/** dto/InstitutionDTO */
++export interface InstitutionDTO {
++  id: number
++  legalName: string
++  tradeName: string | null
++  cnpj: string
++  type: InstitutionType
++  active: boolean
++  classCount: number
++  createdAt: IsoInstant
++}
++
++/** POST /institutions */
++export interface InstitutionInsertDTO {
++  legalName: string
++  tradeName?: string | null
++  cnpj: string
++  type: InstitutionType
++}
++
++/** PUT /institutions/{id} */
++export interface InstitutionUpdateDTO extends InstitutionInsertDTO {
++  active: boolean
++}
++
++/** dto/SchoolClassDTO */
++export interface SchoolClassDTO {
++  id: number
++  name: string
++  schoolYear: number
++  institutionId: number
++  institutionName: string
++  createdAt: IsoInstant
++}
++
++/** POST /classes */
++export interface SchoolClassInsertDTO {
++  name: string
++  schoolYear: number
++  institutionId: number
++}
++
++/** PUT /classes/{id} */
++export interface SchoolClassUpdateDTO {
++  name: string
++  schoolYear: number
++}
++
++/** dto/TrailDTO — GET /trails (público), POST /trails */
++export interface TrailDTO {
++  id: number
++  name: TrailName
++  sequentialOrder: number | null
++}
++
++/** PUT /trails/{id} */
++export interface TrailUpdateDTO {
++  name: TrailName
++  sequentialOrder?: number | null
++}
++
++/** dto/QuestionOptionDTO */
++export interface QuestionOptionDTO {
++  id: number
++  optionText: string
++  humanitiesWeight: number | null
++  biologicalSciencesWeight: number | null
++  exactSciencesWeight: number | null
++  artsWeight: number | null
++}
++
++/** dto/QuestionDTO — leitura e escrita (POST/PUT /questions). */
++export interface QuestionDTO {
++  id: number | null
++  content: string
++  questionType: QuestionType
++  trailId: number
++  options: QuestionOptionDTO[]
++}
++
++// ════════════════════════════════════════════════════════════════
++// PSICÓLOGA — painel, relatórios, agenda, feedbacks, curadoria de links
++// ════════════════════════════════════════════════════════════════
++
++/** PanelDTOs.TrailProgress */
++export interface TrailProgress {
++  trailId: number
++  trailName: TrailName
++  sequentialOrder: number | null
++  answeredQuestions: number
++  totalQuestions: number
++  progressPercentage: number
++  synthesisSubmitted: boolean
++  status: ProgressStatus
++}
++
++/** PanelDTOs.StudentStatus */
++export interface StudentStatus {
++  studentId: number
++  studentName: string
++  schoolClassId: number | null
++  schoolClassName: string | null
++  answeredQuestions: number
++  totalQuestions: number
++  progressPercentage: number
++  concludedTrails: number
++  totalTrails: number
++  currentTrail: TrailName | null
++  finalSynthesisSubmitted: boolean
++  journeyStatus: ProgressStatus
++  inDoubt: boolean
++  doubtFlaggedAt: IsoInstant | null
++  trails: TrailProgress[]
++}
++
++/** PanelDTOs.PanelSummary — GET /psychologist-panel/{psychologistId} */
++export interface PanelSummary {
++  totalStudents: number
++  notStartedStudents: number
++  inProgressStudents: number
++  concludedStudents: number
++  inDoubtStudents: number
++  students: StudentStatus[]
++}
++
++/** ReportDTOs.StudentReport (base dos .xlsx) */
++export interface StudentReport {
++  studentId: number
++  name: string
++  email: string
++  scholarYear: string | null
++  schoolType: string | null
++  race: string | null
++  schoolClassName: string | null
++  schoolYear: number | null
++  institutionName: string | null
++  humanitiesScore: number | null
++  exactSciencesScore: number | null
++  biologicalSciencesScore: number | null
++  artsScore: number | null
++  highestScoreAreas: KnowledgeArea[]
++  status: StudentStatus
++  syntheses: SynthesisDTO[]
++}
++
++/** ReportDTOs.ClassReport */
++export interface ClassReport {
++  schoolClassId: number
++  schoolClassName: string
++  schoolYear: number | null
++  institutionName: string | null
++  totalStudents: number
++  notStartedStudents: number
++  inProgressStudents: number
++  concludedStudents: number
++  inDoubtStudents: number
++  students: StudentReport[]
++}
++
++/** MIME dos relatórios (ReportFile.XLSX_MEDIA_TYPE). */
++export const XLSX_MEDIA_TYPE =
++  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
++
++/** dto/AppointmentParticipantDTO */
++export interface AppointmentParticipantDTO {
++  id: number
++  name: string
++  email: string
++}
++
++/** dto/AppointmentDTO */
++export interface AppointmentDTO {
++  id: number
++  title: string
++  description: string | null
++  dateTime: IsoLocalDateTime
++  durationMinutes: number
++  scheduleType: ScheduleType
++  scheduleStatus: ScheduleStatus
++  psychologist: AppointmentParticipantDTO
++  students: AppointmentParticipantDTO[]
++  googleEventId: string | null
++  meetLink: string | null
++  calendarLink: string | null
++  feedback: string | null
++  feedbackDate: IsoLocalDateTime | null
++  cancelReason: string | null
++}
++
++/** POST /appointments e PUT /appointments/{id} */
++export interface AppointmentInsertDTO {
++  title: string
++  description?: string | null
++  /** Deve estar no futuro (@Future). */
++  dateTime: IsoLocalDateTime
++  /** > 0 (@Positive). */
++  durationMinutes: number
++  scheduleType: ScheduleType
++  psychologistId: number
++  /** Ao menos um aluno (@NotEmpty). */
++  studentIds: number[]
++  googleEventId?: string | null
++  meetLink?: string | null
++  calendarLink?: string | null
++}
++
++/** PATCH /appointments/{id}/cancel */
++export interface AppointmentCancelDTO {
++  cancelReason: string
++}
++
++/** PUT /appointments/{id}/feedback */
++export interface AppointmentFeedbackDTO {
++  feedback: string
++}
++
++/** dto/feedback/FeedbackDTO */
++export interface FeedbackDTO {
++  id: number
++  type: FeedbackType
++  content: string
++  studentId: number
++  studentName: string
++  psychologistId: number
++  psychologistName: string
++  journeyNumber: number | null
++  appointmentId: number | null
++  appointmentTitle: string | null
++  appointmentDateTime: IsoLocalDateTime | null
++  createdAt: IsoInstant
++  readAt: IsoInstant | null
++  read: boolean
++}
++
++/** POST /feedbacks/journey */
++export interface JourneyFeedbackInsertDTO {
++  studentId: number
++  journeyNumber?: number | null
++  content: string
++}
++
++/** POST /feedbacks/session */
++export interface SessionFeedbackInsertDTO {
++  appointmentId: number
++  studentId: number
++  content: string
++}
++
++/** GET /feedbacks/panel/{psychologistId} */
++export interface StudentFeedbackStatusDTO {
++  studentId: number
++  studentName: string
++  schoolClassName: string | null
++  concludedJourneys: number
++  lastConcludedJourneyNumber: number | null
++  journeyFeedbackSent: boolean
++  sessionFeedbacksSent: number
++}
++
++/** dto/InformationLinkDTO */
++export interface InformationLinkDTO {
++  id: number
++  topic: string
++  url: string
++  knowledgeArea: KnowledgeArea | null
++}
++
++/** POST /information-links */
++export interface InformationLinkInsertDTO {
++  topic: string
++  url: string
++  knowledgeArea?: KnowledgeArea | null
++}
++
++// ════════════════════════════════════════════════════════════════
++// ALUNO — perfil, trilhas, respostas, sínteses, jornada, resultado
++// ════════════════════════════════════════════════════════════════
++
++/** dto/StudentAffinityDTO — PUT /students/me/affinities (cada valor entre 0 e 5). */
++export interface StudentAffinityDTO {
++  humanities: number
++  exactSciences: number
++  biologicalSciences: number
++  arts: number
++}
++
++/** dto/StudentScoreDTO — GET /students/{id}/score */
++export interface StudentScoreDTO {
++  studentId: number
++  humanitiesScore: number | null
++  exactSciencesScore: number | null
++  biologicalSciencesScore: number | null
++  artsScore: number | null
++}
++
++/** dto/StudentProfileDTO — GET /students/me */
++export interface StudentProfileDTO {
++  id: number
++  name: string
++  email: string
++  profileCompleted: boolean
++  profileCompletedAt: IsoInstant | null
++  affinities: StudentAffinityDTO | null
++  score: StudentScoreDTO | null
++}
++
++/** dto/AnswerDTO — GET /answers */
++export interface AnswerDTO {
++  id: number
++  content: string | null
++  student: StudentDTO
++  questionOptionDTO: QuestionOptionDTO
++}
++
++/** POST /answers */
++export interface AnswerInsertDTO {
++  questionOptionId: number
++}
++
++/** dto/SynthesisDTO — GET /syntheses/me */
++export interface SynthesisDTO {
++  id: number
++  content: string
++  trailId: number | null
++  trailName: TrailName | null
++  trailSequentialOrder: number | null
++  journeySynthesis: boolean
++  createdAt: IsoInstant
++}
++
++/** POST /syntheses (content ≤ 5000). */
++export interface SynthesisInsertDTO {
++  trailId: number
++  content: string
++}
++
++/** GET|POST /journey/doubt */
++export interface JourneyDoubtDTO {
++  studentId: number
++  inDoubt: boolean
++  doubtFlaggedAt: IsoInstant | null
++}
++
++/** GET /journeys/me/current, POST /journeys/me/new */
++export interface JourneyStatusDTO {
++  currentJourneyNumber: number | null
++  currentJourneyStartedAt: IsoInstant | null
++  currentJourneyConcluded: boolean
++  concludedJourneys: number
++}
++
++/** GET /journeys/me (histórico) */
++export interface JourneyRecordDTO {
++  id: number
++  journeyNumber: number
++  startedAt: IsoInstant
++  concludedAt: IsoInstant | null
++  schoolClassName: string | null
++  schoolYear: number | null
++  institutionName: string | null
++  humanitiesScore: number | null
++  exactSciencesScore: number | null
++  biologicalSciencesScore: number | null
++  artsScore: number | null
++  affinities: StudentAffinityDTO | null
++  highestScoreAreas: KnowledgeArea[]
++  inDoubt: boolean
++  doubtFlaggedAt: IsoInstant | null
++}
++
++/** JourneyContent.AnswerContent */
++export interface JourneyAnswerContent {
++  question: string
++  questionType: QuestionType
++  answer: string
++}
++
++/** JourneyContent.TrailContent */
++export interface JourneyTrailContent {
++  trailName: TrailName
++  sequentialOrder: number | null
++  answers: JourneyAnswerContent[]
++  synthesis: string | null
++  synthesisCreatedAt: IsoInstant | null
++}
++
++/** JourneyContent.LinkContent */
++export interface JourneyLinkContent {
++  topic: string
++  url: string
++  knowledgeArea: KnowledgeArea | null
++}
++
++/** dto/journey/JourneyContent */
++export interface JourneyContent {
++  trails: JourneyTrailContent[]
++  links: JourneyLinkContent[]
++}
++
++/** dto/result/AreaScoreDTO */
++export interface AreaScoreDTO {
++  area: KnowledgeArea
++  areaName: string
++  score: number
++  maxScore: number
++  percentage: number
++  highlighted: boolean
++}
++
++/** dto/result/SubareaDTO */
++export interface SubareaDTO {
++  id: number
++  area: KnowledgeArea
++  name: string
++  description: string | null
++  careers: string[]
++}
++
++/** GET /journey/result e GET /journeys/me/{journeyId}/result */
++export interface JourneyResultDTO {
++  journeyId: number
++  journeyNumber: number
++  concludedAt: IsoInstant | null
++  scores: AreaScoreDTO[]
++  highlightedAreas: KnowledgeArea[]
++  suggestions: SubareaDTO[]
++  disclaimer: string
++}
++
++/** GET /information-links/me — Pilar 03 (Informação Profissional). */
++export interface InformationTrailDTO {
++  recommendedAreas: KnowledgeArea[]
++  score: StudentScoreDTO | null
++  areaScores: AreaScoreDTO[]
++  careerLinks: InformationLinkDTO[]
++  universityAccessLinks: InformationLinkDTO[]
++}
+diff --git a/Source/synccarreira-frontend/src/vite-env.d.ts b/Source/synccarreira-frontend/src/vite-env.d.ts
+new file mode 100644
+index 0000000..c896650
+--- /dev/null
++++ b/Source/synccarreira-frontend/src/vite-env.d.ts
+@@ -0,0 +1,12 @@
++/// <reference types="vite/client" />
++
++interface ImportMetaEnv {
++  /** Raiz da API, sem /api/v1 (ex.: http://localhost:8080). */
++  readonly VITE_API_URL?: string
++  readonly VITE_GOOGLE_CLIENT_ID?: string
++  readonly VITE_APPOINTMENTS_MOCK?: string
++}
++
++interface ImportMeta {
++  readonly env: ImportMetaEnv
++}
+diff --git a/Source/synccarreira-frontend/tsconfig.json b/Source/synccarreira-frontend/tsconfig.json
+new file mode 100644
+index 0000000..38b42ca
+--- /dev/null
++++ b/Source/synccarreira-frontend/tsconfig.json
+@@ -0,0 +1,25 @@
++{
++  "compilerOptions": {
++    "target": "ES2020",
++    "lib": ["ES2022", "DOM", "DOM.Iterable"],
++    "module": "ESNext",
++    "moduleResolution": "Bundler",
++    "jsx": "react-jsx",
++    "strict": true,
++    "noEmit": true,
++    "skipLibCheck": true,
++    "isolatedModules": true,
++    "resolveJsonModule": true,
++    "noUnusedLocals": true,
++    "noUnusedParameters": true,
++    "noFallthroughCasesInSwitch": true,
++
++    "allowJs": true,
++    "checkJs": false,
++
++    "baseUrl": ".",
++    "paths": { "@/*": ["src/*"] },
++    "types": ["vite/client"]
++  },
++  "include": ["src"]
++}
