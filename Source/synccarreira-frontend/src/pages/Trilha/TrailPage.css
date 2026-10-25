@@ -423,9 +423,9 @@
 }
 
 .tp-likert__scale {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
-  justify-content: space-between;
 }
 
 .tp-likert__btn {
@@ -454,6 +454,13 @@
 }
 
 .tp-likert__btn:active { transform: scale(0.96); }
+
+.tp-likert__notice {
+  margin: 2px 0 0;
+  color: var(--sc-muted);
+  font-size: 11px;
+  line-height: 1.5;
+}
 
 /* ── Feedback de salvamento ────────────────────────────────── */
 .tp-question__save-feedback {
