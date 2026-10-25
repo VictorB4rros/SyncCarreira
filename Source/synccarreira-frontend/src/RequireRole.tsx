@@ -123,12 +123,12 @@ function NoRoleScreen() {
 
 // ─── Guardas ─────────────────────────────────────────────────────
 
-interface RequireRoleProps {
+type RequireRoleProps = Readonly<{
   /** Perfis com acesso. Omitido = qualquer usuário autenticado com perfil válido. */
   allow?: readonly RoleAuthority[]
   /** Conteúdo protegido. Omitido = renderiza <Outlet /> (uso como layout route). */
   children?: ReactNode
-}
+}>
 
 /**
  * Protege rotas por perfil.
@@ -162,7 +162,11 @@ export function RequireRole({ allow, children }: RequireRoleProps) {
 }
 
 /** Rotas só para visitantes (ex.: /login). Logado → home do próprio perfil. */
-export function RequireGuest({ children }: { children?: ReactNode }) {
+type RequireGuestProps = Readonly<{
+  children?: ReactNode
+}>
+
+export function RequireGuest({ children }: RequireGuestProps) {
   const { user } = useTypedAuth()
   if (user && getPrimaryRole(user)) return <Navigate to={getHomePath(user)} replace />
   return children ? <>{children}</> : <Outlet />

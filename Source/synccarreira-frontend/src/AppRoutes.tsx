@@ -63,7 +63,20 @@ const TrailPage = page(() => import('../pages/Trilha/TrailPage.jsx'))
 
 // ─── Estados de carregamento e fallback ──────────────────────────
 
-function PageLoader({ fullScreen = false }: { fullScreen?: boolean }) {
+type PageLoaderProps = Readonly<{
+  fullScreen?: boolean
+}>
+
+type LazyProps = Readonly<{
+  children: ReactNode
+  fullScreen?: boolean
+}>
+
+type ComingSoonProps = Readonly<{
+  title: string
+}>
+
+function PageLoader({ fullScreen = false }: PageLoaderProps) {
   return (
     <div
       role="status"
@@ -79,12 +92,12 @@ function PageLoader({ fullScreen = false }: { fullScreen?: boolean }) {
 }
 
 /** Envolve cada tela lazy com seu próprio Suspense (o layout continua visível). */
-function Lazy({ children, fullScreen }: { children: ReactNode; fullScreen?: boolean }) {
+function Lazy({ children, fullScreen }: LazyProps) {
   return <Suspense fallback={<PageLoader fullScreen={fullScreen} />}>{children}</Suspense>
 }
 
 /** Telas dos itens de menu que ainda serão migradas nas próximas etapas. */
-function ComingSoon({ title }: { title: string }) {
+function ComingSoon({ title }: ComingSoonProps) {
   return (
     <section className="bg-white rounded-xl border border-slate-200 p-10 shadow-sm text-center space-y-3 max-w-xl mx-auto mt-10">
       <div className="mx-auto w-12 h-12 rounded-xl bg-[#EDE9FE] text-[#6D28D9] flex items-center justify-center">
@@ -120,13 +133,21 @@ function NotFound() {
 
 // ─── Redirecionamento de rotas legadas por perfil ────────────────
 
-type LegacyTargets = Partial<Record<'ADMIN' | 'PSICOLOGA' | 'USER', string>>
+type LegacyTargets = Readonly<Partial<Record<'ADMIN' | 'PSICOLOGA' | 'USER', string>>>
+
+type LegacyRedirectProps = Readonly<{
+  targets: LegacyTargets
+}>
+
+type WithProfileGateProps = Readonly<{
+  children: ReactNode
+}>
 
 /**
  * Converte uma rota antiga na equivalente do perfil, preservando a query string
  * (ex.: /agendamentos?nova=1 → /psicologa/agenda?nova=1). `:param` é substituído pelos params da URL.
  */
-function LegacyRedirect({ targets }: { targets: LegacyTargets }) {
+function LegacyRedirect({ targets }: LegacyRedirectProps) {
   const { user } = useTypedAuth()
   const params = useParams()
   const { search } = useLocation()
@@ -155,7 +176,7 @@ function roleKey(user: AuthUser): keyof LegacyTargets | null {
 }
 
 /** Páginas do aluno que exigem o perfil de afinidades preenchido. */
-function WithProfileGate({ children }: { children: ReactNode }) {
+function WithProfileGate({ children }: WithProfileGateProps) {
   return <StudentProfileGate>{children}</StudentProfileGate>
 }
 

@@ -17,13 +17,6 @@
 // Tipos utilitários
 // ════════════════════════════════════════════════════════════════
 
-/** java.time.Instant serializado. */
-export type IsoInstant = string
-/** java.time.LocalDateTime serializado (sem fuso). */
-export type IsoLocalDateTime = string
-/** java.time.LocalDate serializado ("yyyy-MM-dd"). */
-export type IsoLocalDate = string
-
 /** org.springframework.data.domain.Page<T> (formato padrão do Spring Data). */
 export interface Page<T> {
   content: T[]
@@ -120,7 +113,7 @@ export const VALIDATION_LIMITS = {
 
 /** Corpo padrão de erro do ControllerExceptionHandler. */
 export interface CustomError {
-  timestamp: IsoInstant
+  timestamp: string
   status: number
   /** Mensagem legível (ex.: "Dados inválidos", "Recurso não encontrado"). */
   error: string
@@ -231,7 +224,7 @@ export interface PsychologistDTO {
   name: string
   email: string
   crp: string
-  contractExpirationDate: IsoLocalDate
+  contractExpirationDate: string
   institutionId: number | null
   institutionName: string | null
   isContractValid: boolean
@@ -244,7 +237,7 @@ export interface PsychologistInsertDTO {
   email: string
   crp: string
   institutionId?: number | null
-  contractExpirationDate: IsoLocalDate
+  contractExpirationDate: string
 }
 
 /** dto/StudentDTO — GET /students/{id}, retorno de POST/PUT /students */
@@ -290,7 +283,7 @@ export interface InstitutionDTO {
   type: InstitutionType
   active: boolean
   classCount: number
-  createdAt: IsoInstant
+  createdAt: string
 }
 
 /** POST /institutions */
@@ -313,7 +306,7 @@ export interface SchoolClassDTO {
   schoolYear: number
   institutionId: number
   institutionName: string
-  createdAt: IsoInstant
+  createdAt: string
 }
 
 /** POST /classes */
@@ -392,7 +385,7 @@ export interface StudentStatus {
   finalSynthesisSubmitted: boolean
   journeyStatus: ProgressStatus
   inDoubt: boolean
-  doubtFlaggedAt: IsoInstant | null
+  doubtFlaggedAt: string | null
   trails: TrailProgress[]
 }
 
@@ -456,7 +449,7 @@ export interface AppointmentDTO {
   id: number
   title: string
   description: string | null
-  dateTime: IsoLocalDateTime
+  dateTime: string
   durationMinutes: number
   scheduleType: ScheduleType
   scheduleStatus: ScheduleStatus
@@ -466,7 +459,7 @@ export interface AppointmentDTO {
   meetLink: string | null
   calendarLink: string | null
   feedback: string | null
-  feedbackDate: IsoLocalDateTime | null
+  feedbackDate: string | null
   cancelReason: string | null
 }
 
@@ -475,7 +468,7 @@ export interface AppointmentInsertDTO {
   title: string
   description?: string | null
   /** Deve estar no futuro (@Future). */
-  dateTime: IsoLocalDateTime
+  dateTime: string
   /** > 0 (@Positive). */
   durationMinutes: number
   scheduleType: ScheduleType
@@ -509,9 +502,9 @@ export interface FeedbackDTO {
   journeyNumber: number | null
   appointmentId: number | null
   appointmentTitle: string | null
-  appointmentDateTime: IsoLocalDateTime | null
-  createdAt: IsoInstant
-  readAt: IsoInstant | null
+  appointmentDateTime: string | null
+  createdAt: string
+  readAt: string | null
   read: boolean
 }
 
@@ -582,7 +575,7 @@ export interface StudentProfileDTO {
   name: string
   email: string
   profileCompleted: boolean
-  profileCompletedAt: IsoInstant | null
+  profileCompletedAt: string | null
   affinities: StudentAffinityDTO | null
   score: StudentScoreDTO | null
 }
@@ -608,7 +601,7 @@ export interface SynthesisDTO {
   trailName: TrailName | null
   trailSequentialOrder: number | null
   journeySynthesis: boolean
-  createdAt: IsoInstant
+  createdAt: string
 }
 
 /** POST /syntheses (content ≤ 5000). */
@@ -621,13 +614,13 @@ export interface SynthesisInsertDTO {
 export interface JourneyDoubtDTO {
   studentId: number
   inDoubt: boolean
-  doubtFlaggedAt: IsoInstant | null
+  doubtFlaggedAt: string | null
 }
 
 /** GET /journeys/me/current, POST /journeys/me/new */
 export interface JourneyStatusDTO {
   currentJourneyNumber: number | null
-  currentJourneyStartedAt: IsoInstant | null
+  currentJourneyStartedAt: string | null
   currentJourneyConcluded: boolean
   concludedJourneys: number
 }
@@ -636,8 +629,8 @@ export interface JourneyStatusDTO {
 export interface JourneyRecordDTO {
   id: number
   journeyNumber: number
-  startedAt: IsoInstant
-  concludedAt: IsoInstant | null
+  startedAt: string
+  concludedAt: string | null
   schoolClassName: string | null
   schoolYear: number | null
   institutionName: string | null
@@ -648,7 +641,7 @@ export interface JourneyRecordDTO {
   affinities: StudentAffinityDTO | null
   highestScoreAreas: KnowledgeArea[]
   inDoubt: boolean
-  doubtFlaggedAt: IsoInstant | null
+  doubtFlaggedAt: string | null
 }
 
 /** JourneyContent.AnswerContent */
@@ -664,7 +657,7 @@ export interface JourneyTrailContent {
   sequentialOrder: number | null
   answers: JourneyAnswerContent[]
   synthesis: string | null
-  synthesisCreatedAt: IsoInstant | null
+  synthesisCreatedAt: string | null
 }
 
 /** JourneyContent.LinkContent */
@@ -703,7 +696,7 @@ export interface SubareaDTO {
 export interface JourneyResultDTO {
   journeyId: number
   journeyNumber: number
-  concludedAt: IsoInstant | null
+  concludedAt: string | null
   scores: AreaScoreDTO[]
   highlightedAreas: KnowledgeArea[]
   suggestions: SubareaDTO[]

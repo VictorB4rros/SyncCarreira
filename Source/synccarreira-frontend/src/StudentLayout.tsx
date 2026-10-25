@@ -116,6 +116,15 @@ function pickNextSession(appointments: AppointmentDTO[]): AppointmentDTO | null 
   )
 }
 
+/** Texto da pílula "Próxima Sessão" (substitui o ternário aninhado do JSX). */
+function describeSession(session: AppointmentDTO | null): string {
+  if (!session) return 'Nenhuma sessão agendada'
+  const date = parseLocalDateTime(session.dateTime)
+  if (!date) return 'Nenhuma sessão agendada'
+  const meetSuffix = session.meetLink ? ' (Meet)' : ''
+  return `${formatSessionDate(date)}${meetSuffix}`
+}
+
 /** Turma/instituição da jornada mais recente (o aluno não tem acesso a GET /students). */
 function latestRecord(records: JourneyRecordDTO[]): JourneyRecordDTO | null {
   return [...records].sort((x, y) => (y.journeyNumber ?? 0) - (x.journeyNumber ?? 0))[0] ?? null
@@ -146,7 +155,7 @@ function useStudentShellData(studentId: number | undefined, pathname: string) {
     const controller = new AbortController()
     const opts = { signal: controller.signal, suppressGlobalError: true }
 
-    Promise.allSettled([
+    void Promise.allSettled([
       api.get<JourneyStatusDTO>('/journeys/me/current', opts),
       api.get<JourneyRecordDTO[]>('/journeys/me', opts),
       api.get<AppointmentDTO[]>(`/appointments/student/${studentId}`, opts),
@@ -178,6 +187,33 @@ function useStudentShellData(studentId: number | undefined, pathname: string) {
   return { state, reload: () => setReloadKey((k) => k + 1) }
 }
 
+// ─── Props (imutáveis) ───────────────────────────────────────────
+
+type ShellProps = Readonly<{
+  shell: ShellState
+}>
+
+type UnreadBadgeProps = Readonly<{
+  state: ShellState
+}>
+
+type SidebarNavProps = Readonly<{
+  shell: ShellState
+  onNavigate: () => void
+}>
+
+type SidebarFooterProps = Readonly<{
+  name: string
+  shell: ShellState
+  loggingOut: boolean
+  onLogout: () => void
+}>
+
+type NextSessionCardProps = Readonly<{
+  shell: ShellState
+  onRetry: () => void
+}>
+
 // ─── Componentes visuais ─────────────────────────────────────────
 
 function BrandLogo() {
@@ -199,7 +235,7 @@ function BrandLogo() {
   )
 }
 
-function UnreadBadge({ state }: { state: ShellState }) {
+function UnreadBadge({ state }: UnreadBadgeProps) {
   if (state.status === 'loading') {
     return <span className="w-12 h-4 rounded-full bg-[#8e44ad]/60 animate-pulse" aria-label="Carregando feedbacks" />
   }
@@ -212,7 +248,7 @@ function UnreadBadge({ state }: { state: ShellState }) {
   )
 }
 
-function SidebarNav({ shell, onNavigate }: { shell: ShellState; onNavigate: () => void }) {
+function SidebarNav({ shell, onNavigate }: SidebarNavProps) {
   return (
     <nav className="flex flex-col gap-1 p-4 overflow-y-auto flex-1" aria-label="Navegação principal">
       {NAV_ITEMS.map(({ to, label, icon: Icon, end, showUnreadBadge }) => (
@@ -241,17 +277,7 @@ function SidebarNav({ shell, onNavigate }: { shell: ShellState; onNavigate: () =
   )
 }
 
-function SidebarFooter({
-  name,
-  shell,
-  loggingOut,
-  onLogout,
-}: {
-  name: string
-  shell: ShellState
-  loggingOut: boolean
-  onLogout: () => void
-}) {
+function SidebarFooter({ name, shell, loggingOut, onLogout }: SidebarFooterProps) {
   const record = shell.status === 'ready' ? shell.data.record : null
 
   return (
@@ -302,7 +328,7 @@ function SidebarFooter({
   )
 }
 
-function JourneyPill({ shell }: { shell: ShellState }) {
+function JourneyPill({ shell }: ShellProps) {
   if (shell.status === 'loading') {
     return <span className="hidden md:block h-6 w-44 rounded-full bg-[#fde7ff] animate-pulse" aria-label="Carregando jornada" />
   }
@@ -323,7 +349,7 @@ function JourneyPill({ shell }: { shell: ShellState }) {
   )
 }
 
-function NextSessionCard({ shell, onRetry }: { shell: ShellState; onRetry: () => void }) {
+function NextSessionCard({ shell, onRetry }: NextSessionCardProps) {
   const base =
     'hidden lg:flex items-center gap-1 px-2 py-1.5 rounded-xl bg-[#ffefff] text-[#320047] shadow-[0_2px_8px_-2px_rgba(91,44,111,0.05)]'
 
@@ -339,27 +365,25 @@ function NextSessionCard({ shell, onRetry }: { shell: ShellState; onRetry: () =>
     )
   }
 
-  const session = shell.data.nextSession
-  const date = session ? parseLocalDateTime(session.dateTime) : null
+  const sessionLabel = describeSession(shell.data.nextSession)
 
+  // O botão de retry é irmão do <Link> (botão dentro de <a> é HTML inválido)
   return (
-    <Link to={`${BASE}/sessoes`} className={`${base} hover:bg-[#fde7ff] transition-colors`}>
-      <Video className="w-[18px] h-[18px] text-[#732993] shrink-0" aria-hidden="true" />
-      <div className="flex flex-col">
-        <span className="text-[11px] leading-[14px] font-semibold text-[#320047]">Próxima Sessão</span>
-        <span className="text-xs leading-[18px] text-[#4e4350]">
-          {session && date
-            ? `${formatSessionDate(date)}${session.meetLink ? ' (Meet)' : ''}`
-            : 'Nenhuma sessão agendada'}
+    <div className={`${base} hover:bg-[#fde7ff] transition-colors`}>
+      <Link
+        to={`${BASE}/sessoes`}
+        className="flex items-center gap-1 rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-[#ecb2ff]"
+      >
+        <Video className="w-[18px] h-[18px] text-[#732993] shrink-0" aria-hidden="true" />
+        <span className="flex flex-col">
+          <span className="text-[11px] leading-[14px] font-semibold text-[#320047]">Próxima Sessão</span>
+          <span className="text-xs leading-[18px] text-[#4e4350]">{sessionLabel}</span>
         </span>
-      </div>
+      </Link>
       {shell.partialError && (
         <button
           type="button"
-          onClick={(e) => {
-            e.preventDefault()
-            onRetry()
-          }}
+          onClick={onRetry}
           title={`Alguns dados não carregaram: ${shell.partialError}`}
           aria-label="Recarregar dados do cabeçalho"
           className="ml-1 p-1 rounded-md text-[#ba1a1a] hover:bg-[#ffdad6] transition-colors"
@@ -367,7 +391,7 @@ function NextSessionCard({ shell, onRetry }: { shell: ShellState; onRetry: () =>
           <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
         </button>
       )}
-    </Link>
+    </div>
   )
 }
 
@@ -411,7 +435,13 @@ export default function StudentLayout() {
   return (
     <div className={`min-h-screen bg-[#fff7fb] text-[#320047] text-sm antialiased ${FONT}`}>
       {mobileOpen && (
-        <div className="fixed inset-0 z-40 bg-[#320047]/40 lg:hidden" onClick={closeMobile} aria-hidden="true" />
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={closeMobile}
+          aria-label="Fechar menu"
+          className="fixed inset-0 z-40 bg-[#320047]/40 lg:hidden cursor-default"
+        />
       )}
 
       {/* 1. SIDEBAR ESQUERDA FIXA */}

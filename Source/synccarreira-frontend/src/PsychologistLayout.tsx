@@ -10,7 +10,7 @@
  * Fonte:  Plus Jakarta Sans (fallback Inter)
  */
 
-import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { NavLink, Outlet, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import {
   AlertCircle,
@@ -75,7 +75,7 @@ function initialsOf(name?: string | null): string {
   if (!name) return '?'
   const parts = name.trim().split(/\s+/).filter((p) => !/^(dra?|sr|sra)\.?$/i.test(p))
   const first = parts[0]?.[0] ?? ''
-  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
+  const last = parts.length > 1 ? (parts.at(-1)?.[0] ?? '') : ''
   return (first + last).toUpperCase() || '?'
 }
 
@@ -166,33 +166,40 @@ function BrandMark() {
   )
 }
 
-function PendingBadge({ state, onRetry }: { state: LoadState<number>; onRetry: () => void }) {
+type PendingBadgeProps = Readonly<{
+  state: LoadState<number>
+}>
+
+type PendingRetryButtonProps = Readonly<{
+  message: string
+  onRetry: () => void
+}>
+
+type SidebarNavProps = Readonly<{
+  pending: LoadState<number>
+  onRetryPending: () => void
+  onNavigate: () => void
+}>
+
+type SidebarFooterProps = Readonly<{
+  name: string
+  email: string
+  loggingOut: boolean
+  onLogout: () => void
+  onNavigate: () => void
+}>
+
+type CalendarStatusPillProps = Readonly<{
+  email: string
+}>
+
+/** Badge informativo (não interativo) exibido dentro do link "Orientações". */
+function PendingBadge({ state }: PendingBadgeProps) {
   if (state.status === 'loading') {
     return <span className="w-16 h-5 rounded-full bg-slate-100 animate-pulse" aria-label="Carregando pendências" />
   }
-  if (state.status === 'error') {
-    return (
-      <span
-        role="button"
-        tabIndex={0}
-        title={`${state.message} Clique para tentar novamente.`}
-        onClick={(e) => {
-          e.preventDefault()
-          onRetry()
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            onRetry()
-          }
-        }}
-        className="text-rose-500 hover:text-rose-600 p-0.5 rounded"
-      >
-        <AlertCircle className="w-4 h-4" aria-hidden="true" />
-        <span className="sr-only">Erro ao carregar pendências. Tentar novamente.</span>
-      </span>
-    )
-  }
+  // Em caso de erro, o retry é um <button> nativo renderizado FORA do link (ver SidebarNav)
+  if (state.status === 'error') return null
   if (state.data <= 0) return null
   return (
     <span className="bg-[#FEF3C7] text-[#D97706] font-semibold text-xs px-2 py-0.5 rounded-full border border-[#FDE68A] whitespace-nowrap">
@@ -201,65 +208,64 @@ function PendingBadge({ state, onRetry }: { state: LoadState<number>; onRetry: (
   )
 }
 
-function SidebarNav({
-  pending,
-  onRetryPending,
-  onNavigate,
-}: {
-  pending: LoadState<number>
-  onRetryPending: () => void
-  onNavigate: () => void
-}) {
+/** Botão nativo de nova tentativa, irmão do link (botão dentro de <a> é HTML inválido). */
+function PendingRetryButton({ message, onRetry }: PendingRetryButtonProps) {
+  return (
+    <button
+      type="button"
+      onClick={onRetry}
+      title={`${message} Clique para tentar novamente.`}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-rose-500 hover:text-rose-600 p-0.5 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-rose-500/30"
+    >
+      <AlertCircle className="w-4 h-4" aria-hidden="true" />
+      <span className="sr-only">Erro ao carregar pendências. Tentar novamente.</span>
+    </button>
+  )
+}
+
+function SidebarNav({ pending, onRetryPending, onNavigate }: SidebarNavProps) {
   return (
     <nav className="flex-1 px-3 py-4 space-y-1" aria-label="Navegação principal">
       {NAV_ITEMS.map(({ to, label, icon: Icon, end, showPendingBadge }) => (
-        <NavLink
-          key={to}
-          to={to}
-          end={end}
-          onClick={onNavigate}
-          className={({ isActive }) =>
-            [
-              'flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors group focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/30',
-              isActive
-                ? 'rounded-r-xl bg-[#EDE9FE] text-[#6D28D9] font-bold border-l-4 border-[#6D28D9] shadow-xs'
-                : 'rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium',
-            ].join(' ')
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <span className="flex items-center gap-3 min-w-0">
-                <Icon
-                  className={`w-[18px] h-[18px] shrink-0 ${
-                    isActive ? 'text-[#6D28D9]' : 'text-slate-500 group-hover:text-slate-700'
-                  }`}
-                  aria-hidden="true"
-                />
-                <span className="truncate">{label}</span>
-              </span>
-              {showPendingBadge && <PendingBadge state={pending} onRetry={onRetryPending} />}
-            </>
+        <div key={to} className="relative">
+          <NavLink
+            to={to}
+            end={end}
+            onClick={onNavigate}
+            className={({ isActive }) =>
+              [
+                'flex items-center justify-between gap-3 px-3 py-2.5 text-sm transition-colors group focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500/30',
+                isActive
+                  ? 'rounded-r-xl bg-[#EDE9FE] text-[#6D28D9] font-bold border-l-4 border-[#6D28D9] shadow-xs'
+                  : 'rounded-lg text-slate-600 hover:bg-slate-50 hover:text-slate-900 font-medium',
+              ].join(' ')
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <span className="flex items-center gap-3 min-w-0">
+                  <Icon
+                    className={`w-[18px] h-[18px] shrink-0 ${
+                      isActive ? 'text-[#6D28D9]' : 'text-slate-500 group-hover:text-slate-700'
+                    }`}
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">{label}</span>
+                </span>
+                {showPendingBadge && <PendingBadge state={pending} />}
+              </>
+            )}
+          </NavLink>
+          {showPendingBadge && pending.status === 'error' && (
+            <PendingRetryButton message={pending.message} onRetry={onRetryPending} />
           )}
-        </NavLink>
+        </div>
       ))}
     </nav>
   )
 }
 
-function SidebarFooter({
-  name,
-  email,
-  loggingOut,
-  onLogout,
-  onNavigate,
-}: {
-  name: string
-  email: string
-  loggingOut: boolean
-  onLogout: () => void
-  onNavigate: () => void
-}) {
+function SidebarFooter({ name, email, loggingOut, onLogout, onNavigate }: SidebarFooterProps) {
   return (
     <div className="bg-[#F8FAFC] border-t border-slate-200 p-4 space-y-3 shrink-0">
       <div className="bg-purple-50 text-purple-900 border border-purple-100 rounded-lg py-1.5 px-2.5 text-xs flex items-center gap-2 font-medium">
@@ -390,7 +396,7 @@ function SearchBox() {
   )
 }
 
-function CalendarStatusPill({ email }: { email: string }) {
+function CalendarStatusPill({ email }: CalendarStatusPillProps) {
   const { configured, connected, connecting, error, connect } = useGoogleCalendarStatus(email)
   if (!configured) return null
 
@@ -406,28 +412,34 @@ function CalendarStatusPill({ email }: { email: string }) {
     )
   }
 
+  // Ícone e rótulo resolvidos fora do JSX (evita ternários aninhados)
+  let statusIcon: ReactNode
+  let statusLabel: string
+  if (connecting) {
+    statusIcon = <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+    statusLabel = 'Conectando...'
+  } else if (error) {
+    statusIcon = <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
+    statusLabel = 'Falha ao conectar — tentar de novo'
+  } else {
+    statusIcon = <span className="h-2 w-2 rounded-full bg-slate-400" aria-hidden="true" />
+    statusLabel = 'Conectar Google Calendar'
+  }
+
+  const toneClasses = error
+    ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100'
+    : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
+
   return (
     <button
       type="button"
       onClick={() => void connect()}
       disabled={connecting}
       title={error ?? 'Conecte para criar sessões com link do Google Meet'}
-      className={`hidden md:flex px-3 py-1.5 rounded-full text-xs font-semibold items-center gap-2 whitespace-nowrap border transition-colors disabled:cursor-wait ${
-        error
-          ? 'bg-rose-50 text-rose-600 border-rose-200 hover:bg-rose-100'
-          : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
-      }`}
+      className={`hidden md:flex px-3 py-1.5 rounded-full text-xs font-semibold items-center gap-2 whitespace-nowrap border transition-colors disabled:cursor-wait ${toneClasses}`}
     >
-      {connecting ? (
-        <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
-      ) : error ? (
-        <AlertCircle className="w-3.5 h-3.5" aria-hidden="true" />
-      ) : (
-        <span className="h-2 w-2 rounded-full bg-slate-400" aria-hidden="true" />
-      )}
-      <span>
-        {connecting ? 'Conectando...' : error ? 'Falha ao conectar — tentar de novo' : 'Conectar Google Calendar'}
-      </span>
+      {statusIcon}
+      <span>{statusLabel}</span>
     </button>
   )
 }
@@ -471,7 +483,13 @@ export default function PsychologistLayout() {
     <div className={`min-h-screen bg-[#F8FAFC] text-[#0F172A] antialiased ${FONT}`}>
       {/* Overlay mobile */}
       {mobileOpen && (
-        <div className="fixed inset-0 z-30 bg-slate-900/40 lg:hidden" onClick={closeMobile} aria-hidden="true" />
+        <button
+          type="button"
+          tabIndex={-1}
+          onClick={closeMobile}
+          aria-label="Fechar menu"
+          className="fixed inset-0 z-30 bg-slate-900/40 lg:hidden cursor-default"
+        />
       )}
 
       {/* 1. SIDEBAR ESQUERDA FIXA */}
