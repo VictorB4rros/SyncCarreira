@@ -14,7 +14,7 @@
  *
  * Tipos de pergunta suportados:
  * - CHECKBOX  → opções clicáveis (radio visual — 1 seleção por vez)
- * - LIKERT    → escala 1-5 com labels Discordo / Concordo
+ * - LIKERT    → escala de quatro opções, sem alternativa neutra
  *
  * @requires trailService, AuthContext, React Router
  */
@@ -42,13 +42,26 @@ const SAVE_DEBOUNCE = 300
 /** Labels da escala Likert */
 const LIKERT_LABELS = ['Discordo totalmente', 'Concordo totalmente']
 
-/** Texto lido pelo leitor de tela em cada botão da escala Likert. */
-function likertAriaLabel(val) {
-  if (val === 1) return `${val} — ${LIKERT_LABELS[0]}`
-  if (val === 5) return `${val} — ${LIKERT_LABELS[1]}`
-  return `${val} — `
+/** A escala visual usa quatro posições e não oferece a opção neutra. */
+const LIKERT_VALUES = [1, 2, 3, 4]
+
+function getLikertOptions(options = []) {
+  const neutralIndex = options.findIndex(option =>
+    /^neutro\.?$/i.test((option.optionText ?? '').trim()),
+  )
+
+  if (neutralIndex >= 0) {
+    return options.filter((_, index) => index !== neutralIndex).slice(0, 4)
+  }
+
+  // A API atual fornece cinco opções Likert; se o rótulo central variar,
+  // preserva os extremos e remove a posição central da escala ímpar.
+  if (options.length === 5) {
+    return options.filter((_, index) => index !== 2)
+  }
+
+  return options.slice(0, 4)
 }
-const LIKERT_VALUES = [1, 2, 3, 4, 5]
 
 // ─── Helpers de carregamento ──────────────────────────────────
 
@@ -153,17 +166,18 @@ function CheckboxQuestion({ question, selectedOptionId, onSelect, saveStatus }) 
 }
 
 /**
- * Pergunta do tipo LIKERT — escala 1 a 5.
+ * Pergunta do tipo LIKERT — quatro opções, sem ponto neutro.
  */
 function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
-  const selectedValue = question.options.findIndex(o => o.id === selectedOptionId) + 1 || null
+  const responseOptions = getLikertOptions(question.options)
+  const selectedValue = responseOptions.findIndex(option => option.id === selectedOptionId) + 1 || null
+  const selectedOption = question.options.find(option => option.id === selectedOptionId)
+  const selectedNeutralOptionIsHidden = Boolean(selectedOption && selectedValue === null)
 
   function handleClick(value) {
-    const opt = question.options[value - 1]
+    const opt = responseOptions[value - 1]
     if (opt) {
       onSelect(question.id, opt.id, opt.optionText || String(value))
-    } else {
-      onSelect(question.id, null, String(value))
     }
   }
 
@@ -172,7 +186,7 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
         <div className="tp-question__meta">
           <span className="tp-question__num">Pergunta {question.index}</span>
           <span className={`tp-question__badge${selectedOptionId ? ' tp-question__badge--done' : ''}`}>
-          {selectedOptionId ? '✓ Respondida' : 'Escala Likert'}
+          {selectedNeutralOptionIsHidden ? 'Atualize sua resposta' : selectedOptionId ? '✓ Respondida' : 'Escala Likert · 4 opções'}
         </span>
         </div>
 
@@ -184,19 +198,25 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
                 <span key={i} className="tp-likert__label">{label}</span>
             ))}
           </div>
-          <div className="tp-likert__scale">
+          <div className="tp-likert__scale" role="group" aria-label="Escala com quatro opções">
             {LIKERT_VALUES.map((val) => (
                 <button
                     key={val}
                     type="button"
                     className={`tp-likert__btn${selectedValue === val ? ' tp-likert__btn--selected' : ''}`}
                     onClick={() => handleClick(val)}
-                    aria-label={likertAriaLabel(val)}
+                    aria-label={`Opção ${val} — ${responseOptions[val - 1]?.optionText ?? ''}`}
+                    aria-pressed={selectedValue === val}
                 >
                   {val}
                 </button>
             ))}
           </div>
+          {selectedNeutralOptionIsHidden && (
+            <p className="tp-likert__notice" role="status">
+              Sua resposta anterior foi neutra. Selecione uma das quatro opções para atualizá-la.
+            </p>
+          )}
         </div>
 
         <SaveFeedback status={saveStatus} />
