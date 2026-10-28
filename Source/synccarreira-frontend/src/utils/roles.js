@@ -31,8 +31,13 @@ export function isAdministrator(user) {
   return authoritiesOf(user).includes('ROLE_ADMIN')
 }
 
-/** @returns {boolean} true se o usuário deve ver a visão de aluno */
+/**
+ * @returns {boolean} true se o usuário deve ver a visão de aluno.
+ *
+ * Aluno é EXCLUSIVAMENTE quem tem uma das STUDENT_ROLES. Antes, o fallback
+ * `|| !isPsychologist(user)` fazia qualquer não-psicóloga (inclusive ADMIN)
+ * cair no fluxo de aluno — gerando badge "Aluno" e 403 em /students/me.
+ */
 export function isStudent(user) {
-  const auths = authoritiesOf(user)
-  return auths.some(a => STUDENT_ROLES.includes(a)) || !isPsychologist(user)
+  return authoritiesOf(user).some(a => STUDENT_ROLES.includes(a))
 }
