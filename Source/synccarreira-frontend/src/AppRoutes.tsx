@@ -39,10 +39,10 @@ const NewPasswordPage = page(() => import('../pages/NewPassword/NewPasswordPage.
 
 // Admin
 const AccountManagementPage = page(() => import('../pages/Psicologas/AccountManagementPage.jsx'))
-const StudentFormPage = page(() => import('../pages/Psicologas/studentformPage.jsx'))
+const StudentFormPage = page(() => import('../pages/Psicologas/StudentFormPage.jsx'))
 
 // Psicóloga + Admin
-const StudentDetailPage = page(() => import('../pages/Psicologas/studentdetailPage.jsx'))
+const StudentDetailPage = page(() => import('../pages/Psicologas/StudentDetailPage.jsx'))
 
 // Psicóloga
 const ProgressDashboardPage = page(() => import('../pages/Psicologas/ProgressDashboardPage.jsx'))
