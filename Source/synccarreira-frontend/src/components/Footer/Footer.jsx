@@ -11,6 +11,7 @@
  * <Footer />
  */
 
+import { Link } from 'react-router-dom'
 import './Footer.css'
 
 /**
@@ -28,10 +29,9 @@ export default function Footer() {
       </span>
 
       <nav className="sc-footer__links" aria-label="Links institucionais">
-        {/* Páginas institucionais ainda não publicadas — quando existirem, trocar por <Link> */}
-        <button type="button">Privacidade</button>
-        <button type="button">Termos de Uso</button>
-        <button type="button">Suporte</button>
+        <Link to="/privacidade">Privacidade</Link>
+        <Link to="/termos">Termos de Uso</Link>
+        <Link to="/suporte">Suporte</Link>
       </nav>
     </footer>
   )
