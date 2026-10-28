@@ -1,7 +1,15 @@
+/* ═══════════════════════════════════════════════════════════════
+   src/pages/Admin/AccountManagementPage.css
+
+   Painel administrativo (gestão de usuários, turmas e instituições).
+   Mantém uma identidade sóbria de "painel de sistema", mas alinhada
+   à paleta do SyncCarreira (tokens em src/styles/variables.css).
+   ═══════════════════════════════════════════════════════════════ */
+
 .students-page {
     min-height: 100vh;
-    background: #f5f7f4;
-    color: #20332e;
+    background: var(--sc-bg);
+    color: var(--sc-text);
 }
 
 .students-main {
@@ -20,7 +28,7 @@
 
 .students-eyebrow {
     margin-bottom: 9px;
-    color: #527166;
+    color: var(--sc-roxo);
     font-size: 11px;
     font-weight: 750;
     letter-spacing: 1.2px;
@@ -34,7 +42,7 @@
 
 .students-description {
     margin-top: 8px;
-    color: #687a74;
+    color: var(--sc-muted);
     font-size: 14px;
 }
 
@@ -43,32 +51,33 @@
     min-height: 42px;
     padding: 0 16px;
     border: 1px solid transparent;
-    border-radius: 5px;
+    border-radius: var(--sc-radius-sm);
     font-size: 13px;
     font-weight: 650;
 }
 
 .students-primary {
-    background: #236653;
-    color: #fff;
+    background: var(--sc-roxo);
+    color: var(--sc-white);
 }
 
-.students-primary:hover { background: #1c5545; }
+.students-primary:hover { background: var(--sc-roxo-hover); }
 .students-primary:disabled { opacity: .6; cursor: wait; }
 .students-primary span { margin-right: 5px; font-size: 19px; vertical-align: -1px; }
 
 .students-secondary {
-    border-color: #d6e0db;
-    background: #fff;
-    color: #40534c;
+    border-color: var(--sc-border);
+    background: var(--sc-white);
+    color: var(--sc-text);
 }
 
 .students-summary {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin-top: 30px;
-    border: 1px solid #dfe7e2;
-    background: #fff;
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-white);
 }
 
 .students-summary > div {
@@ -79,9 +88,9 @@
     padding: 18px 24px;
 }
 
-.students-summary > div + div { border-left: 1px solid #e7ede9; }
-.students-summary span { color: #687a74; font-size: 13px; }
-.students-summary strong { color: #40534c; font-size: 17px; font-weight: 600; }
+.students-summary > div + div { border-left: 1px solid var(--sc-border); }
+.students-summary span { color: var(--sc-muted); font-size: 13px; }
+.students-summary strong { color: var(--sc-text); font-size: 17px; font-weight: 600; }
 
 .students-notice {
     margin-top: 16px;
@@ -94,18 +103,19 @@
 }
 
 .students-notice--mock {
-    border-left-color: #42866e;
-    background: #edf6f1;
-    color: #315c4d;
+    border-left-color: var(--sc-roxo);
+    background: var(--sc-roxo-soft);
+    color: var(--sc-roxo-hover);
 }
 
 .students-error {
     margin-top: 14px;
     padding: 11px 14px;
-    border: 1px solid #edc9c3;
-    background: #fff4f1;
-    color: #9b382b;
+    border: 1px solid var(--sc-error-brd);
+    background: var(--sc-error-bg);
+    color: var(--sc-error-txt);
     font-size: 13px;
+    border-radius: var(--sc-radius-sm);
 }
 
 .students-tools {
@@ -123,24 +133,24 @@
     width: 100%;
     height: 42px;
     padding: 0 12px;
-    border: 1px solid #d6e0db;
-    border-radius: 4px;
-    background: #fff;
-    color: #20332e;
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-white);
+    color: var(--sc-text);
     font-size: 13px;
 }
 
-.students-search input::placeholder { color: #899791; }
+.students-search input::placeholder { color: var(--sc-muted); }
 .students-search input:focus,
 .students-modal input:focus,
-.students-modal select:focus { outline: 2px solid #8ab7a5; outline-offset: 1px; }
+.students-modal select:focus { outline: 2px solid var(--sc-roxo); outline-offset: 1px; }
 
 .students-filters {
     display: flex;
     padding: 3px;
-    border: 1px solid #d6e0db;
-    border-radius: 5px;
-    background: #edf1ee;
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-bg);
 }
 
 .students-filters button {
@@ -149,20 +159,20 @@
     border: 0;
     border-radius: 3px;
     background: transparent;
-    color: #61716a;
+    color: var(--sc-muted);
     font-size: 12px;
 }
 
-.students-filters button.is-selected { background: #fff; color: #245c4a; box-shadow: 0 1px 3px #20332e1c; }
+.students-filters button.is-selected { background: var(--sc-white); color: var(--sc-roxo); box-shadow: 0 1px 3px rgba(26, 26, 46, 0.11); }
 
 .students-profile-switch {
     display: inline-flex;
     gap: 3px;
     margin-top: 25px;
     padding: 3px;
-    border: 1px solid #d6e0db;
-    border-radius: 5px;
-    background: #edf1ee;
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-bg);
 }
 
 .students-profile-switch button {
@@ -171,34 +181,35 @@
     border: 0;
     border-radius: 3px;
     background: transparent;
-    color: #61716a;
+    color: var(--sc-muted);
     font-size: 12px;
 }
 
 .students-profile-switch button.is-selected {
-    background: #fff;
-    color: #245c4a;
+    background: var(--sc-white);
+    color: var(--sc-roxo);
     font-weight: 650;
-    box-shadow: 0 1px 3px #20332e1c;
+    box-shadow: 0 1px 3px rgba(26, 26, 46, 0.11);
 }
 
 .students-inline-note { color: #8c5d21; font-size: 12px; line-height: 1.45; }
-.students-assignment-student { display: grid; gap: 4px; padding: 12px; background: #f5f7f4; color: #243a32; font-size: 13px; }
-.students-assignment-student span { color: #788780; font-size: 12px; }
+.students-assignment-student { display: grid; gap: 4px; padding: 12px; background: var(--sc-bg); color: var(--sc-text); font-size: 13px; border-radius: var(--sc-radius-sm); }
+.students-assignment-student span { color: var(--sc-muted); font-size: 12px; }
 
 .students-table-wrap {
     overflow-x: auto;
-    border: 1px solid #dfe7e2;
-    background: #fff;
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-sm);
+    background: var(--sc-white);
 }
 
 .students-table { width: 100%; border-collapse: collapse; text-align: left; }
 .students-table th {
     height: 43px;
     padding: 0 18px;
-    border-bottom: 1px solid #e7ede9;
-    background: #fafcfb;
-    color: #718079;
+    border-bottom: 1px solid var(--sc-border);
+    background: var(--sc-bg);
+    color: var(--sc-muted);
     font-size: 10px;
     font-weight: 700;
     letter-spacing: .7px;
@@ -209,8 +220,8 @@
 .students-table td {
     min-height: 64px;
     padding: 13px 18px;
-    border-bottom: 1px solid #edf1ee;
-    color: #53645d;
+    border-bottom: 1px solid var(--sc-border);
+    color: var(--sc-text);
     font-size: 12px;
     white-space: nowrap;
 }
@@ -219,8 +230,8 @@
 .students-table td:first-child { min-width: 230px; }
 .students-table td:first-child strong,
 .students-table td:first-child span { display: block; }
-.students-table td:first-child strong { margin-bottom: 4px; color: #243a32; font-size: 13px; font-weight: 650; }
-.students-table td:first-child span { color: #788780; font-size: 12px; }
+.students-table td:first-child strong { margin-bottom: 4px; color: var(--sc-text); font-size: 13px; font-weight: 650; }
+.students-table td:first-child span { color: var(--sc-muted); font-size: 12px; }
 
 .students-status {
     display: inline-flex;
@@ -228,19 +239,19 @@
     min-height: 23px;
     padding: 0 8px;
     border-radius: 3px;
-    background: #e8f4ed;
-    color: #2a7152;
+    background: var(--sc-roxo-soft);
+    color: var(--sc-roxo-hover);
     font-size: 11px;
     font-weight: 650;
 }
 
-.students-status--inactive { background: #f0efed; color: #6c6b66; }
+.students-status--inactive { background: #f0efed; color: var(--sc-muted); }
 .students-actions { text-align: right; }
-.students-actions button { margin-left: 12px; border: 0; background: none; color: #286b55; font-size: 12px; font-weight: 650; }
+.students-actions button { margin-left: 12px; border: 0; background: none; color: var(--sc-roxo); font-size: 12px; font-weight: 650; }
 .students-actions button:hover:not(:disabled) { text-decoration: underline; }
 .students-actions button:disabled { color: #a4aea9; cursor: not-allowed; }
-.students-empty { padding: 34px 16px; color: #72817b; font-size: 13px; text-align: center; }
-.students-count { margin-top: 10px; color: #77867f; font-size: 11px; text-align: right; }
+.students-empty { padding: 34px 16px; color: var(--sc-muted); font-size: 13px; text-align: center; }
+.students-count { margin-top: 10px; color: var(--sc-muted); font-size: 11px; text-align: right; }
 
 .students-modal-backdrop {
     position: fixed;
@@ -249,7 +260,7 @@
     display: grid;
     place-items: center;
     padding: 20px;
-    background: #16241f8a;
+    background: rgba(26, 26, 46, 0.54);
 }
 
 .students-modal-dismiss {
@@ -268,23 +279,23 @@
     z-index: 1;
     width: min(520px, 100%);
     padding: 26px;
-    border: 1px solid #dfe7e2;
-    border-radius: 6px;
-    background: #fff;
-    box-shadow: 0 16px 50px #10271f38;
+    border: 1px solid var(--sc-border);
+    border-radius: var(--sc-radius-lg);
+    background: var(--sc-white);
+    box-shadow: var(--sc-shadow);
 }
 
-.students-modal h2 { color: #20332e; font-size: 22px; font-weight: 650; }
-.students-close { width: 34px; height: 34px; border: 0; background: transparent; color: #687a74; font-size: 25px; }
+.students-modal h2 { color: var(--sc-text); font-size: 22px; font-weight: 650; }
+.students-close { width: 34px; height: 34px; border: 0; background: transparent; color: var(--sc-muted); font-size: 25px; }
 .students-modal form { display: grid; gap: 16px; margin-top: 22px; }
-.students-modal label { display: grid; gap: 7px; color: #465a51; font-size: 12px; font-weight: 650; }
+.students-modal label { display: grid; gap: 7px; color: var(--sc-text); font-size: 12px; font-weight: 650; }
 .students-modal .institution-active-toggle {
     display: flex;
     align-items: center;
     gap: 9px;
-    color: #40534c;
+    color: var(--sc-text);
 }
-.institution-active-toggle input { width: 16px; height: 16px; accent-color: #236653; }
+.institution-active-toggle input { width: 16px; height: 16px; accent-color: var(--sc-roxo); }
 .students-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .students-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 6px; }
 

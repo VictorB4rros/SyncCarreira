@@ -11,11 +11,15 @@ import {
     saveManagedInstitution,
     saveManagedAccount,
 } from '../../services/accountManagementService.js'
-import './studentlistPage.css'
+import './AccountManagementPage.css'
 
 const EMPTY_STUDENT = { name: '', email: '', schollarYear: '', schoolType: '' }
 const EMPTY_PSYCHOLOGIST = { name: '', email: '', crp: '', contractExpirationDate: '', institutionId: '' }
 const EMPTY_CLASS = { name: '', schoolYear: '', institutionId: '' }
+
+// Faixa aceita para o ano-calendário de uma turma.
+const CLASS_YEAR_MIN = 2000
+const CLASS_YEAR_MAX = new Date().getFullYear() + 1
 const EMPTY_INSTITUTION = { legalName: '', tradeName: '', cnpj: '', type: 'PUBLICA', active: true }
 const INSTITUTION_TYPES = [
     { id: 'PUBLICA', label: 'Pública' },
@@ -234,6 +238,15 @@ export default function AccountManagementPage() {
 
     async function handleClassSubmit(event) {
         event.preventDefault()
+
+        // Ano-calendário: precisa ser um inteiro dentro de uma faixa plausível.
+        // Sem isto, "00000" (= 0) ou anos absurdos passavam direto para a API.
+        const year = Number(classForm.schoolYear)
+        if (!Number.isInteger(year) || year < CLASS_YEAR_MIN || year > CLASS_YEAR_MAX) {
+            setError(`Informe um ano-calendário válido (entre ${CLASS_YEAR_MIN} e ${CLASS_YEAR_MAX}).`)
+            return
+        }
+
         setSaving(true)
         setError('')
         try {
@@ -633,8 +646,17 @@ export default function AccountManagementPage() {
                                 <input required value={classForm.name} onChange={event => setClassForm(current => ({ ...current, name: event.target.value }))} />
                             </label>
                             <div className="students-form-row">
-                                <label>Ano escolar
-                                    <input type="number" min="1" step="1" required value={classForm.schoolYear} onChange={event => setClassForm(current => ({ ...current, schoolYear: event.target.value }))} />
+                                <label>Ano (calendário)
+                                    <input
+                                        type="number"
+                                        min={CLASS_YEAR_MIN}
+                                        max={CLASS_YEAR_MAX}
+                                        step="1"
+                                        required
+                                        placeholder={String(CLASS_YEAR_MAX)}
+                                        value={classForm.schoolYear}
+                                        onChange={event => setClassForm(current => ({ ...current, schoolYear: event.target.value }))}
+                                    />
                                 </label>
                                 <label>Instituição
                                     <select required value={classForm.institutionId} onChange={event => setClassForm(current => ({ ...current, institutionId: event.target.value }))} disabled={loadingInstitutions}>

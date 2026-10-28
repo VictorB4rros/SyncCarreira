@@ -2,9 +2,12 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import LoginPage    from '../pages/Login/LoginPage.jsx'
 import NewPasswordPage from '../pages/NewPassword/NewPasswordPage.jsx'
+import PrivacyPage from '../pages/Institucional/PrivacyPage.jsx'
+import TermsPage from '../pages/Institucional/TermsPage.jsx'
+import SupportPage from '../pages/Institucional/SupportPage.jsx'
 import HomePage     from '../pages/Home/HomePage.jsx'
 import TrailPage    from '../pages/Trilha/TrailPage.jsx'
-import AccountManagementPage from '../pages/Psicologas/AccountManagementPage.jsx'
+import AccountManagementPage from '../pages/Admin/AccountManagementPage.jsx'
 import StudentDetailPage from '../pages/Psicologas/studentdetailPage.jsx'
 import StudentFormPage from '../pages/Psicologas/studentformPage.jsx'
 import AgendamentosPage from '../pages/Agendamentos/AgendamentosPage.jsx'
@@ -13,7 +16,9 @@ import JourneyResultPage from '../pages/ResultadoJornada/JourneyResultPage.jsx'
 import StudentProfilePage from '../pages/Perfil/StudentProfilePage.jsx'
 import StudentProfileGate from '../pages/Perfil/StudentProfileGate.jsx'
 import ProgressDashboardPage from '../pages/Psicologas/ProgressDashboardPage.jsx'
+import PsychologistClassesPage from '../pages/Psicologas/PsychologistClassesPage.jsx'
 import JourneyPanoramaPage from '../pages/Jornada/JourneyPanoramaPage.jsx'
+import PsychologistPortalLayout from '../pages/Psicologas/PsychologistPortalLayout.jsx'
 import { isAdministrator, isPsychologist } from '../utils/roles.js'
 
 function PrivateRoute({ children }) {
@@ -45,8 +50,15 @@ function PsychologistRoute({ children }) {
 function HomeRoute() {
     const { user } = useAuth()
     return isPsychologist(user)
-        ? <Navigate to="/painel-progresso" replace />
+        ? <Navigate to="/psicologa" replace />
         : <StudentProfileGate><HomePage /></StudentProfileGate>
+}
+
+function AppointmentsRoute() {
+    const { user } = useAuth()
+    return isPsychologist(user)
+        ? <Navigate to="/psicologa/agenda" replace />
+        : <AgendamentosPage />
 }
 
 function StudentRoute({ children }) {
@@ -64,6 +76,11 @@ export default function AppRoutes() {
         <Routes>
             <Route path="/login"    element={<LoginPage />} />
             <Route path="/new-password" element={<NewPasswordPage />} />
+
+            {/* Páginas institucionais públicas (linkadas no rodapé) */}
+            <Route path="/privacidade" element={<PrivacyPage />} />
+            <Route path="/termos" element={<TermsPage />} />
+            <Route path="/suporte" element={<SupportPage />} />
             <Route path="/home" element={
                 <PrivateRoute><HomeRoute /></PrivateRoute>
             } />
@@ -83,11 +100,20 @@ export default function AppRoutes() {
             <Route path="/gestao" element={
                 <AdminRoute><AccountManagementPage /></AdminRoute>
             } />
+            <Route path="/psicologa" element={
+                <PrivateRoute><PsychologistRoute><PsychologistPortalLayout /></PsychologistRoute></PrivateRoute>
+            }>
+                <Route index element={<ProgressDashboardPage />} />
+                <Route path="turmas" element={<PsychologistClassesPage />} />
+                <Route path="agenda" element={<AgendamentosPage />} />
+                <Route path="conteudos" element={<InformationLinkManagementPage />} />
+                <Route path="alunos/:id" element={<StaffRoute><StudentDetailPage /></StaffRoute>} />
+            </Route>
             <Route path="/curadoria-links" element={
-                <PrivateRoute><PsychologistRoute><InformationLinkManagementPage /></PsychologistRoute></PrivateRoute>
+                <Navigate to="/psicologa/conteudos" replace />
             } />
             <Route path="/painel-progresso" element={
-                <PrivateRoute><PsychologistRoute><ProgressDashboardPage /></PsychologistRoute></PrivateRoute>
+                <Navigate to="/psicologa" replace />
             } />
             <Route path="/alunos" element={<Navigate to="/gestao" replace />} />
             <Route path="/alunos/:id" element={
@@ -96,9 +122,7 @@ export default function AppRoutes() {
             <Route path="/alunos/:id/editar" element={
                 <PrivateRoute><StaffRoute><StudentFormPage /></StaffRoute></PrivateRoute>
             } />
-            <Route path="/agendamentos" element={
-                <PrivateRoute><AgendamentosPage /></PrivateRoute>
-            } />
+            <Route path="/agendamentos" element={<PrivateRoute><AppointmentsRoute /></PrivateRoute>} />
             <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
     )

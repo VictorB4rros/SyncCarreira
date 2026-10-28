@@ -48,7 +48,7 @@ export default function SentFeedbacks({ feedbacks, error, onDelete }) {
   }
 
   return (
-    <section className="pd-panel pd-feedbacks" aria-labelledby="pd-feedbacks-title">
+    <section id="pd-feedback-history" className="pd-panel pd-feedbacks" aria-labelledby="pd-feedbacks-title">
       <div className="pd-section-heading">
         <div>
           <h2 id="pd-feedbacks-title">Feedbacks enviados</h2>

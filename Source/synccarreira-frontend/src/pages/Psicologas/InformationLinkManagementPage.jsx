@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import AppHeader from '../../components/AppHeader/AppHeader.jsx'
 import {
   createInformationLink,
   deleteInformationLink,
@@ -109,7 +108,6 @@ export default function InformationLinkManagementPage() {
 
   return (
     <div className="information-links-page">
-      <AppHeader />
       <main className="information-links-main">
         <header className="information-links-heading">
           <div>

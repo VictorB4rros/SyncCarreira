@@ -1,0 +1,322 @@
+.psy-portal {
+  --psy-primary: #732993;
+  --psy-primary-dark: #5b2c6f;
+  --psy-primary-soft: #f4ecf7;
+  --psy-border: #e8daef;
+  --psy-muted: #72647a;
+  min-height: 100vh;
+  background: #fff7fb;
+  color: #320047;
+  font-family: 'Plus Jakarta Sans', Inter, system-ui, sans-serif;
+}
+
+.psy-sidebar {
+  position: fixed;
+  z-index: 40;
+  inset: 0 auto 0 0;
+  display: flex;
+  width: 258px;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--psy-border);
+  background: #fff;
+  box-shadow: 0 2px 14px rgb(91 44 111 / 5%);
+  transition: transform .2s ease;
+}
+
+.psy-sidebar__top { min-height: 0; overflow-y: auto; }
+.psy-brand { display: flex; min-height: 78px; align-items: center; gap: 12px; padding: 16px 22px; color: inherit; text-decoration: none; }
+.psy-brand__mark { display: grid; width: 42px; height: 42px; place-items: center; border-radius: 13px; background: var(--psy-primary); color: #fff; font-size: 21px; font-weight: 750; }
+.psy-brand__text { display: grid; gap: 3px; }
+.psy-brand__text strong { color: var(--psy-primary-dark); font-size: 15px; letter-spacing: -.02em; }
+.psy-brand__text small { color: var(--psy-muted); font-size: 10px; }
+.psy-sidebar__divider { height: 1px; margin: 0 18px 12px; background: #f0e8f2; }
+.psy-nav { display: grid; gap: 5px; padding: 0 12px; }
+.psy-nav__link { display: flex; min-height: 44px; align-items: center; gap: 12px; padding: 0 13px; border-left: 3px solid transparent; border-radius: 0 12px 12px 0; color: #594b61; font-size: 13px; font-weight: 550; text-decoration: none; transition: background .16s ease, color .16s ease; }
+.psy-nav__link:hover { background: #fbf7fc; color: var(--psy-primary); }
+.psy-nav__link--active { border-left-color: var(--psy-primary); background: #f4ecf7; color: var(--psy-primary); font-weight: 700; }
+.psy-sidebar__footer { display: grid; gap: 14px; padding: 16px; border-top: 1px solid #f0e8f2; }
+.psy-privacy { display: flex; align-items: center; gap: 8px; padding: 10px 11px; border: 1px solid #eadbf0; border-radius: 10px; background: #fbf6fc; color: var(--psy-primary-dark); font-size: 11px; font-weight: 600; }
+.psy-account { display: flex; min-width: 0; align-items: center; gap: 10px; }
+.psy-account__avatar { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border: 2px solid #eadbf0; border-radius: 50%; background: #f4ecf7; color: var(--psy-primary); font-size: 12px; font-weight: 750; }
+.psy-account__identity { display: grid; min-width: 0; gap: 3px; }
+.psy-account__identity strong, .psy-account__identity small { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.psy-account__identity strong { color: #3d2846; font-size: 12px; }
+.psy-account__identity small { color: var(--psy-muted); font-size: 10px; }
+.psy-logout { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: 38px; border: 1px solid var(--psy-border); border-radius: 9px; background: #fff; color: #65556d; font: inherit; font-size: 12px; font-weight: 650; cursor: pointer; }
+.psy-logout:hover:not(:disabled) { border-color: #d8c2e0; background: #fbf7fc; color: var(--psy-primary); }
+.psy-logout:disabled { cursor: wait; opacity: .65; }
+.psy-sidebar__close, .psy-topbar__menu { display: none; }
+.psy-workspace { min-height: 100vh; margin-left: 258px; }
+.psy-topbar { position: fixed; z-index: 30; top: 0; right: 0; left: 258px; display: flex; height: 70px; align-items: center; justify-content: space-between; gap: 16px; padding: 0 30px; border-bottom: 1px solid #eee3f0; background: rgb(255 247 251 / 94%); backdrop-filter: blur(14px); }
+.psy-topbar__context { display: flex; min-width: 0; align-items: center; gap: 10px; color: #887a8e; font-size: 12px; }
+.psy-topbar__context strong { overflow: hidden; color: var(--psy-primary-dark); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.psy-topbar__search { display: flex; width: min(360px, 32vw); height: 40px; align-items: center; gap: 9px; padding: 0 10px; border: 1px solid #eadbf0; border-radius: 10px; background: #fff; color: #8b7b91; }
+.psy-topbar__search:focus-within { border-color: #a569bd; box-shadow: 0 0 0 3px rgb(165 105 189 / 13%); }
+.psy-topbar__search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: #3d2846; font: inherit; font-size: 11px; }
+.psy-topbar__search input::placeholder { color: #9a8ba0; }
+.psy-topbar__search > span { flex: 0 0 auto; padding: 3px 5px; border: 1px solid #eee5f0; border-radius: 5px; color: #8b7b91; font-size: 9px; }
+.psy-topbar__action { display: inline-flex; min-height: 40px; flex: 0 0 auto; align-items: center; justify-content: center; gap: 8px; padding: 0 15px; border: 1px solid var(--psy-primary); border-radius: 10px; background: var(--psy-primary); box-shadow: 0 4px 12px rgb(115 41 147 / 18%); color: #fff; font: inherit; font-size: 12px; font-weight: 700; cursor: pointer; transition: background .16s ease, transform .16s ease; }
+.psy-topbar__action:hover { transform: translateY(-1px); background: #5b2c6f; }
+.psy-portal__main { min-height: 100vh; padding: 94px 30px 34px; }
+.psy-portal__main > * { max-width: 1440px; margin-right: auto; margin-left: auto; }
+.psy-portal__scrim { display: none; }
+.psy-portal #pd-students, .psy-portal #pd-reports { scroll-margin-top: 92px; }
+
+/* Keep the data screens inside the shared shell while preserving their actions. */
+.psy-portal__main .pd-page, .psy-portal__main .information-links-page, .psy-portal__main .ag-root { min-height: auto; background: transparent; }
+.psy-portal__main .pd-main, .psy-portal__main .information-links-main { width: 100%; max-width: 1440px; padding: 8px 0 28px; }
+.psy-portal__main .pd-heading h1, .psy-portal__main .information-links-heading h1, .psy-portal__main .ag-h1 { color: var(--psy-primary-dark); letter-spacing: -.035em; }
+.psy-portal__main .pd-eyebrow, .psy-portal__main .information-links-eyebrow { color: var(--psy-primary); }
+.psy-portal__main .pd-metric, .psy-portal__main .pd-panel, .psy-portal__main .information-links-panel, .psy-portal__main .information-links-list, .psy-portal__main .ag-google, .psy-portal__main .ag-list { border-color: var(--psy-border); box-shadow: 0 3px 14px rgb(91 44 111 / 5%); }
+.psy-portal__main .pd-metric, .psy-portal__main .pd-panel, .psy-portal__main .information-links-panel, .psy-portal__main .information-links-list, .psy-portal__main .ag-google, .psy-portal__main .ag-list { border-radius: 16px; }
+.psy-portal__main .pd-progress-track span { background: linear-gradient(90deg, #732993, #a569bd); }
+.psy-portal__main .pd-refresh, .psy-portal__main .information-links-refresh { border-color: #d8c2e0; color: var(--psy-primary); }
+.psy-portal__main .pd-refresh:hover:not(:disabled), .psy-portal__main .information-links-refresh:hover:not(:disabled) { background: #f4ecf7; }
+.psy-portal__main .information-links-primary, .psy-portal__main .ag-btn--primary { background: var(--psy-primary); }
+.psy-portal__main .information-links-primary:hover:not(:disabled), .psy-portal__main .ag-btn--primary:hover:not(:disabled) { background: #5b2c6f; }
+.psy-portal__main .information-links-panel__icon, .psy-portal__main .information-links-category { background: #f4ecf7; color: var(--psy-primary); }
+.psy-portal__main .information-links-table a, .psy-portal__main .information-links-actions button, .psy-portal__main .ag-link { color: var(--psy-primary); }
+.psy-portal__main .ag-main { justify-content: flex-start; padding: 8px 0 32px; }
+.psy-portal__main .ag-content--wide { max-width: 1080px; }
+.psy-portal__main .pd-section-heading h2, .psy-portal__main .pd-attention h2,
+.psy-portal__main .information-links-panel__heading h2, .psy-portal__main .information-links-list__heading h2 { color: var(--psy-primary-dark); }
+.psy-portal__main .pd-metric { position: relative; overflow: hidden; padding-top: 20px; }
+.psy-portal__main .pd-metric::before { position: absolute; top: 0; right: 0; left: 0; height: 3px; background: linear-gradient(90deg, #732993, #d2b4de); content: ''; }
+.psy-portal__main .pd-metric--blue::before { background: linear-gradient(90deg, #6d62a0, #b8aad4); }
+.psy-portal__main .pd-metric--green::before { background: linear-gradient(90deg, #36866d, #9ed4b7); }
+.psy-portal__main .pd-metric--amber::before { background: linear-gradient(90deg, #c0772a, #efd19b); }
+.psy-portal__main .pd-heading p, .psy-portal__main .pd-section-heading p,
+.psy-portal__main .information-links-description { color: #72647a; }
+.psy-portal__main .pd-panel { padding: 22px; }
+.psy-portal__main .pd-filters input:focus, .psy-portal__main .pd-filters select:focus,
+.psy-portal__main .information-links-form input:focus, .psy-portal__main .information-links-form select:focus { border-color: #a569bd; outline-color: #f4ecf7; }
+.psy-portal__main .pd-status--em_andamento { background: #f4ecf7; color: #732993; }
+.psy-portal__main .pd-expand { border-color: #e4d3eb; color: #732993; }
+.psy-portal__main .pd-expand:hover { background: #fbf6fc; }
+.psy-portal__main .pd-expand--strong { border-color: #732993; background: #732993; color: #fff; }
+.psy-portal__main .pd-expand--strong:hover { background: #5b2c6f; }
+.psy-portal__main .ag-btn--outline { border-color: #d8c2e0; color: #732993; }
+.psy-portal__main .ag-btn--outline:hover:not(:disabled) { border-color: #a569bd; background: #f4ecf7; }
+.psy-portal__main .ag-tab--on { border-color: #732993; color: #732993; }
+.psy-portal__main .ag-tab--on::after { background: #732993; }
+.psy-portal__main :focus-visible { outline-color: #a569bd; }
+
+@media (max-width: 1050px) {
+  .psy-portal__main { padding-right: 22px; padding-left: 22px; }
+  .psy-topbar { padding-right: 22px; padding-left: 22px; }
+}
+
+@media (max-width: 760px) {
+  .psy-sidebar { width: min(290px, calc(100vw - 52px)); visibility: hidden; transform: translateX(-102%); }
+  .psy-sidebar--open { visibility: visible; transform: translateX(0); }
+  .psy-sidebar__close { position: absolute; top: 21px; right: 16px; display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #62536a; cursor: pointer; }
+  .psy-sidebar__close:hover { background: #f4ecf7; }
+  .psy-sidebar__top { position: relative; }
+  .psy-workspace { margin-left: 0; }
+  .psy-topbar { left: 0; height: 64px; padding: 0 15px; }
+  .psy-topbar__menu { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border: 1px solid var(--psy-border); border-radius: 9px; background: #fff; color: var(--psy-primary-dark); cursor: pointer; }
+  .psy-topbar__context { flex: 1; gap: 7px; font-size: 10px; }
+  .psy-topbar__context strong { font-size: 11px; }
+  .psy-topbar__search { display: none; }
+  .psy-topbar__action { min-height: 38px; padding: 0 10px; font-size: 11px; }
+  .psy-topbar__action span { display: none; }
+  .psy-portal__main { padding: 82px 16px 24px; }
+  .psy-portal__scrim { position: fixed; z-index: 35; inset: 0; display: block; border: 0; background: rgb(35 15 42 / 42%); }
+  .psy-portal__main .pd-main, .psy-portal__main .information-links-main { padding-top: 4px; }
+}
+
+@media (min-width: 761px) {
+  .psy-sidebar { visibility: visible; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .psy-sidebar, .psy-nav__link, .psy-topbar__action { transition: none; }
+}
+
+/* Visual language inspired by ESTR_MAT_VIEW: violet, cool neutral surfaces and generous cards. */
+.psy-portal {
+  --psy-primary: #6d28d9;
+  --psy-primary-dark: #4c1d95;
+  --psy-primary-soft: #ede9fe;
+  --psy-border: #e2e8f0;
+  --psy-muted: #64748b;
+  min-height: 100vh;
+  background: #f8fafc;
+  color: #0f172a;
+}
+
+.psy-sidebar {
+  width: 280px;
+  border-right-color: #e8eaf1;
+  box-shadow: 0 10px 36px rgb(15 23 42 / 5%);
+}
+
+.psy-brand { min-height: 82px; padding-right: 20px; padding-left: 24px; }
+.psy-brand__mark { background: linear-gradient(145deg, #7c3aed, #5b21b6); box-shadow: 0 6px 16px rgb(109 40 217 / 20%); }
+.psy-brand__text strong { color: #4c1d95; }
+.psy-brand__text small { color: #64748b; }
+.psy-sidebar__divider { margin-bottom: 16px; background: #eef0f5; }
+.psy-nav { gap: 6px; padding: 0 14px; }
+.psy-nav__link {
+  min-height: 46px;
+  border-left: 0;
+  border-radius: 11px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 600;
+}
+.psy-nav__link:hover { background: #f5f3ff; color: #5b21b6; }
+.psy-nav__link--active { background: #ede9fe; color: #5b21b6; font-weight: 750; }
+.psy-sidebar__footer { gap: 12px; padding: 16px 15px; border-top-color: #eef0f5; }
+.psy-privacy { border-color: #e9e3fc; background: #f5f3ff; color: #5b21b6; }
+.psy-account__avatar { border-color: #ddd6fe; background: #ede9fe; color: #5b21b6; }
+.psy-account__identity strong { color: #1e293b; }
+.psy-account__identity small { color: #64748b; }
+.psy-logout { border-color: #e2e8f0; color: #475569; }
+.psy-logout:hover:not(:disabled) { border-color: #c4b5fd; background: #f5f3ff; color: #5b21b6; }
+.psy-workspace { margin-left: 280px; }
+.psy-topbar {
+  left: 280px;
+  height: 76px;
+  padding-right: 28px;
+  padding-left: 28px;
+  border-bottom-color: #e8eaf1;
+  background: rgb(255 255 255 / 92%);
+  box-shadow: 0 4px 20px rgb(15 23 42 / 3%);
+}
+.psy-topbar__context { color: #64748b; }
+.psy-topbar__context strong { color: #4c1d95; }
+.psy-topbar__search { width: min(420px, 34vw); height: 42px; border-color: #e2e8f0; border-radius: 12px; }
+.psy-topbar__search:focus-within { border-color: #a78bfa; box-shadow: 0 0 0 3px rgb(124 58 237 / 12%); }
+.psy-topbar__search input { color: #0f172a; }
+.psy-topbar__action { border-color: #6d28d9; background: #6d28d9; box-shadow: 0 6px 16px rgb(109 40 217 / 20%); }
+.psy-topbar__action:hover { background: #5b21b6; }
+.psy-portal__main { padding: 100px 30px 44px; }
+.psy-portal__main > * { max-width: 1480px; }
+.psy-portal__main .pd-page, .psy-portal__main .information-links-page, .psy-portal__main .ag-root { background: transparent; color: #0f172a; }
+.psy-portal__main .pd-main, .psy-portal__main .information-links-main { width: 100%; max-width: 1480px; padding: 0 0 36px; }
+.psy-portal__main .pd-heading h1, .psy-portal__main .information-links-heading h1, .psy-portal__main .ag-h1 { color: #4c1d95; }
+.psy-portal__main .pd-eyebrow, .psy-portal__main .information-links-eyebrow { color: #6d28d9; }
+.psy-portal__main .pd-heading p, .psy-portal__main .pd-section-heading p, .psy-portal__main .information-links-description { color: #64748b; }
+.psy-portal__main .pd-metric, .psy-portal__main .pd-panel, .psy-portal__main .pd-alerts,
+.psy-portal__main .information-links-panel, .psy-portal__main .information-links-list,
+.psy-portal__main .ag-google, .psy-portal__main .ag-list {
+  border-color: #e2e8f0;
+  border-radius: 20px;
+  box-shadow: 0 8px 24px rgb(15 23 42 / 4%);
+}
+.psy-portal__main .pd-panel, .psy-portal__main .information-links-panel, .psy-portal__main .information-links-list { padding: 24px; }
+.psy-portal__main .pd-section-heading h2, .psy-portal__main .pd-alerts h2,
+.psy-portal__main .information-links-panel__heading h2, .psy-portal__main .information-links-list__heading h2 { color: #1e293b; }
+.psy-portal__main .pd-progress-track { height: 8px; background: #ede9fe; }
+.psy-portal__main .pd-progress-track span { background: linear-gradient(90deg, #6d28d9, #a78bfa); }
+.psy-portal__main .pd-metric { border-top-width: 3px; border-top-color: #7c3aed; }
+.psy-portal__main .pd-metric--blue { border-top-color: #8b5cf6; }
+.psy-portal__main .pd-metric--green { border-top-color: #10b981; }
+.psy-portal__main .pd-metric--amber { border-top-color: #f59e0b; }
+.psy-portal__main .pd-metric strong { color: #1e293b; }
+.psy-portal__main .pd-metric__label, .psy-portal__main .pd-result-count { color: #64748b; }
+.psy-portal__main .pd-refresh, .psy-portal__main .information-links-refresh,
+.psy-portal__main .pd-state button { border-color: #ddd6fe; color: #5b21b6; }
+.psy-portal__main .pd-refresh:hover:not(:disabled), .psy-portal__main .information-links-refresh:hover:not(:disabled) { background: #f5f3ff; }
+.psy-portal__main .pd-alerts { border-color: #fde7bd; background: #fffbeb; }
+.psy-portal__main .pd-alerts--empty { border-color: #bbf7d0; background: #f0fdf4; }
+.psy-portal__main .pd-alert { border-color: #f1e5ca; border-radius: 14px; }
+.psy-portal__main .pd-alert__count { background: #b45309; }
+.psy-portal__main .pd-alert__icon { background: #fef3c7; color: #92400e; }
+.psy-portal__main .pd-alert__icon--ok { background: #dcfce7; color: #047857; }
+.psy-portal__main .pd-table th { color: #64748b; }
+.psy-portal__main .pd-table td { border-bottom-color: #f1f5f9; color: #475569; }
+.psy-portal__main .pd-table td > strong, .psy-portal__main .pd-session strong { color: #1e293b; }
+.psy-portal__main .pd-filters input, .psy-portal__main .pd-filters select,
+.psy-portal__main .pd-reports__select select, .psy-portal__main .information-links-form input,
+.psy-portal__main .information-links-form select { border-color: #e2e8f0; border-radius: 11px; }
+.psy-portal__main .pd-status--em_andamento { background: #ede9fe; color: #5b21b6; }
+.psy-portal__main .pd-expand { border-color: #ddd6fe; color: #5b21b6; }
+.psy-portal__main .pd-expand:hover { background: #f5f3ff; }
+.psy-portal__main .pd-expand--strong, .psy-portal__main .ag-btn--primary,
+.psy-portal__main .information-links-primary { border-color: #6d28d9; background: #6d28d9; color: #fff; }
+.psy-portal__main .pd-expand--strong:hover, .psy-portal__main .ag-btn--primary:hover:not(:disabled),
+.psy-portal__main .information-links-primary:hover:not(:disabled) { background: #5b21b6; }
+.psy-portal__main .ag-root { --sc-bg: transparent; --sc-border: #e2e8f0; --sc-text: #0f172a; --sc-muted: #64748b; --sc-roxo: #6d28d9; --sc-roxo-hover: #5b21b6; --sc-roxo-soft: #ede9fe; --sc-white: #fff; --sc-radius-md: 12px; --sc-radius-lg: 20px; }
+.psy-portal__main .information-links-count, .psy-portal__main .information-links-category { background: #ede9fe; color: #5b21b6; }
+.psy-portal__main .information-links-eyebrow, .psy-portal__main .information-links-table a,
+.psy-portal__main .information-links-actions button { color: #6d28d9; }
+.psy-portal__main .information-links-panel__icon { background: #ede9fe; color: #6d28d9; }
+.psy-portal__main .information-links-alert { border-radius: 12px; }
+.psy-portal__main .pd-heading {
+  min-height: 176px;
+  margin: 0 0 22px;
+  padding: 28px 32px;
+  border: 1px solid #ddd6fe;
+  border-radius: 24px;
+  background: linear-gradient(115deg, #fff 0%, #faf8ff 56%, #f1edff 100%);
+  box-shadow: 0 12px 34px rgb(76 29 149 / 6%);
+}
+.psy-portal__main .pd-heading h1 { margin: 8px 0 6px; color: #1e1b4b; font-size: clamp(28px, 3vw, 38px); letter-spacing: -.04em; }
+.psy-portal__main .pd-heading p { max-width: 680px; color: #64748b; font-size: 14px; line-height: 1.6; }
+.psy-portal__main .pd-heading__actions { display: grid; justify-items: end; gap: 10px; flex: 0 0 auto; }
+.psy-portal__main .pd-date-chip { padding: 8px 12px; border: 1px solid #e9e5f7; border-radius: 999px; background: rgb(255 255 255 / 80%); color: #64748b; font-size: 11px; font-weight: 650; }
+.psy-portal__main .pd-refresh { min-height: 42px; border-radius: 11px; font-size: 12px; }
+.psy-portal__main .pd-metrics { gap: 16px; margin-bottom: 20px; }
+.psy-portal__main .pd-metric { min-height: 132px; padding: 20px; border-radius: 18px; background: #fff; }
+.psy-portal__main .pd-metric strong { font-size: 34px; letter-spacing: -.04em; }
+.psy-portal__main .pd-pillar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(172px, 1fr)); gap: 13px; }
+.psy-portal__main .pd-pillar-card { min-width: 0; padding: 16px; border: 1px solid #e9eaf2; border-radius: 16px; background: #fff; }
+.psy-portal__main .pd-pillar-card__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.psy-portal__main .pd-pillar-card__top > span { display: grid; width: 32px; height: 32px; place-items: center; border-radius: 10px; background: #f5f3ff; color: #6d28d9; font-size: 10px; font-weight: 800; }
+.psy-portal__main .pd-pillar-card__top > strong { color: #5b21b6; font-size: 20px; letter-spacing: -.03em; }
+.psy-portal__main .pd-pillar-card h3 { min-height: 38px; margin: 13px 0 4px; color: #1e293b; font-size: 13px; line-height: 1.4; }
+.psy-portal__main .pd-pillar-card p { min-height: 18px; margin: 0 0 12px; color: #64748b; font-size: 10px; }
+.psy-portal__main .pd-pillar-card--1 .pd-pillar-card__top > span { background: #ecfdf5; color: #047857; }
+.psy-portal__main .pd-pillar-card--2 .pd-pillar-card__top > span { background: #eff6ff; color: #1d4ed8; }
+.psy-portal__main .pd-pillar-card--3 .pd-pillar-card__top > span { background: #fff7ed; color: #c2410c; }
+.psy-portal__main .pd-pillar-card--4 .pd-pillar-card__top > span { background: #fdf2f8; color: #be185d; }
+.psy-portal__main .pd-pillar-card .pd-progress-track span { background: linear-gradient(90deg, #7c3aed, #a78bfa); }
+.psy-portal__main #pd-guidance { scroll-margin-top: 98px; }
+.psy-portal__main #pd-stages, .psy-portal__main #pd-reports, .psy-portal__main #pd-students { scroll-margin-top: 98px; }
+.psy-portal__main .pd-alerts { padding: 22px; }
+.psy-portal__main .pd-alert { padding: 14px 16px; }
+.psy-portal__main .pd-alert__actions .ag-btn { border-radius: 10px; }
+.psy-portal__main .pd-session, .psy-portal__main .pd-feedback { border-color: #e9eaf2; border-radius: 13px; }
+.psy-portal__main .pd-table-wrap { border: 1px solid #e9eaf2; border-radius: 14px; }
+.psy-portal__main .pd-table th { background: #f8fafc; }
+.psy-portal__main .pd-table__details-cell { background: #fafaff; }
+.psy-portal__main .pd-section-heading h2, .psy-portal__main .pd-alerts h2,
+.psy-portal__main .information-links-panel__heading h2, .psy-portal__main .information-links-list__heading h2 { font-size: 17px; }
+.psy-portal__main .ag-main { justify-content: flex-start; padding: 0 0 36px; }
+.psy-portal__main .ag-content--wide { max-width: 1480px; }
+.psy-portal__main .ag-content { gap: 20px; }
+.psy-portal__main .ag-page-head { padding: 0 0 8px; }
+.psy-portal__main :focus-visible { outline-color: #8b5cf6; }
+
+@media (max-width: 1050px) {
+  .psy-portal__main { padding-right: 22px; padding-left: 22px; }
+  .psy-topbar { padding-right: 22px; padding-left: 22px; }
+}
+
+@media (max-width: 800px) {
+  .psy-sidebar { width: min(300px, calc(100vw - 44px)); visibility: hidden; transform: translateX(-102%); }
+  .psy-sidebar--open { visibility: visible; transform: translateX(0); }
+  .psy-sidebar__top { position: relative; }
+  .psy-sidebar__close { position: absolute; top: 21px; right: 16px; display: grid; width: 34px; height: 34px; place-items: center; border: 0; border-radius: 9px; background: transparent; color: #475569; cursor: pointer; }
+  .psy-workspace { margin-left: 0; }
+  .psy-topbar { left: 0; height: 68px; }
+  .psy-topbar__menu { display: grid; width: 38px; height: 38px; flex: 0 0 auto; place-items: center; border: 1px solid #e2e8f0; border-radius: 10px; background: #fff; color: #4c1d95; cursor: pointer; }
+  .psy-portal__main { padding: 88px 18px 28px; }
+  .psy-portal__scrim { position: fixed; z-index: 35; inset: 0; display: block; border: 0; background: rgb(15 23 42 / 42%); }
+  .psy-portal__main .pd-main, .psy-portal__main .information-links-main { padding-top: 0; }
+  .psy-portal__main .pd-heading { min-height: 0; padding: 24px; }
+  .psy-portal__main .pd-pillar-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 520px) {
+  .psy-portal__main { padding-right: 14px; padding-left: 14px; }
+  .psy-portal__main .pd-panel, .psy-portal__main .information-links-panel, .psy-portal__main .information-links-list { padding: 18px 15px; }
+  .psy-portal__main .pd-heading { flex-direction: column; align-items: stretch; gap: 17px; padding: 21px 19px; border-radius: 19px; }
+  .psy-portal__main .pd-heading__actions { display: flex; align-items: center; justify-content: space-between; }
+  .psy-portal__main .pd-heading__actions .pd-refresh { width: auto; }
+  .psy-portal__main .pd-date-chip { display: none; }
+  .psy-portal__main .pd-pillar-grid { grid-template-columns: 1fr; }
+}
