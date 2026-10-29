@@ -70,6 +70,23 @@
 \renewcommand{\cftquadroname}{Quadro\space}
 \renewcommand*{\cftquadroaftersnum}{\hfill--\hfill}
 
+%% Quadros que podem continuar na página seguinte (evitam grandes espaços em branco)
+%% Uso: \quadrolongocaption{Título do quadro.}\label{rotulo} na primeira linha de um xltabular
+\usepackage{xltabular}
+\usepackage[section]{placeins}  % Mantém as figuras dentro da própria seção
+%% Parâmetros de posicionamento: permitem mais figuras por página e reduzem espaços em branco
+\renewcommand{\topfraction}{0.9}
+\renewcommand{\bottomfraction}{0.8}
+\renewcommand{\textfraction}{0.07}
+\renewcommand{\floatpagefraction}{0.75}
+\setcounter{topnumber}{3}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}
+\newcommand{\quadrolongocaption}[1]{%
+  \refstepcounter{quadro}%
+  \addcontentsline{loq}{quadro}{\protect\numberline{\thequadro}{\ignorespaces #1}}%
+  \parbox{\textwidth}{\centering\normalsize Quadro~\thequadro\ABNTEXcaptiondelim #1}}
+
 
 
 %% Metadados

@@ -54,7 +54,7 @@ Do ponto de vista técnico e institucional, a importância do \textit{software} 
 
 Para dimensionar a gravidade do problema decorrente de escolhas profissionais precipitadas, os microdados do Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (INEP) revelam um cenário expressivo de abandono ao longo da trajetória de estudantes ingressantes no Ensino Superior a partir de 2015, conforme ilustram as Figuras \ref{fig_grafico_inep1}, \ref{fig_grafico_inep2} e \ref{fig_grafico_inep3} \cite{inep2024}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Gráfico 1 -- Trajetória histórica de estudantes do Ensino Superior.}
     \label{fig_grafico_inep1}
@@ -62,7 +62,7 @@ Para dimensionar a gravidade do problema decorrente de escolhas profissionais pr
     \legend{Fonte: \citeonline{inep2024}.}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Gráfico 2 -- Taxa de conclusão anual no Ensino Superior dos ingressantes de 2015.}
     \label{fig_grafico_inep2}
@@ -70,7 +70,7 @@ Para dimensionar a gravidade do problema decorrente de escolhas profissionais pr
     \legend{Fonte: \citeonline{inep2024}.}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Gráfico 3 -- Taxa de desistência anual acumulada no Ensino Superior (Coorte de Ingressantes em 2015).}
     \label{fig_grafico_inep3}
@@ -115,7 +115,7 @@ O 16Personalities é uma plataforma global de mapeamento de personalidade basead
 
 A plataforma destaca-se pela sua interface e experiência de usuário. A utilização de uma escala de concordância visual (escala Likert) torna o preenchimento fluido e menos cansativo para o público jovem. Além disso, a devolutiva dos resultados é gamificada, com uso de avatares e descrições de fácil compreensão, o que gera alta identificação por parte do usuário.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Interface do teste de personalidade da plataforma 16Personalities.}
     \label{fig_16personalities}
@@ -129,7 +129,7 @@ O Descomplica é uma das maiores plataformas de educação \textit{online} do Br
 
 Sua principal vantagem é a linguagem acessível e alinhada à realidade do estudante brasileiro do Ensino Médio. A plataforma vincula, de forma imediata, o resultado de um teste de perfil a opções de cursos superiores reais e a tendências de mercado, facilitando a visualização dos próximos passos acadêmicos do aluno.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Interface do teste vocacional da plataforma Descomplica.}
     \label{fig_descomplica}
@@ -141,7 +141,7 @@ Sua principal vantagem é a linguagem acessível e alinhada à realidade do estu
 
 A plataforma Qual Carreira é uma ferramenta \textit{web} focada em orientação vocacional, que auxilia usuários a filtrar as centenas de graduações existentes e sugere aquelas que melhor se adequam ao seu perfil e a seus objetivos. Funciona também como portal de conteúdo e notícias, mantendo seu público --- composto majoritariamente por estudantes e universitários --- informado sobre temas como calendários de provas e atualizações do sistema educacional brasileiro.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Interface do teste vocacional da plataforma Qual Carreira.}
     \label{fig_qualcarreira}
@@ -153,7 +153,7 @@ A plataforma Qual Carreira é uma ferramenta \textit{web} focada em orientação
 
 A plataforma \textit{web} CareerExplorer é uma referência internacional em sistemas de orientação de carreira. Utiliza uma interface moderna e gera relatórios personalizados para seus usuários, além de sugerir certificações e cursos alinhados aos objetivos individuais --- um de seus principais diferenciais é a alta taxa de personalização do resultado. Seu público é amplo, variando de jovens recém-saídos do Ensino Médio a profissionais em transição de carreira.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Interface do teste vocacional da plataforma CareerExplorer.}
     \label{fig_careerexplorer}
@@ -165,15 +165,22 @@ A plataforma \textit{web} CareerExplorer é uma referência internacional em sis
 
 O \autoref{quadro-comparativo} resume as funcionalidades das plataformas concorrentes em contraste com a proposta do \textit{SyncCarreira}. A verificação de cada recurso foi realizada exclusivamente na versão gratuita de cada plataforma concorrente, conforme indicado na linha ``Plano analisado''; a ausência de marcação ($\checkmark$) indica que o recurso não foi identificado nessa versão, podendo estar disponível em planos pagos não avaliados neste estudo.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Comparação de recursos entre os projetos.}
-\label{quadro-comparativo}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.8cm}|*{5}{>{\centering\arraybackslash}X|}}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.8cm}|*{5}{>{\centering\arraybackslash}X|}}
+\multicolumn{6}{@{}c@{}}{\quadrolongocaption{Comparação de recursos entre os projetos.}\label{quadro-comparativo}} \\[0.3em]
 \hline
 \textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Nossa Solução} \\
 \hline
+\endfirsthead
+\multicolumn{6}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Nossa Solução} \\
+\hline
+\endhead
+\multicolumn{6}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Login (Aluno/Psicóloga) & $\checkmark$ & $\checkmark$ &  & $\checkmark$ & $\checkmark$ \\
 \hline
 Painel da Psicóloga &  &  &  &  & $\checkmark$ \\
@@ -196,9 +203,9 @@ Multi-idioma (Inglês) & $\checkmark$ &  &  & $\checkmark$ & $\checkmark$ \\
 \hline
 \textbf{Plano analisado} & Gratuito & Gratuito & Gratuito & Gratuito & -- \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 
 \section{Estrutura do Documento}\label{sec:estrutura-documento}

@@ -47,15 +47,22 @@ Regras de negócio são declarações que expressam as políticas, condições e
 
 O \autoref{quadro-regras-negocio} apresenta as regras de negócio do \textit{SyncCarreira}.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Regras de negócio do SyncCarreira.}
-\label{quadro-regras-negocio}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.3}
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{2.6cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\centering\arraybackslash}p{2.6cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{2}{@{}c@{}}{\quadrolongocaption{Regras de negócio do SyncCarreira.}\label{quadro-regras-negocio}} \\[0.3em]
 \hline
 \textbf{Identificador} & \textbf{Regra de Negócio} \\
 \hline
+\endfirsthead
+\multicolumn{2}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Identificador} & \textbf{Regra de Negócio} \\
+\hline
+\endhead
+\multicolumn{2}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 RN-01 & A jornada do aluno é dividida em 5 trilhas sequenciais (autoconhecimento, influências, informação, projeto de futuro e síntese das informações). Não é possível avançar sem concluir a trilha anterior. \\
 \hline
 RN-02 & O aluno precisa ter autonomia para realizar as trilhas e expressar sua opinião/sentimentos. Ao final de cada trilha, o aluno deve obrigatoriamente registrar uma síntese textual livre. \\
@@ -74,15 +81,15 @@ RN-08 & O sistema deve fornecer ao aluno um panorama completo do seu histórico 
 \hline
 RN-09 & O sistema deve possuir um banco de dados fixo com questões para cada trilha, aprovado e validado pelo profissional de orientação. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 O processo de orientação vocacional no qual o \textit{SyncCarreira} se insere envolve quatro participantes --- o Administrador, o aluno, o próprio sistema e o profissional de orientação --- e combina atividades sequenciais, decisões e atividades executadas em paralelo. Para representá-lo, adota-se o diagrama de atividades, que descreve o fluxo de controle de um processo por meio de suas ações, decisões e paralelismos e permite organizá-las em partições de acordo com o responsável por cada ação \cite{omg2017uml}.
 
 O processo inicia-se com o cadastro da instituição parceira, de suas turmas e das contas de profissionais de orientação e alunos pelo Administrador. A partir daí, duas linhas de atividade ocorrem em paralelo. De um lado, o aluno registra seus interesses e percorre as trilhas, respondendo às questões e registrando uma síntese ao final de cada uma, enquanto o sistema libera a trilha seguinte até a conclusão da jornada. De outro, o profissional de orientação realiza a curadoria de \textit{links} externos e acompanha o progresso dos alunos. Concluída a jornada, o sistema gera o leque de possibilidades, que o aluno consulta juntamente com o histórico de sua jornada. Caso permaneça em dúvida quanto à escolha profissional, o aluno sinaliza essa condição, e o sistema alerta o profissional de orientação e prioriza o aluno, que passa a ser convocado para uma sessão de orientação e recebe \textit{feedback} do profissional. A \autoref{fig_atividades} apresenta esse processo.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de atividades do processo de orientação vocacional.}
     \label{fig_atividades}

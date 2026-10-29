@@ -19,15 +19,22 @@ Um ator, em Engenharia de Requisitos, representa qualquer entidade externa — p
 
 O \autoref{quadro-atores} identifica os atores do \textit{SyncCarreira} e sintetiza seus papéis.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Atores do SyncCarreira.}
-\label{quadro-atores}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{2.3cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}p{2.3cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Atores do SyncCarreira.}\label{quadro-atores}} \\[0.3em]
 \hline
 \textbf{Ator} & \textbf{Tipo} & \textbf{Descrição do papel} \\
 \hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Ator} & \textbf{Tipo} & \textbf{Descrição do papel} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Administrador & Primário & Configura o ambiente da plataforma: cadastra e gerencia as instituições parceiras e suas turmas, cria e mantém as contas dos profissionais de orientação e dos alunos e vincula cada aluno à sua turma. \\
 \hline
 Profissional de Orientação (psicólogo(a) ou mentor(a) educacional) & Primário & Acompanha o progresso dos alunos da instituição à qual está vinculado, identifica os alunos que sinalizaram dúvida, realiza a curadoria de fontes externas, agenda sessões de orientação, envia \textit{feedbacks} e emite relatórios. \\
@@ -38,9 +45,9 @@ Google Calendar & Secundário (sistema externo) & Recebe os eventos das sessões
 \hline
 Serviço de e-mail & Secundário (sistema externo) & Entrega as mensagens de primeiro acesso, os avisos de \textit{feedback} ao aluno e os alertas de sinalização de dúvida ao profissional de orientação. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 Os comportamentos automáticos do sistema, como a sinalização de alunos em dúvida (RF-04) e a priorização desses alunos para atendimento (RN-04), não constituem um ator, pois são executados pelo próprio sistema em resposta às ações dos atores primários.
 
@@ -48,7 +55,7 @@ Os comportamentos automáticos do sistema, como a sinalização de alunos em dú
 
 Um caso de uso descreve uma sequência de ações que um sistema executa para produzir um resultado observável e de valor para um ator específico \cite{pressman2021}. O \textit{SyncCarreira} possui dezesseis casos de uso. A autenticação (UC16) é pré-condição de todos os demais, uma vez que nenhuma funcionalidade é acessível sem que o usuário esteja identificado. A \autoref{fig_casos_uso} apresenta o diagrama de casos de uso.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de casos de uso do SyncCarreira.}
     \label{fig_casos_uso}
@@ -531,7 +538,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 O modelo conceitual representa os principais conceitos do domínio do problema, seus atributos e relacionamentos, sem incorporar decisões de implementação, como tipos de dados, chaves ou mecanismos de persistência. Na modelagem orientada a objetos, essa representação é construída por meio de classes de análise, que descrevem as entidades relevantes do domínio, e das associações entre elas, com as respectivas multiplicidades \cite{pressman2021}. A \autoref{fig_classes_conceitual} apresenta o diagrama de classes conceitual do \textit{SyncCarreira}.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de classes conceitual do SyncCarreira.}
     \label{fig_classes_conceitual}
@@ -566,15 +573,22 @@ Os requisitos funcionais decorrem, em sua maioria, das regras de negócio do sis
 
 O \autoref{quadro-rf} apresenta os dezesseis requisitos funcionais do sistema, organizados por ator responsável.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Requisitos funcionais do SyncCarreira.}
-\label{quadro-rf}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\centering\arraybackslash}p{1.2cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Requisitos funcionais do SyncCarreira.}\label{quadro-rf}} \\[0.3em]
 \hline
 \textbf{ID} & \textbf{Requisito} & \textbf{Descrição} \\
 \hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{ID} & \textbf{Requisito} & \textbf{Descrição} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 \multicolumn{3}{|l|}{\cellcolor{gray!12}\textbf{Administrador}} \\
 \hline
 RF-01 & Gestão de instituições & Cadastrar e gerenciar escolas/ONGs, vinculando usuários e turmas a cada instituição. \\
@@ -615,9 +629,9 @@ RF-15 & Histórico de jornadas anteriores & Consultar jornadas de ciclos anterio
 \hline
 RF-16 & Agendamentos e feedbacks & Ver, em uma área própria, os agendamentos de sessão e os feedbacks enviados pelo profissional de orientação. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 \section{Requisitos Não Funcionais}\label{sec:rnf}
 
@@ -625,15 +639,22 @@ Os requisitos não funcionais são restrições sobre os serviços ou as funçõ
 
 O \autoref{quadro-rnf} apresenta os oito requisitos não funcionais do sistema.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Requisitos não funcionais do SyncCarreira.}
-\label{quadro-rnf}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\centering\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Requisitos não funcionais do SyncCarreira.}\label{quadro-rnf}} \\[0.3em]
 \hline
 \textbf{ID} & \textbf{Categoria} & \textbf{Descrição} \\
 \hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{ID} & \textbf{Categoria} & \textbf{Descrição} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 RNF-01 & Segurança (autenticação e autorização) & Cada usuário só acessa as ferramentas permitidas ao seu perfil; um aluno não vê informações de outros alunos, e um profissional de orientação só acessa suas próprias turmas. \\
 \hline
 RNF-02 & Privacidade e proteção de dados (LGPD) & Dados sensíveis (respostas, sentimentos e perfis) são armazenados com criptografia; o sistema garante a exclusão total dos dados mediante solicitação do aluno ou da instituição. \\
@@ -650,9 +671,9 @@ RNF-07 & Documentação de API & Interface de programação do sistema documenta
 \hline
 RNF-08 & Isolamento de dados por instituição & Dados de alunos, turmas, trilhas e resultados de uma instituição nunca se misturam ou ficam visíveis para outra instituição cadastrada. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 \section{Restrições do Sistema}\label{sec:restricoes}
 

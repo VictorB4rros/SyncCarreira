@@ -13,15 +13,22 @@ Para atender a essas características, o sistema adota uma arquitetura cliente-s
 
 Internamente, o servidor organiza-se segundo o estilo arquitetural em camadas, no qual cada camada desempenha um papel específico e se comunica apenas com as camadas adjacentes. Esse estilo favorece a separação de responsabilidades e a testabilidade, ao custo de alguma sobrecarga na passagem de dados entre camadas, e é adequado a aplicações de negócio de porte pequeno e médio \cite{richards2020}. O \autoref{quadro-camadas} apresenta as camadas do servidor e suas responsabilidades.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Camadas do servidor e responsabilidades.}
-\label{quadro-camadas}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{4.0cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Camadas do servidor e responsabilidades.}\label{quadro-camadas}} \\[0.3em]
 \hline
 \textbf{Camada} & \textbf{Pacote} & \textbf{Responsabilidade} \\
 \hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Camada} & \textbf{Pacote} & \textbf{Responsabilidade} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Controladores & controllers & Recebem as requisições HTTP, validam os dados de entrada e devolvem as respostas no formato JSON. \\
 \hline
 Serviços & services & Concentram as regras de negócio, as verificações de acesso por perfil e por instituição e o controle de transações. \\
@@ -34,13 +41,13 @@ Objetos de transferência & dto & Definem os dados de entrada e saída de cada o
 \hline
 Configuração & config & Define a segurança, a emissão de \textit{tokens}, o CORS, a documentação da API e a execução assíncrona. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 Na visão de componentes, a solução divide-se em dois componentes principais — a aplicação \textit{web} e a API REST — e em três sistemas externos: o banco de dados relacional, o servidor de envio de mensagens eletrônicas e a interface de programação do Google Calendar. A \autoref{fig_componentes} apresenta o diagrama de componentes, elaborado segundo a notação da UML \cite{omg2017uml}, no qual as interfaces oferecidas são representadas por círculos e as interfaces requeridas, por semicírculos.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de componentes do SyncCarreira.}
     \label{fig_componentes}
@@ -56,15 +63,22 @@ Quanto à implantação, os arquivos estáticos da aplicação \textit{web}, ger
 
 O projeto de componentes detalha a estrutura interna e as interfaces de cada componente definido na arquitetura, com o objetivo de obter módulos coesos, com baixo acoplamento entre si e interfaces bem definidas \cite{pressman2021}. No \textit{SyncCarreira}, cada módulo de domínio da API corresponde a um conjunto de controladores, serviços e repositórios e expõe um grupo de recursos REST. O \autoref{quadro-componentes} relaciona os componentes, os requisitos que atendem, suas principais classes e os recursos que expõem.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Componentes da API, requisitos atendidos e interfaces.}
-\label{quadro-componentes}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{4.5cm}|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.4cm}|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{4.5cm}|}
+\multicolumn{4}{@{}c@{}}{\quadrolongocaption{Componentes da API, requisitos atendidos e interfaces.}\label{quadro-componentes}} \\[0.3em]
 \hline
 \textbf{Componente} & \textbf{Requisitos} & \textbf{Principais classes} & \textbf{Recursos REST} \\
 \hline
+\endfirsthead
+\multicolumn{4}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Componente} & \textbf{Requisitos} & \textbf{Principais classes} & \textbf{Recursos REST} \\
+\hline
+\endhead
+\multicolumn{4}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Autenticação e Autorização & RNF-01 & AuthorizationServerConfig, ResourceServerConfig, AuthService, PasswordRecoverService & /oauth2/token, /auth/new-password, /users/me \\
 \hline
 Gestão Institucional e de Usuários & RF-01, RF-02 & InstitutionService, SchoolClassService, PsychologistService, StudentService, UserService & /institutions, /classes, /psychologists, /students, /users \\
@@ -83,9 +97,9 @@ Notificações & RF-04, RF-09 & EmailService, EmailEventListener, modelos Thymel
 \hline
 Persistência & — & Repositórios Spring Data JPA e projeções de consulta & interna (JDBC) \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 Algumas decisões de projeto são transversais aos componentes:
 
@@ -145,15 +159,22 @@ Para ilustrar o cálculo, considera-se um aluno hipotético que declarou, no per
 
 O \autoref{quadro-exemplo-leque} apresenta a soma dos pesos das respostas de cada trilha, a pontuação e o máximo de cada área e a afinidade resultante.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Exemplo de cálculo das afinidades por área do conhecimento.}
-\label{quadro-exemplo-leque}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|}
+\multicolumn{5}{@{}c@{}}{\quadrolongocaption{Exemplo de cálculo das afinidades por área do conhecimento.}\label{quadro-exemplo-leque}} \\[0.3em]
 \hline
 \textbf{Componente} & \textbf{Humanas} & \textbf{Biológicas} & \textbf{Exatas} & \textbf{Artes} \\
 \hline
+\endfirsthead
+\multicolumn{5}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Componente} & \textbf{Humanas} & \textbf{Biológicas} & \textbf{Exatas} & \textbf{Artes} \\
+\hline
+\endhead
+\multicolumn{5}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Interesse declarado ($I_a$) & 4,0 & 2,0 & 1,0 & 3,0 \\
 \hline
 Respostas da trilha de Autoconhecimento & 71,0 & 17,0 & 7,0 & 15,0 \\
@@ -168,9 +189,9 @@ Máximo possível ($M_a$) & 180,5 & 146,5 & 212,0 & 157,5 \\
 \hline
 \textbf{Afinidade} ($S_a$) & \textbf{76,5\%} & \textbf{38,6\%} & \textbf{23,8\%} & \textbf{47,6\%} \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 Para a área de Humanas, por exemplo, a afinidade resulta de:
 
@@ -186,7 +207,7 @@ O projeto de um banco de dados percorre etapas sucessivas: o projeto conceitual,
 
 As Figuras \ref{fig_classes_projeto_a} e \ref{fig_classes_projeto_b} apresentam o diagrama de classes de projeto, com os atributos, os tipos e as multiplicidades efetivamente adotados. Para manter a legibilidade, os atributos registrados por área do conhecimento — Humanas, Exatas, Biológicas e Artes — são representados de forma agrupada, como score«Área» e affinity«Área», e o diagrama foi dividido em duas partes.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de classes de projeto: usuários, instituições e jornada.}
     \label{fig_classes_projeto_a}
@@ -194,7 +215,7 @@ As Figuras \ref{fig_classes_projeto_a} e \ref{fig_classes_projeto_b} apresentam 
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de classes de projeto: acompanhamento, conteúdo e enumerações.}
     \label{fig_classes_projeto_b}
@@ -204,15 +225,22 @@ As Figuras \ref{fig_classes_projeto_a} e \ref{fig_classes_projeto_b} apresentam 
 
 O \autoref{quadro-tabelas} relaciona as classes persistentes às respectivas tabelas do banco de dados.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Classes persistentes e tabelas do banco de dados.}
-\label{quadro-tabelas}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{4.9cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.9cm}|>{\raggedright\arraybackslash}p{4.9cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Classes persistentes e tabelas do banco de dados.}\label{quadro-tabelas}} \\[0.3em]
 \hline
 \textbf{Classe} & \textbf{Tabela} & \textbf{Conteúdo} \\
 \hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Classe} & \textbf{Tabela} & \textbf{Conteúdo} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 User, Role & tb\_usuario, tb\_role, tb\_usuario\_role & Dados comuns de acesso e perfis de acesso de cada usuário. \\
 \hline
 Psychologist & tb\_psicologa & Dados específicos do profissional de orientação e vínculo com a instituição. \\
@@ -237,9 +265,9 @@ Feedback & tb\_feedback & Feedbacks individuais de jornada e de sessão. \\
 \hline
 PasswordRecover & tb\_senha\_recuperacao & Tokens temporários de definição de senha. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 As principais decisões do modelo de dados são as seguintes:
 
@@ -258,7 +286,7 @@ O projeto da interface do usuário define a organização das telas, a navegaç�
 
 A interface organiza-se por perfil de acesso. Após a autenticação, cada usuário é direcionado à sua tela inicial e dispõe de um menu de navegação com as opções permitidas ao seu perfil: o profissional de orientação acessa o painel de progresso, os agendamentos e a curadoria de \textit{links}; o aluno acessa as trilhas, o panorama da jornada, o perfil e os agendamentos; e o Administrador acessa a gestão de usuários, turmas e instituições. A \autoref{fig_navegacao} apresenta o mapa de navegação da aplicação, com as telas e os respectivos endereços.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Mapa de navegação da interface do SyncCarreira.}
     \label{fig_navegacao}
@@ -278,7 +306,7 @@ Os principais padrões adotados na interface são os seguintes:
 
 As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais telas do sistema.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Tela de autenticação.}
     \label{fig_tela_login}
@@ -286,7 +314,7 @@ As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais 
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Painel de progresso do profissional de orientação.}
     \label{fig_tela_painel}
@@ -294,27 +322,27 @@ As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais 
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Tela de personalização dos interesses do aluno.}
     \label{fig_tela_interesses}
-    \fbox{\includegraphics[width=0.8\textwidth]{img/fig-cap4-tela-interesses.png}}
+    \fbox{\includegraphics[width=0.7\textwidth]{img/fig-cap4-tela-interesses.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Tela inicial do aluno com as trilhas da jornada.}
     \label{fig_tela_trilha}
-    \fbox{\includegraphics[width=0.6\textwidth]{img/fig-cap4-tela-trilhas.png}}
+    \fbox{\includegraphics[width=0.5\textwidth]{img/fig-cap4-tela-trilhas.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Tela do leque de possibilidades de carreira.}
     \label{fig_tela_leque}
-    \fbox{\includegraphics[width=0.62\textwidth]{img/fig-cap4-tela-leque.png}}
+    \fbox{\includegraphics[width=0.55\textwidth]{img/fig-cap4-tela-leque.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
@@ -324,7 +352,7 @@ Os diagramas de sequência representam a colaboração entre os objetos que real
 
 A \autoref{fig_seq_sintese} apresenta o registro da síntese de uma trilha. A API verifica se a trilha está liberada para o aluno e se todas as suas questões foram respondidas antes de registrar a síntese; em seguida, caso todas as trilhas estejam concluídas, registra a jornada no histórico do aluno. As violações dessas condições resultam em respostas de acesso negado (403), regra de negócio violada (422) ou síntese já registrada (409).
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de sequência do registro de síntese da trilha.}
     \label{fig_seq_sintese}
@@ -334,7 +362,7 @@ A \autoref{fig_seq_sintese} apresenta o registro da síntese de uma trilha. A AP
 
 A \autoref{fig_seq_duvida} apresenta a sinalização de dúvida pelo aluno ao final da jornada. A resposta ao aluno é devolvida assim que a sinalização é gravada; a mensagem eletrônica destinada a cada profissional de orientação com contrato vigente na instituição é enviada somente após a confirmação da transação e de forma assíncrona, de modo que eventual indisponibilidade do servidor de e-mail não impede o registro da sinalização.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de sequência da sinalização de dúvida.}
     \label{fig_seq_duvida}
@@ -344,7 +372,7 @@ A \autoref{fig_seq_duvida} apresenta a sinalização de dúvida pelo aluno ao fi
 
 A \autoref{fig_seq_agendamento} apresenta o agendamento de uma sessão de orientação. Quando a conta do Google Agenda está conectada, a aplicação \textit{web} cria primeiro o evento, com os alunos como convidados e o \textit{link} de videoconferência, e depois registra a sessão na API. Se a API rejeitar o registro — por exemplo, por envolver aluno de outra instituição —, a aplicação cancela o evento recém-criado, evitando convites para uma sessão inexistente.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de sequência do agendamento de sessão.}
     \label{fig_seq_agendamento}
@@ -356,15 +384,22 @@ A \autoref{fig_seq_agendamento} apresenta o agendamento de uma sessão de orient
 
 A seleção das tecnologias considerou a maturidade e a documentação de cada ferramenta, sua adequação aos requisitos não funcionais e o domínio prévio da equipe. O servidor foi desenvolvido em Java com o ecossistema Spring, que oferece módulos integrados para a construção de APIs, persistência, segurança e documentação \cite{spring2026}. A aplicação \textit{web} utiliza a biblioteca React, baseada em componentes reutilizáveis e na atualização declarativa da interface \cite{react2026}. O \autoref{quadro-tecnologias} apresenta as tecnologias adotadas e sua função no projeto.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Tecnologias utilizadas no SyncCarreira.}
-\label{quadro-tecnologias}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{4.9cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}X|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{4.9cm}|>{\raggedright\arraybackslash}p{1.8cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{4}{@{}c@{}}{\quadrolongocaption{Tecnologias utilizadas no SyncCarreira.}\label{quadro-tecnologias}} \\[0.3em]
 \hline
 \textbf{Camada} & \textbf{Tecnologia} & \textbf{Versão} & \textbf{Função no projeto} \\
 \hline
+\endfirsthead
+\multicolumn{4}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Camada} & \textbf{Tecnologia} & \textbf{Versão} & \textbf{Função no projeto} \\
+\hline
+\endhead
+\multicolumn{4}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Servidor & Java & 21 & Linguagem do servidor. \\
 \hline
 Servidor & Spring Boot & 4.0.5 & Base da aplicação, configuração e servidor HTTP embarcado. \\
@@ -407,10 +442,10 @@ Infraestrutura & Amazon S3 e Amazon CloudFront & — & Hospedagem e distribuiç�
 \hline
 Qualidade & GitHub Actions, SonarCloud e JaCoCo & — & Compilação automática, análise estática e cobertura de testes a cada integração. \\
 \hline
-\end{tabularx}
+\end{xltabular}
 {\footnotesize \textsuperscript{1} Versão gerenciada pelo Spring Boot 4.0.5.\par}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 \section{Segurança e Controle de Acesso}
 
@@ -426,15 +461,22 @@ As senhas não são armazenadas em texto claro: são transformadas por meio da f
 
 O controle de acesso é aplicado em dois níveis. No primeiro, baseado em perfis, cada grupo de recursos da API é associado aos perfis autorizados — Administrador, Profissional de Orientação e Aluno —, e as requisições de perfis não autorizados são rejeitadas antes de alcançar a lógica de negócio. O \autoref{quadro-autorizacao} apresenta a matriz de autorização por perfil.
 
-\begin{quadro}[H]
-\ABNTEXfontereduzida
-\caption{Matriz de autorização por perfil.}
-\label{quadro-autorizacao}
+{\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.7cm}|}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}p{2.7cm}|}
+\multicolumn{4}{@{}c@{}}{\quadrolongocaption{Matriz de autorização por perfil.}\label{quadro-autorizacao}} \\[0.3em]
 \hline
 \textbf{Recurso} & \textbf{Administrador} & \textbf{Profissional} & \textbf{Aluno} \\
 \hline
+\endfirsthead
+\multicolumn{4}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Recurso} & \textbf{Administrador} & \textbf{Profissional} & \textbf{Aluno} \\
+\hline
+\endhead
+\multicolumn{4}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
 Usuários, instituições, turmas e profissionais & Gerencia & — & — \\
 \hline
 Alunos (cadastro, edição e exclusão) & Gerencia & Consulta & — \\
@@ -451,15 +493,15 @@ Sessões de orientação & Gerencia & Própria agenda & Consulta das próprias \
 \hline
 Feedbacks & Consulta do status & Envia e exclui & Consulta e marca como lido \\
 \hline
-\end{tabularx}
+\end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
-\end{quadro}
+}
 
 No segundo nível, os serviços verificam a propriedade e o escopo institucional de cada recurso. O aluno acessa apenas os próprios dados, identificados a partir do \textit{token}, e não a partir de parâmetros informados na requisição; o profissional de orientação acessa apenas o próprio painel e a própria agenda, e somente pode convocar para sessões alunos vinculados a turmas da sua instituição. Essa verificação impede que a simples alteração de um identificador na requisição dê acesso a dados de outro usuário ou de outra instituição, em atendimento aos requisitos RNF-01 e RNF-08.
 
 O acesso às trilhas também é controlado pelo sistema, conforme a regra de negócio RN-01. A \autoref{fig_estados_acesso} apresenta o ciclo de vida do acesso de um usuário, e a \autoref{fig_estados_trilha}, os estados de uma trilha na jornada do aluno.
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de estados do acesso do usuário.}
     \label{fig_estados_acesso}
@@ -467,7 +509,7 @@ O acesso às trilhas também é controlado pelo sistema, conforme a regra de neg
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[!htbp]
     \centering
     \caption{Diagrama de estados de uma trilha na jornada do aluno.}
     \label{fig_estados_trilha}
