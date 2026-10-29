@@ -115,6 +115,10 @@
   {\renewcommand{\imprimirmembrotresRotulo}{#1}
    \renewcommand{\imprimirmembrotres}{#2}}
 
+% Comandos de dados - Terceiro orientador
+\providecommand{\imprimirorientadortres}{}
+\newcommand{\orientadortres}[1]{\renewcommand{\imprimirorientadortres}{#1}}
+
 % Comandos de dados - Data da apresentação
 \providecommand{\imprimirdataapresentacaoRotulo}{}
 \providecommand{\imprimirdataapresentacao}{}
@@ -184,17 +188,10 @@
   \abntex@ifnotempty{\imprimirorientador}{
     \hspace{.45\textwidth}
     \begin{minipage}{.5\textwidth}
-      \SingleSpacing
+      \SingleSpacing\raggedright
       \textbf{Orientador:} \imprimirorientador
-    \end{minipage}
-    \vspace*{\fill}
-  }
-
-  \abntex@ifnotempty{\imprimircoorientador}{
-    \hspace{.45\textwidth}
-    \begin{minipage}{.5\textwidth}
-      \SingleSpacing
-      \textbf{Orientador:} \imprimircoorientador
+      \abntex@ifnotempty{\imprimircoorientador}{\par\vspace{0.4cm}\textbf{Orientador:} \imprimircoorientador}
+      \abntex@ifnotempty{\imprimirorientadortres}{\par\vspace{0.4cm}\textbf{Orientador:} \imprimirorientadortres}
     \end{minipage}
     \vspace*{\fill}
   }
@@ -239,8 +236,9 @@ Aprovada em \dataapresentacao.
 
   \setlength{\ABNTEXsignwidth}{12cm}
   \setlength{\ABNTEXsignskip}{0.5cm}
-  \assinatura{\textbf{\imprimirorientador (Orientador)} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
-  \assinatura{\textbf{\imprimircoorientador (Orientador)} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
+  \assinatura{\textbf{\imprimirorientador{} (Orientador)} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
+  \assinatura{\textbf{\imprimircoorientador{} (Orientador)} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
+  \assinatura{\textbf{\imprimirorientadortres{} (Orientador)} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
   \assinatura{\textbf{\imprimirmembroum} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
   \assinatura{\textbf{\imprimirmembrodois} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
   %\assinatura{\textbf{\imprimirmembrotres} \\ Instituto Federal de Educação, Ciência e Tecnologia de São Paulo - IFSP}
