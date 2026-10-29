@@ -22,6 +22,17 @@ const TABS = [
   { id: 'agendamentos', label: 'Agendamentos e feedbacks' },
 ]
 
+/**
+ * Carrega o perfil e, se ele já foi preenchido, a situação da jornada atual.
+ * Uma falha na situação da jornada não impede o perfil de abrir.
+ */
+async function loadProfileAndJourneyStatus() {
+  const profile = await getMyStudentProfile()
+  if (!profile.profileCompleted) return { profile, journeyStatus: null }
+  const journeyStatus = await getMyCurrentJourneyStatus().catch(() => null)
+  return { profile, journeyStatus }
+}
+
 /** Primeiro acesso: só o formulário de interesses, como antes. */
 function OnboardingCard({ profile, onSaved }) {
   return (
@@ -49,14 +60,11 @@ export default function StudentProfilePage() {
 
   useEffect(() => {
     let active = true
-    getMyStudentProfile()
-      .then(async data => {
+    loadProfileAndJourneyStatus()
+      .then(({ profile: data, journeyStatus: status }) => {
         if (!active) return
         setProfile(data)
-        if (data.profileCompleted) {
-          const status = await getMyCurrentJourneyStatus().catch(() => null)
-          if (active) setJourneyStatus(status)
-        }
+        setJourneyStatus(status)
       })
       .catch(() => {
         if (active) setError('Não foi possível carregar seu perfil. Atualize a página ou tente novamente.')
@@ -88,7 +96,7 @@ export default function StudentProfilePage() {
       <main className="sp-main">
         <Link className="sp-back" to="/home">← Voltar para o início</Link>
 
-        {loading && <section className="sp-card"><div className="sp-state" role="status">Carregando seu perfil…</div></section>}
+        {loading && <section className="sp-card"><output className="sp-state">Carregando seu perfil…</output></section>}
         {!loading && error && <section className="sp-card"><p className="sp-message sp-message--error" role="alert">{error}</p></section>}
 
         {!loading && !error && profile && !profile.profileCompleted && (

@@ -257,27 +257,31 @@ async function sendOnce(url, method, body) {
   }
 }
 
+/**
+ * Faz a chamada e, em falhas temporárias (rede, 429, 5xx), tenta de novo com
+ * espera crescente (1 s, 2 s…), até MAX_ATTEMPTS tentativas.
+ */
+async function sendWithRetry(url, method, body, attempt = 1) {
+  const { resp, networkError } = await sendOnce(url, method, body)
+  const isLast = attempt >= MAX_ATTEMPTS
+
+  if (networkError) {
+    if (isLast) throw new GoogleCalendarError('Sem conexão com o Google Agenda. Verifique a internet e tente de novo.')
+  } else if (resp.ok || resp.status === 204) {
+    return resp.status === 204 ? null : resp.json()
+  } else if (isLast || !RETRYABLE_STATUS.has(resp.status)) {
+    throw await toCalendarError(resp)
+  }
+
+  await sleep(1000 * attempt)
+  return sendWithRetry(url, method, body, attempt + 1)
+}
+
 async function calendarFetch(path, { method = 'GET', query = {}, body } = {}) {
   if (!isGoogleConnected()) {
     throw new GoogleCalendarError('Conecte sua conta Google para sincronizar a agenda.', 401)
   }
-
-  const url = buildUrl(path, query)
-  for (let attempt = 1; ; attempt++) {
-    const { resp, networkError } = await sendOnce(url, method, body)
-    const isLast = attempt >= MAX_ATTEMPTS
-
-    if (networkError) {
-      if (isLast) throw new GoogleCalendarError('Sem conexão com o Google Agenda. Verifique a internet e tente de novo.')
-    } else if (resp.ok || resp.status === 204) {
-      return resp.status === 204 ? null : resp.json()
-    } else if (isLast || !RETRYABLE_STATUS.has(resp.status)) {
-      throw await toCalendarError(resp)
-    }
-
-    // espera crescente: 1 s, 2 s…
-    await sleep(1000 * attempt)
-  }
+  return sendWithRetry(buildUrl(path, query), method, body)
 }
 
 /** Soma minutos a uma data "YYYY-MM-DDTHH:mm[:ss]" local e devolve no mesmo formato. */
@@ -359,13 +363,11 @@ function meetCreationFailed(event) {
  * O Google às vezes devolve a sala do Meet como "pending".
  * Consulta o evento mais algumas vezes até o link aparecer.
  */
-async function waitForMeetLink(event) {
-  let current = event
-  for (let i = 0; i < MEET_POLL_ATTEMPTS && !meetLinkOf(current) && !meetCreationFailed(current); i++) {
-    await sleep(1000)
-    current = await calendarFetch(`/${encodeURIComponent(event.id)}`)
-  }
-  return current
+async function waitForMeetLink(event, attemptsLeft = MEET_POLL_ATTEMPTS) {
+  if (attemptsLeft <= 0 || meetLinkOf(event) || meetCreationFailed(event)) return event
+  await sleep(1000)
+  const current = await calendarFetch(`/${encodeURIComponent(event.id)}`)
+  return waitForMeetLink(current, attemptsLeft - 1)
 }
 
 function toResult(event) {

@@ -268,7 +268,7 @@ export default function JourneyHistory({ status, onStatusChange }) {
     <div className="sp-history">
       <CurrentJourneyBar status={status} onStarted={newStatus => { onStatusChange(newStatus); void load() }} />
 
-      {loading && <div className="sp-state" role="status">Carregando suas jornadas…</div>}
+      {loading && <output className="sp-state">Carregando suas jornadas…</output>}
       {!loading && error && (
         <div className="sp-message sp-message--error" role="alert">
           {error} <button type="button" className="sp-link-btn" onClick={load}>Tentar de novo</button>
