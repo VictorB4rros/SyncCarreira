@@ -1,18 +1,89 @@
 % ----------------------------------------------------------
-% Considerações Finais
+% Capítulo 6 -- Conclusão
 % ----------------------------------------------------------
-\chapter{Considerações Finais}
+\chapter{Conclusão}\label{cap:conclusao}
 
-O desenvolvimento do \textit{SyncCarreira} representou não apenas um desafio técnico de engenharia de \textit{software}, mas, sobretudo, uma oportunidade de aplicar a tecnologia como ferramenta de transformação social. Ao longo deste projeto, foi possível estruturar uma solução capaz de democratizar o acesso à orientação profissional, utilizando uma arquitetura robusta e escalável, pensada para atender às necessidades específicas de jovens em contextos de vulnerabilidade.
+Este capítulo encerra o documento com a avaliação do projeto como um todo. Retoma os objetivos estabelecidos e os resultados alcançados, relata as principais dificuldades enfrentadas durante o desenvolvimento e as soluções adotadas e indica possibilidades de continuidade e evolução do \textit{SyncCarreira}.
 
-\section{Dificuldades, Escolhas e Descartes}
+\section{Considerações Finais}
 
-A construção do \textit{SyncCarreira} foi um processo de aprendizado contínuo, onde a tradução do negócio para a tecnologia foi o desafio central.
+O projeto teve como objetivo geral desenvolver o \textit{SyncCarreira}, uma plataforma no modelo \textit{Software as a Service} destinada à automação e à gestão dos processos de orientação vocacional em instituições de ensino. A versão desenvolvida encontra-se em execução em ambiente de nuvem, acessível pelo domínio próprio do projeto, e atende aos três perfis previstos: o Administrador, que configura as instituições, as turmas e as contas; o profissional de orientação, que acompanha os alunos e conduz os atendimentos; e o aluno, protagonista da jornada.
+
+Do ponto de vista do aluno, a plataforma estrutura o processo de escolha profissional em trilhas sequenciais, com registro obrigatório de uma síntese ao final de cada uma, e apresenta, ao término da jornada, um leque de áreas e carreiras acompanhado de aviso explícito de que não se trata de diagnóstico. Do ponto de vista do profissional de orientação, o sistema substitui o acompanhamento manual por um painel por turma, preservando o sigilo das respostas individuais, sinaliza automaticamente os alunos que permanecem em dúvida e reúne em um único ambiente o agendamento de sessões, o envio de \textit{feedback}, a curadoria de fontes externas e a emissão de relatórios. O \autoref{quadro-objetivos} sintetiza o atendimento a cada objetivo específico.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.25}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{2.2cm}|>{\raggedright\arraybackslash}p{5.8cm}|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Atendimento aos objetivos específicos.}\label{quadro-objetivos}} \\[0.3em]
+\hline
+\textbf{Objetivo específico} & \textbf{Situação} & \textbf{Observação} \\
+\hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Objetivo específico} & \textbf{Situação} & \textbf{Observação} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+Estruturar a jornada do aluno em trilhas sequenciais e obrigatórias & Atendido & Liberação de cada trilha condicionada à conclusão da anterior, com síntese final ao término da jornada. \\
+\hline
+Assegurar a autonomia do estudante por meio do registro obrigatório de sínteses & Atendido & Síntese textual livre ao final de cada trilha. \\
+\hline
+Fornecer ao profissional de orientação um painel de acompanhamento por turma, com sigilo das respostas & Atendido & Painel com indicadores e progresso por trilha, sem exibição do conteúdo das respostas. \\
+\hline
+Sinalizar automaticamente os alunos em dúvida e priorizá-los para atendimento & Atendido & Destaque no painel, aviso por e-mail ao profissional e filtro no agendamento. \\
+\hline
+Viabilizar o agendamento de sessões com notificação pelo Google Calendar & Atendido & Sessões individuais ou em grupo, com convite e videoconferência. \\
+\hline
+Possibilitar a curadoria de \textit{links} de fontes externas na trilha de Informação & Atendido & \textit{Links} gerais e por área do conhecimento. \\
+\hline
+Apresentar um leque de áreas e carreiras, vedado o diagnóstico fechado & Atendido & Áreas em destaque, subáreas e carreiras, com aviso de que o resultado é um ponto de partida. \\
+\hline
+Disponibilizar o histórico de respostas e sínteses, inclusive de jornadas anteriores & Atendido & Panorama da jornada, histórico de ciclos anteriores e exportação em PDF. \\
+\hline
+Permitir a gestão de múltiplas instituições com isolamento dos dados & Parcial & Isolamento de alunos, painel e sessões; \textit{links} de informação compartilhados entre instituições. \\
+\hline
+Garantir a conformidade com a LGPD, com criptografia de dados sensíveis e exclusão de dados & Parcial & Exclusão definitiva implementada; apenas as senhas são protegidas por função de \textit{hash}. \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
+Dos dez objetivos específicos, oito foram plenamente atendidos e dois o foram parcialmente, o que permite concluir que o objetivo geral foi alcançado: a plataforma digitaliza a jornada de escolha profissional e oferece ao profissional de orientação as ferramentas de acompanhamento previstas. As lacunas remanescentes — a criptografia dos dados sensíveis e o isolamento completo das fontes de informação por instituição — não comprometem o fluxo principal de uso, mas devem ser tratadas antes da adoção da plataforma em larga escala, dada a natureza dos dados de estudantes menores de idade.
+
+No plano técnico, a arquitetura em camadas, a separação entre a aplicação \textit{web} e a API, a integração contínua com testes automatizados e a análise estática do código resultaram em uma base de código com cobertura de testes de 89,3\%, aprovada no critério de qualidade adotado, o que favorece a manutenção e a evolução da plataforma. Durante o refinamento do escopo, a equipe optou por não incorporar à primeira versão funcionalidades de automação baseadas em Inteligência Artificial, priorizando a clareza do fluxo de navegação e a curadoria de conteúdo pelo profissional de orientação, de modo a concentrar o esforço nas funcionalidades essenciais ao processo de orientação.
+
+\section{Dificuldades Encontradas}
+
+Ao longo do desenvolvimento, a equipe enfrentou dificuldades de natureza conceitual, técnica e organizacional. As principais, e as soluções adotadas, foram as seguintes:
 
 \begin{itemize}
-    \item \textbf{Dificuldades:} A principal barreira foi o alinhamento de expectativas e a tradução das necessidades da instituição parceira para requisitos técnicos. O processo de orientação vocacional, por ser inicialmente abstrato, exigiu um esforço extra de comunicação e modelagem para que as regras de negócio fossem compreendidas pela equipe de desenvolvimento e convertidas em funcionalidades concretas e tangíveis no sistema.
+  \item \textbf{tradução do processo de orientação em requisitos}: por ser um processo de natureza subjetiva, a orientação vocacional exigiu um esforço de comunicação com a instituição parceira para que suas etapas fossem compreendidas e convertidas em regras de negócio e funcionalidades concretas; a dificuldade foi tratada por meio de entrevistas com a parceira e da formalização dos requisitos em um documento aprovado pelas partes;
+  \item \textbf{autenticação com concessão por senha}: o \textit{framework} de autorização adotado não oferece nativamente a concessão por senha do proprietário do recurso, o que exigiu o desenvolvimento de uma concessão personalizada, integrada à emissão de \textit{tokens} JWT;
+  \item \textbf{requisições simultâneas}: o registro de respostas em sequência rápida pelo mesmo aluno provocava bloqueios mútuos no banco de dados; a solução combinou o bloqueio do registro do aluno durante a operação, a repetição automática em caso de bloqueio e o retorno de conflito quando a falha persiste;
+  \item \textbf{comparabilidade das áreas do conhecimento}: como o banco de questões não distribui a mesma quantidade de pontos entre as áreas, a comparação direta das pontuações favorecia a área com mais pontos em jogo; adotou-se a comparação pelo percentual do máximo possível de cada área;
+  \item \textbf{integração com o Google Agenda}: a criação de eventos com videoconferência e convites exigiu que a autorização fosse concedida pelo próprio profissional de orientação no navegador, com tratamento para cancelar o evento caso o registro da sessão não fosse concluído na API;
+  \item \textbf{entrega de e-mails}: para assegurar a entrega das mensagens de primeiro acesso e dos avisos, o envio passou a utilizar um serviço transacional com remetente no domínio próprio do projeto e versão alternativa em texto puro;
+  \item \textbf{implantação em nuvem}: a publicação da plataforma exigiu a configuração da distribuição da aplicação \textit{web}, do acesso HTTPS à API, das origens autorizadas e do domínio próprio, além do ajuste das configurações de produção, como o fuso horário da instituição;
+  \item \textbf{qualidade do código}: a adoção da análise estática e da meta de cobertura de testes exigiu a correção contínua dos apontamentos e a ampliação dos testes automatizados ao longo do desenvolvimento;
+  \item \textbf{organização da equipe}: o desenvolvimento precisou ser conciliado com as demais atividades acadêmicas e profissionais dos integrantes, o que foi tratado com a divisão das atribuições por competência e com o fluxo de trabalho baseado em ramificações e revisão de código por \textit{pull request}.
+\end{itemize}
 
-    \item \textbf{Escolhas:} Optou-se pela utilização do MySQL como banco de dados relacional pela sua robustez e confiabilidade na persistência de dados. A escolha do React no \textit{front-end} foi estratégica para garantir que a interface fosse tecnicamente consistente e fácil de manter a longo prazo, permitindo uma estrutura de componentes clara e modular.
+\section{Trabalhos Futuros}
 
-    \item \textbf{Descartes:} Durante o refinamento do projeto, descartou-se a implementação de funcionalidades que prometiam automatizações complexas de Inteligência Artificial (IA), optando-se por priorizar a clareza do fluxo de navegação e a curadoria de conteúdo pedagógico. Esse descarte foi fundamental para evitar a criação de um sistema excessivamente complexo e garantir que a ferramenta entregasse valor imediato aos jovens atendidos pela ONG, sem dispersar o foco da equipe de desenvolvimento em tecnologias que não eram vitais para o MVP.
+A versão desenvolvida constitui uma base funcional para a evolução do \textit{SyncCarreira}. Como continuidade do trabalho, propõem-se as seguintes melhorias e ampliações:
+
+\begin{itemize}
+  \item \textbf{proteção de dados}: criptografar em repouso as respostas, as sínteses e os perfis dos alunos, implementar o fluxo de aceite do termo de consentimento e mover o armazenamento do \textit{token} de acesso para um mecanismo menos exposto a \textit{scripts};
+  \item \textbf{gestão de acesso}: permitir a recuperação de senha pelo próprio usuário e o reenvio do \textit{link} de primeiro acesso, tornar opcional o registro profissional para mentores, bloquear o acesso de profissionais com contrato vencido e vincular os \textit{links} de informação a cada instituição;
+  \item \textbf{gestão do banco de questões}: oferecer na aplicação \textit{web} a consulta e a manutenção das questões e de seus pesos pelo profissional de orientação, preservando a validação prevista nas regras de negócio;
+  \item \textbf{infraestrutura e operação}: automatizar a implantação por meio de entrega contínua, persistir a chave de assinatura dos \textit{tokens}, adotar monitoramento e redundância e medir formalmente o desempenho e a disponibilidade;
+  \item \textbf{qualidade}: incluir testes automatizados na aplicação \textit{web} e tratar os apontamentos pendentes da análise estática;
+  \item \textbf{apoio à análise das sínteses}: empregar Inteligência Artificial generativa para auxiliar o profissional de orientação na leitura das sínteses dos alunos, por meio de resumos e da identificação de temas recorrentes, sem gerar diagnósticos e sempre sob supervisão do profissional;
+  \item \textbf{internacionalização}: disponibilizar a plataforma em outros idiomas, ampliando seu alcance;
+  \item \textbf{novos públicos}: adaptar as trilhas e o banco de questões para estudantes do ensino superior, apoiando decisões de reorientação de curso e de inserção profissional;
+  \item \textbf{ampliação do produto}: desenvolver aplicativos móveis nativos, integrar a plataforma a sistemas de gestão acadêmica e ambientes virtuais de aprendizagem e implementar o módulo de faturamento necessário à oferta comercial no modelo SaaS;
+  \item \textbf{validação com usuários}: avaliar a plataforma junto a profissionais de orientação e estudantes em uso real, de modo a mensurar seus efeitos sobre o acompanhamento vocacional e orientar as próximas versões.
 \end{itemize}
