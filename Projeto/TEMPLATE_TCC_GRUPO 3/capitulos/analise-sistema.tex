@@ -562,6 +562,8 @@ A partir desse diagrama, destacam-se os seguintes conceitos:
 
 Um requisito funcional é uma declaração sobre um serviço que o sistema deve fornecer, descrevendo como ele deve reagir a entradas específicas e como deve se comportar em determinadas situações \cite{pressman2021}. \citeonline{sommerville2011} acrescenta que os requisitos funcionais podem, em alguns casos, explicitar também o que o sistema não deve fazer — caso da vedação a diagnósticos fechados de carreira no \textit{SyncCarreira}.
 
+Os requisitos funcionais decorrem, em sua maioria, das regras de negócio do sistema: o RF-03 e o RF-07 atendem à RN-03; o RF-04, à RN-03 e à RN-04; o RF-05 e o RF-08, à RN-04; o RF-06, à RN-05; o RF-10, à RN-01, à RN-06 e à RN-09; o RF-11, à RN-02; o RF-12, à RN-07; e o RF-13 e o RF-15, à RN-08. Cinco requisitos, entretanto, não decorrem de uma regra de negócio específica. O RF-01 e o RF-02 são requisitos de suporte administrativo: o cadastro das instituições, das turmas e das contas de usuário é condição para que qualquer jornada ocorra e para que o isolamento entre instituições e os perfis de acesso possam ser aplicados. O RF-09 e o RF-16 complementam o atendimento aos alunos em dúvida, ao permitir que o profissional de orientação dê retorno individual ao aluno após a sessão e que o aluno reúna, em um único local, seus agendamentos e os \textit{feedbacks} recebidos. O RF-14, por sua vez, permite ao aluno registrar informações de perfil e interesses que contextualizam sua jornada. Esses requisitos constam do Documento de Requisitos do Sistema como funcionalidades de apoio ao processo de orientação, sem uma regra de negócio própria.
+
 O \autoref{quadro-rf} apresenta os dezesseis requisitos funcionais do sistema, organizados por ator responsável.
 
 \begin{quadro}[H]
@@ -663,4 +665,15 @@ O Documento de Requisitos do Sistema delimita quatro exclusões de escopo que op
   \item \textbf{Publicação de aplicativos nativos}: a plataforma é entregue como aplicação \textit{web} responsiva, projetada para funcionar em navegadores de \textit{smartphones} e \textit{tablets}; o desenvolvimento e a publicação de aplicativos nativos nas lojas App Store e Play Store não estão previstos nesta versão.
   \item \textbf{Módulo financeiro e \textit{gateway} de pagamentos}: embora a arquitetura seja projetada para um modelo de negócio SaaS, esta versão não contempla fluxos de faturamento, integrações com \textit{gateways} de cartão de crédito, emissão de boletos ou de notas fiscais.
   \item \textbf{Integração com plataformas de terceiros}: o \textit{SyncCarreira} opera de forma independente, sem integrações automatizadas ou sincronização de dados com sistemas de gestão acadêmica ou ambientes virtuais de aprendizagem já utilizados pelas instituições de ensino; o provisionamento de contas e turmas ocorre por cadastro direto na plataforma.
+\end{enumerate}
+
+Além dessas exclusões, o desenvolvimento e a operação do \textit{SyncCarreira} estão sujeitos às seguintes restrições, decorrentes do contexto em que o projeto é realizado:
+
+\begin{enumerate}[label=\alph*)]
+  \item \textbf{Prazo}: o desenvolvimento está condicionado ao calendário acadêmico do Projeto de Conclusão de Curso, o que limita esta versão às funcionalidades previstas no Documento de Requisitos do Sistema e às entregas definidas em cada etapa de avaliação.
+  \item \textbf{Equipe}: o sistema é desenvolvido exclusivamente pelos integrantes do grupo, que conciliam o projeto com as demais atividades acadêmicas e profissionais, sem dedicação integral e sem apoio de equipes externas de desenvolvimento, \textit{design} ou testes.
+  \item \textbf{Orçamento}: o projeto não conta com financiamento; os custos de hospedagem em nuvem, de domínio e de envio de e-mails devem permanecer reduzidos, o que restringe a infraestrutura a recursos de baixo custo, com capacidade compatível com o volume de uso de uma instituição parceira.
+  \item \textbf{Legislação}: o tratamento de dados pessoais deve observar a Lei Geral de Proteção de Dados Pessoais, que determina que o tratamento de dados de crianças e de adolescentes seja realizado em seu melhor interesse \cite{brasil2018lgpd}; como parte do público-alvo é composta por estudantes menores de idade, a coleta deve limitar-se aos dados necessários à jornada de orientação, e o sistema deve permitir a exclusão desses dados.
+  \item \textbf{Plataforma de acesso}: por se tratar de uma aplicação \textit{web}, o uso do sistema depende de um navegador com conexão à internet, seja nos dispositivos da instituição parceira, seja nos dos próprios alunos.
+  \item \textbf{Serviços de terceiros}: o envio de convites das sessões de orientação depende de o profissional de orientação possuir uma conta Google e autorizar o acesso ao Google Agenda, e o envio de e-mails, como o de primeiro acesso, depende de um provedor externo de envio de mensagens.
 \end{enumerate}
