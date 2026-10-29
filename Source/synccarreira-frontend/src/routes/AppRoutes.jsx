@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext.jsx'
 import LoginPage    from '../pages/Login/LoginPage.jsx'
@@ -15,6 +16,15 @@ import StudentProfileGate from '../pages/Perfil/StudentProfileGate.jsx'
 import ProgressDashboardPage from '../pages/Psicologas/ProgressDashboardPage.jsx'
 import JourneyPanoramaPage from '../pages/Jornada/JourneyPanoramaPage.jsx'
 import { isAdministrator, isPsychologist } from '../utils/roles.js'
+
+// Área do aluno (React + TypeScript + Tailwind), carregada sob demanda em /aluno/*
+const StudentApp = lazy(() => import('../features/aluno/StudentApp'))
+
+/** Aluno = ROLE_USER sem perfil de equipe (mesma regra de src/features/aluno/context/auth.ts). */
+function isStudentOnly(user) {
+    return Boolean(user?.roles?.some(role => role.authority === 'ROLE_USER'))
+        && !isPsychologist(user) && !isAdministrator(user)
+}
 
 function PrivateRoute({ children }) {
     const { user } = useAuth()
@@ -44,9 +54,9 @@ function PsychologistRoute({ children }) {
 
 function HomeRoute() {
     const { user } = useAuth()
-    return isPsychologist(user)
-        ? <Navigate to="/painel-progresso" replace />
-        : <StudentProfileGate><HomePage /></StudentProfileGate>
+    if (isPsychologist(user)) return <Navigate to="/painel-progresso" replace />
+    if (isStudentOnly(user)) return <Navigate to="/aluno" replace />
+    return <StudentProfileGate><HomePage /></StudentProfileGate>
 }
 
 function StudentRoute({ children }) {
@@ -63,6 +73,9 @@ export default function AppRoutes() {
     return (
         <Routes>
             <Route path="/login"    element={<LoginPage />} />
+            <Route path="/aluno/*" element={
+                <PrivateRoute><Suspense fallback={null}><StudentApp /></Suspense></PrivateRoute>
+            } />
             <Route path="/new-password" element={<NewPasswordPage />} />
             <Route path="/home" element={
                 <PrivateRoute><HomeRoute /></PrivateRoute>
