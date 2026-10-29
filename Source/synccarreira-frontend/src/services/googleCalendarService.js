@@ -7,7 +7,7 @@
  *     do Google (Google Identity Services) e recebemos um access_token com o
  *     escopo `calendar.events`.
  *  2. Ao criar uma sessão, criamos um evento na agenda PRINCIPAL da psicóloga,
- *     com os alunos como convidados (attendees) e pedindo ao Google que gere
+ *     com os alunos como convidados (attendees) e pedindo ao Google que geregit
  *     um link do Google Meet (conferenceData).
  *  3. Usamos `sendUpdates=all`: o próprio Google envia o convite por e-mail
  *     para o aluno, e o evento aparece no Google Agenda dele.
@@ -21,7 +21,7 @@
  *  - Novas tentativas automáticas em falhas temporárias (rede, 429 e 5xx).
  *  - ID do evento gerado no front: se a criação for repetida, não duplica o evento.
  *  - Editar um evento que sumiu do Google (apagado ou criado por outra conta) cria
- *    um evento novo. Cancelar um evento que já não existe conta como sucesso.
+ *    um evento novo. Cancelar um evento que já não existe conta como sucesso.it
  * 
  * Nenhum segredo fica no front: só o CLIENT_ID (público) do OAuth.
  * O token do Google fica só em memória (não vai para localStorage/sessionStorage).
@@ -32,7 +32,6 @@
  *  - https://developers.google.com/calendar/api/v3/reference/events
  */
 
-c
 
 const CLIENT_ID    = import.meta.env.VITE_GOOGLE_CLIENT_ID || ''
 const SCOPE        = 'https://www.googleapis.com/auth/calendar.events'
