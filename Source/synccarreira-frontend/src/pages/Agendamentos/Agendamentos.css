@@ -502,7 +502,8 @@ code {
 
 .ag-label { font-size: 13px; font-weight: 600; color: var(--sc-text); display: flex; align-items: center; gap: 8px; }
 .ag-label em { font-style: normal; font-weight: 400; color: var(--sc-muted); }
-.ag-label__count { margin-left: auto; font-size: 12px; color: var(--ag-roxo-texto) !important; }
+/* .ag-label .ag-label__count vence .ag-label em sem precisar de !important */
+.ag-label .ag-label__count { margin-left: auto; font-size: 12px; color: var(--ag-roxo-texto); }
 
 .ag-input {
   width: 100%;

@@ -144,7 +144,7 @@ export default function PsicologaAgendamentos() {
     }
   }, [psychologist.id])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { load().catch(() => undefined) }, [load])
 
   const loadSentFeedbacks = useCallback(async () => {
     try {
