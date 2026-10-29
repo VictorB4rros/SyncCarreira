@@ -100,6 +100,86 @@ Algumas decisões de projeto são transversais aos componentes:
 
 Na aplicação \textit{web}, os componentes organizam-se em páginas, agrupadas por perfil de acesso; serviços de acesso à API, que encapsulam as chamadas HTTP e o envio do \textit{token}; um contexto de autenticação, que mantém os dados do usuário autenticado; e guardas de rota, que restringem cada página aos perfis autorizados e direcionam o aluno ao preenchimento do perfil antes de liberar as trilhas. A integração com o Google Agenda é encapsulada em um serviço próprio, responsável pela autorização da conta e pela criação, atualização e cancelamento dos eventos.
 
+\subsection{Cálculo do leque de possibilidades}
+
+O leque de possibilidades decorre da afinidade do aluno com quatro grandes áreas do conhecimento --- Humanas ($H$), Biológicas ($B$), Exatas ($E$) e Artes ($A$) ---, calculada a partir de dois tipos de dado: os interesses declarados no perfil, em que o aluno atribui a cada área uma nota inteira de 0 a 5, e as respostas às questões das trilhas. Cada opção de resposta do banco de questões possui um peso para cada área, definido e validado pelo profissional de orientação. Para cada área $a \in \{H, B, E, A\}$, a pontuação do aluno $P_a$ é dada pela \autoref{eq_pontuacao}:
+
+\begin{equation}
+P_a = I_a + \sum_{o \in R} w_{o,a}
+\label{eq_pontuacao}
+\end{equation}
+
+\noindent em que $I_a$ é o interesse declarado pelo aluno na área $a$, $R$ é o conjunto das opções marcadas pelo aluno em todas as questões respondidas e $w_{o,a}$ é o peso da opção $o$ para a área $a$. Nas questões de seleção única, cada questão contribui com a opção escolhida; nas de seleção múltipla, com todas as opções marcadas.
+
+As questões, entretanto, não distribuem a mesma quantidade de pontos entre as áreas, de modo que a comparação direta das pontuações favoreceria a área com mais pontos em jogo. Por esse motivo, a pontuação de cada área é comparada ao máximo que ela pode atingir, $M_a$, obtido pela \autoref{eq_maximo}:
+
+\begin{equation}
+M_a = I_{max} + \sum_{q \in Q} m_{q,a},
+\qquad
+m_{q,a} =
+\begin{cases}
+\displaystyle\sum_{o \in O_q} \max\left(0,\, w_{o,a}\right), & \text{se } q \text{ é de seleção múltipla}\\[2ex]
+\max\left(0,\, \displaystyle\max_{o \in O_q} w_{o,a}\right), & \text{caso contrário}
+\end{cases}
+\label{eq_maximo}
+\end{equation}
+
+\noindent em que $I_{max} = 5$ é o maior interesse que pode ser declarado, $Q$ é o conjunto das questões do banco e $O_q$ é o conjunto das opções da questão $q$; pesos negativos não aumentam o máximo possível. Com o banco de questões da versão atual, composto por trinta questões e 138 opções de resposta, os máximos são $M_H = 180{,}5$, $M_B = 146{,}5$, $M_E = 212{,}0$ e $M_A = 157{,}5$. A diferença entre esses valores mostra por que a comparação direta das pontuações não é adequada: a área de Exatas tem cerca de 45\% mais pontos em jogo do que a de Biológicas.
+
+A afinidade com cada área, $S_a$, corresponde ao percentual da pontuação em relação ao máximo, limitado ao intervalo de 0 a 100 e arredondado com uma casa decimal, conforme a \autoref{eq_afinidade}:
+
+\begin{equation}
+S_a = \min\left(100,\, \max\left(0,\, \frac{100 \cdot P_a}{M_a}\right)\right)
+\label{eq_afinidade}
+\end{equation}
+
+As áreas com o maior valor de $S_a$ são destacadas --- todas elas, em caso de empate --- e o leque de possibilidades é composto pelas subáreas do conhecimento associadas às áreas em destaque, cada qual acompanhada de exemplos de carreiras; se nenhuma área pontuar, nenhuma é destacada. As quatro afinidades são exibidas ao aluno em ordem decrescente, juntamente com o aviso de que o resultado constitui um ponto de partida para a reflexão, e não um diagnóstico. Ao término da jornada, as pontuações e os máximos são gravados no registro da jornada, de modo que o resultado de uma jornada concluída não se altera caso o aluno modifique seus interesses ou o banco de questões seja alterado posteriormente.
+
+Para ilustrar o cálculo, considera-se um aluno hipotético que declarou, no perfil, interesse 4 em Humanas, 2 em Biológicas, 1 em Exatas e 3 em Artes, e que respondeu às trinta questões das trilhas de Autoconhecimento, Influências e Projeto de Futuro --- a trilha de Informação não possui questões pontuadas. Três de suas respostas exemplificam a aplicação dos pesos, indicados na ordem ($H$; $B$; $E$; $A$):
+
+\begin{itemize}
+  \item na questão ``Quais destes assuntos costumam prender sua atenção naturalmente em conversas, vídeos ou leituras?'', o aluno escolheu ``Comportamento humano e relações sociais'', com pesos (10; 0; 0; 0);
+  \item na questão de seleção múltipla ``Das atividades abaixo, qual você curte e faz com frequência?'', marcou ``Ajudar pessoas a resolverem problemas pessoais'', com pesos (8; 2; 0; 0), e ``Criar coisas novas'', com pesos (0; 0; 4; 6), o que soma (8; 2; 4; 6);
+  \item na questão em escala ``O quanto a carreira que você está considerando é uma escolha sua, e não uma resposta ao que os outros esperam de você?'', escolheu ``É completamente minha escolha'', com pesos (2; 1; 1; 6).
+\end{itemize}
+
+O \autoref{quadro-exemplo-leque} apresenta a soma dos pesos das respostas de cada trilha, a pontuação e o máximo de cada área e a afinidade resultante.
+
+\begin{quadro}[H]
+\ABNTEXfontereduzida
+\caption{Exemplo de cálculo das afinidades por área do conhecimento.}
+\label{quadro-exemplo-leque}
+\renewcommand{\arraystretch}{1.25}
+\begin{tabularx}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|>{\centering\arraybackslash}p{2.2cm}|}
+\hline
+\textbf{Componente} & \textbf{Humanas} & \textbf{Biológicas} & \textbf{Exatas} & \textbf{Artes} \\
+\hline
+Interesse declarado ($I_a$) & 4,0 & 2,0 & 1,0 & 3,0 \\
+\hline
+Respostas da trilha de Autoconhecimento & 71,0 & 17,0 & 7,0 & 15,0 \\
+\hline
+Respostas da trilha de Influências & 35,5 & 18,0 & 18,0 & 28,5 \\
+\hline
+Respostas da trilha de Projeto de Futuro & 27,5 & 19,5 & 24,5 & 28,5 \\
+\hline
+\textbf{Pontuação} ($P_a$) & \textbf{138,0} & \textbf{56,5} & \textbf{50,5} & \textbf{75,0} \\
+\hline
+Máximo possível ($M_a$) & 180,5 & 146,5 & 212,0 & 157,5 \\
+\hline
+\textbf{Afinidade} ($S_a$) & \textbf{76,5\%} & \textbf{38,6\%} & \textbf{23,8\%} & \textbf{47,6\%} \\
+\hline
+\end{tabularx}
+\legend{Fonte: Autoria própria (2026).}
+\end{quadro}
+
+Para a área de Humanas, por exemplo, a afinidade resulta de:
+
+\[
+S_H = \frac{100 \cdot 138{,}0}{180{,}5} \approx 76{,}5
+\]
+
+\noindent Como Humanas apresenta a maior afinidade, é a única área destacada, e o leque de possibilidades apresentado ao aluno reúne suas cinco subáreas: Ciências Sociais e Comportamentais (como Psicologia, Economia e Relações Internacionais); Direito, Gestão e Negócios (como Direito, Administração e Marketing); Comunicação e Informação (como Jornalismo e Biblioteconomia); Humanidades e Letras (como História, Filosofia e Letras); e Educação em Humanas (como Pedagogia e as licenciaturas em História, Geografia e Letras). As demais áreas são exibidas com suas afinidades, na ordem Artes, Biológicas e Exatas, para que o aluno também possa explorá-las.
+
 \section{Modelo de Dados}
 
 O projeto de um banco de dados percorre etapas sucessivas: o projeto conceitual, que descreve a estrutura de informação do domínio de forma independente de considerações de implementação, de eficiência de armazenamento ou do Sistema Gerenciador de Banco de Dados (SGBD) adotado; o projeto lógico, que traduz esse esquema para o modelo de dados do SGBD escolhido; e o projeto físico, que define estruturas de armazenamento e de acesso \cite{elmasri2011}. No \textit{SyncCarreira}, o modelo de dados é definido por classes persistentes mapeadas para tabelas relacionais por meio da especificação \textit{Jakarta Persistence} (JPA), e o banco de dados adotado é o MySQL \cite{mysql2026}.
@@ -198,39 +278,43 @@ Os principais padrões adotados na interface são os seguintes:
 
 As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais telas do sistema.
 
-% TODO: substituir o quadro cinza pela captura de tela (\includegraphics[width=0.85\textwidth]{img/...})
 \begin{figure}[H]
     \centering
     \caption{Tela de autenticação.}
     \label{fig_tela_login}
-    \fcolorbox{gray}{gray!8}{\parbox[c][4.5cm][c]{0.7\textwidth}{\centering\textit{[Inserir captura de tela]}}}
+    \fbox{\includegraphics[width=0.55\textwidth]{img/fig-cap4-tela-login.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-% TODO: substituir o quadro cinza pela captura de tela (\includegraphics[width=0.85\textwidth]{img/...})
 \begin{figure}[H]
     \centering
     \caption{Painel de progresso do profissional de orientação.}
     \label{fig_tela_painel}
-    \fcolorbox{gray}{gray!8}{\parbox[c][4.5cm][c]{0.7\textwidth}{\centering\textit{[Inserir captura de tela]}}}
+    \fbox{\includegraphics[width=0.97\textwidth]{img/fig-cap4-tela-painel.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-% TODO: substituir o quadro cinza pela captura de tela (\includegraphics[width=0.85\textwidth]{img/...})
 \begin{figure}[H]
     \centering
-    \caption{Tela de trilha com o registro da síntese.}
-    \label{fig_tela_trilha}
-    \fcolorbox{gray}{gray!8}{\parbox[c][4.5cm][c]{0.7\textwidth}{\centering\textit{[Inserir captura de tela]}}}
+    \caption{Tela de personalização dos interesses do aluno.}
+    \label{fig_tela_interesses}
+    \fbox{\includegraphics[width=0.8\textwidth]{img/fig-cap4-tela-interesses.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-% TODO: substituir o quadro cinza pela captura de tela (\includegraphics[width=0.85\textwidth]{img/...})
+\begin{figure}[H]
+    \centering
+    \caption{Tela inicial do aluno com as trilhas da jornada.}
+    \label{fig_tela_trilha}
+    \fbox{\includegraphics[width=0.6\textwidth]{img/fig-cap4-tela-trilhas.png}}
+    \legend{Fonte: Autoria própria (2026).}
+\end{figure}
+
 \begin{figure}[H]
     \centering
     \caption{Tela do leque de possibilidades de carreira.}
     \label{fig_tela_leque}
-    \fcolorbox{gray}{gray!8}{\parbox[c][4.5cm][c]{0.7\textwidth}{\centering\textit{[Inserir captura de tela]}}}
+    \fbox{\includegraphics[width=0.62\textwidth]{img/fig-cap4-tela-leque.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
