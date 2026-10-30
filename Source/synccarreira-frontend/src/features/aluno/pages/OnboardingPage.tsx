@@ -21,6 +21,11 @@ export function OnboardingPage() {
 
   if (profile.profileCompleted) return <Navigate to="/aluno" replace />
 
+  async function handleLogout() {
+    await logout()
+    navigate('/login', { replace: true })
+  }
+
   function handleSaved(updated: StudentProfileDTO) {
     setProfile(updated)
     toast.success('Afinidades registradas!', 'O Pilar 01 — Autoconhecimento já está liberado.')
@@ -37,10 +42,7 @@ export function OnboardingPage() {
           </div>
           <button
             type="button"
-            onClick={async () => {
-              await logout()
-              navigate('/login', { replace: true })
-            }}
+            onClick={() => void handleLogout()}
             className="flex items-center gap-1.5 rounded-lg px-2 py-1 text-sm font-semibold text-muted hover:bg-white hover:text-primary"
           >
             <LogOut className="h-4 w-4" aria-hidden /> Sair

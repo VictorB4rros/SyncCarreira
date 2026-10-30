@@ -23,7 +23,7 @@ beforeEach(() => {
 describe('validateAffinities', () => {
   it('exige as 4 áreas com inteiros de 0 a 5', () => {
     const errors = validateAffinities({ humanities: null, exactSciences: 2, biologicalSciences: 7, arts: 1.5 })
-    expect(Object.keys(errors).sort()).toEqual(['arts', 'biologicalSciences', 'humanities'])
+    expect(Object.keys(errors).sort((a, b) => a.localeCompare(b))).toEqual(['arts', 'biologicalSciences', 'humanities'])
     expect(validateAffinities({ humanities: 0, exactSciences: 5, biologicalSciences: 3, arts: 1 })).toEqual({})
   })
 })

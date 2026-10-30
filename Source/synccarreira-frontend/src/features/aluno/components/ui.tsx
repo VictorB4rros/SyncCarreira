@@ -212,6 +212,17 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function ErrorState({ title = 'Algo deu errado', message, onRetry, className }: { title?: string; message: string; onRetry?: () => void | Promise<void>; className?: string }) {
   const [retrying, setRetrying] = useState(false)
+
+  async function handleRetry() {
+    if (!onRetry) return
+    setRetrying(true)
+    try {
+      await onRetry()
+    } finally {
+      setRetrying(false)
+    }
+  }
+
   return (
     <div role="alert" className={cn('mx-auto flex max-w-md flex-col items-center gap-3 rounded-2xl bg-white p-6 text-center shadow-card', className)}>
       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-error-container text-error">
@@ -224,14 +235,7 @@ export function ErrorState({ title = 'Algo deu errado', message, onRetry, classN
           variant="outline"
           icon={RefreshCw}
           loading={retrying}
-          onClick={async () => {
-            setRetrying(true)
-            try {
-              await onRetry()
-            } finally {
-              setRetrying(false)
-            }
-          }}
+          onClick={() => void handleRetry()}
         >
           Tentar novamente
         </Button>

@@ -209,7 +209,7 @@ function FeedbackReader({ feedback, studentName, onBack }: { feedback: FeedbackD
       <div className="flex flex-col gap-3 border-b border-outline-variant pb-4">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="soft" icon={Mail}>{FEEDBACK_TYPE_LABELS[feedback.type]}</Badge>
-          {feedback.journeyNumber && <Badge tone="strong">Jornada #{feedback.journeyNumber}</Badge>}
+          {feedback.journeyNumber != null && <Badge tone="strong">Jornada #{feedback.journeyNumber}</Badge>}
         </div>
         <h2 className="text-xl font-bold tracking-tight text-on-surface">{feedbackTitle(feedback)}</h2>
         <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">

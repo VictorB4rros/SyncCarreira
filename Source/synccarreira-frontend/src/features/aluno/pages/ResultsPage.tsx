@@ -165,7 +165,7 @@ function ResultView({ result, current }: { result: JourneyResultDTO; current: bo
               </span>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button variant="outline" icon={Download} loading={downloading} onClick={handleDownload}>
+              <Button variant="outline" icon={Download} loading={downloading} onClick={() => void handleDownload()}>
                 Baixar relatório em PDF
               </Button>
               {current && <NewJourneyButton />}
@@ -307,7 +307,7 @@ function DoubtCard() {
         </Alert>
       ) : (
         <>
-          <Button icon={MessageCircle} loading={sending} onClick={handleFlag}>
+          <Button icon={MessageCircle} loading={sending} onClick={() => void handleFlag()}>
             Sinalizar dúvida para a psicóloga
           </Button>
           <p className="text-[11px] text-muted">As psicólogas da sua escola recebem um aviso por e-mail para agendar uma conversa.</p>
@@ -355,7 +355,7 @@ function NewJourneyButton() {
             <Button variant="ghost" onClick={() => setOpen(false)} disabled={starting}>
               Cancelar
             </Button>
-            <Button icon={RefreshCw} loading={starting} onClick={handleStart}>
+            <Button icon={RefreshCw} loading={starting} onClick={() => void handleStart()}>
               Sim, iniciar nova jornada
             </Button>
           </>
@@ -440,7 +440,7 @@ function HistoryTable({ state, activeId }: { state: AsyncState<JourneyRecordDTO[
                       </Link>
                       <button
                         type="button"
-                        onClick={() => handleDownload(j)}
+                        onClick={() => void handleDownload(j)}
                         disabled={downloadingId === j.id}
                         className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-primary hover:bg-surface-container-low disabled:opacity-60"
                       >

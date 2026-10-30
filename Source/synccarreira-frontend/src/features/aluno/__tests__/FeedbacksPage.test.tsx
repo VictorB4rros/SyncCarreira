@@ -42,7 +42,7 @@ describe('FeedbacksPage', () => {
     const items = await screen.findAllByRole('button', { name: /Devolutiva da Jornada|Sessão:/ })
     expect(items[0]).toHaveTextContent('Devolutiva da Jornada #1')
     expect(items[1]).toHaveTextContent('Sessão: Sessão individual')
-    expect(context.setUnreadFeedbacks).toHaveBeenCalledWith(1)
+    await waitFor(() => expect(context.setUnreadFeedbacks).toHaveBeenCalledWith(1))
   })
 
   it('filtra por não lidas', async () => {

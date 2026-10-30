@@ -28,7 +28,7 @@ function Hero({ progress }: { progress: JourneyProgress | null }) {
       <div className="relative z-10 flex flex-col justify-between gap-6 lg:flex-row lg:items-center">
         <div className="flex max-w-2xl flex-col gap-2">
           <div className="flex flex-wrap items-center gap-2">
-            {journey?.currentJourneyNumber && (
+            {journey?.currentJourneyNumber != null && (
               <Badge tone="white">
                 <span className="h-2 w-2 rounded-full bg-secondary-container" aria-hidden /> Jornada {concluded ? 'concluída' : 'ativa'} #{journey.currentJourneyNumber}
               </Badge>

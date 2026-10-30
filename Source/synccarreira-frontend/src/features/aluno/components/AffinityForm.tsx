@@ -81,7 +81,7 @@ export function AffinityForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-5">
+    <form onSubmit={event => void handleSubmit(event)} noValidate className="flex flex-col gap-5">
       {AFFINITY_FIELDS.map(({ field, area }) => {
         const error = errors[field]
         const legendId = `afinidade-${field}`

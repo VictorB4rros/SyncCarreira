@@ -117,7 +117,7 @@ function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           </div>
           <button
             type="button"
-            onClick={handleLogout}
+            onClick={() => void handleLogout()}
             title="Sair da plataforma"
             aria-label="Sair da plataforma"
             className="rounded-lg p-1.5 text-inverse-on-surface/80 transition-colors hover:bg-white/10 hover:text-white"

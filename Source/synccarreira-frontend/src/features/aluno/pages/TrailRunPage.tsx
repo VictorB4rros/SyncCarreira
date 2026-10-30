@@ -423,7 +423,7 @@ function SynthesisSection({
             : 'Escreva livremente o que percebeu sobre você ao responder este pilar. Depois de enviada, a síntese não pode ser editada.'}
         </p>
       </div>
-      <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-3">
+      <form onSubmit={event => void handleSubmit(event)} noValidate className="flex flex-col gap-3">
         <label htmlFor={textareaId} className="sr-only">
           Síntese do {pillarCode(trail.sequentialOrder)}
         </label>
