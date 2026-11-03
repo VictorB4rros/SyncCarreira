@@ -162,9 +162,9 @@ export default function PsychologistClassesPage() {
         {unassignedCount > 0 && <span className="psy-unassigned-note">{unassignedCount} {unassignedCount === 1 ? 'aluno sem turma' : 'alunos sem turma'}</span>}
       </section>
 
-      {downloadMessage && <p className="psy-classes-success" role="status">{downloadMessage}</p>}
+      {downloadMessage && <output className="psy-classes-success">{downloadMessage}</output>}
       {downloadError && <p className="psy-classes-error" role="alert">{downloadError}</p>}
-      {loading && <div className="psy-classes-state" role="status">Carregando turmas…</div>}
+      {loading && <output className="psy-classes-state">Carregando turmas…</output>}
       {!loading && error && (
         <div className="psy-classes-state psy-classes-state--error" role="alert">
           <strong>Não foi possível carregar as turmas</strong>

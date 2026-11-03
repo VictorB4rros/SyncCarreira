@@ -642,11 +642,11 @@ export default function AccountManagementPage() {
                         </div>
                         <form onSubmit={handleClassSubmit}>
                             {error && <p className="students-error" role="alert">{error}</p>}
-                            <label>Nome da turma
+                            <label><span>Nome da turma</span>
                                 <input required value={classForm.name} onChange={event => setClassForm(current => ({ ...current, name: event.target.value }))} />
                             </label>
                             <div className="students-form-row">
-                                <label>Ano (calendário)
+                                <label><span>Ano (calendário)</span>
                                     <input
                                         type="number"
                                         min={CLASS_YEAR_MIN}

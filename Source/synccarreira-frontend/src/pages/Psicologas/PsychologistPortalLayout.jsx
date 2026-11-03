@@ -47,6 +47,22 @@ function isActiveItem(item, location) {
   return undefined
 }
 
+const HASH_TITLES = {
+  '#pd-students': 'Turmas',
+  '#pd-stages': 'Trilhas',
+  '#pd-guidance': 'Orientações',
+  '#pd-reports': 'Relatórios',
+}
+
+function resolvePageTitle(location) {
+  const { pathname, hash } = location
+  if (pathname.endsWith('/agenda')) return 'Agenda'
+  if (pathname.endsWith('/turmas')) return 'Turmas'
+  if (pathname.endsWith('/conteudos')) return 'Conteúdos'
+  if (pathname.endsWith('/alunos') || pathname.includes('/alunos/')) return 'Alunos e turmas'
+  return HASH_TITLES[hash] ?? 'Visão geral'
+}
+
 export default function PsychologistPortalLayout() {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
@@ -57,23 +73,7 @@ export default function PsychologistPortalLayout() {
   const [globalQuery, setGlobalQuery] = useState(() => searchParams.get('busca') || '')
 
   const name = user?.nome || user?.name || 'Psicóloga'
-  const pageTitle = location.pathname.endsWith('/agenda')
-    ? 'Agenda'
-    : location.pathname.endsWith('/turmas')
-      ? 'Turmas'
-    : location.pathname.endsWith('/conteudos')
-      ? 'Conteúdos'
-      : location.pathname.endsWith('/alunos') || location.pathname.includes('/alunos/')
-        ? 'Alunos e turmas'
-        : location.hash === '#pd-students'
-          ? 'Turmas'
-          : location.hash === '#pd-stages'
-            ? 'Trilhas'
-            : location.hash === '#pd-guidance'
-              ? 'Orientações'
-              : location.hash === '#pd-reports'
-                ? 'Relatórios'
-        : 'Visão geral'
+  const pageTitle = resolvePageTitle(location)
 
   useEffect(() => setMenuOpen(false), [location.pathname, location.hash])
   useEffect(() => setGlobalQuery(searchParams.get('busca') || ''), [searchParams])

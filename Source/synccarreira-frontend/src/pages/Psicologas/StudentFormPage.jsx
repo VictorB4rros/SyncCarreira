@@ -12,7 +12,7 @@ const SCHOOL_YEARS = [
 
 const SCHOOL_TYPES = ['Pública', 'Privada']
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const EMAIL_REGEX = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/
 
 const EMPTY_FORM = { name: '', email: '', schollarYear: '', schoolType: '' }
 
@@ -135,19 +135,18 @@ export default function StudentFormPage() {
 
         <form className="student-form" onSubmit={handleSubmit} noValidate>
           <label>
-            Nome completo
+            <span>Nome completo</span>
             <input
               name="name"
               value={form.name}
               onChange={handleChange}
               aria-invalid={Boolean(fieldErrors.name)}
-              autoFocus
             />
             {fieldErrors.name && <span className="student-field-error">{fieldErrors.name}</span>}
           </label>
 
           <label>
-            E-mail
+            <span>E-mail</span>
             <input
               type="email"
               name="email"
@@ -160,7 +159,7 @@ export default function StudentFormPage() {
 
           <div className="student-form__row">
             <label>
-              Ano escolar
+              <span>Ano escolar</span>
               <select name="schollarYear" value={form.schollarYear} onChange={handleChange}>
                 <option value="">Não informado</option>
                 {SCHOOL_YEARS.map((year) => <option key={year} value={year}>{year}</option>)}
@@ -168,7 +167,7 @@ export default function StudentFormPage() {
             </label>
 
             <label>
-              Tipo de escola
+              <span>Tipo de escola</span>
               <select name="schoolType" value={form.schoolType} onChange={handleChange}>
                 <option value="">Não informado</option>
                 {SCHOOL_TYPES.map((type) => <option key={type} value={type}>{type}</option>)}
