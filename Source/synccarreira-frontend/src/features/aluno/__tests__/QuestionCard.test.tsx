@@ -5,9 +5,9 @@ import { QuestionCard } from '../components/QuestionCard'
 import { makeLikert, makeQuestion } from '../test/fixtures'
 
 describe('QuestionCard', () => {
-  it('CHECKBOX funciona como escolha única (radio)', async () => {
+  it('MULTIPLA_ESCOLHA funciona como escolha única (radio)', async () => {
     const onChoose = vi.fn()
-    const question = makeQuestion(1, 'CHECKBOX', [11, 12])
+    const question = makeQuestion(1, 'MULTIPLA_ESCOLHA', [11, 12])
     render(<QuestionCard question={question} index={1} selected={[11]} onChoose={onChoose} />)
 
     const radios = screen.getAllByRole('radio')
@@ -19,9 +19,9 @@ describe('QuestionCard', () => {
     expect(onChoose).toHaveBeenCalledWith(question, 12)
   })
 
-  it('MULTIPLA_ESCOLHA usa checkboxes e indica que aceita várias opções', async () => {
+  it('CHECKBOX usa checkboxes e indica que aceita várias opções', async () => {
     const onChoose = vi.fn()
-    const question = makeQuestion(2, 'MULTIPLA_ESCOLHA', [21, 22, 23])
+    const question = makeQuestion(2, 'CHECKBOX', [21, 22, 23])
     render(<QuestionCard question={question} index={2} selected={[]} onChoose={onChoose} />)
 
     expect(screen.getByText('Marque quantas quiser')).toBeInTheDocument()
@@ -30,6 +30,26 @@ describe('QuestionCard', () => {
     await userEvent.click(boxes[2])
     expect(onChoose).toHaveBeenNthCalledWith(1, question, 21)
     expect(onChoose).toHaveBeenNthCalledWith(2, question, 23)
+  })
+
+  it('CHECKBOX com limite no enunciado bloqueia novas opções ao atingir o limite', async () => {
+    const onChoose = vi.fn()
+    const question = { ...makeQuestion(4, 'CHECKBOX', [41, 42, 43]), content: 'O que define uma atividade bem-sucedida? (Selecione no máximo 2)' }
+    render(<QuestionCard question={question} index={4} selected={[41, 42]} onChoose={onChoose} />)
+
+    const boxes = screen.getAllByRole('checkbox')
+    expect(boxes[2]).toBeDisabled()
+    await userEvent.click(boxes[2])
+    expect(onChoose).not.toHaveBeenCalled()
+    // As opções marcadas continuam clicáveis para desmarcar
+    await userEvent.click(boxes[0])
+    expect(onChoose).toHaveBeenCalledWith(question, 41)
+  })
+
+  it('CHECKBOX com limite informa quantas opções podem ser marcadas', () => {
+    const question = { ...makeQuestion(4, 'CHECKBOX', [41, 42, 43]), content: 'Pergunta (Selecione no máximo 2)' }
+    render(<QuestionCard question={question} index={4} selected={[]} onChoose={vi.fn()} />)
+    expect(screen.getByText('Marque até 2 opções')).toBeInTheDocument()
   })
 
   it('LIKERT mostra 4 opções, sem a neutra', () => {
@@ -46,7 +66,7 @@ describe('QuestionCard', () => {
 
   it('em modo revisão as opções ficam desabilitadas', async () => {
     const onChoose = vi.fn()
-    render(<QuestionCard question={makeQuestion(1, 'CHECKBOX', [11, 12])} index={1} selected={[11]} disabled onChoose={onChoose} />)
+    render(<QuestionCard question={makeQuestion(1, 'MULTIPLA_ESCOLHA', [11, 12])} index={1} selected={[11]} disabled onChoose={onChoose} />)
     const radios = screen.getAllByRole('radio')
     expect(radios[1]).toBeDisabled()
     await userEvent.click(radios[1])
@@ -54,7 +74,7 @@ describe('QuestionCard', () => {
   })
 
   it('exibe os estados de salvamento', () => {
-    const question = makeQuestion(1, 'CHECKBOX', [11])
+    const question = makeQuestion(1, 'MULTIPLA_ESCOLHA', [11])
     const { rerender } = render(<QuestionCard question={question} index={1} selected={[11]} status="saving" onChoose={vi.fn()} />)
     expect(screen.getByText('Salvando…')).toBeInTheDocument()
     rerender(<QuestionCard question={question} index={1} selected={[11]} status="error" errorMessage="Trilha não liberada." onChoose={vi.fn()} />)

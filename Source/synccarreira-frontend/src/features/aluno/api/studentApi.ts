@@ -64,13 +64,13 @@ export async function getMyAnswers(trailId: number): Promise<AnswerDTO[]> {
   return data ?? []
 }
 
-/** Marca uma opção. Em MULTIPLA_ESCOLHA soma; nos demais tipos substitui a resposta anterior. */
+/** Marca uma opção. Em CHECKBOX soma; nos demais tipos substitui a resposta anterior. */
 export async function checkOption(questionOptionId: number): Promise<AnswerDTO> {
   const { data } = await api.post<AnswerDTO>('/answers', { questionOptionId })
   return data
 }
 
-/** Desmarca uma opção (somente MULTIPLA_ESCOLHA). */
+/** Desmarca uma opção (somente CHECKBOX). */
 export async function uncheckOption(questionOptionId: number): Promise<void> {
   await api.delete('/answers', { params: { questionOptionId } })
 }

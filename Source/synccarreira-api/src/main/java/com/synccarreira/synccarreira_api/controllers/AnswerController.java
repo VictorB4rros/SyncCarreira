@@ -50,7 +50,7 @@ public class AnswerController {
         return ResponseEntity.ok(dto);
     }
 
-    @Operation(summary = "Insere uma nova resposta do aluno logado. Em perguntas de múltipla escolha, marca mais uma opção; nos demais tipos, substitui a resposta anterior.")
+    @Operation(summary = "Insere uma nova resposta do aluno logado. Em perguntas de checkbox, marca mais uma opção; nos demais tipos, substitui a resposta anterior.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "201",
@@ -75,7 +75,7 @@ public class AnswerController {
         return ResponseEntity.created(uri).body(result);
     }
 
-    @Operation(summary = "Desmarca uma opção que o aluno logado marcou em uma pergunta de múltipla escolha.")
+    @Operation(summary = "Desmarca uma opção que o aluno logado marcou em uma pergunta de checkbox.")
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "204",
@@ -93,7 +93,7 @@ public class AnswerController {
             ),
             @ApiResponse(
                     responseCode = "422",
-                    description = "A opção não pertence a uma pergunta de múltipla escolha.",
+                    description = "A opção não pertence a uma pergunta de checkbox.",
                     content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CustomError.class)) }
             )
     })

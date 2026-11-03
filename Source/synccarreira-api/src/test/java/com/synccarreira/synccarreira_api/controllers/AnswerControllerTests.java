@@ -164,7 +164,7 @@ public class AnswerControllerTests {
         result.andExpect(jsonPath("$.error").value("Os dados estavam sendo alterados por outra operação ao mesmo tempo. Tente novamente."));
     }
 
-    // Desmarcar uma opção de pergunta de múltipla escolha
+    // Desmarcar uma opção de pergunta de checkbox
 
     @Test
     void uncheckShouldReturnNoContent() throws Exception {
@@ -186,8 +186,8 @@ public class AnswerControllerTests {
     }
 
     @Test
-    void uncheckShouldReturnUnprocessableContentWhenQuestionIsNotMultipleChoice() throws Exception {
-        doThrow(new BusinessException("Só é possível desmarcar opções de perguntas de múltipla escolha."))
+    void uncheckShouldReturnUnprocessableContentWhenQuestionIsNotCheckbox() throws Exception {
+        doThrow(new BusinessException("Só é possível desmarcar opções de perguntas de checkbox."))
                 .when(service).uncheck(1L);
 
         ResultActions result = mockMvc.perform(delete("/answers")
@@ -195,7 +195,7 @@ public class AnswerControllerTests {
                 .accept(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isUnprocessableContent());
-        result.andExpect(jsonPath("$.error").value("Só é possível desmarcar opções de perguntas de múltipla escolha."));
+        result.andExpect(jsonPath("$.error").value("Só é possível desmarcar opções de perguntas de checkbox."));
     }
 
     @Test

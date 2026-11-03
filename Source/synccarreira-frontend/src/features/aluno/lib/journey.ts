@@ -4,8 +4,8 @@
  *
  *  - TrailService.canAccess: a 1ª trilha exige o perfil preenchido; as demais exigem a anterior concluída.
  *  - Trilha concluída = todas as perguntas respondidas + síntese enviada.
- *  - MULTIPLA_ESCOLHA aceita várias opções (POST marca, DELETE desmarca).
- *    CHECKBOX, LIKERT e os demais tipos têm uma resposta por pergunta (POST substitui).
+ *  - CHECKBOX aceita várias opções (POST marca, DELETE desmarca).
+ *    MULTIPLA_ESCOLHA, LIKERT e os demais tipos têm uma resposta por pergunta (POST substitui).
  */
 import type {
   AnswerDTO,
@@ -47,8 +47,18 @@ export function sortTrails(trails: TrailDTO[]): TrailDTO[] {
   )
 }
 
-export function isMultipleChoice(question: Pick<QuestionDTO, 'questionType'>): boolean {
-  return question.questionType === 'MULTIPLA_ESCOLHA'
+export function acceptsSeveralOptions(question: Pick<QuestionDTO, 'questionType'>): boolean {
+  return question.questionType === 'CHECKBOX'
+}
+
+/**
+ * Limite de opções marcadas em uma pergunta CHECKBOX, lido do enunciado ("Selecione no máximo 2").
+ * Sem esse trecho no enunciado, não há limite (null).
+ */
+export function maxSelections(question: Pick<QuestionDTO, 'questionType' | 'content'>): number | null {
+  if (!acceptsSeveralOptions(question)) return null
+  const match = /no m[aá]ximo\s+(\d+)/i.exec(question.content ?? '')
+  return match ? Number(match[1]) : null
 }
 
 /** Mapa questionId → ids das opções marcadas, a partir das respostas da API. */
@@ -71,7 +81,7 @@ export function buildSelections(questions: QuestionDTO[], answers: AnswerDTO[]):
 
   // Tipos de resposta única: se o banco tiver sobras, vale só a última
   questions.forEach(q => {
-    if (!isMultipleChoice(q) && selections[q.id].length > 1) {
+    if (!acceptsSeveralOptions(q) && selections[q.id].length > 1) {
       selections[q.id] = selections[q.id].slice(-1)
     }
   })

@@ -70,7 +70,7 @@ public class AreaScoreCalculator {
     }
 
     // Máximo possível por área: a afinidade máxima do perfil (RF-14) mais o máximo de cada pergunta.
-    // Nas perguntas de MULTIPLA_ESCOLHA o aluno pode marcar todas as opções, então o máximo é a soma dos pesos positivos.
+    // Nas perguntas de CHECKBOX o aluno pode marcar todas as opções, então o máximo é a soma dos pesos positivos.
     // Nos demais tipos o aluno fica com uma única opção (o AnswerService substitui a resposta anterior), então é o maior peso.
     // É calculado a partir das perguntas cadastradas agora. Na conclusão da jornada, esse máximo é guardado no
     // JourneyRecord, para que o resultado de uma jornada concluída não mude se as perguntas ou os pesos mudarem depois.
@@ -98,7 +98,7 @@ public class AreaScoreCalculator {
 
     // Um peso negativo não aumenta o máximo possível
     private static double questionMaxScore(Question question, KnowledgeArea area) {
-        if (question.getQuestionType() == QuestionType.MULTIPLA_ESCOLHA) {
+        if (question.getQuestionType() == QuestionType.CHECKBOX) {
             return question.getOptions().stream()
                     .mapToDouble(option -> Math.max(0.0, weight(option, area)))
                     .sum();

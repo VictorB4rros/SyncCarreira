@@ -19,7 +19,7 @@ beforeEach(() => {
   vi.mocked(api.getTrails).mockResolvedValue(sorted)
   vi.mocked(api.getMySyntheses).mockResolvedValue([makeSynthesis(auto)])
   vi.mocked(api.canAccessTrail).mockImplementation(async id => id === auto.id || id === influencias.id)
-  vi.mocked(api.getTrailQuestions).mockImplementation(async id => [makeQuestion(id * 10, 'CHECKBOX', [id * 100, id * 100 + 1], id)])
+  vi.mocked(api.getTrailQuestions).mockImplementation(async id => [makeQuestion(id * 10, 'MULTIPLA_ESCOLHA', [id * 100, id * 100 + 1], id)])
   vi.mocked(api.getMyAnswers).mockImplementation(async id => (id === auto.id ? [answerFor(auto.id * 100)] : []))
 })
 

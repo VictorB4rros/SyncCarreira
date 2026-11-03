@@ -32,7 +32,7 @@ public class AreaScoreCalculatorTests {
         Question first = new Question(1L, "Pergunta 1", QuestionType.LIKERT, TrailFactory.createTrail(), new ArrayList<>());
         first.getOptions().add(new QuestionOption(1L, "A", 10.0, 0.0, 0.0, 0.0, first));
         first.getOptions().add(new QuestionOption(2L, "B", 0.0, 5.0, 2.0, 0.0, first));
-        Question second = new Question(2L, "Pergunta 2", QuestionType.CHECKBOX, TrailFactory.createTrail(), new ArrayList<>());
+        Question second = new Question(2L, "Pergunta 2", QuestionType.MULTIPLA_ESCOLHA, TrailFactory.createTrail(), new ArrayList<>());
         second.getOptions().add(new QuestionOption(3L, "C", 0.0, 0.0, 10.0, 3.0, second));
         second.getOptions().add(new QuestionOption(4L, "D", 1.0, 1.0, 1.0, 1.0, second));
         Mockito.when(questionRepository.findAll()).thenReturn(List.of(first, second));
@@ -151,9 +151,9 @@ public class AreaScoreCalculatorTests {
     }
 
     @Test
-    void currentMaxScoresShouldSumPositiveWeightsOfAllOptionsWhenQuestionIsMultipleChoice() {
-        // Na múltipla escolha o aluno pode marcar todas as opções; peso negativo não aumenta o máximo
-        Question multiple = new Question(1L, "Pergunta", QuestionType.MULTIPLA_ESCOLHA, TrailFactory.createTrail(), new ArrayList<>());
+    void currentMaxScoresShouldSumPositiveWeightsOfAllOptionsWhenQuestionIsCheckbox() {
+        // No checkbox o aluno pode marcar todas as opções; peso negativo não aumenta o máximo
+        Question multiple = new Question(1L, "Pergunta", QuestionType.CHECKBOX, TrailFactory.createTrail(), new ArrayList<>());
         multiple.getOptions().add(new QuestionOption(1L, "A", 10.0, 0.0, -3.0, 0.0, multiple));
         multiple.getOptions().add(new QuestionOption(2L, "B", 4.0, 5.0, 2.0, null, multiple));
         multiple.getOptions().add(new QuestionOption(3L, "C", 1.0, 0.0, 0.0, 0.0, multiple));
@@ -163,22 +163,22 @@ public class AreaScoreCalculatorTests {
     }
 
     @Test
-    void currentMaxScoresShouldUseHighestWeightForSingleAnswerQuestionsAndSumForMultipleChoice() {
-        Question single = new Question(1L, "Única", QuestionType.CHECKBOX, TrailFactory.createTrail(), new ArrayList<>());
+    void currentMaxScoresShouldUseHighestWeightForSingleAnswerQuestionsAndSumForCheckbox() {
+        Question single = new Question(1L, "Única", QuestionType.MULTIPLA_ESCOLHA, TrailFactory.createTrail(), new ArrayList<>());
         single.getOptions().add(new QuestionOption(1L, "A", 10.0, 0.0, 0.0, 0.0, single));
         single.getOptions().add(new QuestionOption(2L, "B", 4.0, 0.0, 0.0, 0.0, single));
-        Question multiple = new Question(2L, "Múltipla", QuestionType.MULTIPLA_ESCOLHA, TrailFactory.createTrail(), new ArrayList<>());
+        Question multiple = new Question(2L, "Múltipla", QuestionType.CHECKBOX, TrailFactory.createTrail(), new ArrayList<>());
         multiple.getOptions().add(new QuestionOption(3L, "C", 10.0, 0.0, 0.0, 0.0, multiple));
         multiple.getOptions().add(new QuestionOption(4L, "D", 4.0, 0.0, 0.0, 0.0, multiple));
         Mockito.when(questionRepository.findAll()).thenReturn(List.of(single, multiple));
 
-        // Humanas: afinidade 5 + 10 (maior peso da única) + 14 (soma da múltipla)
+        // Humanas: afinidade 5 + 10 (maior peso da única) + 14 (soma do checkbox)
         Assertions.assertEquals(29.0, calculator.currentMaxScores().get(KnowledgeArea.HUMANAS));
     }
 
     @Test
-    void calculateShouldReachFullPercentageOnlyWhenAllMultipleChoiceOptionsAreChecked() {
-        Question multiple = new Question(1L, "Múltipla", QuestionType.MULTIPLA_ESCOLHA, TrailFactory.createTrail(), new ArrayList<>());
+    void calculateShouldReachFullPercentageOnlyWhenAllCheckboxOptionsAreChecked() {
+        Question multiple = new Question(1L, "Múltipla", QuestionType.CHECKBOX, TrailFactory.createTrail(), new ArrayList<>());
         multiple.getOptions().add(new QuestionOption(1L, "A", 0.0, 0.0, 0.0, 5.0, multiple));
         multiple.getOptions().add(new QuestionOption(2L, "B", 0.0, 0.0, 0.0, 10.0, multiple));
         Mockito.when(questionRepository.findAll()).thenReturn(List.of(multiple));

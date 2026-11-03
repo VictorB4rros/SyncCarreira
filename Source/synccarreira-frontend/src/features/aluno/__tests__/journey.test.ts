@@ -5,6 +5,7 @@ import {
   deriveTrailProgress,
   groupAppointments,
   likertOptions,
+  maxSelections,
   nextAppointment,
   sortTrails,
   summarizeJourney,
@@ -20,8 +21,8 @@ describe('sortTrails', () => {
 })
 
 describe('buildSelections', () => {
-  const single = makeQuestion(1, 'CHECKBOX', [11, 12])
-  const multiple = makeQuestion(2, 'MULTIPLA_ESCOLHA', [21, 22, 23])
+  const single = makeQuestion(1, 'MULTIPLA_ESCOLHA', [11, 12])
+  const multiple = makeQuestion(2, 'CHECKBOX', [21, 22, 23])
 
   it('mapeia cada resposta para a pergunta dona da opção', () => {
     const selections = buildSelections([single, multiple], [answerFor(12), answerFor(21), answerFor(23)])
@@ -38,8 +39,20 @@ describe('buildSelections', () => {
   })
 })
 
+describe('maxSelections', () => {
+  it('lê o limite do enunciado das perguntas CHECKBOX', () => {
+    const question = { ...makeQuestion(1, 'CHECKBOX', [11, 12, 13]), content: 'O que define uma atividade bem-sucedida? (Selecione no máximo 2)' }
+    expect(maxSelections(question)).toBe(2)
+  })
+
+  it('sem limite no enunciado, ou fora do CHECKBOX, não há limite', () => {
+    expect(maxSelections(makeQuestion(1, 'CHECKBOX', [11, 12]))).toBeNull()
+    expect(maxSelections({ ...makeQuestion(2, 'MULTIPLA_ESCOLHA', [21]), content: 'Escolha no máximo 2' })).toBeNull()
+  })
+})
+
 describe('deriveTrailProgress', () => {
-  const questions = [makeQuestion(1, 'CHECKBOX', [11, 12]), makeQuestion(2, 'LIKERT', [21, 22])]
+  const questions = [makeQuestion(1, 'MULTIPLA_ESCOLHA', [11, 12]), makeQuestion(2, 'LIKERT', [21, 22])]
 
   it('trilha sem acesso fica bloqueada', () => {
     expect(deriveTrailProgress(influencias, { accessible: false }).status).toBe('LOCKED')

@@ -56,7 +56,7 @@ public class AnswerServiceTests {
     private TrailService trailService;
 
     private Student student;
-    // Pergunta de MULTIPLA_ESCOLHA: Matemática (1.0 em exatas) e Biologia (1.0 em biológicas)
+    // Pergunta de CHECKBOX: Matemática (1.0 em exatas) e Biologia (1.0 em biológicas)
     private Question question;
     private QuestionOption option;
     private QuestionOption otherOption;
@@ -72,6 +72,7 @@ public class AnswerServiceTests {
     void setUp() {
         student = StudentFactory.createStudent();
         question = QuestionFactory.createQuestion();
+        question.setQuestionType(QuestionType.CHECKBOX);
         option = question.getOptions().getFirst();
         otherOption = new QuestionOption(2L, "Biologia", 0.0, 1.0, 0.0, 0.0, question);
         question.getOptions().add(otherOption);
@@ -109,7 +110,7 @@ public class AnswerServiceTests {
         Mockito.when(answerRepository.findByStudentId(student.getId())).thenReturn(answers);
     }
 
-    // Perguntas de resposta única (todos os tipos, exceto MULTIPLA_ESCOLHA)
+    // Perguntas de resposta única (todos os tipos, exceto CHECKBOX)
 
     @Test
     void insertShouldCreateNewAnswerWhenQuestionWasNotAnsweredYet() {
@@ -146,8 +147,8 @@ public class AnswerServiceTests {
     }
 
     @ParameterizedTest
-    @EnumSource(value = QuestionType.class, names = "MULTIPLA_ESCOLHA", mode = EnumSource.Mode.EXCLUDE)
-    void insertShouldReplacePreviousAnswerWhenQuestionIsNotMultipleChoice(QuestionType type) {
+    @EnumSource(value = QuestionType.class, names = "CHECKBOX", mode = EnumSource.Mode.EXCLUDE)
+    void insertShouldReplacePreviousAnswerWhenQuestionIsNotCheckbox(QuestionType type) {
         singleAnswerQuestion.setQuestionType(type);
         mockValidRequest(agree);
         mockSave();
@@ -181,10 +182,10 @@ public class AnswerServiceTests {
         Assertions.assertEquals(agree.getId(), oldest.getQuestionOption().getId());
     }
 
-    // Perguntas de MULTIPLA_ESCOLHA: várias opções marcadas ao mesmo tempo
+    // Perguntas de CHECKBOX: várias opções marcadas ao mesmo tempo
 
     @Test
-    void insertShouldCreateAnswerWhenMultipleChoiceQuestionWasNotAnsweredYet() {
+    void insertShouldCreateAnswerWhenCheckboxQuestionWasNotAnsweredYet() {
         mockValidRequest(option);
         mockSave();
         mockPreviousAnswers(question, List.of());
@@ -198,7 +199,7 @@ public class AnswerServiceTests {
     }
 
     @Test
-    void insertShouldAddAnswerKeepingOtherCheckedOptionsWhenQuestionIsMultipleChoice() {
+    void insertShouldAddAnswerKeepingOtherCheckedOptionsWhenQuestionIsCheckbox() {
         mockValidRequest(option);
         mockSave();
         Answer previousAnswer = new Answer(7L, student, otherOption);
@@ -219,7 +220,7 @@ public class AnswerServiceTests {
     }
 
     @Test
-    void insertShouldSumWeightsOfAllCheckedOptionsWhenQuestionIsMultipleChoice() {
+    void insertShouldSumWeightsOfAllCheckedOptionsWhenQuestionIsCheckbox() {
         mockValidRequest(option);
         mockSave();
         Answer previousAnswer = new Answer(7L, student, otherOption);
@@ -351,7 +352,7 @@ public class AnswerServiceTests {
         Mockito.verify(answerRepository, Mockito.never()).save(any());
     }
 
-    // Desmarcar uma opção (somente MULTIPLA_ESCOLHA)
+    // Desmarcar uma opção (somente CHECKBOX)
 
     @Test
     void uncheckShouldDeleteOnlyAnswerOfThatOptionAndRecalculateScore() {
@@ -427,8 +428,8 @@ public class AnswerServiceTests {
     }
 
     @ParameterizedTest
-    @EnumSource(value = QuestionType.class, names = "MULTIPLA_ESCOLHA", mode = EnumSource.Mode.EXCLUDE)
-    void uncheckShouldThrowBusinessExceptionWhenQuestionIsNotMultipleChoice(QuestionType type) {
+    @EnumSource(value = QuestionType.class, names = "CHECKBOX", mode = EnumSource.Mode.EXCLUDE)
+    void uncheckShouldThrowBusinessExceptionWhenQuestionIsNotCheckbox(QuestionType type) {
         singleAnswerQuestion.setQuestionType(type);
         mockValidRequest(agree);
 
