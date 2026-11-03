@@ -69,4 +69,7 @@ jobs:
           -Dsonar.coverage.jacoco.xmlReportPaths=Source/synccarreira-api/build/reports/jacoco/test/jacocoTestReport.xml
           -Dsonar.coverage.exclusions="**/config/**,**/entities/**,**/dto/**,**/services/exceptions/**,**/controllers/handlers/**,Source/synccarreira-frontend/**"
           -Dsonar.exclusions=**/node_modules/**,**/dist/**,**/build/**
+          -Dsonar.issue.ignore.multicriteria=tw1
+          -Dsonar.issue.ignore.multicriteria.tw1.ruleKey=css:S4662
+          -Dsonar.issue.ignore.multicriteria.tw1.resourceKey=**/features/aluno/aluno.css
           -Dsonar.qualitygate.wait=true
