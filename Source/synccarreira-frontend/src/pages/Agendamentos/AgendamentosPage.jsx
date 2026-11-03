@@ -18,7 +18,7 @@ export default function AgendamentosPage() {
 
   return (
     <div className="ag-root">
-      <AppHeader />
+      {!showPsychologistView && <AppHeader />}
       <main className="ag-main">
         <div className={`ag-content${showPsychologistView ? ' ag-content--wide' : ''}`}>
           {showPsychologistView ? <PsicologaAgendamentos /> : <AlunoAgendamentos />}

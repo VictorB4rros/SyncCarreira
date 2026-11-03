@@ -81,10 +81,21 @@ export async function listManagedClasses(institutionId) {
 }
 
 export async function createManagedClass(classData) {
+  const schoolYear = Number(classData.schoolYear)
+  const institutionId = Number(classData.institutionId)
+
+  // Defesa de serviço: não envia ano/instituição inválidos para a API.
+  if (!Number.isInteger(schoolYear) || schoolYear < 2000) {
+    throw new Error('Ano-calendário da turma inválido.')
+  }
+  if (!Number.isInteger(institutionId) || institutionId <= 0) {
+    throw new Error('Selecione uma instituição válida para a turma.')
+  }
+
   const { data } = await api.post('/classes', {
     name: classData.name.trim(),
-    schoolYear: Number(classData.schoolYear),
-    institutionId: Number(classData.institutionId),
+    schoolYear,
+    institutionId,
   }, { suppressAuthRedirect: true })
   return data
 }

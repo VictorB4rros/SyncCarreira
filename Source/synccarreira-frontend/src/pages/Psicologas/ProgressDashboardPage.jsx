@@ -10,8 +10,7 @@
  */
 
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import AppHeader from '../../components/AppHeader/AppHeader.jsx'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
 import {
   getPsychologistPanel, downloadClassReport, downloadStudentReport,
@@ -181,10 +180,11 @@ function StudentRow({ student, expanded, feedbackStatus, reportBusy, onToggle, o
 export default function ProgressDashboardPage() {
   const { user } = useAuth()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const [panel, setPanel] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(() => searchParams.get('busca') || '')
   const [classFilter, setClassFilter] = useState('')
   const [statusFilter, setStatusFilter] = useState('')
   const [expandedStudentId, setExpandedStudentId] = useState(null)
@@ -250,6 +250,8 @@ export default function ProgressDashboardPage() {
 
   useEffect(() => { refreshAll() }, [refreshAll])
 
+  useEffect(() => { setQuery(searchParams.get('busca') || '') }, [searchParams])
+
   useEffect(() => {
     if (!toast) return undefined
     const timer = setTimeout(() => setToast(''), 4000)
@@ -266,7 +268,9 @@ export default function ProgressDashboardPage() {
   const filteredStudents = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase('pt-BR')
     return students.filter(student => {
-      const matchesName = !normalizedQuery || student.studentName?.toLocaleLowerCase('pt-BR').includes(normalizedQuery)
+      const matchesName = !normalizedQuery
+        || student.studentName?.toLocaleLowerCase('pt-BR').includes(normalizedQuery)
+        || student.schoolClassName?.toLocaleLowerCase('pt-BR').includes(normalizedQuery)
       const matchesClass = !classFilter || student.schoolClassName === classFilter
       const matchesStatus = !statusFilter || student.journeyStatus === statusFilter
       return matchesName && matchesClass && matchesStatus
@@ -291,7 +295,7 @@ export default function ProgressDashboardPage() {
 
   // ── Ações ────────────────────────────────────────────────────
   function scheduleWith(student) {
-    navigate(`/agendamentos?aluno=${student.studentId}`)
+    navigate(`/psicologa/agenda?aluno=${student.studentId}`)
   }
 
   function showStudent(student) {
@@ -338,17 +342,19 @@ export default function ProgressDashboardPage() {
 
   return (
     <div className="pd-page">
-      <AppHeader />
       <main className="pd-main">
         <header className="pd-heading">
           <div>
-            <span className="pd-eyebrow">ACOMPANHAMENTO DA JORNADA</span>
-            <h1>Painel de progresso</h1>
-            <p>Visão geral das trilhas, alertas, relatórios e feedbacks dos alunos da sua instituição.</p>
+            <span className="pd-eyebrow">PAINEL DA PSICÓLOGA · VISÃO GERAL</span>
+            <h1>Olá, {user?.nome || 'psicóloga'}</h1>
+            <p>Acompanhe a evolução dos seus alunos e identifique quem pode precisar de orientação.</p>
           </div>
-          <button className="pd-refresh" type="button" onClick={refreshAll} disabled={loading}>
-            {loading ? 'Atualizando…' : 'Atualizar painel'}
-          </button>
+          <div className="pd-heading__actions">
+            <span className="pd-date-chip">{new Date().toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}</span>
+            <button className="pd-refresh" type="button" onClick={refreshAll} disabled={loading}>
+              {loading ? 'Atualizando…' : 'Atualizar painel'}
+            </button>
+          </div>
         </header>
 
         {loading && <div className="pd-state" role="status">Carregando dados do painel…</div>}
@@ -368,48 +374,54 @@ export default function ProgressDashboardPage() {
               <MetricCard label="Em dúvida" value={panel.inDoubtStudents} note="precisam de orientação" tone="amber" />
             </section>
 
-            <GuidanceAlerts
-              students={attentionStudents}
-              feedbackStatusById={feedbackStatusById}
-              onSchedule={scheduleWith}
-              onFeedback={student => setFeedbackTarget(student)}
-              onDetails={showStudent}
-            />
-
-            <div className="pd-grid">
-              <UpcomingSessions
-                appointments={appointments}
-                loading={loadingAppointments}
-                error={appointmentsError}
-                onOpenSchedule={() => navigate('/agendamentos')}
-                onNewSession={() => navigate('/agendamentos?nova=1')}
-              />
-              <ReportsPanel
-                students={students}
-                onDownload={(classId, className) => downloadClassReport(user.id, classId, className)}
-              />
-            </div>
-
-            <section className="pd-panel" aria-labelledby="pd-stage-title">
+            <section id="pd-stages" className="pd-panel pd-pillars" aria-labelledby="pd-stage-title">
               <div className="pd-section-heading">
-                <div><h2 id="pd-stage-title">Conclusão por etapa</h2><p>Alunos que já concluíram cada etapa da jornada.</p></div>
+                <div><h2 id="pd-stage-title">Monitoramento da jornada</h2><p>Conclusão dos pilares vocacionais e da síntese final por aluno.</p></div>
               </div>
               {stages.length ? (
-                <div className="pd-stage-chart">
-                  {stages.map(stage => {
+                <div className="pd-pillar-grid">
+                  {stages.map((stage, index) => {
                     const percentage = panel.totalStudents ? Math.round(stage.complete * 100 / panel.totalStudents) : 0
                     return (
-                      <div className="pd-chart-row" key={stage.id}>
-                        <div className="pd-chart-row__label"><span>{stage.name}</span><strong>{stage.complete}/{panel.totalStudents}</strong></div>
-                        <div className="pd-progress-track"><span style={{ width: `${percentage}%` }} /></div>
-                      </div>
+                      <article className={`pd-pillar-card pd-pillar-card--${index % 4}`} key={stage.id}>
+                        <div className="pd-pillar-card__top"><span>{String(index + 1).padStart(2, '0')}</span><strong>{percentage}%</strong></div>
+                        <h3>{stage.name}</h3>
+                        <p>{stage.complete} de {panel.totalStudents} {panel.totalStudents === 1 ? 'aluno concluiu' : 'alunos concluíram'}</p>
+                        <div className="pd-progress-track" aria-label={`${percentage}% dos alunos concluíram ${stage.name}`}><span style={{ width: `${percentage}%` }} /></div>
+                      </article>
                     )
                   })}
                 </div>
               ) : <p className="pd-empty-inline">Ainda não há alunos para exibir.</p>}
             </section>
 
-            <section className="pd-panel pd-students" aria-labelledby="pd-students-title">
+            <div id="pd-guidance">
+              <GuidanceAlerts
+                students={attentionStudents}
+                feedbackStatusById={feedbackStatusById}
+                onSchedule={scheduleWith}
+                onFeedback={student => setFeedbackTarget(student)}
+                onDetails={showStudent}
+              />
+            </div>
+
+            <div className="pd-grid">
+              <UpcomingSessions
+                appointments={appointments}
+                loading={loadingAppointments}
+                error={appointmentsError}
+                onOpenSchedule={() => navigate('/psicologa/agenda')}
+                onNewSession={() => navigate('/psicologa/agenda?nova=1')}
+              />
+              <div id="pd-reports">
+                <ReportsPanel
+                  students={students}
+                  onDownload={(classId, className) => downloadClassReport(user.id, classId, className)}
+                />
+              </div>
+            </div>
+
+            <section id="pd-students" className="pd-panel pd-students" aria-labelledby="pd-students-title">
               <div className="pd-section-heading pd-students__heading">
                 <div><h2 id="pd-students-title">Progresso dos alunos</h2><p>Andamento individual, feedback e relatório de cada aluno.</p></div>
                 <span className="pd-result-count">{filteredStudents.length} de {students.length} alunos</span>

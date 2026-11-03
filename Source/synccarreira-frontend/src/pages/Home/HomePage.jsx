@@ -194,11 +194,15 @@ export default function HomePage() {
             <h1 className="hp-title">
               Bem-vindo, <span>{user?.nome ?? 'Usuário'}</span>!
             </h1>
-            <span className="hp-role">{psicologa ? 'Psicóloga / Orientadora' : 'Aluno'}</span>
+            <span className="hp-role">
+              {administradora ? 'Administrador' : psicologa ? 'Psicóloga / Orientadora' : 'Aluno'}
+            </span>
             <p className="hp-sub">
-              {psicologa
-                ? 'Acompanhe seus alunos e organize as sessões de orientação.'
-                : 'Continue sua jornada de autoconhecimento.'}
+              {administradora
+                ? 'Gerencie usuários, turmas e instituições da plataforma.'
+                : psicologa
+                  ? 'Acompanhe seus alunos e organize as sessões de orientação.'
+                  : 'Continue sua jornada de autoconhecimento.'}
             </p>
             {psicologa && (
               <button

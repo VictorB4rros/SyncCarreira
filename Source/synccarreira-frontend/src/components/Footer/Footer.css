@@ -26,15 +26,18 @@
   gap: 20px;
 }
 
-.sc-footer__links button {
+.sc-footer__links button,
+.sc-footer__links a {
   background: none;
   border: none;
   font-size: 12px;
   color: var(--sc-muted);
+  text-decoration: none;
   transition: color 0.15s;
 }
 
-.sc-footer__links button:hover {
+.sc-footer__links button:hover,
+.sc-footer__links a:hover {
   color: var(--sc-roxo);
 }
 

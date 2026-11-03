@@ -29,7 +29,16 @@ export default function AppHeader() {
 
   const linkClass = ({ isActive }) =>
     `sc-header__link${isActive ? ' sc-header__link--active' : ''}`
-  const homePath = isPsychologist(user) ? '/painel-progresso' : '/home'
+
+  // O admin é um usuário de sistema: sua "home" é a gestão, não o fluxo de aluno.
+  const admin = isAdministrator(user)
+  const psicologa = isPsychologist(user)
+  let homePath = '/home'
+  if (admin) homePath = '/gestao'
+  else if (psicologa) homePath = '/painel-progresso'
+
+  // Agendamentos existe só para aluno (RF-16) e psicóloga (RF-08) — nunca para o admin.
+  const showAppointments = hasStudentRole(user) || psicologa
 
   return (
     <header className="sc-header">
@@ -40,7 +49,9 @@ export default function AppHeader() {
 
       <nav className="sc-header__nav" aria-label="Navegação principal">
         <NavLink to={homePath} className={linkClass}>Início</NavLink>
-        <NavLink to="/agendamentos" className={linkClass}>Agendamentos</NavLink>
+        {showAppointments && (
+          <NavLink to="/agendamentos" className={linkClass}>Agendamentos</NavLink>
+        )}
         {hasStudentRole(user) && (
           <>
             <NavLink to="/minha-jornada" className={linkClass}>Minha jornada</NavLink>

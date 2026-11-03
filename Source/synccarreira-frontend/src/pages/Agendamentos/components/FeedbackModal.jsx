@@ -123,8 +123,12 @@ export default function FeedbackModal({ appointment, sentByStudent, onSend, onDe
                 {sent && <span className="ag-card__ok">✓ Enviado</span>}
               </div>
               {sent
-                ? <SentFeedback feedback={sent} busy={busy} onDelete={() => run(student.id, () => onDelete(sent.id))} />
-                : <FeedbackEditor student={student} busy={busy} onSend={content => run(student.id, () => onSend(student.id, content))} />}
+                ? <SentFeedback feedback={sent} busy={busy} onDelete={() => {
+                    if (window.confirm(`Apagar o feedback de ${student.name}? Esta ação não pode ser desfeita.`)) {
+                      void run(student.id, () => onDelete(sent.id))
+                    }
+                  }} />
+                : <FeedbackEditor student={student} busy={busy} onSend={content => void run(student.id, () => onSend(student.id, content))} />}
             </li>
           )
         })}
