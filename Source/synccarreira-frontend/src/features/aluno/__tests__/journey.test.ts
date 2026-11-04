@@ -45,6 +45,19 @@ describe('maxSelections', () => {
     expect(maxSelections(question)).toBe(2)
   })
 
+  it('aceita o limite escrito como "até N"', () => {
+    const question = {
+      ...makeQuestion(1, 'CHECKBOX', [11, 12, 13, 14]),
+      content: 'Quais destes assuntos costumam prender sua atenção naturalmente em conversas, vídeos ou leituras? (Selecione até 3)',
+    }
+    expect(maxSelections(question)).toBe(3)
+  })
+
+  it('sem número depois de "até", não há limite', () => {
+    const question = { ...makeQuestion(1, 'CHECKBOX', [11, 12]), content: 'Sobre o que te influenciou até aqui, o que você reconhece?' }
+    expect(maxSelections(question)).toBeNull()
+  })
+
   it('sem limite no enunciado, ou fora do CHECKBOX, não há limite', () => {
     expect(maxSelections(makeQuestion(1, 'CHECKBOX', [11, 12]))).toBeNull()
     expect(maxSelections({ ...makeQuestion(2, 'MULTIPLA_ESCOLHA', [21]), content: 'Escolha no máximo 2' })).toBeNull()

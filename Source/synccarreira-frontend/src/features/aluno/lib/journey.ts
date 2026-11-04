@@ -52,12 +52,12 @@ export function acceptsSeveralOptions(question: Pick<QuestionDTO, 'questionType'
 }
 
 /**
- * Limite de opções marcadas em uma pergunta CHECKBOX, lido do enunciado ("Selecione no máximo 2").
- * Sem esse trecho no enunciado, não há limite (null).
+ * Limite de opções marcadas em uma pergunta CHECKBOX, lido do enunciado
+ * ("Selecione no máximo 2" ou "Selecione até 3"). Sem esse trecho no enunciado, não há limite (null).
  */
 export function maxSelections(question: Pick<QuestionDTO, 'questionType' | 'content'>): number | null {
   if (!acceptsSeveralOptions(question)) return null
-  const match = /no m[aá]ximo\s+(\d+)/i.exec(question.content ?? '')
+  const match = /(?:no\s+m[aá]ximo|at[eé])\s+(\d+)/i.exec(question.content ?? '')
   return match ? Number(match[1]) : null
 }
 
