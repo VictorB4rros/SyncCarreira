@@ -22,8 +22,8 @@ import TrailRunPage from '../pages/TrailRunPage'
 
 const sorted = [...trails].sort((a, b) => (a.sequentialOrder ?? 0) - (b.sequentialOrder ?? 0))
 const auto = sorted[0]
-const single = makeQuestion(1, 'CHECKBOX', [11, 12])
-const multiple = makeQuestion(2, 'MULTIPLA_ESCOLHA', [21, 22])
+const single = makeQuestion(1, 'MULTIPLA_ESCOLHA', [11, 12])
+const multiple = makeQuestion(2, 'CHECKBOX', [21, 22])
 
 function renderTrail(trailId = auto.id) {
   return renderWithStudent(<TrailRunPage />, { route: `/aluno/trilhas/${trailId}`, path: '/aluno/trilhas/:trailId' })
@@ -66,7 +66,7 @@ describe('TrailRunPage', () => {
     expect(await screen.findByRole('heading', { name: 'Síntese reflexiva do pilar' })).toBeInTheDocument()
   })
 
-  it('desmarca opção de múltipla escolha com DELETE', async () => {
+  it('desmarca opção de checkbox com DELETE', async () => {
     vi.mocked(api.getMyAnswers).mockResolvedValue([answerFor(21)])
     renderTrail()
     await userEvent.click(await screen.findByRole('checkbox', { name: 'Opção 1' }))

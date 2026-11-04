@@ -66,8 +66,8 @@ export const getAnswers = async (studentId, trailId) => {
 }
 
 /**
- * Salva (ou substitui) uma resposta do aluno.
- * O backend substitui automaticamente respostas anteriores da mesma questão.
+ * Salva uma resposta do aluno.
+ * Em perguntas CHECKBOX o backend marca mais uma opção; nos demais tipos substitui a resposta anterior.
  *
  * @param {Object} payload
  * @param {string} payload.content          - texto livre (pode ser vazio para CHECKBOX)
@@ -82,6 +82,14 @@ export const postAnswer = async ({ content = '', studentId, questionOptionId }) 
     questionOptionId,
   })
   return response.data
+}
+
+/**
+ * Desmarca uma opção do aluno logado (somente perguntas CHECKBOX).
+ * @param {number} questionOptionId
+ */
+export const deleteAnswer = async (questionOptionId) => {
+  await api.delete('/answers', { params: { questionOptionId } })
 }
 
 // ─── Síntese (RF-11) ──────────────────────────────────────────

@@ -397,6 +397,39 @@
   opacity: 1;
 }
 
+/* CHECKBOX: caixa quadrada com ✓, várias opções marcadas ao mesmo tempo */
+.tp-option__dot--square {
+  border-radius: 5px;
+}
+
+.tp-option__check {
+  color: white;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.tp-option--selected .tp-option__check {
+  opacity: 1;
+}
+
+/* Limite de opções atingido: as não marcadas ficam indisponíveis */
+.tp-option:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.tp-option:disabled:hover {
+  border-color: var(--sc-border);
+  background: #fafafa;
+}
+
+.tp-question__hint {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--sc-roxo);
+  margin: -10px 0 14px;
+}
+
 .tp-option__text {
   font-size: 13.5px;
   color: var(--sc-text);

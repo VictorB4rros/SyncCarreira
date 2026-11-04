@@ -56,7 +56,7 @@ public class AnswerService {
         return result.stream().map(AnswerDTO::new).toList();
     }
 
-    // Nas perguntas de MULTIPLA_ESCOLHA o aluno pode marcar várias opções: cada opção marcada é uma resposta.
+    // Nas perguntas de CHECKBOX o aluno pode marcar várias opções: cada opção marcada é uma resposta.
     // Nos demais tipos, cada aluno tem uma resposta por pergunta: responder de novo substitui a opção escolhida.
     // A linha do aluno fica travada até o fim da transação, então respostas simultâneas do mesmo aluno
     // (cliques rápidos, várias abas) são gravadas uma de cada vez, sem deadlock no MySQL.
@@ -73,14 +73,14 @@ public class AnswerService {
         checkTrailAccess(question);
 
         List<Answer> previousAnswers = answerRepository.findByStudentAndQuestion(student.getId(), question.getId());
-        Answer entity = isMultipleChoice(question)
+        Answer entity = acceptsSeveralOptions(question)
                 ? checkOption(previousAnswers, student, questionOption)
                 : replaceAnswer(previousAnswers, student, questionOption);
         recalculateStudentScore(student);
         return new AnswerDTO(entity);
     }
 
-    // Desmarca uma opção de uma pergunta de MULTIPLA_ESCOLHA. Se a opção já não estava marcada, nada muda.
+    // Desmarca uma opção de uma pergunta de CHECKBOX. Se a opção já não estava marcada, nada muda.
     // Nos demais tipos não há como desmarcar: a resposta só é substituída por outra opção.
     @Retryable(
             retryFor = PessimisticLockingFailureException.class,
@@ -92,8 +92,8 @@ public class AnswerService {
         Student student = lockLoggedStudent();
         Question question = questionOption.getQuestion();
         checkTrailAccess(question);
-        if (!isMultipleChoice(question)) {
-            throw new BusinessException("Só é possível desmarcar opções de perguntas de múltipla escolha.");
+        if (!acceptsSeveralOptions(question)) {
+            throw new BusinessException("Só é possível desmarcar opções de perguntas de checkbox.");
         }
 
         // Apaga pelo id das respostas encontradas (e não por faixa), pelo mesmo motivo do replaceAnswer
@@ -128,8 +128,8 @@ public class AnswerService {
         return answerRepository.save(entity);
     }
 
-    private static boolean isMultipleChoice(Question question) {
-        return question.getQuestionType() == QuestionType.MULTIPLA_ESCOLHA;
+    private static boolean acceptsSeveralOptions(Question question) {
+        return question.getQuestionType() == QuestionType.CHECKBOX;
     }
 
     private static boolean isSameOption(Answer answer, QuestionOption questionOption) {

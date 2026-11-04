@@ -4,7 +4,8 @@
  *
  * Regras do backend respeitadas:
  *  - Trilha bloqueada → can-access = false (e perguntas/respostas devolvem 403).
- *  - MULTIPLA_ESCOLHA: POST marca e DELETE desmarca; demais tipos: POST substitui a resposta.
+ *  - CHECKBOX: POST marca e DELETE desmarca; demais tipos: POST substitui a resposta.
+ *    O limite de opções do enunciado ("no máximo N") é aplicado só no front-end.
  *  - A síntese só é aceita com todas as perguntas respondidas e não pode ser editada (POST único).
  *  - Pilar concluído (síntese enviada) fica em modo revisão: as respostas não mudam mais.
  */
@@ -52,7 +53,7 @@ import {
 import { useStudent } from '../context/StudentContext'
 import { useAsync } from '../hooks/useAsync'
 import { formatDateTime } from '../lib/format'
-import { buildSelections, countAnswered, isMultipleChoice } from '../lib/journey'
+import { acceptsSeveralOptions, buildSelections, countAnswered, maxSelections } from '../lib/journey'
 import { AREA_LABELS, TRAIL_META, pillarCode, trailLabel } from '../lib/labels'
 import { LIMITS, type QuestionDTO, type SynthesisDTO, type TrailDTO } from '../types'
 
@@ -208,9 +209,11 @@ function TrailRun({ data }: { data: TrailRunData }) {
     (question: QuestionDTO, optionId: number) => {
       if (readOnly) return
       const previous = selections[question.id] ?? []
-      const multiple = isMultipleChoice(question)
+      const multiple = acceptsSeveralOptions(question)
       const wasChecked = previous.includes(optionId)
       if (!multiple && wasChecked) return
+      const max = maxSelections(question)
+      if (multiple && !wasChecked && max !== null && previous.length >= max) return
 
       const next = multiple ? (wasChecked ? previous.filter(id => id !== optionId) : [...previous, optionId]) : [optionId]
       setSelections(s => ({ ...s, [question.id]: next }))

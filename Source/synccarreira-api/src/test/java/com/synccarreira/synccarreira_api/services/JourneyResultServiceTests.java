@@ -77,7 +77,7 @@ public class JourneyResultServiceTests {
         Question first = new Question(1L, "Pergunta 1", QuestionType.LIKERT, TrailFactory.createTrail(), new ArrayList<>());
         first.getOptions().add(new QuestionOption(1L, "A", 10.0, 0.0, 0.0, 0.0, first));
         first.getOptions().add(new QuestionOption(2L, "B", 0.0, 5.0, 2.0, 0.0, first));
-        Question second = new Question(2L, "Pergunta 2", QuestionType.CHECKBOX, TrailFactory.createTrail(), new ArrayList<>());
+        Question second = new Question(2L, "Pergunta 2", QuestionType.MULTIPLA_ESCOLHA, TrailFactory.createTrail(), new ArrayList<>());
         second.getOptions().add(new QuestionOption(3L, "C", 0.0, 0.0, 10.0, 3.0, second));
         second.getOptions().add(new QuestionOption(4L, "D", 1.0, 1.0, 1.0, 1.0, second));
         Mockito.when(questionRepository.findAll()).thenReturn(List.of(first, second));

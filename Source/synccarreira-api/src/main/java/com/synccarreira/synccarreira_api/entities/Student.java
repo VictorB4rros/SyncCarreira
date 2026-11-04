@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -36,7 +38,9 @@ public class Student extends User {
     @Setter
     private String race;
 
+    // Ao excluir o aluno, ele sai dos agendamentos pelo banco (ON DELETE CASCADE em tb_agendamento_aluno); o agendamento é mantido
     @ManyToMany(mappedBy = "students")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @Getter
     private List<Appointment> appointments = new ArrayList<>();
 

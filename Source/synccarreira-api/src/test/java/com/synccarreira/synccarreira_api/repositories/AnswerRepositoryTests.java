@@ -3,6 +3,8 @@ package com.synccarreira.synccarreira_api.repositories;
 import com.synccarreira.synccarreira_api.entities.*;
 import com.synccarreira.synccarreira_api.entities.enums.InstitutionType;
 import com.synccarreira.synccarreira_api.entities.enums.QuestionType;
+import com.synccarreira.synccarreira_api.entities.enums.ScheduleStatus;
+import com.synccarreira.synccarreira_api.entities.enums.ScheduleType;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +15,8 @@ import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @DataJpaTest
@@ -99,6 +103,48 @@ public class AnswerRepositoryTests {
 
         Assertions.assertEquals("Ana", result.getName());
         Assertions.assertTrue(studentRepository.findByIdForUpdate(9999L).isEmpty());
+    }
+
+    @Test
+    void deletingStudentShouldAlsoDeleteTheirAnswers() {
+        studentRepository.deleteById(ana.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        Assertions.assertFalse(studentRepository.existsById(ana.getId()));
+        Assertions.assertTrue(answerRepository.findByStudentId(ana.getId()).isEmpty());
+        Assertions.assertEquals(1, answerRepository.findByStudentId(bruno.getId()).size());
+    }
+
+    @Test
+    void deletingStudentShouldRemoveThemFromAppointmentsKeepingTheAppointment() {
+        Psychologist psychologist = new Psychologist();
+        psychologist.setName("Carla");
+        psychologist.setEmail("carla@gmail.com");
+        psychologist.setCrp("06/123456");
+        psychologist.setContractExpirationDate(LocalDate.now().plusYears(1));
+        entityManager.persist(psychologist);
+
+        Appointment appointment = new Appointment();
+        appointment.setTitle("Sessão em grupo");
+        appointment.setDateTime(LocalDateTime.now().plusDays(1));
+        appointment.setDurationMinutes(60);
+        appointment.setScheduleType(ScheduleType.GRUPO);
+        appointment.setScheduleStatus(ScheduleStatus.AGENDADA);
+        appointment.setPsychologist(psychologist);
+        appointment.getStudents().add(entityManager.find(Student.class, ana.getId()));
+        appointment.getStudents().add(entityManager.find(Student.class, bruno.getId()));
+        entityManager.persist(appointment);
+        entityManager.flush();
+        entityManager.clear();
+
+        studentRepository.deleteById(ana.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        Appointment result = entityManager.find(Appointment.class, appointment.getId());
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(List.of(bruno.getId()), result.getStudents().stream().map(Student::getId).toList());
     }
 
     private Student persistStudent(String name, String email, SchoolClass schoolClass) {

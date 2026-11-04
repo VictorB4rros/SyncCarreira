@@ -6,15 +6,17 @@
  * 1. Lê trailId da URL (/trail/:trailId)
  * 2. Busca dados da trilha, perguntas e respostas já salvas em paralelo
  * 3. Mapeia respostas existentes por questionOptionId para pré-selecionar
- * 4. Ao selecionar uma opção, faz POST /answers (backend substitui a anterior)
- * 5. Calcula progresso em tempo real (respostas únicas por questão)
+ * 4. Ao selecionar uma opção, faz POST /answers (o backend substitui a anterior, exceto em CHECKBOX).
+ *    Em CHECKBOX, clicar numa opção já marcada faz DELETE /answers e a desmarca.
+ * 5. Calcula progresso em tempo real (perguntas com ao menos uma opção marcada)
  * 6. (RF-11) Com todas as perguntas respondidas, exibe o campo de síntese (texto livre).
  *    A trilha só é marcada como concluída depois que a síntese é salva (POST /syntheses).
  *    As sínteses já enviadas vêm de GET /syntheses/me.
  *
  * Tipos de pergunta suportados:
- * - CHECKBOX  → opções clicáveis (radio visual — 1 seleção por vez)
- * - LIKERT    → escala de quatro opções, sem alternativa neutra
+ * - CHECKBOX         → várias opções marcadas (checkbox visual), respeitando o limite do enunciado ("no máximo N")
+ * - MULTIPLA_ESCOLHA → uma opção por vez (radio visual)
+ * - LIKERT           → escala de quatro opções, sem alternativa neutra
  *
  * @requires trailService, AuthContext, React Router
  */
@@ -29,9 +31,11 @@ import {
   getQuestionsByTrail,
   getAnswers,
   postAnswer,
+  deleteAnswer,
   getMySyntheses,
   postSynthesis,
 } from '../../services/trailService'
+import { acceptsSeveralOptions, maxSelections } from '../../features/aluno/lib/journey'
 import './TrailPage.css'
 
 // ─── Constantes ───────────────────────────────────────────────
@@ -78,8 +82,9 @@ function answersErrorMessage(err) {
 }
 
 /**
- * Converte a lista de respostas do backend em { [questionId]: optionId },
+ * Converte a lista de respostas do backend em { [questionId]: [optionId, ...] },
  * descobrindo a pergunta de cada resposta pela opção escolhida.
+ * Só perguntas CHECKBOX guardam várias opções; nas demais vale a última resposta.
  */
 function buildAnswerMap(answersData, questionsData) {
   const answerMap = {}
@@ -90,7 +95,10 @@ function buildAnswerMap(answersData, questionsData) {
     const matchingQuestion = optId
       ? questionsData.find(q => q.options?.some(o => o.id === optId))
       : null
-    if (matchingQuestion) answerMap[matchingQuestion.id] = optId
+    if (!matchingQuestion) continue
+    const current = answerMap[matchingQuestion.id] ?? []
+    if (!acceptsSeveralOptions(matchingQuestion)) answerMap[matchingQuestion.id] = [optId]
+    else if (!current.includes(optId)) answerMap[matchingQuestion.id] = [...current, optId]
   }
   return answerMap
 }
@@ -128,36 +136,60 @@ function SaveFeedback({ status }) {
   )
 }
 
+function optionsBadge(multiple, max) {
+  if (!multiple) return 'Escolha uma opção'
+  if (max === null) return 'Marque quantas quiser'
+  return `Marque até ${max} ${max === 1 ? 'opção' : 'opções'}`
+}
+
 /**
- * Pergunta do tipo CHECKBOX — opções como botões radio visuais.
+ * Pergunta com opções: CHECKBOX marca várias (checkbox visual); os demais tipos, uma por vez (radio visual).
  */
-function CheckboxQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
+function OptionsQuestion({ question, selectedOptionIds, onSelect, saveStatus }) {
+  const multiple = acceptsSeveralOptions(question)
+  const max = maxSelections(question)
+  // Com o limite atingido, só as opções marcadas continuam clicáveis (para desmarcar)
+  const limitReached = max !== null && selectedOptionIds.length >= max
+  const answered = selectedOptionIds.length > 0
+
   return (
-      <div className={`tp-question${selectedOptionId ? ' tp-question--answered' : ''}`}>
+      <div className={`tp-question${answered ? ' tp-question--answered' : ''}`}>
         <div className="tp-question__meta">
           <span className="tp-question__num">Pergunta {question.index}</span>
-          <span className={`tp-question__badge${selectedOptionId ? ' tp-question__badge--done' : ''}`}>
-          {selectedOptionId ? '✓ Respondida' : 'Múltipla escolha'}
+          <span className={`tp-question__badge${answered ? ' tp-question__badge--done' : ''}`}>
+          {answered ? '✓ Respondida' : optionsBadge(multiple, max)}
         </span>
         </div>
 
         <p className="tp-question__content">{question.content}</p>
+        {multiple && answered && (
+            <p className="tp-question__hint">{optionsBadge(multiple, max)}</p>
+        )}
 
-        <div className="tp-options">
-          {question.options.map((opt) => (
-              <button
-                  key={opt.id}
-                  type="button"
-                  className={`tp-option${selectedOptionId === opt.id ? ' tp-option--selected' : ''}`}
-                  onClick={() => onSelect(question.id, opt.id, opt.optionText)}
-                  aria-pressed={selectedOptionId === opt.id}
-              >
-            <span className="tp-option__dot">
-              <span className="tp-option__dot-inner" />
-            </span>
-                <span className="tp-option__text">{opt.optionText}</span>
-              </button>
-          ))}
+        <div className="tp-options" role={multiple ? 'group' : 'radiogroup'}>
+          {question.options.map((opt) => {
+            const checked = selectedOptionIds.includes(opt.id)
+            return (
+                <button
+                    key={opt.id}
+                    type="button"
+                    role={multiple ? 'checkbox' : 'radio'}
+                    className={`tp-option${checked ? ' tp-option--selected' : ''}`}
+                    onClick={() => onSelect(question, opt.id, opt.optionText)}
+                    aria-checked={checked}
+                    disabled={limitReached && !checked}
+                >
+              <span className={`tp-option__dot${multiple ? ' tp-option__dot--square' : ''}`}>
+                {multiple
+                    ? <svg className="tp-option__check" viewBox="0 0 20 20" fill="currentColor" width="12" height="12" aria-hidden="true">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
+                      </svg>
+                    : <span className="tp-option__dot-inner" />}
+              </span>
+                  <span className="tp-option__text">{opt.optionText}</span>
+                </button>
+            )
+          })}
         </div>
 
         <SaveFeedback status={saveStatus} />
@@ -177,7 +209,7 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
   function handleClick(value) {
     const opt = responseOptions[value - 1]
     if (opt) {
-      onSelect(question.id, opt.id, opt.optionText || String(value))
+      onSelect(question, opt.id, opt.optionText || String(value))
     }
   }
 
@@ -517,16 +549,30 @@ export default function TrailPage() {
 
   // ── Seleção de resposta ────────────────────────────────────
 
-  const handleSelect = useCallback(async (questionId, optionId, content = '') => {
-    setAnswers(prev => ({ ...prev, [questionId]: optionId }))
+  const handleSelect = useCallback(async (question, optionId, content = '') => {
+    const questionId = question.id
+    const previous = answers[questionId] ?? []
+    const multiple = acceptsSeveralOptions(question)
+    const wasChecked = previous.includes(optionId)
+    if (!multiple && wasChecked) return
+    const max = maxSelections(question)
+    if (multiple && !wasChecked && max !== null && previous.length >= max) return
+
+    let next = [optionId]
+    if (multiple) next = wasChecked ? previous.filter(id => id !== optionId) : [...previous, optionId]
+    setAnswers(prev => ({ ...prev, [questionId]: next }))
     setSaveStatus(prev => ({ ...prev, [questionId]: 'saving' }))
 
     try {
-      await postAnswer({
-        content,
-        studentId: user.id,
-        questionOptionId: optionId,
-      })
+      if (multiple && wasChecked) {
+        await deleteAnswer(optionId)
+      } else {
+        await postAnswer({
+          content,
+          studentId: user.id,
+          questionOptionId: optionId,
+        })
+      }
       setSaveStatus(prev => ({ ...prev, [questionId]: 'saved' }))
 
       setTimeout(() => {
@@ -539,9 +585,11 @@ export default function TrailPage() {
 
     } catch (err) {
       console.error('[TrailPage] Erro ao salvar resposta:', err)
+      // Volta para as opções que estavam salvas antes do clique
+      setAnswers(prev => (prev[questionId] === next ? { ...prev, [questionId]: previous } : prev))
       setSaveStatus(prev => ({ ...prev, [questionId]: 'error' }))
     }
-  }, [user?.id])
+  }, [answers, user?.id])
 
   // ── Salvar síntese (RF-11) ─────────────────────────────────
 
@@ -562,9 +610,7 @@ export default function TrailPage() {
 
   // ── Cálculo de progresso ───────────────────────────────────
   const totalQuestions   = questions.length
-  const answeredCount    = Object.keys(answers).filter(qId =>
-      answers[qId] !== null && answers[qId] !== undefined
-  ).length
+  const answeredCount    = questions.filter(q => (answers[q.id]?.length ?? 0) > 0).length
   const progressPct      = totalQuestions > 0
       ? Math.round((answeredCount / totalQuestions) * 100)
       : 0
@@ -664,7 +710,7 @@ export default function TrailPage() {
           {/* ── Lista de perguntas ── */}
           {questions.map((question) => {
             const type = question.questionType?.toUpperCase()
-            const selectedOptionId = answers[question.id] ?? null
+            const selectedOptionIds = answers[question.id] ?? []
             const status = saveStatus[question.id] ?? null
 
             if (type === 'LIKERT') {
@@ -672,7 +718,7 @@ export default function TrailPage() {
                   <LikertQuestion
                       key={question.id}
                       question={question}
-                      selectedOptionId={selectedOptionId}
+                      selectedOptionId={selectedOptionIds[0] ?? null}
                       onSelect={handleSelect}
                       saveStatus={status}
                   />
@@ -680,10 +726,10 @@ export default function TrailPage() {
             }
 
             return (
-                <CheckboxQuestion
+                <OptionsQuestion
                     key={question.id}
                     question={question}
-                    selectedOptionId={selectedOptionId}
+                    selectedOptionIds={selectedOptionIds}
                     onSelect={handleSelect}
                     saveStatus={status}
                 />

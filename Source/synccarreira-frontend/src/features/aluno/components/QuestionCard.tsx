@@ -1,12 +1,12 @@
 /**
  * @file QuestionCard.tsx
  * @description Uma pergunta da trilha, com o controle adequado ao tipo:
- *  - MULTIPLA_ESCOLHA → várias opções (checkbox)
- *  - CHECKBOX / ABERTA / outros → uma opção (radio)
+ *  - CHECKBOX → várias opções (checkbox), respeitando o limite do enunciado ("no máximo N")
+ *  - MULTIPLA_ESCOLHA / ABERTA / outros → uma opção (radio)
  *  - LIKERT → escala de 4 pontos, sem neutro
  */
 import { Check, CircleAlert, CircleCheck, LoaderCircle } from 'lucide-react'
-import { isMultipleChoice, likertOptions } from '../lib/journey'
+import { acceptsSeveralOptions, likertOptions, maxSelections } from '../lib/journey'
 import type { QuestionDTO } from '../types'
 import { cn } from './ui'
 
@@ -24,7 +24,11 @@ export interface QuestionCardProps {
 
 function typeLabel(question: QuestionDTO): string {
   if (question.questionType === 'LIKERT') return 'Escala de concordância'
-  if (isMultipleChoice(question)) return 'Marque quantas quiser'
+  if (acceptsSeveralOptions(question)) {
+    const max = maxSelections(question)
+    if (max === null) return 'Marque quantas quiser'
+    return `Marque até ${max} ${max === 1 ? 'opção' : 'opções'}`
+  }
   return 'Escolha uma opção'
 }
 
@@ -55,7 +59,9 @@ function SaveFeedback({ status, errorMessage }: { status?: SaveStatus; errorMess
 
 export function QuestionCard({ question, index, selected, status, errorMessage, disabled = false, onChoose }: QuestionCardProps) {
   const answered = selected.length > 0
-  const multiple = isMultipleChoice(question)
+  const multiple = acceptsSeveralOptions(question)
+  const max = maxSelections(question)
+  const limitReached = max !== null && selected.length >= max
   const promptId = `pergunta-${question.id}`
 
   return (
@@ -94,20 +100,22 @@ export function QuestionCard({ question, index, selected, status, errorMessage, 
         >
           {question.options.map(option => {
             const checked = selected.includes(option.id)
+            // Com o limite atingido, só as opções marcadas continuam clicáveis (para desmarcar)
+            const optionDisabled = disabled || (limitReached && !checked)
             return (
               <button
                 key={option.id}
                 type="button"
                 role={multiple ? 'checkbox' : 'radio'}
                 aria-checked={checked}
-                disabled={disabled}
+                disabled={optionDisabled}
                 onClick={() => onChoose(question, option.id)}
                 className={cn(
                   'flex items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-all',
                   checked
                     ? 'border-primary bg-surface-container text-primary-strong font-semibold'
                     : 'border-outline-variant bg-white text-on-surface-variant hover:border-primary-fixed-dim hover:bg-surface-container-low',
-                  disabled && 'cursor-not-allowed opacity-70 hover:border-outline-variant hover:bg-white',
+                  optionDisabled && 'cursor-not-allowed opacity-70 hover:border-outline-variant hover:bg-white',
                 )}
               >
                 <span
