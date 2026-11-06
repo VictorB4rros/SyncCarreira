@@ -1,7 +1,12 @@
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
 %% Elementos Textuais (Capítulos)      %%
 %% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% %%
-\pagestyle{empty} % Remover cabeçalho com titulo dos capítulos
+% Estilo com apenas o número da página no canto superior direito (ABNT NBR 14724),
+% sem o cabeçalho com o título dos capítulos
+\makepagestyle{abntnumero}
+\makeevenhead{abntnumero}{}{}{\ABNTEXfontereduzida\thepage}
+\makeoddhead{abntnumero}{}{}{\ABNTEXfontereduzida\thepage}
+\pagestyle{abntnumero}
 %% Inclua aqui os capítulos que farão parte do TCC
 \input{capitulos/introducao}
 \input{capitulos/contexto-projeto}
