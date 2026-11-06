@@ -12,4 +12,25 @@ O Documento de Requisitos do Sistema, em sua versão 1.1, elaborado pela equipe 
 
 \includepdf[pages=-,scale=0.85,frame,pagecommand={\thispagestyle{abntheadings}}]{pos-textual/documento-requisitos.pdf}
 
+% Apêndice B -- Resultados da análise estática no SonarCloud
+\chapter{Resultados da Análise Estática no SonarCloud}\label{apendice-sonar}
+
+Este apêndice reproduz o painel de visão geral do projeto no SonarCloud, capturado em 4 de novembro de 2026, com os resultados da análise estática do código. A \autoref{fig_sonar_geral} apresenta a situação do \textit{quality gate}, a quantidade de apontamentos, a duplicação de código, a cobertura de testes e os indicadores de segurança. A \autoref{fig_sonar_qualidade} apresenta os indicadores de confiabilidade e de manutenibilidade.
+
+\begin{figure}[p]
+    \centering
+    \caption{Painel do SonarCloud: situação geral e segurança.}
+    \label{fig_sonar_geral}
+    \fbox{\includegraphics[page=1,height=0.8\textheight]{pos-textual/sonarcloud-painel-1.pdf}}
+    \legend{Fonte: SonarCloud (2026).}
+\end{figure}
+
+\begin{figure}[p]
+    \centering
+    \caption{Painel do SonarCloud: confiabilidade e manutenibilidade.}
+    \label{fig_sonar_qualidade}
+    \fbox{\includegraphics[page=1,height=0.8\textheight]{pos-textual/sonarcloud-painel-2.pdf}}
+    \legend{Fonte: SonarCloud (2026).}
+\end{figure}
+
 \end{apendicesenv}
