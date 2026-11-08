@@ -2,6 +2,7 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.StudentAffinityDTO;
 import com.synccarreira.synccarreira_api.dto.result.AreaScoreDTO;
+import com.synccarreira.synccarreira_api.entities.JourneyRecord;
 import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
 import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
@@ -15,10 +16,12 @@ import java.util.Comparator;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 // Compara as áreas do conhecimento pelo percentual do máximo possível de cada uma (RF-12 / RN-05).
 // As perguntas não distribuem a mesma quantidade de pontos para todas as áreas, então o score bruto
-// favoreceria a área com mais pontos em jogo. Usado na conclusão da jornada, no resultado, no PDF e na trilha de Informação.
+// favoreceria a área com mais pontos em jogo. Usado na conclusão da jornada, no resultado, no PDF, na trilha de Informação
+// e nos relatórios da psicóloga.
 @Component
 public class AreaScoreCalculator {
 
@@ -32,6 +35,31 @@ public class AreaScoreCalculator {
     @Transactional(readOnly = true)
     public List<AreaScoreDTO> calculate(Double humanities, Double biologicalSciences, Double exactSciences, Double arts) {
         return calculate(areaMap(humanities, biologicalSciences, exactSciences, arts), currentMaxScores());
+    }
+
+    // Percentuais de uma jornada concluída, com os scores e os máximos guardados na conclusão
+    @Transactional(readOnly = true)
+    public List<AreaScoreDTO> calculate(JourneyRecord journey) {
+        return calculate(journey, this::currentMaxScores);
+    }
+
+    // Usa os scores e os máximos guardados na conclusão da jornada: o resultado não muda depois,
+    // nem se o aluno alterar o perfil, nem se as perguntas ou os pesos forem alterados.
+    // Jornadas concluídas antes do RF-12 não têm o máximo guardado: usa o das perguntas atuais (currentMaxScores).
+    public static List<AreaScoreDTO> calculate(JourneyRecord journey, Supplier<Map<KnowledgeArea, Double>> currentMaxScores) {
+        Map<KnowledgeArea, Double> scores = areaMap(
+                journey.getHumanitiesScore(),
+                journey.getBiologicalSciencesScore(),
+                journey.getExactSciencesScore(),
+                journey.getArtsScore());
+        Map<KnowledgeArea, Double> maxScores = journey.hasMaxScores()
+                ? areaMap(
+                        journey.getHumanitiesMaxScore(),
+                        journey.getBiologicalSciencesMaxScore(),
+                        journey.getExactSciencesMaxScore(),
+                        journey.getArtsMaxScore())
+                : currentMaxScores.get();
+        return calculate(scores, maxScores);
     }
 
     // Scores das 4 áreas em percentual, do maior para o menor, marcando a(s) área(s) em destaque.

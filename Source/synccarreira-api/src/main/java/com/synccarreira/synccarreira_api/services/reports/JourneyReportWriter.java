@@ -3,9 +3,11 @@ package com.synccarreira.synccarreira_api.services.reports;
 import com.synccarreira.synccarreira_api.dto.SynthesisDTO;
 import com.synccarreira.synccarreira_api.dto.psychologist.PanelDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportDTOs;
+import com.synccarreira.synccarreira_api.dto.result.AreaScoreDTO;
 import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
+import com.synccarreira.synccarreira_api.services.AreaScoreCalculator;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -26,6 +28,8 @@ import java.io.UncheckedIOException;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,6 +44,10 @@ public class JourneyReportWriter {
     private static final String ANSWERED_QUESTIONS = "Perguntas respondidas";
     private static final String TOTAL_QUESTIONS = "Total de perguntas";
     private static final String PROGRESS = "Progresso";
+
+    // Ordem das áreas nas colunas e linhas do relatório
+    private static final List<KnowledgeArea> REPORT_AREAS = List.of(
+            KnowledgeArea.HUMANAS, KnowledgeArea.EXATAS, KnowledgeArea.BIOLOGICAS, KnowledgeArea.ARTES);
 
     private static final int NAME_WIDTH = 32;
     private static final int CONTENT_WIDTH = 100;
@@ -109,10 +117,10 @@ public class JourneyReportWriter {
         writer.row("Síntese final enviada", status.finalSynthesisSubmitted());
         writer.row("Em dúvida sobre a escolha profissional", status.inDoubt());
         writer.row("Dúvida sinalizada em", status.doubtFlaggedAt());
-        writer.row("Pontuação em Humanas", report.humanitiesScore());
-        writer.row("Pontuação em Exatas", report.exactSciencesScore());
-        writer.row("Pontuação em Biológicas", report.biologicalSciencesScore());
-        writer.row("Pontuação em Artes", report.artsScore());
+        for (KnowledgeArea area : REPORT_AREAS) {
+            writer.row(scoreTitle(area), score(report, area));
+            writer.row(affinityTitle(area), affinity(report, area));
+        }
         writer.row("Áreas de maior afinidade", labels(report.highestScoreAreas()));
         writer.row("Relatório gerado em", Instant.now());
         writer.width(0, 40);
@@ -121,23 +129,31 @@ public class JourneyReportWriter {
 
     private static void writeStudentsSheet(Workbook workbook, Styles styles, List<ReportDTOs.StudentReport> students) {
         SheetWriter writer = new SheetWriter(workbook.createSheet("Alunos"), styles);
-        writer.header(
+        List<String> titles = new ArrayList<>(List.of(
                 STUDENT, "E-mail", "Ano de escolaridade", "Tipo de escola", "Raça/cor",
                 "Status da jornada", PROGRESS, ANSWERED_QUESTIONS, TOTAL_QUESTIONS,
                 "Trilhas concluídas", "Total de trilhas", "Trilha atual", "Síntese final enviada",
-                "Em dúvida", "Dúvida sinalizada em",
-                "Pontuação em Humanas", "Pontuação em Exatas", "Pontuação em Biológicas", "Pontuação em Artes",
-                "Áreas de maior afinidade");
+                "Em dúvida", "Dúvida sinalizada em"));
+        for (KnowledgeArea area : REPORT_AREAS) {
+            titles.add(scoreTitle(area));
+            titles.add(affinityTitle(area));
+        }
+        titles.add("Áreas de maior afinidade");
+        writer.header(titles.toArray(String[]::new));
         for (ReportDTOs.StudentReport student : students) {
             PanelDTOs.StudentStatus status = student.status();
-            writer.row(
+            List<Object> values = new ArrayList<>(Arrays.asList(
                     student.name(), student.email(), student.scholarYear(), student.schoolType(), student.race(),
                     label(status.journeyStatus()), new Percentage(status.progressPercentage()),
                     status.answeredQuestions(), status.totalQuestions(),
                     status.concludedTrails(), status.totalTrails(), label(status.currentTrail()), status.finalSynthesisSubmitted(),
-                    status.inDoubt(), status.doubtFlaggedAt(),
-                    student.humanitiesScore(), student.exactSciencesScore(), student.biologicalSciencesScore(), student.artsScore(),
-                    labels(student.highestScoreAreas()));
+                    status.inDoubt(), status.doubtFlaggedAt()));
+            for (KnowledgeArea area : REPORT_AREAS) {
+                values.add(score(student, area));
+                values.add(affinity(student, area));
+            }
+            values.add(labels(student.highestScoreAreas()));
+            writer.row(values.toArray());
         }
         writer.width(0, NAME_WIDTH);
         writer.width(1, NAME_WIDTH);
@@ -238,17 +254,35 @@ public class JourneyReportWriter {
             return null;
         }
         return areas.stream()
-                .map(area -> switch (area) {
-                    case HUMANAS -> "Humanas";
-                    case BIOLOGICAS -> "Biológicas";
-                    case EXATAS -> "Exatas";
-                    case ARTES -> "Artes";
-                })
+                .map(AreaScoreCalculator::label)
                 .collect(Collectors.joining(", "));
+    }
+
+    private static String scoreTitle(KnowledgeArea area) {
+        return "Pontuação em " + AreaScoreCalculator.label(area);
+    }
+
+    private static String affinityTitle(KnowledgeArea area) {
+        return "Afinidade em " + AreaScoreCalculator.label(area);
+    }
+
+    private static Double score(ReportDTOs.StudentReport report, KnowledgeArea area) {
+        AreaScoreDTO areaScore = report.areaScore(area);
+        return areaScore != null ? areaScore.score() : null;
+    }
+
+    // Afinidade: percentual da pontuação sobre o máximo possível da área, o mesmo exibido no resultado da jornada
+    private static AffinityPercentage affinity(ReportDTOs.StudentReport report, KnowledgeArea area) {
+        AreaScoreDTO areaScore = report.areaScore(area);
+        return areaScore != null ? new AffinityPercentage(areaScore.percentage()) : null;
     }
 
     // Percentual de 0 a 100, gravado na célula como fração com formato de porcentagem
     private record Percentage(int value) {
+    }
+
+    // Percentual de 0 a 100 com uma casa decimal (ex.: 66,7%), gravado na célula como fração
+    private record AffinityPercentage(double value) {
     }
 
     // Texto longo, gravado com quebra de linha automática
@@ -263,6 +297,7 @@ public class JourneyReportWriter {
         private final CellStyle integer;
         private final CellStyle decimal;
         private final CellStyle percentage;
+        private final CellStyle decimalPercentage;
         private final CellStyle dateTime;
 
         private Styles(Workbook workbook) {
@@ -289,6 +324,9 @@ public class JourneyReportWriter {
 
             percentage = bodyStyle(workbook);
             percentage.setDataFormat(workbook.createDataFormat().getFormat("0%"));
+
+            decimalPercentage = bodyStyle(workbook);
+            decimalPercentage.setDataFormat(workbook.createDataFormat().getFormat("0.0%"));
 
             dateTime = bodyStyle(workbook);
             dateTime.setDataFormat(workbook.createDataFormat().getFormat("dd/mm/yyyy hh:mm"));
@@ -375,6 +413,10 @@ public class JourneyReportWriter {
                 case Percentage(int percentage) -> {
                     cell.setCellValue(percentage / 100.0);
                     cell.setCellStyle(styles.percentage);
+                }
+                case AffinityPercentage(double percentage) -> {
+                    cell.setCellValue(percentage / 100.0);
+                    cell.setCellStyle(styles.decimalPercentage);
                 }
                 case Double number -> {
                     cell.setCellValue(number);
