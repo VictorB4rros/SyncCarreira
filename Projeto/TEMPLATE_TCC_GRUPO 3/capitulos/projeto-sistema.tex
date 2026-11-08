@@ -109,7 +109,7 @@ Algumas decisões de projeto são transversais aos componentes:
   \item \textbf{tratamento centralizado de exceções}: um manipulador global converte as exceções de negócio em respostas HTTP padronizadas — 404 para recurso inexistente, 403 para acesso negado, 409 para conflito ou duplicidade e 422 para violação de regra de negócio ou dado inválido —, com mensagem descritiva e, quando aplicável, a lista de campos rejeitados;
   \item \textbf{notificações assíncronas após a confirmação da transação}: o envio de mensagens eletrônicas é disparado por eventos tratados somente depois da confirmação (\textit{commit}) da transação que os originou e executado de forma assíncrona, com novas tentativas em caso de falha temporária do servidor de e-mail; assim, a resposta ao usuário não depende da disponibilidade desse servidor;
   \item \textbf{cálculo do leque de possibilidades}: a pontuação de cada área do conhecimento é sempre recalculada a partir dos interesses declarados no perfil e dos pesos das opções respondidas, e comparada ao valor máximo possível de cada área, o que evita favorecer áreas com mais pontos distribuídos no banco de questões;
-  \item \textbf{controle de concorrência}: as operações sujeitas a requisições simultâneas, como o registro de respostas e de sínteses, são protegidas por restrições de unicidade no banco de dados e por novas tentativas automáticas em caso de bloqueio, retornando conflito em vez de erro interno.
+  \item \textbf{controle de concorrência}: as operações sujeitas a requisições simultâneas, como o registro de respostas e de sínteses, são protegidas de forma complementar: no registro de respostas, o registro do aluno é bloqueado durante a gravação, de modo que as requisições do mesmo aluno sejam processadas uma de cada vez, e a operação é repetida automaticamente caso o banco de dados a interrompa por bloqueio; no registro de sínteses, restrições de unicidade no banco de dados impedem registros duplicados. Nos dois casos, a falha que persistir é devolvida como conflito, e não como erro interno.
 \end{itemize}
 
 Na aplicação \textit{web}, os componentes organizam-se em páginas, agrupadas por perfil de acesso; serviços de acesso à API, que encapsulam as chamadas HTTP e o envio do \textit{token}; um contexto de autenticação, que mantém os dados do usuário autenticado; e guardas de rota, que restringem cada página aos perfis autorizados e direcionam o aluno ao preenchimento do perfil antes de liberar as trilhas. A integração com o Google Agenda é encapsulada em um serviço próprio, responsável pela autorização da conta e pela criação, atualização e cancelamento dos eventos.
@@ -328,7 +328,7 @@ As principais decisões do modelo de dados são as seguintes:
   \item \textbf{herança por tabelas associadas}: a classe User concentra os atributos comuns e é especializada em Psychologist e Student, cada uma com tabela própria ligada à tabela de usuários pela chave primária (estratégia \textit{joined}); essa estratégia evita colunas nulas que seriam necessárias em uma tabela única e preserva a integridade referencial. O Administrador não possui atributos próprios e é identificado apenas pelo perfil de acesso;
   \item \textbf{registro imutável das jornadas concluídas}: ao término de cada jornada, o sistema grava em JourneyRecord uma cópia das pontuações, dos valores máximos por área, dos interesses declarados e, em formato JSON, das questões, respostas, sínteses e \textit{links} daquela jornada. Essa desnormalização intencional garante que o histórico e o resultado de uma jornada concluída não se alterem quando o banco de questões, os pesos ou o perfil do aluno forem modificados, e permite reiniciar as trilhas em um novo ciclo;
   \item \textbf{restrições de unicidade}: o banco impede o registro de mais de uma síntese por aluno e trilha, de mais de um registro por número de jornada do aluno e de mais de um \textit{feedback} por aluno em uma mesma jornada ou sessão;
-  \item \textbf{exclusão em cascata}: sínteses, jornadas concluídas e \textit{feedbacks} são removidos automaticamente com o aluno ou o profissional correspondente, em atendimento ao direito de eliminação de dados previsto na LGPD \cite{brasil2018lgpd};
+  \item \textbf{exclusão em cascata}: sínteses, jornadas concluídas e \textit{feedbacks} são removidos automaticamente com o aluno ou o profissional correspondente --- inclusive os \textit{feedbacks} que um profissional enviou aos alunos, quando a conta desse profissional é excluída ---, em atendimento ao direito de eliminação de dados previsto na LGPD \cite{brasil2018lgpd};
   \item \textbf{enumerações persistidas como texto}: tipos de instituição, nomes de trilha, tipos de questão, áreas do conhecimento e situações de sessão são gravados por nome, o que torna os registros legíveis e independentes da ordem de declaração;
   \item \textbf{carga inicial}: os perfis de acesso, as trilhas, o banco de questões --- 34 questões e 148 opções de resposta com pesos por área, apresentado no \autoref{apendice-banco-questoes} --- e as vinte subáreas do conhecimento são carregados por \textit{script} de inicialização.
 \end{itemize}
@@ -502,7 +502,7 @@ Qualidade & GitHub Actions, SonarCloud e JaCoCo & — & Compilação automática
 
 \section{Segurança e Controle de Acesso}
 
-Por tratar dados de orientação vocacional de estudantes, em sua maioria menores de idade, o \textit{SyncCarreira} está sujeito às exigências da Lei Geral de Proteção de Dados Pessoais quanto ao tratamento de dados de crianças e adolescentes \cite{brasil2018lgpd}. Além disso, a falha no controle de acesso ocupa a primeira posição entre os riscos de segurança mais críticos de aplicações \textit{web} \cite{owasp2021}. As decisões descritas a seguir respondem a esses dois condicionantes.
+Por tratar dados de orientação vocacional de estudantes, em sua maioria menores de idade, o \textit{SyncCarreira} está sujeito às exigências da Lei Geral de Proteção de Dados Pessoais quanto ao tratamento de dados de crianças e adolescentes \cite{brasil2018lgpd} e às do Estatuto Digital da Criança e do Adolescente, aplicável aos serviços digitais direcionados a esse público \cite{brasil2025lei15211}. Além disso, a falha no controle de acesso ocupa a primeira posição entre os riscos de segurança mais críticos de aplicações \textit{web} \cite{owasp2021}. As decisões descritas a seguir respondem a esses dois condicionantes.
 
 \subsection{Autenticação}
 
@@ -534,21 +534,23 @@ Usuários, instituições, turmas e profissionais & Gerencia & — & — \\
 \hline
 Alunos (cadastro, edição e exclusão) & Gerencia & Consulta & — \\
 \hline
-Banco de questões & Gerencia & Consulta & Consulta \\
+Banco de questões & — & Consulta & Consulta \\
 \hline
 Perfil, respostas, sínteses, jornada, histórico e resultado & — & — & Próprios dados \\
 \hline
-Painel de progresso e relatórios & Consulta & Própria instituição & — \\
+Painel de progresso e relatórios & — & Própria instituição & — \\
 \hline
-Links de informação & Gerencia & Gerencia & Consulta na trilha \\
+Links de informação & — & Gerencia & Consulta na trilha \\
 \hline
-Sessões de orientação & Gerencia & Própria agenda & Consulta das próprias \\
+Sessões de orientação & — & Própria agenda & Consulta das próprias \\
 \hline
-Feedbacks & Consulta do status & Envia e exclui & Consulta e marca como lido \\
+Feedbacks & — & Envia e exclui & Consulta e marca como lido \\
 \hline
 \end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
 }
+
+O Administrador atua apenas na gestão de instituições, turmas e contas de usuário, sem acesso ao conteúdo da jornada dos alunos, e as alterações no banco de questões são realizadas pela equipe de desenvolvimento, por meio de \textit{script} de banco de dados.
 
 No segundo nível, os serviços verificam a propriedade e o escopo institucional de cada recurso. O aluno acessa apenas os próprios dados, identificados a partir do \textit{token}, e não a partir de parâmetros informados na requisição; o profissional de orientação acessa apenas o próprio painel e a própria agenda, e somente pode convocar para sessões alunos vinculados a turmas da sua instituição. Essa verificação impede que a simples alteração de um identificador na requisição dê acesso a dados de outro usuário ou de outra instituição, em atendimento aos requisitos RNF-01 e RNF-08.
 
@@ -575,9 +577,126 @@ O acesso às trilhas também é controlado pelo sistema, conforme a regra de neg
 Complementarmente, o sistema adota as seguintes medidas de proteção de dados:
 
 \begin{itemize}
-  \item \textbf{sigilo no painel gerencial}: o painel do profissional de orientação exibe apenas o progresso e a situação dos alunos, sem o conteúdo das respostas, conforme a regra de negócio RN-03;
+  \item \textbf{sigilo das respostas}: o painel do profissional de orientação exibe apenas o progresso e a situação dos alunos, sem o conteúdo das respostas, conforme a regra de negócio RN-03, e o acesso de cada perfil aos dados da jornada segue o modelo apresentado no \autoref{quadro-acesso-dados};
+  \item \textbf{criptografia em repouso}: o banco de dados de produção, no Amazon RDS, utiliza criptografia de armazenamento com chaves gerenciadas pelo AWS Key Management Service (KMS), que abrange os dados, as cópias de segurança automáticas e os \textit{snapshots} da instância \cite{aws2026rdscriptografia}. Essa medida protege os dados contra o acesso ao meio físico de armazenamento, mas é transparente para a aplicação e para quem acessa o banco com credenciais válidas; a criptografia por coluna das respostas e das sínteses, que exigiria uma chave em posse da aplicação, não foi implementada nesta versão;
   \item \textbf{eliminação de dados}: a exclusão de uma conta remove definitivamente os dados a ela associados, como sínteses, histórico de jornadas e \textit{feedbacks};
   \item \textbf{proteção de credenciais}: senhas armazenadas apenas na forma de \textit{hash} e \textit{tokens} de definição de senha com prazo de validade;
   \item \textbf{restrição de origens}: a API aceita requisições de navegador apenas das origens configuradas para a aplicação \textit{web} (CORS);
   \item \textbf{credenciais de serviços externos}: a autorização de acesso ao Google Agenda é concedida pelo próprio profissional de orientação e mantida apenas na memória da aplicação \textit{web}, sem armazenamento no servidor; as credenciais do servidor de e-mail são lidas de variáveis de ambiente.
 \end{itemize}
+
+O \autoref{quadro-acesso-dados} descreve quais dados da jornada cada perfil pode visualizar e a justificativa de cada acesso. O critério adotado é o da necessidade: cada perfil acessa apenas os dados indispensáveis à sua função no processo de orientação.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.25}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{2.7cm}|>{\raggedright\arraybackslash}p{1.6cm}|>{\raggedright\arraybackslash}p{2.6cm}|>{\raggedright\arraybackslash}p{2.4cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{5}{@{}c@{}}{\quadrolongocaption{Acesso aos dados do aluno por perfil.}\label{quadro-acesso-dados}} \\[0.3em]
+\hline
+\textbf{Dado} & \textbf{Aluno} & \textbf{Profissional de orientação} & \textbf{Administrador} & \textbf{Justificativa} \\
+\hline
+\endfirsthead
+\multicolumn{5}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Dado} & \textbf{Aluno} & \textbf{Profissional de orientação} & \textbf{Administrador} & \textbf{Justificativa} \\
+\hline
+\endhead
+\multicolumn{5}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+Dados cadastrais (nome, e-mail, turma, ano de escolaridade) & Próprios & Alunos da própria instituição & Todos, para gestão das contas & Necessários à criação das contas, ao vínculo com a instituição e à identificação do aluno no acompanhamento. \\
+\hline
+Respostas às questões & Próprias & Apenas a quantidade de questões respondidas & — & O conteúdo das respostas é preservado (RN-03); o progresso basta para o acompanhamento. \\
+\hline
+Sínteses das trilhas e síntese final & Próprias & Alunos da própria instituição, nos relatórios & — & As sínteses registram a reflexão do aluno e constituem material de trabalho do profissional na orientação individual e coletiva. \\
+\hline
+Interesses declarados, afinidades e leque de possibilidades & Próprios & Alunos da própria instituição, nos relatórios & — & Permitem ao profissional compreender as inclinações do aluno e orientar a discussão sobre as possibilidades apresentadas. \\
+\hline
+Sinalização de dúvida & Própria & Alunos da própria instituição & — & Permite priorizar o atendimento dos alunos em dúvida (RN-04). \\
+\hline
+Sessões e \textit{feedbacks} & Próprios & Os que agendou ou enviou & — & Necessários à realização do atendimento e ao retorno individual ao aluno. \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
+\subsection{Conformidade com a LGPD e o ECA Digital}
+
+Esta subseção analisa o tratamento de dados pessoais realizado pelo \textit{SyncCarreira} à luz da Lei Geral de Proteção de Dados Pessoais (LGPD) e do Estatuto Digital da Criança e do Adolescente. As definições de papéis, bases legais, prazos de retenção e riscos aqui apresentadas constituem uma proposta da equipe para a adoção da plataforma pelas instituições parceiras, cabendo a cada instituição, na condição de controladora, a decisão final sobre esses aspectos.
+
+\textbf{Dados pessoais tratados.} A plataforma trata dados pessoais de estudantes --- nome, e-mail, turma, ano de escolaridade e tipo de escola --- e os dados produzidos durante a jornada: interesses declarados, respostas às questões, sínteses, afinidades por área, leque de possibilidades, sinalização de dúvida, sessões e \textit{feedbacks}. A LGPD define como dado pessoal sensível aquele sobre origem racial ou étnica, convicção religiosa, opinião política, filiação a sindicato ou a organização de caráter religioso, filosófico ou político, dado referente à saúde ou à vida sexual, dado genético ou biométrico, quando vinculado a uma pessoa natural (art. 5º, II) \cite{brasil2018lgpd}. As respostas e as afinidades não se enquadram, por si, nessa definição. As sínteses, por serem textos livres, podem eventualmente conter informações dessa natureza e, por isso, recebem o mesmo nível de proteção dos demais dados da jornada. O modelo de dados da API contém, ainda, um campo opcional de raça ou cor do aluno, que não é preenchido pela aplicação \textit{web}; por se tratar de dado pessoal sensível sem finalidade definida no processo de orientação, recomenda-se sua remoção, em atendimento ao princípio da necessidade (art. 6º, III).
+
+\textbf{Dados de crianças e adolescentes.} O tratamento de dados de crianças e adolescentes deve ser realizado em seu melhor interesse (art. 14) \cite{brasil2018lgpd}. Segundo o Enunciado CD/ANPD nº 1/2023, esse tratamento pode ser realizado com base nas hipóteses legais previstas nos arts. 7º e 11 da LGPD, desde que observado e prevalecente o melhor interesse do titular, a ser avaliado no caso concreto \cite{anpd2023enunciado}. No \textit{SyncCarreira}, o tratamento tem como finalidade apoiar o próprio estudante na escolha profissional, sob acompanhamento de um profissional de orientação, o que está alinhado a esse interesse.
+
+\textbf{Papéis.} A instituição parceira --- escola ou organização social --- atua como controladora, pois é ela quem decide adotar a plataforma e define as finalidades do tratamento dos dados de seus alunos (art. 5º, VI). A equipe responsável pelo \textit{SyncCarreira} atua como operadora, realizando o tratamento em nome da instituição e segundo suas instruções (arts. 5º, VII, e 39). Os provedores de serviços utilizados pela plataforma --- infraestrutura em nuvem, envio de e-mails e agenda --- atuam como suboperadores. Cabe à controladora indicar o encarregado pelo tratamento de dados pessoais (art. 41), e à operadora apoiá-la no atendimento às solicitações dos titulares.
+
+\textbf{Bases legais.} O \autoref{quadro-bases-legais} apresenta as finalidades do tratamento e as bases legais propostas. Para as instituições privadas, propõe-se a execução do contrato de prestação de serviços educacionais firmado com o estudante ou seus responsáveis (art. 7º, V); para as escolas públicas, a execução de políticas públicas (art. 7º, III), considerando a obrigatoriedade dos serviços de psicologia na educação básica e a previsão legal do Projeto de Vida no Ensino Médio.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.25}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}p{4.4cm}|}
+\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Finalidades do tratamento e bases legais propostas.}\label{quadro-bases-legais}} \\[0.3em]
+\hline
+\textbf{Tratamento} & \textbf{Finalidade} & \textbf{Base legal proposta} \\
+\hline
+\endfirsthead
+\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Tratamento} & \textbf{Finalidade} & \textbf{Base legal proposta} \\
+\hline
+\endhead
+\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+Cadastro de alunos, profissionais e turmas & Permitir o acesso à plataforma e o vínculo dos usuários à instituição & Art. 7º, V (instituições privadas) ou art. 7º, III (escolas públicas) \\
+\hline
+Registro da jornada (interesses, respostas, sínteses, afinidades e leque) & Conduzir o processo de autoconhecimento e apresentar o leque de possibilidades & Art. 7º, V ou III, observado o melhor interesse (art. 14) \\
+\hline
+Sinalização de dúvida e alertas & Priorizar o atendimento dos alunos em dúvida & Art. 7º, V ou III, observado o melhor interesse (art. 14) \\
+\hline
+Sessões e \textit{feedbacks} & Organizar o atendimento e dar retorno individual ao aluno & Art. 7º, V ou III \\
+\hline
+Envio de e-mails e convites de agenda & Comunicar a definição de senha, os alertas e as sessões & Art. 7º, V ou III, por meio de suboperadores \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
+\textbf{Retenção e eliminação.} A LGPD determina o término do tratamento quando sua finalidade é alcançada e a eliminação dos dados após esse término, ressalvadas as hipóteses de conservação previstas em lei (arts. 15 e 16) \cite{brasil2018lgpd}. Propõe-se que os dados do aluno sejam mantidos enquanto ele estiver vinculado à instituição parceira e eliminados mediante solicitação do titular ou de seus responsáveis, ou ao término do vínculo. Na versão atual, a eliminação é realizada pela exclusão da conta pelo Administrador, que remove definitivamente os dados associados; a eliminação automática ao término do vínculo não foi implementada.
+
+\textbf{Relatório de impacto.} A LGPD prevê que a ANPD pode solicitar ao controlador o relatório de impacto à proteção de dados pessoais, que descreve os processos de tratamento que podem gerar riscos aos titulares e as medidas de mitigação adotadas (arts. 5º, XVII, e 38) \cite{brasil2018lgpd}; o Estatuto Digital da Criança e do Adolescente, por sua vez, prevê a gestão de riscos e a avaliação de impacto pelos fornecedores de serviços destinados a esse público \cite{brasil2025lei15211}. O \autoref{quadro-ripd} apresenta um esboço dos principais riscos identificados e das medidas correspondentes, como subsídio ao relatório a ser elaborado pela controladora.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.25}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{5.0cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{2}{@{}c@{}}{\quadrolongocaption{Esboço de riscos e medidas para o relatório de impacto.}\label{quadro-ripd}} \\[0.3em]
+\hline
+\textbf{Risco} & \textbf{Medidas adotadas ou propostas} \\
+\hline
+\endfirsthead
+\multicolumn{2}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Risco} & \textbf{Medidas adotadas ou propostas} \\
+\hline
+\endhead
+\multicolumn{2}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+Acesso indevido de terceiros aos dados & Autenticação por \textit{token} assinado, senhas protegidas por \textit{hash}, comunicação por HTTPS, restrição de origens e criptografia em repouso do banco de dados. \\
+\hline
+Acesso de uma instituição aos dados de outra & Verificação do escopo institucional em cada serviço (RNF-08). \\
+\hline
+Exposição do conteúdo reflexivo a perfis sem necessidade & Modelo de acesso por necessidade, sem acesso do Administrador aos dados da jornada. \\
+\hline
+Interpretação do resultado como diagnóstico & Leque aberto de possibilidades (RN-07), aviso explícito de que o resultado não constitui diagnóstico e acompanhamento por profissional de orientação. \\
+\hline
+Retenção além do necessário & Política de retenção proposta e exclusão definitiva dos dados associados à conta. \\
+\hline
+Transferência internacional de dados & Adoção de mecanismos do art. 33 da LGPD nos contratos com os provedores e migração da infraestrutura para o Brasil, proposta como trabalho futuro. \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
+\textbf{Transferência internacional.} A infraestrutura da plataforma está hospedada na região us-east-1 da Amazon Web Services, nos Estados Unidos, escolhida por apresentar custo inferior ao da região sa-east-1, em São Paulo. Além disso, os e-mails transacionais são enviados por meio do serviço Brevo, e os convites de sessão, pelo Google Agenda. Esse arranjo caracteriza transferência internacional de dados pessoais, que a LGPD admite apenas nas hipóteses do art. 33 \cite{brasil2018lgpd}, entre as quais se destacam: a transferência para países que proporcionem grau de proteção adequado, reconhecido pela ANPD (inciso I); a transferência amparada em garantias oferecidas pelo controlador, na forma de cláusulas contratuais específicas, cláusulas-padrão contratuais, normas corporativas globais ou selos, certificados e códigos de conduta (inciso II); o consentimento específico e em destaque do titular (inciso VIII); e as hipóteses do art. 7º, II, V e VI, como a execução de contrato (inciso IX). A Resolução CD/ANPD nº 19/2024 regulamentou essas transferências e aprovou as cláusulas-padrão contratuais, que devem constar dos contratos firmados entre o exportador e o importador dos dados \cite{anpd2024resolucao19}. Para o \textit{SyncCarreira}, propõe-se amparar a transferência nas cláusulas-padrão contratuais, verificando sua adoção nos contratos com os provedores, e registra-se como trabalho futuro a migração da infraestrutura para a região sa-east-1, que manteria os dados armazenados no Brasil, com o correspondente aumento de custo.
+
+\textbf{ECA Digital.} O Estatuto Digital da Criança e do Adolescente, em vigor desde março de 2026, aplica-se aos produtos e serviços de tecnologia da informação direcionados a crianças e adolescentes ou de acesso provável por eles \cite{brasil2025lei15211}. Entre suas obrigações, destacam-se, para o \textit{SyncCarreira}: a adoção, por padrão, da configuração mais protetiva disponível em relação à privacidade e à proteção de dados pessoais (art. 7º), atendida pelo fato de as contas serem criadas pela instituição, de não haver perfis públicos nem interação entre alunos e de os dados da jornada serem visíveis apenas ao próprio aluno e ao profissional de orientação de sua instituição; a vedação do perfilamento para direcionamento de publicidade (art. 22), atendida pela ausência de publicidade na plataforma e pelo uso das afinidades exclusivamente no processo de orientação; e a gestão de riscos e a avaliação de impacto (art. 8º), para as quais o \autoref{quadro-ripd} oferece subsídios. As ferramentas de supervisão pelos responsáveis previstas na lei não foram implementadas, pois o acompanhamento do aluno na plataforma é realizado pelo profissional de orientação da instituição; sua aplicabilidade a uma plataforma educacional de uso mediado pela escola deve ser avaliada pela instituição controladora.
