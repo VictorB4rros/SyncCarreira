@@ -124,7 +124,7 @@ Qualquer funcionalidade não prevista no Documento de Requisitos é tratada como
 
 Para o desenvolvimento estrutural e visual do sistema, foi realizado um estudo de \textit{benchmarking} com o intuito de identificar as principais soluções disponíveis no mercado que tangenciam o escopo de orientação vocacional e mapeamento de perfil de estudantes. Compreender o cenário competitivo é uma etapa fundamental para o posicionamento de qualquer solução tecnológica, já que, conforme apontam \citeonline{kotler2012}, o planejamento de estratégias eficazes exige que a organização pesquise e compreenda o mais profundamente possível a atuação de seus concorrentes.
 
-A seleção das plataformas analisadas seguiu os seguintes critérios de inclusão: (i) disponibilidade em língua portuguesa e uso ativo por estudantes brasileiros do Ensino Médio ou em fase de escolha de curso superior; (ii) oferta de algum instrumento de autoavaliação vocacional ou de personalidade, ainda que não seja o foco exclusivo da plataforma; e (iii) relevância de mercado, evidenciada por volume expressivo de usuários ou por associação a marcas consolidadas no setor educacional brasileiro. Foram excluídas plataformas voltadas exclusivamente a públicos corporativos (recrutamento e seleção de profissionais já formados) e ferramentas sem versão em português. A partir desses critérios, foram selecionadas quatro plataformas amplamente utilizadas pelo público jovem --- 16Personalities, Descomplica, Qual Carreira e CareerExplorer ---, cujos pontos fortes e lacunas são discutidos a seguir, em contraste com a proposta do \textit{SyncCarreira} para o contexto escolar.
+A seleção das plataformas analisadas considerou dois grupos. O primeiro reúne ferramentas de uso individual, acessadas diretamente pelo estudante, selecionadas pelos seguintes critérios de inclusão: (i) disponibilidade em língua portuguesa e uso ativo por estudantes brasileiros do Ensino Médio ou em fase de escolha de curso superior; (ii) oferta de algum instrumento de autoavaliação vocacional ou de personalidade, ainda que não seja o foco exclusivo da plataforma; e (iii) relevância de mercado, evidenciada por volume expressivo de usuários ou por associação a marcas consolidadas no setor educacional brasileiro. O segundo grupo reúne soluções institucionais, contratadas por escolas ou organizações para aplicar instrumentos a grupos de pessoas e acompanhar seus resultados, segmento em que se insere o \textit{SyncCarreira}; nesse grupo, o critério de idioma não foi exigido, pois as soluções institucionais em português identificadas têm acesso restrito às instituições contratantes. Em ambos os grupos, foram excluídas as plataformas voltadas exclusivamente ao recrutamento e à seleção de profissionais já formados. A partir desses critérios, foram selecionadas quatro plataformas de uso individual amplamente utilizadas pelo público jovem --- 16Personalities, Descomplica, Qual Carreira e CareerExplorer --- e uma solução institucional, o JobCannon, cujos pontos fortes e lacunas são discutidos a seguir, em contraste com a proposta do \textit{SyncCarreira} para o contexto escolar.
 
 \subsection{16 Personalities}
 
@@ -178,50 +178,77 @@ A plataforma \textit{web} CareerExplorer é uma referência internacional em sis
     \legend{Fonte: \citeonline{careerexplorer2026}.}
 \end{figure}
 
+\subsection{JobCannon}
+
+O JobCannon é uma plataforma \textit{web} fundada em 2022, em Londres, que reúne uma biblioteca de testes de personalidade e de carreira e relaciona os resultados a perfis de carreira e de competências \cite{jobcannon2026sobre}. Entre seus instrumentos está um teste de interesses de carreira com 60 itens, baseado na versão reduzida do \textit{O*NET Interest Profiler}, instrumento público do Departamento do Trabalho dos Estados Unidos, e nos seis tipos de interesse propostos por Holland \cite{jobcannon2026interesses}. Cada item descreve uma atividade, avaliada em uma escala de cinco pontos que vai de ``\textit{Strongly Dislike}'' a ``\textit{Strongly Like}'', como mostra a \autoref{fig_jobcannon_teste}. Ao final, o usuário recebe um perfil de interesses, uma lista de carreiras compatíveis e sugestões de testes específicos para cada carreira.
+
+\begin{figure}[!htbp]
+    \centering
+    \caption{Interface do teste de interesses de carreira da plataforma JobCannon.}
+    \label{fig_jobcannon_teste}
+    \includegraphics[width=0.85\textwidth]{img/fig-5-jobcannon-teste.png}
+    \legend{Fonte: \citeonline{jobcannon2026interesses}.}
+\end{figure}
+
+Além do uso individual, a plataforma oferece uma versão institucional, voltada a empresas, escolas e organizações, na qual um usuário administrador convida pessoas a responder aos instrumentos e acompanha, em um painel, quem concluiu cada teste e a distribuição dos resultados do grupo, como mostra a \autoref{fig_jobcannon_painel}. O plano gratuito, analisado neste estudo, permite o envio de até cinco avaliações por mês; relatórios detalhados, exportação em PDF e licenças educacionais por aluno são oferecidos em planos pagos \cite{jobcannon2026instituicoes}.
+
+\begin{figure}[!htbp]
+    \centering
+    \caption{Painel de acompanhamento da versão institucional da plataforma JobCannon.}
+    \label{fig_jobcannon_painel}
+    \includegraphics[width=0.85\textwidth]{img/fig-6-jobcannon-painel.png}
+    \legend{Fonte: \citeonline{jobcannon2026instituicoes}.}
+\end{figure}
+
+Entre as plataformas analisadas, o JobCannon é a que mais se aproxima do modelo do \textit{SyncCarreira}, por combinar o painel institucional de acompanhamento a um instrumento de interesses fundamentado em uma referência pública reconhecida. Suas lacunas, no entanto, são relevantes para o contexto escolar brasileiro: a interface e o teste analisados estão em inglês; as carreiras sugeridas tomam como referência o mercado de trabalho norte-americano, com salários informados pelo órgão de estatísticas do trabalho dos Estados Unidos; a devolutiva é inteiramente automatizada, sem a participação de um profissional de orientação, sem agendamento de sessões e sem uma jornada de reflexão organizada em etapas; e os dados das avaliações são armazenados na Irlanda \cite{jobcannon2026instituicoes}, o que, para uma instituição brasileira, caracteriza transferência internacional de dados pessoais sujeita às regras da LGPD. O \textit{SyncCarreira}, por sua vez, foi concebido para o acompanhamento do estudante pelo psicólogo(a) ou mentor(a), com conteúdo em português validado pela parceira.
+
+No segmento escolar brasileiro, destaca-se ainda o FutureMe, programa de orientação vocacional oferecido a escolas como parte do componente de Projeto de Vida \cite{futureme2026}, adotado em 2025 pela Secretaria de Estado de Educação do Rio de Janeiro em 1.235 escolas estaduais, para mais de 100 mil estudantes do último ano do Ensino Médio \cite{tupi2025futureme}. A plataforma não foi incluída no comparativo porque o acesso é restrito às escolas contratantes, o que impediu a verificação de seus recursos.
+
 \subsection{Comparativo}
 
-O \autoref{quadro-comparativo} resume as funcionalidades das plataformas concorrentes em contraste com a proposta do \textit{SyncCarreira}. A verificação de cada recurso foi realizada exclusivamente na versão gratuita de cada plataforma concorrente, conforme indicado na linha ``Plano analisado''; a ausência de marcação ($\checkmark$) indica que o recurso não foi identificado nessa versão, podendo estar disponível em planos pagos não avaliados neste estudo.
+O \autoref{quadro-comparativo} resume as funcionalidades das plataformas concorrentes em contraste com o \textit{SyncCarreira}. A verificação dos recursos das plataformas concorrentes foi realizada em 12 de maio de 2026 e, no caso do JobCannon, em 5 de novembro de 2026, exclusivamente na versão gratuita de cada uma, conforme indicado na linha ``Plano analisado''; a coluna do \textit{SyncCarreira} reflete a versão implantada descrita neste trabalho. Cada recurso é classificado em três estados: ``Sim'', quando o recurso foi identificado de forma completa; ``Parcial'', quando foi identificado apenas em parte, por exemplo atendendo somente ao estudante, sem a participação do profissional de orientação ou da instituição; e ``Não'', quando não foi identificado. No caso das plataformas concorrentes, ``Não'' indica que o recurso não foi identificado na versão gratuita, podendo estar disponível em planos pagos não avaliados neste estudo.
 
 {\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.3}
-\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.8cm}|*{5}{>{\centering\arraybackslash}X|}}
-\multicolumn{6}{@{}c@{}}{\quadrolongocaption{Comparação de recursos entre os projetos.}\label{quadro-comparativo}} \\[0.3em]
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}p{3.4cm}|*{6}{>{\centering\arraybackslash}X|}}
+\multicolumn{7}{@{}c@{}}{\quadrolongocaption{Comparação de recursos entre os projetos.}\label{quadro-comparativo}} \\[0.3em]
 \hline
-\textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Nossa Solução} \\
+\textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Job\-Cannon} & \textbf{Sync\-Carreira} \\
 \hline
 \endfirsthead
-\multicolumn{6}{@{}r@{}}{\textit{(continuação)}} \\
+\multicolumn{7}{@{}r@{}}{\textit{(continuação)}} \\
 \hline
-\textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Nossa Solução} \\
+\textbf{Funcionalidades Principais} & \textbf{16Perso\-nalities} & \textbf{Descom\-plica} & \textbf{Qual Carreira} & \textbf{Career\-Explorer} & \textbf{Job\-Cannon} & \textbf{Sync\-Carreira} \\
 \hline
 \endhead
-\multicolumn{6}{@{}r@{}}{\textit{(continua)}} \\
+\multicolumn{7}{@{}r@{}}{\textit{(continua)}} \\
 \endfoot
 \endlastfoot
-Login (Aluno/Psicóloga) & $\checkmark$ & $\checkmark$ &  & $\checkmark$ & $\checkmark$ \\
+Login de aluno e de profissional de orientação & Parcial & Parcial & Não & Parcial & Sim & Sim \\
 \hline
-Painel da Psicóloga &  &  &  &  & $\checkmark$ \\
+Painel do profissional de orientação & Não & Não & Não & Não & Sim & Sim \\
 \hline
-Dashboard do Aluno &  &  &  &  & $\checkmark$ \\
+Painel do aluno & Não & Não & Não & Não & Sim & Sim \\
 \hline
-Relatórios (Aluno/Turma) & $\checkmark$ & $\checkmark$ &  & $\checkmark$ & $\checkmark$ \\
+Relatórios (aluno e turma) & Parcial & Parcial & Não & Parcial & Parcial & Sim \\
 \hline
-Histórico de Testes & $\checkmark$ & $\checkmark$ &  & $\checkmark$ & $\checkmark$ \\
+Histórico de resultados & Sim & Sim & Não & Sim & Sim & Sim \\
 \hline
-Feedback Automatizado & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\checkmark$ \\
+\textit{Feedback} automatizado & Sim & Sim & Sim & Sim & Sim & Sim \\
 \hline
-Feedback da Psicóloga &  & $\checkmark$ &  &  & $\checkmark$ \\
+\textit{Feedback} de profissional de orientação & Não & Sim\textsuperscript{a} & Não & Não & Não & Sim \\
 \hline
-Gestão de Agendamentos &  &  &  &  & $\checkmark$ \\
+Gestão de agendamentos & Não & Não & Não & Não & Não & Sim \\
 \hline
-Cadastro de Testes Próprios &  &  &  &  & $\checkmark$ \\
+Cadastro de instrumentos próprios & Não & Não & Não & Não & Não & Não\textsuperscript{b} \\
 \hline
-Multi-idioma (Inglês) & $\checkmark$ &  &  & $\checkmark$ & $\checkmark$ \\
+Multi-idioma (inglês) & Sim & Não & Não & Sim & Sim & Não\textsuperscript{c} \\
 \hline
-\textbf{Plano analisado} & Gratuito & Gratuito & Gratuito & Gratuito & -- \\
+\textbf{Plano analisado} & Gratuito & Gratuito & Gratuito & Gratuito & Gratuito & -- \\
 \hline
 \end{xltabular}
-\legend{Fonte: Autoria própria (2026).}
+\legend{Fonte: Autoria própria (2026).\\
+Nota: verificação das plataformas concorrentes realizada em 12/05/2026; no caso do JobCannon, em 05/11/2026, no plano gratuito para empresas. (a) Ao concluir o teste vocacional, o Descomplica oferece ao estudante a opção de conversar com um de seus orientadores vocacionais. (b) O \textit{SyncCarreira} utiliza um banco de questões fixo, validado pela parceira; o cadastro e a manutenção de questões pelo profissional de orientação constam como trabalho futuro. (c) A internacionalização da plataforma consta como trabalho futuro.}
 }
 
 
