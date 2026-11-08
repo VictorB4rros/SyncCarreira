@@ -357,17 +357,21 @@ Os principais padrões adotados na interface são os seguintes:
   \item \textbf{responsividade e acessibilidade}: as telas adaptam sua disposição a larguras menores por meio de pontos de quebra, e os componentes interativos utilizam atributos de acessibilidade para leitores de tela, como rótulos, estados expandidos e regiões de atualização dinâmica.
 \end{itemize}
 
-As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais telas do sistema, com dados fictícios de demonstração.
+As principais telas do sistema são apresentadas a seguir com dados fictícios de demonstração, que simulam uma instituição com 31 alunos em diferentes etapas da jornada.
 
-\begin{figure}[!htbp]
+A \autoref{fig_tela_login} apresenta a tela de autenticação, comum aos três perfis. Como as contas são criadas pelo Administrador, a tela não oferece autocadastro: o usuário informa o e-mail e a senha, e a opção ``Esqueceu a senha?'' orienta-o a procurar o Administrador caso não consiga acessar a conta ou o \textit{link} de primeiro acesso tenha expirado. O rodapé dá acesso às páginas de privacidade, de termos de uso e de suporte.
+
+\begin{figure}[htbp]
     \centering
     \caption{Tela de autenticação.}
     \label{fig_tela_login}
-    \fbox{\includegraphics[width=0.6\textwidth]{img/fig-cap4-tela-login.png}}
+    \fbox{\includegraphics[width=0.5\textwidth]{img/fig-cap4-tela-login.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[!htbp]
+A \autoref{fig_tela_painel} apresenta o painel de progresso do profissional de orientação. Os indicadores do topo resumem a situação dos alunos da instituição --- acompanhados, com a jornada iniciada, com a jornada concluída e em dúvida ---, e o monitoramento da jornada mostra, para cada trilha e para a síntese final, quantos alunos já a concluíram. Abaixo, os alertas de orientação listam os alunos que sinalizaram dúvida, com a data da sinalização e atalhos para agendar uma sessão, enviar um \textit{feedback} ou consultar o progresso do aluno. Desse modo, o profissional identifica, em uma única tela, quais alunos de uma turma numerosa precisam de atendimento prioritário, sem acesso ao conteúdo das respostas.
+
+\begin{figure}[htbp]
     \centering
     \caption{Painel de progresso do profissional de orientação.}
     \label{fig_tela_painel}
@@ -375,7 +379,9 @@ As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais 
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[!htbp]
+A \autoref{fig_tela_agenda} apresenta a tela de agendamento de sessões do profissional de orientação. As sessões, individuais ou em grupo, são organizadas em próximas, realizadas e canceladas, e cada uma exibe a data, o horário, os alunos convocados e uma descrição. Quando o profissional conecta sua conta do Google Agenda, o sistema gera o \textit{link} de videoconferência e envia o convite aos alunos.
+
+\begin{figure}[htbp]
     \centering
     \caption{Tela de agendamento de sessões do profissional de orientação.}
     \label{fig_tela_agenda}
@@ -383,27 +389,33 @@ As Figuras \ref{fig_tela_login} a \ref{fig_tela_leque} apresentam as principais 
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[!htbp]
+A \autoref{fig_tela_interesses} apresenta a tela de perfil do aluno, na qual ele declara seu interesse em cada uma das quatro áreas do conhecimento, em uma escala de 0 a 5, antes de iniciar as trilhas, e pode alterá-lo posteriormente. A mesma tela reúne o histórico das jornadas concluídas, os agendamentos e os \textit{feedbacks} recebidos, além da opção de sinalizar dúvida ou indecisão ao profissional de orientação, disponível após a conclusão da jornada.
+
+\begin{figure}[htbp]
     \centering
     \caption{Tela de perfil do aluno, com os interesses declarados e a sinalização de dúvida.}
     \label{fig_tela_interesses}
-    \fbox{\includegraphics[width=0.75\textwidth]{img/fig-cap4-tela-interesses.png}}
+    \fbox{\includegraphics[width=0.68\textwidth]{img/fig-cap4-tela-interesses.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[!htbp]
+A \autoref{fig_tela_trilha} apresenta a tela inicial do aluno, com as trilhas da jornada. Cada trilha exibe sua situação e o percentual de questões respondidas, e a trilha de Informação, última etapa, reúne os materiais de pesquisa e a síntese final da jornada.
+
+\begin{figure}[htbp]
     \centering
     \caption{Tela inicial do aluno com as trilhas da jornada.}
     \label{fig_tela_trilha}
-    \fbox{\includegraphics[width=0.6\textwidth]{img/fig-cap4-tela-trilhas.png}}
+    \fbox{\includegraphics[width=0.45\textwidth]{img/fig-cap4-tela-trilhas.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
-\begin{figure}[!htbp]
+A \autoref{fig_tela_leque} apresenta o leque de possibilidades exibido ao aluno ao término da jornada. A tela traz o aviso de que o resultado é um ponto de partida para a reflexão, e não um diagnóstico; as afinidades com as quatro áreas, em ordem decrescente, com a área de maior afinidade em destaque; e as subáreas do conhecimento associadas, cada qual com exemplos de carreiras.
+
+\begin{figure}[htbp]
     \centering
     \caption{Tela do leque de possibilidades de carreira.}
     \label{fig_tela_leque}
-    \fbox{\includegraphics[width=0.6\textwidth]{img/fig-cap4-tela-leque.png}}
+    \fbox{\includegraphics[width=0.55\textwidth]{img/fig-cap4-tela-leque.png}}
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
@@ -485,7 +497,7 @@ Servidor & Lombok & —\textsuperscript{1} & Geração de métodos de acesso e c
 \hline
 Servidor & Gradle & 9.4.1 & Automação de \textit{build} e gestão de dependências. \\
 \hline
-Dados & MySQL (Amazon RDS) & — & Banco de dados relacional dos ambientes de desenvolvimento e produção. \\
+Dados & MySQL & — & Banco de dados relacional, executado localmente no ambiente de desenvolvimento e no Amazon RDS no ambiente de produção. \\
 \hline
 Dados & H2 Database & —\textsuperscript{1} & Banco em memória do ambiente de testes. \\
 \hline
