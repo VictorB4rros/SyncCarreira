@@ -1,6 +1,5 @@
 package com.synccarreira.synccarreira_api.entities;
 
-import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -12,10 +11,7 @@ import org.hibernate.annotations.OnDeleteAction;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 @Entity
 @Table(name = "tb_aluno")
