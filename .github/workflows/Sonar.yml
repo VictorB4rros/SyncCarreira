@@ -74,4 +74,4 @@ jobs:
           -Dsonar.issue.ignore.multicriteria.tw1.resourceKey=**/features/aluno/aluno.css
           -Dsonar.qualitygate.wait=true
           -Dsonar.scanner.javaOpts=-Xmx6g
-          -Dsonar.jasmin.internal.disabled=true
+          -Dsonar.jasmin.internal.js.ts.disabled=true
