@@ -1,6 +1,9 @@
 package com.synccarreira.synccarreira_api.controllers;
 
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -124,5 +127,25 @@ public class JourneyControllerTests {
                 .accept(MediaType.APPLICATION_JSON));
 
         result.andExpect(status().isUnprocessableContent());
+    }
+
+    @Test
+    void unflagDoubtShouldReturnNoContentWhenStudentExists() throws Exception {
+        doNothing().when(service).unflagDoubt();
+
+        ResultActions result = mockMvc.perform(delete("/journey/doubt")
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isNoContent());
+    }
+
+    @Test
+    void unflagDoubtShouldReturnNotFoundWhenStudentDoesNotExist() throws Exception {
+        doThrow(ResourceNotFoundException.class).when(service).unflagDoubt();
+
+        ResultActions result = mockMvc.perform(delete("/journey/doubt")
+                .accept(MediaType.APPLICATION_JSON));
+
+        result.andExpect(status().isNotFound());
     }
 }

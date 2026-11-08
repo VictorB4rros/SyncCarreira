@@ -119,6 +119,7 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, SYNTHESES).hasRole(USER)
 				.requestMatchers(HttpMethod.GET, JOURNEY).hasRole(USER)
 				.requestMatchers(HttpMethod.POST, JOURNEY).hasRole(USER)
+				.requestMatchers(HttpMethod.DELETE, JOURNEY).hasRole(USER)
 				// Histórico de jornadas (RF-15): só o próprio aluno acessa, a psicóloga não
 				.requestMatchers(HttpMethod.GET, JOURNEY_HISTORY).hasRole(USER)
 				.requestMatchers(HttpMethod.POST, JOURNEY_HISTORY).hasRole(USER)
