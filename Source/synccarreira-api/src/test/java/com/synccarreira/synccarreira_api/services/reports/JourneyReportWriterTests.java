@@ -3,11 +3,9 @@ package com.synccarreira.synccarreira_api.services.reports;
 import com.synccarreira.synccarreira_api.dto.SynthesisDTO;
 import com.synccarreira.synccarreira_api.dto.psychologist.PanelDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportDTOs;
-import com.synccarreira.synccarreira_api.dto.result.AreaScoreDTO;
 import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
-import com.synccarreira.synccarreira_api.services.AreaScoreCalculator;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
@@ -64,15 +62,15 @@ public class JourneyReportWriterTests {
                                 trailProgress(1L, TrailName.AUTOCONHECIMENTO, 1, 5, 5, true),
                                 trailProgress(2L, TrailName.INFLUENCIAS, 2, 4, 4, true),
                                 trailProgress(3L, TrailName.PLANO_DE_FUTURO, 3, 3, 3, true))),
-                areaScores(new double[] {9.5, 9.5, 9.5, 9.5}, new double[] {50.0, 50.0, 50.0, 50.0},
-                        List.of(KnowledgeArea.HUMANAS, KnowledgeArea.BIOLOGICAS, KnowledgeArea.EXATAS, KnowledgeArea.ARTES)),
+                affinities(50.0, 50.0, 50.0, 50.0),
+                List.of(KnowledgeArea.HUMANAS, KnowledgeArea.BIOLOGICAS, KnowledgeArea.EXATAS, KnowledgeArea.ARTES),
                 List.of(
                         synthesis(1L, TrailName.AUTOCONHECIMENTO, 1, "Síntese de autoconhecimento"),
                         synthesis(2L, TrailName.INFLUENCIAS, 2, "Síntese de influências"),
                         synthesis(3L, TrailName.PLANO_DE_FUTURO, 3, "Síntese do plano de futuro"),
                         synthesis(4L, TrailName.INFORMACAO, 4, "Síntese final da jornada")));
 
-        // Bruno está no meio da segunda trilha. Tem mais pontos em Humanas, mas a maior afinidade (percentual) é em Exatas
+        // Bruno está no meio da segunda trilha, com maior afinidade em Exatas
         bruno = createStudentReport(
                 11L, "Bruno Lima", "Branca", "Particular",
                 new PanelDTOs.StudentStatus(11L, "Bruno Lima", 1L, "3º ano A", 7, 12, 58, 1, 3,
@@ -80,7 +78,7 @@ public class JourneyReportWriterTests {
                                 trailProgress(1L, TrailName.AUTOCONHECIMENTO, 1, 5, 5, true),
                                 trailProgress(2L, TrailName.INFLUENCIAS, 2, 2, 4, false),
                                 trailProgress(3L, TrailName.PLANO_DE_FUTURO, 3, 0, 3, false))),
-                brunoAreaScores(),
+                brunoAffinities(), List.of(KnowledgeArea.EXATAS),
                 List.of(synthesis(5L, TrailName.AUTOCONHECIMENTO, 1, "Síntese do Bruno")));
 
         // Carla não começou: sem pontuação, sem raça informada e com tipo de escola em branco
@@ -91,7 +89,7 @@ public class JourneyReportWriterTests {
                                 trailProgress(1L, TrailName.AUTOCONHECIMENTO, 1, 0, 5, false),
                                 trailProgress(2L, TrailName.INFLUENCIAS, 2, 0, 4, false),
                                 trailProgress(3L, TrailName.PLANO_DE_FUTURO, 3, 0, 3, false))),
-                areaScores(new double[] {0.0, 0.0, 0.0, 0.0}, new double[] {0.0, 0.0, 0.0, 0.0}, List.of()),
+                affinities(0.0, 0.0, 0.0, 0.0), List.of(),
                 List.of());
 
         classReport = new ReportDTOs.ClassReport(1L, "3º ano A", 2026, "E.E. Pedro II", 3, 1, 1, 1, 1, List.of(ana, bruno, carla));
@@ -106,24 +104,24 @@ public class JourneyReportWriterTests {
 
     private static ReportDTOs.StudentReport createStudentReport(
             Long id, String name, String race, String schoolType, PanelDTOs.StudentStatus status,
-            List<AreaScoreDTO> areaScores, List<SynthesisDTO> syntheses) {
+            Map<KnowledgeArea, Double> affinities, List<KnowledgeArea> highestScoreAreas, List<SynthesisDTO> syntheses) {
         return new ReportDTOs.StudentReport(
                 id, name, name.toLowerCase().replace(' ', '.') + "@gmail.com", "3º ano do Ensino Médio", schoolType, race,
                 "3º ano A", 2026, "E.E. Pedro II",
-                areaScores, AreaScoreCalculator.highlightedAreas(areaScores), status, syntheses);
+                affinities, highestScoreAreas, status, syntheses);
     }
 
-    // Scores e percentuais na ordem Humanas, Exatas, Biológicas, Artes
-    private static List<AreaScoreDTO> areaScores(double[] scores, double[] percentages, List<KnowledgeArea> highlighted) {
-        List<KnowledgeArea> areas = List.of(KnowledgeArea.HUMANAS, KnowledgeArea.EXATAS, KnowledgeArea.BIOLOGICAS, KnowledgeArea.ARTES);
-        return IntStream.range(0, areas.size())
-                .mapToObj(i -> new AreaScoreDTO(areas.get(i), AreaScoreCalculator.label(areas.get(i)),
-                        scores[i], 20.0, percentages[i], highlighted.contains(areas.get(i))))
-                .toList();
+    // Afinidade (percentual de 0 a 100) de cada área
+    private static Map<KnowledgeArea, Double> affinities(double humanities, double exactSciences, double biologicalSciences, double arts) {
+        return Map.of(
+                KnowledgeArea.HUMANAS, humanities,
+                KnowledgeArea.EXATAS, exactSciences,
+                KnowledgeArea.BIOLOGICAS, biologicalSciences,
+                KnowledgeArea.ARTES, arts);
     }
 
-    private static List<AreaScoreDTO> brunoAreaScores() {
-        return areaScores(new double[] {13.0, 12.0, 1.5, 0.0}, new double[] {32.5, 43.6, 7.5, 0.0}, List.of(KnowledgeArea.EXATAS));
+    private static Map<KnowledgeArea, Double> brunoAffinities() {
+        return affinities(32.5, 43.6, 7.5, 0.0);
     }
 
     private static PanelDTOs.TrailProgress trailProgress(Long id, TrailName name, int order, long answered, long total, boolean synthesisSubmitted) {
@@ -257,8 +255,7 @@ public class JourneyReportWriterTests {
                 "Status da jornada", "Progresso", "Perguntas respondidas", "Total de perguntas",
                 "Trilhas concluídas", "Total de trilhas", "Trilha atual", "Síntese final enviada",
                 "Em dúvida", "Dúvida sinalizada em",
-                "Pontuação em Humanas", "Afinidade em Humanas", "Pontuação em Exatas", "Afinidade em Exatas",
-                "Pontuação em Biológicas", "Afinidade em Biológicas", "Pontuação em Artes", "Afinidade em Artes",
+                "Afinidade em Humanas", "Afinidade em Exatas", "Afinidade em Biológicas", "Afinidade em Artes",
                 "Áreas de maior afinidade"), headers(students));
         Assertions.assertEquals(3, students.getLastRowNum());
         Assertions.assertEquals("Ana Júlia", text(students.getRow(1).getCell(0)));
@@ -277,17 +274,17 @@ public class JourneyReportWriterTests {
     }
 
     @Test
-    void writeClassReportShouldWriteScoresAffinitiesAndHighestScoreAreasInStudentsSheet() throws IOException {
+    void writeClassReportShouldWriteOnlyAffinitiesAndHighestScoreAreasInStudentsSheet() throws IOException {
         Sheet students = read(writer.writeClassReport(classReport)).getSheet("Alunos");
         Row anaRow = students.getRow(1);
         Row brunoRow = students.getRow(2);
 
-        Assertions.assertEquals(List.of(13.0, 0.325, 12.0, 0.436, 1.5, 0.075, 0.0, 0.0), values(brunoRow, 15, 23));
-        Assertions.assertEquals("0.00", format(brunoRow.getCell(15)));
-        Assertions.assertEquals("0.0%", format(brunoRow.getCell(16)));
-        // A área em destaque é a de maior afinidade (percentual), não a de maior pontuação bruta
-        Assertions.assertEquals("Exatas", text(brunoRow.getCell(23)));
-        Assertions.assertEquals("Humanas, Biológicas, Exatas, Artes", text(anaRow.getCell(23)));
+        Assertions.assertEquals(List.of(0.325, 0.436, 0.075, 0.0), values(brunoRow, 15, 19));
+        Assertions.assertEquals("0.0%", format(brunoRow.getCell(15)));
+        Assertions.assertEquals("Exatas", text(brunoRow.getCell(19)));
+        Assertions.assertEquals("Humanas, Biológicas, Exatas, Artes", text(anaRow.getCell(19)));
+        // A pontuação bruta não entra no relatório
+        Assertions.assertTrue(headers(students).stream().noneMatch(header -> header.startsWith("Pontuação")));
     }
 
     @Test
@@ -312,7 +309,7 @@ public class JourneyReportWriterTests {
         Assertions.assertEquals("-", text(carlaRow.getCell(4)));
         Assertions.assertEquals("Não iniciada", text(carlaRow.getCell(5)));
         Assertions.assertEquals("Autoconhecimento", text(carlaRow.getCell(11)));
-        Assertions.assertEquals("-", text(carlaRow.getCell(23)));
+        Assertions.assertEquals("-", text(carlaRow.getCell(19)));
     }
 
     @Test
@@ -365,7 +362,7 @@ public class JourneyReportWriterTests {
     void writeClassReportShouldEnableFilterAndFreezeHeaderInTableSheets() throws IOException {
         Workbook result = read(writer.writeClassReport(classReport));
 
-        Assertions.assertEquals("A1:X4", autoFilter(result.getSheet("Alunos")));
+        Assertions.assertEquals("A1:T4", autoFilter(result.getSheet("Alunos")));
         Assertions.assertEquals("A1:H10", autoFilter(result.getSheet("Progresso por trilha")));
         Assertions.assertEquals("A1:E6", autoFilter(result.getSheet("Sínteses")));
         for (Sheet sheet : result) {
@@ -421,18 +418,19 @@ public class JourneyReportWriterTests {
                 Map.entry("Ano de escolaridade", "3º ano do Ensino Médio"),
                 Map.entry("Tipo de escola", "Particular"),
                 Map.entry("Raça/cor", "Branca"),
-                Map.entry("Pontuação em Humanas", 13.0),
                 Map.entry("Afinidade em Humanas", 0.325),
-                Map.entry("Pontuação em Exatas", 12.0),
                 Map.entry("Afinidade em Exatas", 0.436),
-                Map.entry("Pontuação em Biológicas", 1.5),
                 Map.entry("Afinidade em Biológicas", 0.075),
-                Map.entry("Pontuação em Artes", 0.0),
                 Map.entry("Afinidade em Artes", 0.0),
                 Map.entry("Áreas de maior afinidade", "Exatas"));
 
         Assertions.assertEquals(List.of("Campo", "Valor"), headers(student));
         Assertions.assertEquals(expected, values(student, expected.keySet()));
+        Assertions.assertEquals("0.0%", format(valueOf(student, "Afinidade em Exatas")));
+        // A pontuação bruta não entra no relatório
+        for (Row row : student) {
+            Assertions.assertFalse(row.getCell(0).getStringCellValue().startsWith("Pontuação"));
+        }
         assertGeneratedNow(valueOf(student, "Relatório gerado em"));
     }
 
@@ -488,7 +486,7 @@ public class JourneyReportWriterTests {
     void writeStudentReportShouldKeepFullSynthesisContent() throws IOException {
         String longContent = "Gosto de entender como as pessoas pensam.\n".repeat(119);
         ReportDTOs.StudentReport report = createStudentReport(
-                11L, "Bruno Lima", "Branca", "Particular", bruno.status(), brunoAreaScores(),
+                11L, "Bruno Lima", "Branca", "Particular", bruno.status(), brunoAffinities(), List.of(KnowledgeArea.EXATAS),
                 List.of(synthesis(1L, TrailName.AUTOCONHECIMENTO, 1, longContent)));
 
         Cell content = read(writer.writeStudentReport(report)).getSheet("Sínteses").getRow(1).getCell(3);

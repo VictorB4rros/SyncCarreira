@@ -3,7 +3,6 @@ package com.synccarreira.synccarreira_api.services.reports;
 import com.synccarreira.synccarreira_api.dto.SynthesisDTO;
 import com.synccarreira.synccarreira_api.dto.psychologist.PanelDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportDTOs;
-import com.synccarreira.synccarreira_api.dto.result.AreaScoreDTO;
 import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
@@ -118,7 +117,6 @@ public class JourneyReportWriter {
         writer.row("Em dúvida sobre a escolha profissional", status.inDoubt());
         writer.row("Dúvida sinalizada em", status.doubtFlaggedAt());
         for (KnowledgeArea area : REPORT_AREAS) {
-            writer.row(scoreTitle(area), score(report, area));
             writer.row(affinityTitle(area), affinity(report, area));
         }
         writer.row("Áreas de maior afinidade", labels(report.highestScoreAreas()));
@@ -135,7 +133,6 @@ public class JourneyReportWriter {
                 "Trilhas concluídas", "Total de trilhas", "Trilha atual", "Síntese final enviada",
                 "Em dúvida", "Dúvida sinalizada em"));
         for (KnowledgeArea area : REPORT_AREAS) {
-            titles.add(scoreTitle(area));
             titles.add(affinityTitle(area));
         }
         titles.add("Áreas de maior afinidade");
@@ -149,7 +146,6 @@ public class JourneyReportWriter {
                     status.concludedTrails(), status.totalTrails(), label(status.currentTrail()), status.finalSynthesisSubmitted(),
                     status.inDoubt(), status.doubtFlaggedAt()));
             for (KnowledgeArea area : REPORT_AREAS) {
-                values.add(score(student, area));
                 values.add(affinity(student, area));
             }
             values.add(labels(student.highestScoreAreas()));
@@ -258,23 +254,14 @@ public class JourneyReportWriter {
                 .collect(Collectors.joining(", "));
     }
 
-    private static String scoreTitle(KnowledgeArea area) {
-        return "Pontuação em " + AreaScoreCalculator.label(area);
-    }
-
     private static String affinityTitle(KnowledgeArea area) {
         return "Afinidade em " + AreaScoreCalculator.label(area);
     }
 
-    private static Double score(ReportDTOs.StudentReport report, KnowledgeArea area) {
-        AreaScoreDTO areaScore = report.areaScore(area);
-        return areaScore != null ? areaScore.score() : null;
-    }
-
     // Afinidade: percentual da pontuação sobre o máximo possível da área, o mesmo exibido no resultado da jornada
     private static AffinityPercentage affinity(ReportDTOs.StudentReport report, KnowledgeArea area) {
-        AreaScoreDTO areaScore = report.areaScore(area);
-        return areaScore != null ? new AffinityPercentage(areaScore.percentage()) : null;
+        Double affinity = report.affinities() != null ? report.affinities().get(area) : null;
+        return affinity != null ? new AffinityPercentage(affinity) : null;
     }
 
     // Percentual de 0 a 100, gravado na célula como fração com formato de porcentagem

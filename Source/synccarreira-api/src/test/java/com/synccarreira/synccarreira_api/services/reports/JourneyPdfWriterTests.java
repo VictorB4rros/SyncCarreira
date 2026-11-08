@@ -50,6 +50,10 @@ public class JourneyPdfWriterTests {
         Assertions.assertTrue(text.contains("Autoconhecimento"));
         // Resultado em percentual e leque de carreiras (RF-12)
         Assertions.assertTrue(text.contains("47,9%") || text.contains("47.9%"));
+        Assertions.assertTrue(text.contains("Afinidade"));
+        // Apenas a afinidade em %: a pontuação bruta (ex.: 58,0 de 121,0) não aparece no PDF
+        Assertions.assertFalse(text.contains("Pontua"));
+        Assertions.assertFalse(text.contains("58,0") || text.contains("121,0"));
         Assertions.assertTrue(text.contains("Medicina e Cuidado em Sa"));
         Assertions.assertTrue(text.contains("Enfermagem"));
         Assertions.assertTrue(text.contains("diagn"));

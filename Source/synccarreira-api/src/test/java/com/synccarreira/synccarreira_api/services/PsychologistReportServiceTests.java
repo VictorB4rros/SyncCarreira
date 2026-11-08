@@ -3,7 +3,6 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.psychologist.PanelDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportFile;
-import com.synccarreira.synccarreira_api.dto.result.AreaScoreDTO;
 import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.JourneyRecord;
 import com.synccarreira.synccarreira_api.entities.SchoolClass;
@@ -180,8 +179,8 @@ public class PsychologistReportServiceTests {
         Mockito.when(reportWriter.writeStudentReport(any())).thenReturn(content);
     }
 
-    private static AreaScoreDTO areaScore(ReportDTOs.StudentReport report, KnowledgeArea area) {
-        return report.areaScore(area);
+    private static Double affinity(ReportDTOs.StudentReport report, KnowledgeArea area) {
+        return report.affinities().get(area);
     }
 
     @Test
@@ -276,11 +275,11 @@ public class PsychologistReportServiceTests {
         List<ReportDTOs.StudentReport> students = classReportCaptor.getValue().students();
         // Pelo percentual do máximo possível, e não pela maior pontuação bruta (Exatas)
         Assertions.assertEquals(List.of(KnowledgeArea.ARTES), students.get(0).highestScoreAreas());
-        Assertions.assertEquals(66.7, areaScore(students.get(0), KnowledgeArea.ARTES).percentage());
-        Assertions.assertEquals(43.6, areaScore(students.get(0), KnowledgeArea.EXATAS).percentage());
+        Assertions.assertEquals(66.7, affinity(students.get(0), KnowledgeArea.ARTES));
+        Assertions.assertEquals(43.6, affinity(students.get(0), KnowledgeArea.EXATAS));
         // Sem pontuação, as quatro áreas empatariam em zero
         Assertions.assertTrue(students.get(1).highestScoreAreas().isEmpty());
-        Assertions.assertEquals(0.0, areaScore(students.get(1), KnowledgeArea.HUMANAS).percentage());
+        Assertions.assertEquals(0.0, affinity(students.get(1), KnowledgeArea.HUMANAS));
     }
 
     @Test
@@ -408,14 +407,10 @@ public class PsychologistReportServiceTests {
         Assertions.assertEquals(2026, report.schoolYear());
         Assertions.assertEquals("E.E. Pedro II", report.institutionName());
         // Jornada concluída: usa os scores e os máximos guardados na conclusão, como o leque do resultado
-        Assertions.assertEquals(6.0, areaScore(report, KnowledgeArea.HUMANAS).score());
-        Assertions.assertEquals(30.0, areaScore(report, KnowledgeArea.HUMANAS).percentage());
-        Assertions.assertEquals(12.0, areaScore(report, KnowledgeArea.EXATAS).score());
-        Assertions.assertEquals(43.6, areaScore(report, KnowledgeArea.EXATAS).percentage());
-        Assertions.assertEquals(4.0, areaScore(report, KnowledgeArea.BIOLOGICAS).score());
-        Assertions.assertEquals(20.0, areaScore(report, KnowledgeArea.BIOLOGICAS).percentage());
-        Assertions.assertEquals(6.0, areaScore(report, KnowledgeArea.ARTES).score());
-        Assertions.assertEquals(66.7, areaScore(report, KnowledgeArea.ARTES).percentage());
+        Assertions.assertEquals(30.0, affinity(report, KnowledgeArea.HUMANAS));
+        Assertions.assertEquals(43.6, affinity(report, KnowledgeArea.EXATAS));
+        Assertions.assertEquals(20.0, affinity(report, KnowledgeArea.BIOLOGICAS));
+        Assertions.assertEquals(66.7, affinity(report, KnowledgeArea.ARTES));
         Assertions.assertEquals(List.of(KnowledgeArea.ARTES), report.highestScoreAreas());
         Mockito.verify(areaScoreCalculator, Mockito.never()).currentMaxScores();
         Assertions.assertSame(anaStatus, report.status());
@@ -435,11 +430,9 @@ public class PsychologistReportServiceTests {
 
         Mockito.verify(reportWriter).writeStudentReport(studentReportCaptor.capture());
         ReportDTOs.StudentReport report = studentReportCaptor.getValue();
-        Assertions.assertEquals(7.5, areaScore(report, KnowledgeArea.HUMANAS).score());
-        Assertions.assertEquals(75.0, areaScore(report, KnowledgeArea.HUMANAS).percentage());
-        Assertions.assertEquals(8.3, areaScore(report, KnowledgeArea.BIOLOGICAS).score());
-        Assertions.assertEquals(20.6, areaScore(report, KnowledgeArea.BIOLOGICAS).percentage());
-        Assertions.assertEquals(83.3, areaScore(report, KnowledgeArea.ARTES).percentage());
+        Assertions.assertEquals(75.0, affinity(report, KnowledgeArea.HUMANAS));
+        Assertions.assertEquals(20.6, affinity(report, KnowledgeArea.BIOLOGICAS));
+        Assertions.assertEquals(83.3, affinity(report, KnowledgeArea.ARTES));
         // Biológicas tem a maior pontuação bruta (8,25), mas Artes tem a maior afinidade
         Assertions.assertEquals(List.of(KnowledgeArea.ARTES), report.highestScoreAreas());
     }
@@ -457,7 +450,7 @@ public class PsychologistReportServiceTests {
 
         Mockito.verify(reportWriter).writeStudentReport(studentReportCaptor.capture());
         ReportDTOs.StudentReport report = studentReportCaptor.getValue();
-        Assertions.assertEquals(80.0, areaScore(report, KnowledgeArea.EXATAS).percentage());
+        Assertions.assertEquals(80.0, affinity(report, KnowledgeArea.EXATAS));
         Assertions.assertEquals(List.of(KnowledgeArea.EXATAS), report.highestScoreAreas());
     }
 

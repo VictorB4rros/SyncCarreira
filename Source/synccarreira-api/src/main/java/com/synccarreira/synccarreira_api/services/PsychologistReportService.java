@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -213,11 +214,18 @@ public class PsychologistReportService {
                 schoolClass.getName(),
                 schoolClass.getSchoolYear(),
                 institutionName(schoolClass.getInstitution()),
-                areaScores,
+                affinities(areaScores),
                 // Sem nenhuma pontuação não há área em destaque (todas empatariam em zero)
                 AreaScoreCalculator.highlightedAreas(areaScores),
                 status,
                 syntheses);
+    }
+
+    // Apenas o percentual de cada área segue para o relatório: a pontuação bruta não é exibida
+    private static Map<KnowledgeArea, Double> affinities(List<AreaScoreDTO> areaScores) {
+        Map<KnowledgeArea, Double> affinities = new EnumMap<>(KnowledgeArea.class);
+        areaScores.forEach(score -> affinities.put(score.area(), score.percentage()));
+        return affinities;
     }
 
     private static void validateInstitution(SchoolClass schoolClass, Long institutionId, String message) {
