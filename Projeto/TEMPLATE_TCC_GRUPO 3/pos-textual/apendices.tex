@@ -227,4 +227,67 @@ A etapa de testes será formalmente considerada concluída e aprovada para apres
   \item \textbf{ausência de defeitos críticos}: nenhum incidente aberto que viole o isolamento de dados entre escolas parceiras ou interrompa a jornada reflexiva do estudante.
 \end{enumerate}
 
+% Apêndice D -- Matriz de rastreabilidade
+\chapter{Matriz de Rastreabilidade}\label{apendice-rastreabilidade}
+
+Este apêndice consolida a rastreabilidade dos requisitos do \textit{SyncCarreira}. O \autoref{quadro-rastreabilidade} relaciona cada regra de negócio aos requisitos funcionais que a atendem, aos casos de uso que os realizam e às classes de teste automatizado que os verificam. Os requisitos funcionais que não decorrem de uma regra de negócio específica são identificados por um traço na primeira coluna. As classes terminadas em \textit{Tests} pertencem ao servidor e foram escritas com o JUnit 5; os arquivos terminados em \textit{.test.ts} e \textit{.test.tsx} pertencem à aplicação \textit{web} e foram escritos com o Vitest. O mapeamento foi realizado sobre a versão do código-fonte da ramificação principal do repositório em novembro de 2026.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.25}
+\begin{xltabular}{\textwidth}{|>{\centering\arraybackslash}p{1.9cm}|>{\centering\arraybackslash}p{1.5cm}|>{\centering\arraybackslash}p{2.0cm}|>{\raggedright\arraybackslash}X|}
+\multicolumn{4}{@{}c@{}}{\quadrolongocaption{Matriz de rastreabilidade dos requisitos.}\label{quadro-rastreabilidade}} \\[0.3em]
+\hline
+\textbf{Regra de negócio} & \textbf{Requisito} & \textbf{Caso de uso} & \textbf{Testes automatizados} \\
+\hline
+\endfirsthead
+\multicolumn{4}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Regra de negócio} & \textbf{Requisito} & \textbf{Caso de uso} & \textbf{Testes automatizados} \\
+\hline
+\endhead
+\multicolumn{4}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+RN-01 & RF-10 & UC11 & TrailServiceTests; \allowbreak QuestionServiceTests; \allowbreak AnswerServiceTests; \allowbreak AnswerControllerTests; \allowbreak AnswerRepositoryTests; \allowbreak TrailRunPage.test.tsx; \allowbreak QuestionCard.test.tsx \\
+\hline
+RN-02 & RF-11 & UC12 & SynthesisServiceTests; \allowbreak SynthesisControllerTests; \allowbreak TrailRunPage.test.tsx \\
+\hline
+RN-03 & RF-03 & UC03 & PsychologistPanelServiceTests; \allowbreak PsychologistPanelControllerTests; \allowbreak PsychologistPanelQueriesTests \\
+\hline
+RN-03 & RF-07 & UC07 & PsychologistReportServiceTests; \allowbreak PsychologistReportControllerTests; \allowbreak JourneyReportWriterTests; \allowbreak JourneyPdfWriterTests \\
+\hline
+RN-03, RN-04 & RF-04 & UC04, UC10, UC13 & JourneyServiceTests; \allowbreak JourneyControllerTests; \allowbreak PsychologistPanelServiceTests; \allowbreak ResultsPage.test.tsx \\
+\hline
+RN-04 & RF-05 & UC04, UC08 & Sem teste automatizado do filtro de alunos em dúvida na tela de agendamento \\
+\hline
+RN-04 & RF-08 & UC08 & AppointmentServiceTests; \allowbreak AppointmentControllerTests \\
+\hline
+RN-05 & RF-06 & UC06 & InformationLinkServiceTests; \allowbreak InformationLinkControllerTests; \allowbreak InformationLinkRepositoryTests; \allowbreak ContentAndSessions.test.tsx \\
+\hline
+RN-06, RN-09 & RF-10 & UC05, UC11 & QuestionServiceTests; \allowbreak TrailServiceTests \\
+\hline
+RN-07 & RF-12 & UC13 & AreaScoreCalculatorTests; \allowbreak JourneyResultServiceTests; \allowbreak JourneyResultControllerTests; \allowbreak KnowledgeSubareaRepositoryTests; \allowbreak StudentTests; \allowbreak ResultsPage.test.tsx \\
+\hline
+RN-08 & RF-13 & UC14 & AnswerServiceTests; \allowbreak SynthesisServiceTests; \allowbreak loadJourneyProgress.test.ts; \allowbreak journey.test.ts \\
+\hline
+RN-08 & RF-15 & UC14 & JourneyHistoryServiceTests; \allowbreak JourneyHistoryControllerTests \\
+\hline
+-- & RF-01 & UC01 & InstitutionServiceTests; \allowbreak SchoolClassServiceTests; \allowbreak SchoolClassControllerTests; \allowbreak DocumentValidatorTests \\
+\hline
+-- & RF-02 & UC02 & PsychologistServiceTests; \allowbreak StudentServiceTests; \allowbreak StudentControllerTests \\
+\hline
+-- & RF-09 & UC09 & FeedbackServiceTests; \allowbreak FeedbackControllerTests \\
+\hline
+-- & RF-14 & UC10 & StudentProfileServiceTests; \allowbreak StudentProfileControllerTests; \allowbreak AffinityForm.test.tsx \\
+\hline
+-- & RF-16 & UC15 & AppointmentServiceTests; \allowbreak FeedbackServiceTests; \allowbreak FeedbacksPage.test.tsx; \allowbreak ContentAndSessions.test.tsx \\
+\hline
+-- & RNF-01 & UC16 & AuthServiceTests; \allowbreak AuthControllerTests; \allowbreak PasswordRecoverServiceTests \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
+Todos os requisitos funcionais possuem ao menos uma classe de teste associada, com exceção do RF-05: o agendamento dos alunos em dúvida é verificado pelos testes do RF-08, mas o filtro que restringe a seleção aos alunos sinalizados, implementado na tela de agendamento do profissional de orientação, não possui teste automatizado. O caso de uso UC16, de autenticação, não decorre de um requisito funcional, mas do requisito não funcional RNF-01, e por isso consta da última linha do quadro.
+
 \end{apendicesenv}

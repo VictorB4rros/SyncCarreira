@@ -7,7 +7,7 @@ Este capítulo transforma a compreensão do contexto e das necessidades em uma v
 
 \section{Visão Geral do Sistema}\label{sec:visao-geral}
 
-O \textit{SyncCarreira} é uma plataforma \textit{web}, estruturada no modelo \textit{Software as a Service} (SaaS), voltada à orientação vocacional de jovens vinculados a instituições parceiras, isto é, escolas e organizações não governamentais. O sistema organiza a jornada do jovem em cinco trilhas sequenciais e obrigatórias — autoconhecimento, influências, informação, projeto de futuro e síntese final —, compostas por questões de um banco fixo validado pelo profissional de orientação, e encerra cada trilha com o registro de uma síntese reflexiva. Ao término da jornada, apresenta ao aluno um leque de áreas e carreiras sugeridas, sempre como ponto de partida para reflexão.
+O \textit{SyncCarreira} é uma plataforma \textit{web}, estruturada no modelo \textit{Software as a Service} (SaaS), voltada à orientação vocacional de jovens vinculados a instituições parceiras, isto é, escolas e organizações não governamentais. O sistema organiza a jornada do jovem em quatro trilhas sequenciais e obrigatórias --- autoconhecimento, influências, projeto de futuro e informação ---: as três primeiras são compostas por questões de um banco fixo, cujas questões foram validadas pela parceira do projeto, e a trilha de Informação reúne \textit{links} para fontes externas. Cada trilha se encerra com o registro de uma síntese reflexiva, e a síntese da trilha de Informação, última da sequência, constitui a síntese final da jornada. Ao término da jornada, apresenta ao aluno um leque de áreas e carreiras sugeridas, sempre como ponto de partida para reflexão.
 
 Aos profissionais de orientação (psicólogos(as) e mentores(as) educacionais) o sistema oferece um painel de acompanhamento do progresso dos alunos, a sinalização dos casos que demandam atenção prioritária e recursos de agendamento de sessões, envio de \textit{feedback}, curadoria de fontes externas e emissão de relatórios. A plataforma não substitui a atuação desse profissional: seu papel é estruturar o acompanhamento e sinalizar prioridades, mantendo o conteúdo psicológico sob validação humana.
 
@@ -49,7 +49,7 @@ Serviço de e-mail & Secundário (sistema externo) & Entrega as mensagens de pri
 \legend{Fonte: Autoria própria (2026).}
 }
 
-Os comportamentos automáticos do sistema, como a sinalização de alunos em dúvida (RF-04) e a priorização desses alunos para atendimento (RN-04), não constituem um ator, pois são executados pelo próprio sistema em resposta às ações dos atores primários.
+A sinalização de dúvida (RF-04) é iniciada pelo próprio aluno, ao concluir a jornada. O registro dessa sinalização, o alerta aos profissionais de orientação e o destaque do aluno no painel, que o prioriza para atendimento (RN-04), são executados pelo sistema em resposta a essa ação e, por isso, não constituem um ator.
 
 \section{Casos de Uso}\label{sec:casos-de-uso}
 
@@ -104,20 +104,20 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \textit{Requisitos relacionados:} RF-02, RNF-01, RNF-02.
 
-\textit{Descrição:} permite ao Administrador cadastrar, editar e desativar as contas de profissionais de orientação e de alunos, definindo o perfil de acesso de cada uma, e vincular os alunos às respectivas turmas.
+\textit{Descrição:} permite ao Administrador cadastrar, editar e excluir as contas de profissionais de orientação e de alunos, definindo o perfil de acesso de cada uma, e vincular os alunos às respectivas turmas.
 
 \textit{Pré-condições:} Administrador autenticado (UC16); ao menos uma instituição ativa cadastrada.
 
 \textit{Pós-condições:} conta criada com perfil de acesso definido e vinculada à instituição (profissional de orientação) ou à turma (aluno); mensagem de primeiro acesso enviada ao e-mail cadastrado.
 
-\textit{Fluxo principal:} (1) Administrador acessa a aba ``Usuários'' e seleciona o perfil desejado (Aluno ou Profissional de Orientação); (2) sistema exibe as contas cadastradas nesse perfil; (3) Administrador aciona o cadastro de nova conta; (4) sistema exibe o formulário correspondente ao perfil: para o profissional de orientação, nome, e-mail, número de registro no Conselho Regional de Psicologia (CRP, opcional para mentores(as) sem registro), instituição e data de validade do contrato; para o aluno, nome, e-mail, ano escolar e tipo de escola; (5) Administrador preenche os campos e confirma; (6) sistema valida os dados, cria a conta com o perfil correspondente e envia ao e-mail informado uma mensagem de primeiro acesso com \textit{link} para definição de senha; (7) a nova conta passa a constar na listagem.
+\textit{Fluxo principal:} (1) Administrador acessa a aba ``Usuários'' e seleciona o perfil desejado (Aluno ou Profissional de Orientação); (2) sistema exibe as contas cadastradas nesse perfil; (3) Administrador aciona o cadastro de nova conta; (4) sistema exibe o formulário correspondente ao perfil: para o profissional de orientação, nome, e-mail, número de registro no Conselho Regional de Psicologia (CRP), instituição e data de validade do contrato; para o aluno, nome, e-mail, ano escolar e tipo de escola; (5) Administrador preenche os campos e confirma; (6) sistema valida os dados, cria a conta com o perfil correspondente e envia ao e-mail informado uma mensagem de primeiro acesso com \textit{link} para definição de senha; (7) a nova conta passa a constar na listagem.
 
 \textit{Fluxos alternativos:}
 
 \begin{itemize}[label={},leftmargin=\parindent,itemsep=0pt,topsep=0pt]
   \item FA01 – Editar conta: Administrador seleciona a conta, altera os dados e confirma.
   \item FA02 – Vincular aluno a turma: Administrador seleciona o aluno, aciona ``Associar turma'' e escolhe uma das turmas cadastradas; o sistema registra o vínculo e, por consequência, a instituição do aluno.
-  \item FA03 – Desativar conta: o sistema solicita confirmação e, por se tratar de exclusão definitiva em conformidade com a LGPD, remove a conta e os dados a ela associados.
+  \item FA03 – Excluir conta: o sistema solicita confirmação e remove definitivamente a conta e os dados a ela associados, em conformidade com a LGPD. A operação de desativação prevista no RF-02 foi implementada, nesta versão, como exclusão definitiva.
 \end{itemize}
 
 \textit{Fluxos de exceção:}
@@ -172,7 +172,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \textit{Pós-condições:} profissional de orientação identificou os alunos prioritários e pode agendar uma sessão (UC08) ou enviar um \textit{feedback} (UC09).
 
-\textit{Fluxo principal:} (1) quando o aluno sinaliza dúvida (UC13), o sistema registra a data da sinalização e envia mensagem eletrônica aos profissionais de orientação com contrato vigente na instituição do aluno; (2) no painel, o sistema exibe a seção ``Alunos que sinalizaram dúvida''; (3) profissional de orientação seleciona um aluno da seção; (4) sistema exibe o progresso detalhado do aluno; (5) profissional de orientação decide a ação: agendar uma sessão (UC08), restringindo a seleção aos alunos em dúvida, ou enviar um \textit{feedback} (UC09).
+\textit{Fluxo principal:} (1) quando o aluno sinaliza dúvida (UC10 ou UC13), o sistema registra a data da sinalização e envia mensagem eletrônica aos profissionais de orientação com contrato vigente na instituição do aluno; (2) no painel, o sistema exibe a seção ``Alunos que sinalizaram dúvida''; (3) profissional de orientação seleciona um aluno da seção; (4) sistema exibe o progresso detalhado do aluno; (5) profissional de orientação decide a ação: agendar uma sessão (UC08), restringindo a seleção aos alunos em dúvida, ou enviar um \textit{feedback} (UC09).
 
 \textit{Fluxos alternativos:}
 
@@ -194,7 +194,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \textit{Requisitos relacionados:} RN-06, RN-09.
 
-\textit{Descrição:} permite consultar, em modo somente de leitura, as questões e as opções de resposta do banco fixo de cada trilha, previamente aprovado e validado pelo profissional de orientação.
+\textit{Descrição:} permite consultar, em modo somente de leitura, as questões e as opções de resposta do banco fixo de cada trilha, cujas questões foram validadas pela parceira do projeto.
 
 \textit{Pré-condições:} Profissional de orientação autenticado (UC16); banco de questões carregado no sistema.
 
@@ -205,7 +205,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 \textit{Fluxos de exceção:}
 
 \begin{itemize}[label={},leftmargin=\parindent,itemsep=0pt,topsep=0pt]
-  \item FE01 – Tentativa de alteração do conteúdo: o sistema não oferece edição ao profissional de orientação; alterações no banco de questões restringem-se ao Administrador, mediante validação do profissional de orientação.
+  \item FE01 – Tentativa de alteração do conteúdo: o sistema não oferece edição do banco de questões; alterações são realizadas pela equipe de desenvolvimento, por meio de \textit{script} de banco de dados, com questões validadas pela parceira do projeto.
 \end{itemize}
 
 \subsection*{UC06 -- Realizar Curadoria de Links da Trilha de Informação}\label{uc:uc06}
@@ -332,7 +332,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \textit{Ator principal:} Aluno.
 
-\textit{Requisitos relacionados:} RF-14.
+\textit{Requisitos relacionados:} RF-14, RF-04.
 
 \textit{Descrição:} permite ao aluno atribuir um grau de interesse, de 0 (``não me interessa'') a 5 (``tenho muito interesse''), a cada uma das quatro grandes áreas do conhecimento — Humanas, Exatas, Biológicas e Artes —, contextualizando a jornada. Os graus informados compõem a pontuação considerada no leque de possibilidades (UC13).
 
@@ -346,6 +346,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \begin{itemize}[label={},leftmargin=\parindent,itemsep=0pt,topsep=0pt]
   \item FA01 – Atualizar interesses durante a jornada: o aluno altera as notas a qualquer momento; o sistema recalcula a pontuação da jornada em andamento, sem alterar o resultado de jornadas já concluídas.
+  \item FA02 – Sinalizar dúvida: com a jornada concluída, o aluno pode indicar, em ``Meu perfil'', que permanece em dúvida quanto à escolha profissional; o sistema registra a sinalização e notifica os profissionais de orientação (UC04), como no UC13.
 \end{itemize}
 
 \textit{Fluxos de exceção:}
@@ -361,7 +362,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \textit{Requisitos relacionados:} RF-10, RN-01, RN-09.
 
-\textit{Descrição:} permite ao aluno percorrer as cinco trilhas da jornada na ordem obrigatória; cada trilha libera a seguinte somente após concluída, isto é, com todas as questões respondidas e a síntese registrada.
+\textit{Descrição:} permite ao aluno percorrer as quatro trilhas da jornada na ordem obrigatória; cada trilha libera a seguinte somente após concluída, isto é, com todas as questões respondidas e a síntese registrada.
 
 \textit{Pré-condições:} Aluno autenticado (UC16); perfil preenchido (UC10); para as trilhas seguintes à primeira, trilha anterior concluída.
 
@@ -374,7 +375,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 \begin{itemize}[label={},leftmargin=\parindent,itemsep=0pt,topsep=0pt]
   \item FA01 – Interromper e retomar: o aluno deixa a trilha e, no acesso seguinte, retoma do ponto em que parou, com as respostas preservadas.
   \item FA02 – Alterar resposta: enquanto a trilha estiver em andamento, uma nova resposta à mesma questão substitui a anterior.
-  \item FA03 – Trilha de Informação: além das questões, o sistema apresenta os \textit{links} curados pelo profissional de orientação (UC06), como materiais complementares de consulta opcional.
+  \item FA03 – Trilha de Informação: última da sequência, essa trilha não possui questões; o sistema apresenta os \textit{links} curados pelo profissional de orientação (UC06) relacionados às áreas de maior afinidade do aluno, como materiais de consulta, e o campo da síntese final da jornada (UC12).
 \end{itemize}
 
 \textit{Fluxos de exceção:}
@@ -404,7 +405,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 \textit{Fluxos alternativos:}
 
 \begin{itemize}[label={},leftmargin=\parindent,itemsep=0pt,topsep=0pt]
-  \item FA01 – Síntese final da jornada: na última trilha, o registro da síntese conclui a jornada, que passa a constar no histórico do aluno, e o sistema disponibiliza o leque de possibilidades (UC13).
+  \item FA01 – Síntese final da jornada: na trilha de Informação, última da sequência, a síntese registrada constitui a síntese final; seu registro conclui a jornada, que passa a constar no histórico do aluno, e o sistema disponibiliza o leque de possibilidades (UC13).
 \end{itemize}
 
 \textit{Fluxos de exceção:}
@@ -552,7 +553,7 @@ A partir desse diagrama, destacam-se os seguintes conceitos:
   \item \textbf{Usuário}: conceito geral que se especializa em Administrador, Profissional de Orientação e Aluno;
   \item \textbf{Instituição}: escola ou ONG parceira, unidade de isolamento dos dados;
   \item \textbf{Turma}: agrupamento de alunos vinculado a uma Instituição, identificado por nome e ano letivo;
-  \item \textbf{Profissional de Orientação}: psicólogo(a) ou mentor(a) educacional vinculado a uma Instituição, com registro no CRP opcional;
+  \item \textbf{Profissional de Orientação}: psicólogo(a) ou mentor(a) educacional vinculado a uma Instituição, identificado pelo registro no CRP;
   \item \textbf{Aluno}: participante da jornada, caracterizado pelo ano escolar, pelo tipo de escola e pelo grau de interesse declarado em cada área do conhecimento;
   \item \textbf{Jornada}: ciclo completo de orientação percorrido pelo Aluno, que reúne suas Respostas e Sínteses e registra a pontuação por área, as áreas em destaque e a eventual sinalização de dúvida;
   \item \textbf{Trilha}: etapa sequencial da jornada, composta por Questões;
@@ -569,7 +570,7 @@ A partir desse diagrama, destacam-se os seguintes conceitos:
 
 Um requisito funcional é uma declaração sobre um serviço que o sistema deve fornecer, descrevendo como ele deve reagir a entradas específicas e como deve se comportar em determinadas situações \cite{pressman2021}. \citeonline{sommerville2011} acrescenta que os requisitos funcionais podem, em alguns casos, explicitar também o que o sistema não deve fazer — caso da vedação a diagnósticos fechados de carreira no \textit{SyncCarreira}.
 
-Os requisitos funcionais decorrem, em sua maioria, das regras de negócio do sistema: o RF-03 e o RF-07 atendem à RN-03; o RF-04, à RN-03 e à RN-04; o RF-05 e o RF-08, à RN-04; o RF-06, à RN-05; o RF-10, à RN-01, à RN-06 e à RN-09; o RF-11, à RN-02; o RF-12, à RN-07; e o RF-13 e o RF-15, à RN-08. Cinco requisitos, entretanto, não decorrem de uma regra de negócio específica. O RF-01 e o RF-02 são requisitos de suporte administrativo: o cadastro das instituições, das turmas e das contas de usuário é condição para que qualquer jornada ocorra e para que o isolamento entre instituições e os perfis de acesso possam ser aplicados. O RF-09 e o RF-16 complementam o atendimento aos alunos em dúvida, ao permitir que o profissional de orientação dê retorno individual ao aluno após a sessão e que o aluno reúna, em um único local, seus agendamentos e os \textit{feedbacks} recebidos. O RF-14, por sua vez, permite ao aluno registrar informações de perfil e interesses que contextualizam sua jornada. Esses requisitos constam do Documento de Requisitos do Sistema como funcionalidades de apoio ao processo de orientação, sem uma regra de negócio própria.
+Os requisitos funcionais decorrem, em sua maioria, das regras de negócio do sistema. Cinco requisitos, entretanto, não decorrem de uma regra de negócio específica. O RF-01 e o RF-02 são requisitos de suporte administrativo: o cadastro das instituições, das turmas e das contas de usuário é condição para que qualquer jornada ocorra e para que o isolamento entre instituições e os perfis de acesso possam ser aplicados. O RF-09 e o RF-16 complementam o atendimento aos alunos em dúvida, ao permitir que o profissional de orientação dê retorno individual ao aluno após a sessão e que o aluno reúna, em um único local, seus agendamentos e os \textit{feedbacks} recebidos. O RF-14, por sua vez, permite ao aluno registrar informações de perfil e interesses que contextualizam sua jornada. A relação entre cada regra de negócio, os requisitos funcionais que a atendem, os casos de uso correspondentes e os testes automatizados que os verificam é apresentada na matriz de rastreabilidade do \autoref{apendice-rastreabilidade}.
 
 O \autoref{quadro-rf} apresenta os dezesseis requisitos funcionais do sistema, organizados por ator responsável.
 
@@ -635,41 +636,41 @@ RF-16 & Agendamentos e feedbacks & Ver, em uma área própria, os agendamentos d
 
 \section{Requisitos Não Funcionais}\label{sec:rnf}
 
-Os requisitos não funcionais são restrições sobre os serviços ou as funções oferecidas pelo sistema, relacionadas a atributos de qualidade como desempenho, segurança, disponibilidade e usabilidade, e frequentemente se aplicam ao sistema como um todo, e não a uma funcionalidade isolada \cite{pressman2021}. \citeonline{sommerville2011} organiza esses requisitos em três categorias: requisitos de produto, que especificam o comportamento do \textit{software}, como velocidade de execução e confiabilidade; requisitos organizacionais, decorrentes de políticas e procedimentos da organização cliente; e requisitos externos, originados de fatores alheios ao sistema e a seu processo de desenvolvimento, como exigências legais e regulatórias. No \textit{SyncCarreira}, os requisitos RNF-01, RNF-03, RNF-04, RNF-06, RNF-07 e RNF-08 são requisitos de produto; o RNF-05 aproxima-se de um requisito organizacional, vinculado ao horário de funcionamento das instituições parceiras; e o RNF-02, decorrente da Lei Geral de Proteção de Dados Pessoais (LGPD), é um requisito externo.
+Os requisitos não funcionais são restrições sobre os serviços ou as funções oferecidas pelo sistema, relacionadas a atributos de qualidade como desempenho, segurança, disponibilidade e usabilidade, e frequentemente se aplicam ao sistema como um todo, e não a uma funcionalidade isolada \cite{pressman2021}. \citeonline{sommerville2011} organiza esses requisitos em três categorias: requisitos de produto, que especificam o comportamento do \textit{software}, como velocidade de execução e confiabilidade; requisitos organizacionais, decorrentes de políticas e procedimentos da organização cliente; e requisitos externos, originados de fatores alheios ao sistema e a seu processo de desenvolvimento, como exigências legais e regulatórias. No \textit{SyncCarreira}, os requisitos RNF-01, RNF-03, RNF-04, RNF-06, RNF-07 e RNF-08 são requisitos de produto; o RNF-05 aproxima-se de um requisito organizacional, vinculado ao horário de funcionamento das instituições parceiras; e o RNF-02, decorrente da Lei Geral de Proteção de Dados Pessoais (LGPD), é um requisito externo. Como parte desses requisitos foi formulada no Documento de Requisitos do Sistema em termos que não permitem uma verificação objetiva, a equipe definiu, para cada um deles, um critério de verificação mensurável, que orienta a avaliação de seu atendimento.
 
-O \autoref{quadro-rnf} apresenta os oito requisitos não funcionais do sistema.
+O \autoref{quadro-rnf} apresenta os oito requisitos não funcionais do sistema e os respectivos critérios de verificação.
 
 {\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
-\begin{xltabular}{\textwidth}{|>{\centering\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{3.6cm}|>{\raggedright\arraybackslash}X|}
-\multicolumn{3}{@{}c@{}}{\quadrolongocaption{Requisitos não funcionais do SyncCarreira.}\label{quadro-rnf}} \\[0.3em]
+\begin{xltabular}{\textwidth}{|>{\centering\arraybackslash}p{1.4cm}|>{\raggedright\arraybackslash}p{2.8cm}|>{\raggedright\arraybackslash}X|>{\raggedright\arraybackslash}X|}
+\multicolumn{4}{@{}c@{}}{\quadrolongocaption{Requisitos não funcionais do SyncCarreira.}\label{quadro-rnf}} \\[0.3em]
 \hline
-\textbf{ID} & \textbf{Categoria} & \textbf{Descrição} \\
+\textbf{ID} & \textbf{Categoria} & \textbf{Descrição} & \textbf{Critério de verificação} \\
 \hline
 \endfirsthead
-\multicolumn{3}{@{}r@{}}{\textit{(continuação)}} \\
+\multicolumn{4}{@{}r@{}}{\textit{(continuação)}} \\
 \hline
-\textbf{ID} & \textbf{Categoria} & \textbf{Descrição} \\
+\textbf{ID} & \textbf{Categoria} & \textbf{Descrição} & \textbf{Critério de verificação} \\
 \hline
 \endhead
-\multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
+\multicolumn{4}{@{}r@{}}{\textit{(continua)}} \\
 \endfoot
 \endlastfoot
-RNF-01 & Segurança (autenticação e autorização) & Cada usuário só acessa as ferramentas permitidas ao seu perfil; um aluno não vê informações de outros alunos, e um profissional de orientação só acessa suas próprias turmas. \\
+RNF-01 & Segurança (autenticação e autorização) & Cada usuário só acessa as ferramentas permitidas ao seu perfil; um aluno não vê informações de outros alunos, e um profissional de orientação só acessa suas próprias turmas. & Testes automatizados confirmam que requisições de um perfil a recursos não permitidos a ele são recusadas (HTTP 403). \\
 \hline
-RNF-02 & Privacidade e proteção de dados (LGPD) & Dados sensíveis (respostas, sentimentos e perfis) são armazenados com criptografia; o sistema garante a exclusão total dos dados mediante solicitação do aluno ou da instituição. \\
+RNF-02 & Privacidade e proteção de dados (LGPD) & Dados sensíveis (respostas, sentimentos e perfis) são armazenados com criptografia; o sistema garante a exclusão total dos dados mediante solicitação do aluno ou da instituição. & Teste automatizado confirma que a exclusão de uma conta remove os dados a ela associados; a configuração do banco de dados em nuvem indica a criptografia em repouso habilitada. \\
 \hline
-RNF-03 & Desempenho (tempo de resposta) & Ações cotidianas, como carregar uma trilha ou salvar uma resposta, levam no máximo 2 segundos em condições normais de uso. \\
+RNF-03 & Desempenho (tempo de resposta) & Ações cotidianas, como carregar uma trilha ou salvar uma resposta, levam no máximo 2 segundos em condições normais de uso. & Em teste de carga com 40 alunos simultâneos, 95\% das requisições de carregar trilha e salvar resposta são concluídas em até 2 segundos. \\
 \hline
-RNF-04 & Usabilidade (interface acessível e responsiva) & Interface responsiva, construída com abordagem \textit{mobile-first}, com navegação intuitiva o suficiente para dispensar manual de instruções. \\
+RNF-04 & Usabilidade (interface acessível e responsiva) & Interface responsiva, construída com abordagem \textit{mobile-first}, com navegação intuitiva o suficiente para dispensar manual de instruções. & Telas principais utilizáveis na largura de 360 \textit{pixels} e em \textit{desktop}, nos navegadores Google Chrome e Mozilla Firefox; pontuação de acessibilidade igual ou superior a 90 na ferramenta Lighthouse. \\
 \hline
-RNF-05 & Disponibilidade & Plataforma disponível pelo menos 99\% do tempo durante o horário letivo (7h às 22h em dias úteis); manutenções programadas fora desse horário. \\
+RNF-05 & Disponibilidade & Plataforma disponível pelo menos 99\% do tempo durante o horário letivo (7h às 22h em dias úteis); manutenções programadas fora desse horário. & Disponibilidade igual ou superior a 99\% entre 7h e 22h em dias úteis, aferida por monitoramento externo durante, no mínimo, quatro semanas. \\
 \hline
-RNF-06 & Manutenibilidade (arquitetura em camadas) & Arquitetura organizada em camadas, de modo a permitir a adição futura de funcionalidades sem necessidade de refatoração completa. \\
+RNF-06 & Manutenibilidade (arquitetura em camadas) & Arquitetura organizada em camadas, de modo a permitir a adição futura de funcionalidades sem necessidade de refatoração completa. & Inspeção do código confirma que a camada de apresentação não acessa diretamente a camada de dados; nota A de manutenibilidade na análise estática. \\
 \hline
-RNF-07 & Documentação de API & Interface de programação do sistema documentada automaticamente, viabilizando futuras integrações com sistemas escolares de terceiros. \\
+RNF-07 & Documentação de API & Interface de programação do sistema documentada automaticamente, viabilizando futuras integrações com sistemas escolares de terceiros. & Todos os \textit{endpoints} da API constam da documentação gerada automaticamente no padrão OpenAPI. \\
 \hline
-RNF-08 & Isolamento de dados por instituição & Dados de alunos, turmas, trilhas e resultados de uma instituição nunca se misturam ou ficam visíveis para outra instituição cadastrada. \\
+RNF-08 & Isolamento de dados por instituição & Dados de alunos, turmas, trilhas e resultados de uma instituição nunca se misturam ou ficam visíveis para outra instituição cadastrada. & Testes automatizados confirmam que requisições de um usuário a recursos de outra instituição são recusadas. \\
 \hline
 \end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
@@ -682,7 +683,7 @@ Além dos requisitos funcionais e não funcionais, todo projeto de \textit{softw
 O Documento de Requisitos do Sistema delimita quatro exclusões de escopo que operam como restrições ao desenvolvimento do \textit{SyncCarreira}:
 
 \begin{enumerate}[label=\alph*)]
-  \item \textbf{Validação clínica e metodologia psicológica}: a responsabilidade da equipe técnica restringe-se à entrega da infraestrutura tecnológica. O projeto não contempla a criação de novos instrumentos psicométricos proprietários, tampouco a homologação ou validação clínica junto ao Conselho Federal de Psicologia (CFP); a validação do sistema utiliza lógicas de orientação de domínio público ou dados simulados, e o fornecimento do conteúdo final é de responsabilidade da instituição parceira.
+  \item \textbf{Validação clínica e metodologia psicológica}: a responsabilidade da equipe técnica restringe-se à entrega da infraestrutura tecnológica. O projeto não contempla a criação de novos instrumentos psicométricos proprietários, tampouco a homologação ou validação clínica junto ao Conselho Federal de Psicologia (CFP); a validação do sistema utiliza lógicas de orientação de domínio público ou dados simulados, e o fornecimento do conteúdo final é de responsabilidade da instituição parceira. Na versão implementada, o banco de questões foi elaborado pela equipe, e suas questões foram validadas pela parceira do projeto.
   \item \textbf{Publicação de aplicativos nativos}: a plataforma é entregue como aplicação \textit{web} responsiva, projetada para funcionar em navegadores de \textit{smartphones} e \textit{tablets}; o desenvolvimento e a publicação de aplicativos nativos nas lojas App Store e Play Store não estão previstos nesta versão.
   \item \textbf{Módulo financeiro e \textit{gateway} de pagamentos}: embora a arquitetura seja projetada para um modelo de negócio SaaS, esta versão não contempla fluxos de faturamento, integrações com \textit{gateways} de cartão de crédito, emissão de boletos ou de notas fiscais.
   \item \textbf{Integração com plataformas de terceiros}: o \textit{SyncCarreira} opera de forma independente, sem integrações automatizadas ou sincronização de dados com sistemas de gestão acadêmica ou ambientes virtuais de aprendizagem já utilizados pelas instituições de ensino; o provisionamento de contas e turmas ocorre por cadastro direto na plataforma.
@@ -694,7 +695,7 @@ Além dessas exclusões, o desenvolvimento e a operação do \textit{SyncCarreir
   \item \textbf{Prazo}: o desenvolvimento está condicionado ao calendário acadêmico do Projeto de Conclusão de Curso, o que limita esta versão às funcionalidades previstas no Documento de Requisitos do Sistema e às entregas definidas em cada etapa de avaliação.
   \item \textbf{Equipe}: o sistema é desenvolvido exclusivamente pelos integrantes do grupo, que conciliam o projeto com as demais atividades acadêmicas e profissionais, sem dedicação integral e sem apoio de equipes externas de desenvolvimento, \textit{design} ou testes.
   \item \textbf{Orçamento}: o projeto não conta com financiamento; os custos de hospedagem em nuvem, de domínio e de envio de e-mails devem permanecer reduzidos, o que restringe a infraestrutura a recursos de baixo custo, com capacidade compatível com o volume de uso de uma instituição parceira.
-  \item \textbf{Legislação}: o tratamento de dados pessoais deve observar a Lei Geral de Proteção de Dados Pessoais, que determina que o tratamento de dados de crianças e de adolescentes seja realizado em seu melhor interesse \cite{brasil2018lgpd}; como parte do público-alvo é composta por estudantes menores de idade, a coleta deve limitar-se aos dados necessários à jornada de orientação, e o sistema deve permitir a exclusão desses dados.
+  \item \textbf{Legislação}: o tratamento de dados pessoais deve observar a Lei Geral de Proteção de Dados Pessoais, que determina que o tratamento de dados de crianças e de adolescentes seja realizado em seu melhor interesse \cite{brasil2018lgpd}; como parte do público-alvo é composta por estudantes menores de idade, a coleta deve limitar-se aos dados necessários à jornada de orientação, e o sistema deve permitir a exclusão desses dados. Aplica-se também o Estatuto Digital da Criança e do Adolescente, que exige que os serviços digitais direcionados a crianças e adolescentes ou de acesso provável por eles adotem, desde a concepção, a configuração mais protetiva disponível em relação à privacidade e à proteção de dados pessoais como padrão \cite{brasil2025lei15211}.
   \item \textbf{Plataforma de acesso}: por se tratar de uma aplicação \textit{web}, o uso do sistema depende de um navegador com conexão à internet, seja nos dispositivos da instituição parceira, seja nos dos próprios alunos.
   \item \textbf{Serviços de terceiros}: o envio de convites das sessões de orientação depende de o profissional de orientação possuir uma conta Google e autorizar o acesso ao Google Agenda, e o envio de e-mails, como o de primeiro acesso, depende de um provedor externo de envio de mensagens.
 \end{enumerate}
