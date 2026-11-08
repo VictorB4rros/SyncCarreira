@@ -96,6 +96,12 @@ public class JourneyService {
         return new JourneyDoubtDTO(student.getId(), true, flaggedAt);
     }
 
+    @Transactional
+    public void unflagDoubt() {
+        Student student = loggedStudent();
+        studentRepository.unflagDoubt(student.getId());
+    }
+
     private boolean isJourneyConcluded(Long studentId) {
         List<Trail> trails = trailRepository.findAll();
         return !trails.isEmpty() && trails.stream()

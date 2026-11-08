@@ -347,4 +347,26 @@ public class JourneyServiceTests {
             service.flagDoubt();
         });
     }
+
+    @Test
+    void unflagDoubtShouldUnflagDoubtWhenStudentExists() {
+        Mockito.when(authService.authenticated()).thenReturn(studentInDoubt);
+        Mockito.when(studentRepository.findById(existingStudentId)).thenReturn(Optional.of(studentInDoubt));
+
+        Assertions.assertDoesNotThrow(() -> {
+            service.unflagDoubt();
+        });
+        Mockito.verify(studentRepository).unflagDoubt(existingStudentId);
+    }
+
+    @Test
+    void unflagDoubtShouldReturnResourceNotFoundExceptionWhenStudentDoesNotExist() {
+        Mockito.when(authService.authenticated()).thenReturn(student);
+        Mockito.when(studentRepository.findById(existingStudentId)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> {
+            service.unflagDoubt();
+        });
+        Mockito.verify(studentRepository, Mockito.never()).unflagDoubt(any());
+    }
 }

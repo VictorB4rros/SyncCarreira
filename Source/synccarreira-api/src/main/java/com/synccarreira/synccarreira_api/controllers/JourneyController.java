@@ -63,4 +63,20 @@ public class JourneyController {
     public ResponseEntity<JourneyDoubtDTO> flagDoubt() {
         return ResponseEntity.ok(journeyService.flagDoubt());
     }
+
+    @DeleteMapping("/doubt")
+    @Operation(summary = "Desmarca a sinalização de dúvida sobre a escolha profissional do aluno logado.")
+    @ApiResponse(
+            responseCode = "204",
+            description = "Dúvida desmarcada com sucesso."
+    )
+    @ApiResponse(
+            responseCode = "404",
+            description = "Aluno não encontrado.",
+            content = { @Content(mediaType = "application/json", schema = @Schema(implementation = CustomError.class)) }
+    )
+    public ResponseEntity<Void> unflagDoubt() {
+        journeyService.unflagDoubt();
+        return ResponseEntity.noContent().build();
+    }
 }

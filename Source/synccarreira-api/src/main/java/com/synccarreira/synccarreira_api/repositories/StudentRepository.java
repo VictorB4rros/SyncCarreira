@@ -47,6 +47,13 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
             WHERE id_usuario = :studentId AND em_duvida = FALSE""")
     int flagDoubt(@Param("studentId") Long studentId, @Param("flaggedAt") Instant flaggedAt);
 
+    @Modifying
+    @Query(nativeQuery = true, value = """
+            UPDATE tb_aluno
+            SET em_duvida = FALSE, data_sinalizacao_duvida = NULL
+            WHERE id_usuario = :studentId""")
+    void unflagDoubt(@Param("studentId") Long studentId);
+
     @Query("SELECT new com.synccarreira.synccarreira_api.projections.PanelStudentProjection(obj.id, obj.name, c.id, c.name, obj.inDoubt, obj.doubtFlaggedAt) " +
             "FROM Student obj " +
             "JOIN obj.determinedSchoolClass c " +
