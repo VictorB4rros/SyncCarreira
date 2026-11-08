@@ -290,4 +290,399 @@ RN-08 & RF-15 & UC14 & JourneyHistoryServiceTests; \allowbreak JourneyHistoryCon
 
 Todos os requisitos funcionais possuem ao menos uma classe de teste associada, com exceção do RF-05: o agendamento dos alunos em dúvida é verificado pelos testes do RF-08, mas o filtro que restringe a seleção aos alunos sinalizados, implementado na tela de agendamento do profissional de orientação, não possui teste automatizado. O caso de uso UC16, de autenticação, não decorre de um requisito funcional, mas do requisito não funcional RNF-01, e por isso consta da última linha do quadro.
 
+% Apêndice E -- Banco de questões
+\chapter{Banco de Questões}\label{apendice-banco-questoes}
+
+Este apêndice apresenta o banco de questões da versão atual do \textit{SyncCarreira}, organizado por trilha. Para cada questão, indicam-se o enunciado, o tipo --- seleção única, seleção múltipla ou escala --- e as opções de resposta, com os pesos atribuídos a cada área do conhecimento: Humanas (H), Biológicas (B), Exatas (E) e Artes (A). As questões das trilhas de Influências e de Projeto de Futuro têm caráter reflexivo e não atribuem pontos, e a trilha de Informação não possui questões. O \autoref{quadro-banco-questoes} apresenta as 34 questões e as 148 opções de resposta.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.2}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{0.8cm}|>{\centering\arraybackslash}p{0.8cm}|>{\centering\arraybackslash}p{0.8cm}|>{\centering\arraybackslash}p{0.8cm}|}
+\multicolumn{5}{@{}c@{}}{\quadrolongocaption{Banco de questões, opções de resposta e pesos por área.}\label{quadro-banco-questoes}} \\[0.3em]
+\hline
+\textbf{Opção de resposta} & \textbf{H} & \textbf{B} & \textbf{E} & \textbf{A} \\
+\hline
+\endfirsthead
+\multicolumn{5}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Opção de resposta} & \textbf{H} & \textbf{B} & \textbf{E} & \textbf{A} \\
+\hline
+\endhead
+\multicolumn{5}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+\multicolumn{5}{|c|}{\textbf{Trilha de Autoconhecimento}} \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q1.} Quais destes assuntos costumam prender sua atenção naturalmente em conversas, vídeos ou leituras? (Selecione até 3) \textit{(seleção múltipla)}} \\
+\hline
+Tecnologia e funcionamento de sistemas. & 0 & 0 & 3 & 0 \\
+\hline
+Comportamento humano e relações sociais. & 3 & 0 & 0 & 0 \\
+\hline
+Expressão artística e criatividade. & 0 & 0 & 0 & 3 \\
+\hline
+Organização, números e lógica. & 0 & 0 & 3 & 0 \\
+\hline
+Natureza, saúde e bem-estar. & 0 & 3 & 0 & 0 \\
+\hline
+Política, história e atualidades. & 3 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q2.} Não nascemos sabendo. Como você avalia sua facilidade atual em resolver problemas lógicos ou matemáticos? \textit{(escala)}} \\
+\hline
+Muita dificuldade & 0 & 0 & 0 & 0 \\
+\hline
+Alguma dificuldade & 0 & 0 & 1 & 0 \\
+\hline
+Alguma facilidade & 0 & 0 & 2 & 0 \\
+\hline
+Muita facilidade & 0 & 0 & 3 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q3.} Não nascemos sabendo. Como você avalia sua facilidade atual em escrever textos ou expressar ideias com clareza? \textit{(escala)}} \\
+\hline
+Muita dificuldade & 0 & 0 & 0 & 0 \\
+\hline
+Alguma dificuldade & 0,5 & 0 & 0 & 0,5 \\
+\hline
+Alguma facilidade & 1,5 & 0 & 0 & 0,5 \\
+\hline
+Muita facilidade & 2 & 0 & 0 & 1 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q4.} Não nascemos sabendo. Como você avalia sua facilidade atual em trabalhar em equipe e mediar conflitos? \textit{(escala)}} \\
+\hline
+Muita dificuldade & 0 & 0 & 0 & 0 \\
+\hline
+Alguma dificuldade & 1 & 0 & 0 & 0 \\
+\hline
+Alguma facilidade & 2 & 0 & 0 & 0 \\
+\hline
+Muita facilidade & 3 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q5.} Não nascemos sabendo. Como você avalia sua facilidade atual em aprender a usar novas ferramentas digitais? \textit{(escala)}} \\
+\hline
+Muita dificuldade & 0 & 0 & 0 & 0 \\
+\hline
+Alguma dificuldade & 0 & 0 & 1 & 0 \\
+\hline
+Alguma facilidade & 0 & 0 & 2 & 0 \\
+\hline
+Muita facilidade & 0 & 0 & 3 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q6.} Não nascemos sabendo. Como você avalia sua facilidade atual em organizar tarefas e cumprir prazos? \textit{(escala)}} \\
+\hline
+Muita dificuldade & 0 & 0 & 0 & 0 \\
+\hline
+Alguma dificuldade & 0,5 & 0 & 0,5 & 0 \\
+\hline
+Alguma facilidade & 1 & 0 & 1 & 0 \\
+\hline
+Muita facilidade & 1,5 & 0 & 1,5 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q7.} Em qual destes cenários você sente que seu desempenho é melhor? \textit{(seleção única)}} \\
+\hline
+Ambientes dinâmicos, com muita interação social e trocas constantes. & 2 & 1 & 0 & 0 \\
+\hline
+Ambientes tranquilos, onde posso ter foco individual e autonomia. & 0 & 0,5 & 1,5 & 1 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q8.} Das atividades abaixo, qual você curte e faz com frequência (gera prazer imediato)? \textit{(seleção única)}} \\
+\hline
+Criar coisas novas (desenhos, códigos, textos, receitas). & 0 & 0 & 1 & 2 \\
+\hline
+Ajudar pessoas a resolverem problemas pessoais. & 2 & 1 & 0 & 0 \\
+\hline
+Analisar dados, fatos ou notícias. & 1,5 & 0 & 1,5 & 0 \\
+\hline
+Praticar esportes ou atividades físicas. & 0 & 3 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q9.} Qual atividade você faz, mas não curte (faz por obrigação ou necessidade)? \textit{(seleção única)}} \\
+\hline
+Seguir rotinas muito rígidas e repetitivas. & 0 & 0 & 0 & 0 \\
+\hline
+Falar em público ou liderar reuniões. & 0 & 0 & 0 & 0 \\
+\hline
+Estudar temas teóricos muito densos. & 0 & 0 & 0 & 0 \\
+\hline
+Lidar com tarefas burocráticas e manuais. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q10.} Quais destas atividades você curte, mas não faz (por falta de tempo, dinheiro ou ferramenta)? Escolha as que você mais sente falta. \textit{(seleção múltipla)}} \\
+\hline
+Viajar e conhecer novas culturas. & 2 & 0 & 0 & 1 \\
+\hline
+Aprender um novo idioma ou habilidade técnica. & 1,5 & 0 & 1,5 & 0 \\
+\hline
+Praticar um hobby artístico ou manual. & 0 & 0 & 0 & 3 \\
+\hline
+Participar de projetos voluntários ou sociais. & 2 & 1 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q11.} Para você, o que define uma atividade bem-sucedida? (Selecione no máximo 2) \textit{(seleção múltipla)}} \\
+\hline
+O reconhecimento financeiro e status social. & 0 & 0 & 0 & 0 \\
+\hline
+O impacto positivo que causei na vida de alguém. & 1,5 & 1,5 & 0 & 0 \\
+\hline
+A superação de um desafio técnico difícil. & 0 & 0 & 3 & 0 \\
+\hline
+O equilíbrio entre o trabalho e meu tempo livre. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q12.} O que mais te incomoda em uma atividade ou ambiente? \textit{(seleção única)}} \\
+\hline
+Sentir que estou fazendo algo que vai contra meus princípios éticos. & 0 & 0 & 0 & 0 \\
+\hline
+Sentir que minhas habilidades não estão sendo aproveitadas. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q13.} Quanto você está disposto(a) a se dedicar agora a aprender algo totalmente novo, mesmo que seja difícil no início? \textit{(escala)}} \\
+\hline
+Prefiro focar no que já sei fazer. & 0 & 0 & 0 & 0 \\
+\hline
+Topo aprender algo novo, se não for muito diferente do que já sei. & 0 & 0 & 0 & 0 \\
+\hline
+Estou disposto(a) a aprender algo novo, mesmo com dificuldade no início. & 0 & 0 & 0 & 0 \\
+\hline
+Estou totalmente aberto(a) a desafios fora da minha zona de conforto. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q14.} Se você tivesse que descrever seu ``jeitão'' profissional hoje, qual frase melhor se encaixa? \textit{(seleção única)}} \\
+\hline
+``O realizador'': gosto de ver resultados concretos e de colocar a mão na massa. & 0 & 1 & 1,5 & 0,5 \\
+\hline
+``O pensador'': gosto de entender os porquês e criar estratégias. & 1,5 & 0 & 1,5 & 0 \\
+\hline
+``O conector'': gosto de mediar pessoas e facilitar comunicações. & 3 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|c|}{\textbf{Trilha de Influências}} \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q15.} Minha família tem uma expectativa clara sobre qual carreira eu devo seguir. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q16.} Quando penso em uma carreira, a reação da minha família é um fator que me preocupa. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q17.} Como a maioria dos seus amigos próximos está em relação à escolha profissional? \textit{(seleção única)}} \\
+\hline
+A maioria já decidiu. & 0 & 0 & 0 & 0 \\
+\hline
+Estamos todos em dúvida. & 0 & 0 & 0 & 0 \\
+\hline
+A maioria não pensa muito nisso. & 0 & 0 & 0 & 0 \\
+\hline
+Não sei dizer. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q18.} Qual destas áreas é a mais valorizada pelas pessoas do seu convívio (família, escola, bairro)? \textit{(seleção única)}} \\
+\hline
+Saúde. & 0 & 0 & 0 & 0 \\
+\hline
+Tecnologia. & 0 & 0 & 0 & 0 \\
+\hline
+Direito. & 0 & 0 & 0 & 0 \\
+\hline
+Educação. & 0 & 0 & 0 & 0 \\
+\hline
+Arte e Design. & 0 & 0 & 0 & 0 \\
+\hline
+Negócios. & 0 & 0 & 0 & 0 \\
+\hline
+Ofícios técnicos. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q19.} Já deixei de considerar uma carreira porque achei que ela não teria prestígio suficiente aos olhos de outras pessoas. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q20.} Já deixei de considerar alguma carreira por conta de uma reação negativa de alguém próximo. \textit{(seleção única)}} \\
+\hline
+Sim, e ainda me afeta. & 0 & 0 & 0 & 0 \\
+\hline
+Sim, mas já superei. & 0 & 0 & 0 & 0 \\
+\hline
+Não me lembro de algo assim. & 0 & 0 & 0 & 0 \\
+\hline
+Nunca aconteceu. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q21.} Quais das situações abaixo você reconhece na sua vida? \textit{(seleção múltipla)}} \\
+\hline
+Preciso trabalhar enquanto estudo. & 0 & 0 & 0 & 0 \\
+\hline
+Tenho dificuldade de acesso financeiro a cursos. & 0 & 0 & 0 & 0 \\
+\hline
+Moro longe das principais instituições. & 0 & 0 & 0 & 0 \\
+\hline
+Preciso ajudar minha família financeiramente. & 0 & 0 & 0 & 0 \\
+\hline
+Não me vejo representado(a) nas carreiras que conheço. & 0 & 0 & 0 & 0 \\
+\hline
+Nenhuma das anteriores. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q22.} Quem mais influencia o que você pensa sobre sua carreira? \textit{(seleção única)}} \\
+\hline
+Família. & 0 & 0 & 0 & 0 \\
+\hline
+Amigos. & 0 & 0 & 0 & 0 \\
+\hline
+Escola e professores. & 0 & 0 & 0 & 0 \\
+\hline
+Mídia e redes sociais. & 0 & 0 & 0 & 0 \\
+\hline
+Situação financeira. & 0 & 0 & 0 & 0 \\
+\hline
+Religião e cultura. & 0 & 0 & 0 & 0 \\
+\hline
+Eu mesmo(a). & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q23.} De 0 a 10, o quanto a carreira que você está considerando é uma escolha sua, e não uma resposta ao que os outros esperam de você? \textit{(seleção única)}} \\
+\hline
+0 - É totalmente o que os outros esperam de mim. & 0 & 0 & 0 & 0 \\
+\hline
+1 & 0 & 0 & 0 & 0 \\
+\hline
+2 & 0 & 0 & 0 & 0 \\
+\hline
+3 & 0 & 0 & 0 & 0 \\
+\hline
+4 & 0 & 0 & 0 & 0 \\
+\hline
+5 & 0 & 0 & 0 & 0 \\
+\hline
+6 & 0 & 0 & 0 & 0 \\
+\hline
+7 & 0 & 0 & 0 & 0 \\
+\hline
+8 & 0 & 0 & 0 & 0 \\
+\hline
+9 & 0 & 0 & 0 & 0 \\
+\hline
+10 - É completamente minha escolha. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q24.} Sobre a influência que mais pesou na sua vida até aqui, como você se sente em relação a ela? \textit{(seleção única)}} \\
+\hline
+Fico bem com ela, quero que continue assim. & 0 & 0 & 0 & 0 \\
+\hline
+Quero repensar o quanto ela me afeta. & 0 & 0 & 0 & 0 \\
+\hline
+Não tinha me dado conta dessa influência antes. & 0 & 0 & 0 & 0 \\
+\hline
+Prefiro não responder agora. & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|c|}{\textbf{Trilha de Projeto de Futuro}} \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q25.} Tenho clareza sobre o tipo de vida que quero ter no futuro (rotina, conforto, liberdade etc.). \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q26.} Consigo imaginar como será meu dia a dia na vida adulta. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q27.} Minha escolha profissional está alinhada com o estilo de vida que desejo. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q28.} Considero fatores como renda, qualidade de vida e tempo livre ao pensar no meu futuro. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q29.} Estou disposto(a) a fazer sacrifícios no presente para alcançar meus objetivos futuros. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q30.} Levo em conta minhas condições atuais (financeiras, familiares, tempo) ao planejar meu futuro. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q31.} Tenho objetivos claros para os próximos anos (ex.: estudar, trabalhar, mudar de cidade, viajar). \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q32.} Consigo adaptar meus planos quando as circunstâncias mudam. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q33.} Minhas decisões atuais estão contribuindo para o futuro que eu quero construir. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\multicolumn{5}{|>{\raggedright\arraybackslash}p{\dimexpr\textwidth-2\tabcolsep-2\arrayrulewidth\relax}|}{\textbf{Q34.} Eu reflito sobre o que realmente é importante para mim antes de tomar decisões sobre o futuro. \textit{(escala)}} \\
+\hline
+Discordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+Discordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo & 0 & 0 & 0 & 0 \\
+\hline
+Concordo totalmente & 0 & 0 & 0 & 0 \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
 \end{apendicesenv}

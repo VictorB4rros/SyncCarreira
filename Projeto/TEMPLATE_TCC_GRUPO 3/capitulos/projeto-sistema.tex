@@ -116,7 +116,7 @@ Na aplicação \textit{web}, os componentes organizam-se em páginas, agrupadas 
 
 \subsection{Cálculo do leque de possibilidades}
 
-O leque de possibilidades decorre da afinidade do aluno com quatro grandes áreas do conhecimento --- Humanas ($H$), Biológicas ($B$), Exatas ($E$) e Artes ($A$) ---, calculada a partir de dois tipos de dado: os interesses declarados no perfil, em que o aluno atribui a cada área uma nota inteira de 0 a 5, e as respostas às questões das trilhas. Cada opção de resposta do banco de questões possui um peso para cada área, definido e validado pelo profissional de orientação. Para cada área $a \in \{H, B, E, A\}$, a pontuação do aluno $P_a$ é dada pela \autoref{eq_pontuacao}:
+O leque de possibilidades decorre da afinidade do aluno com quatro grandes áreas do conhecimento --- Humanas ($H$), Biológicas ($B$), Exatas ($E$) e Artes ($A$) ---, calculada a partir de dois tipos de dado: os interesses declarados no perfil, em que o aluno atribui a cada área uma nota inteira de 0 a 5, e as respostas às questões das trilhas. Cada opção de resposta do banco de questões possui um peso para cada área, atribuído segundo os critérios descritos na \autoref{sec:criterios-pesos}. Para cada área $a \in \{H, B, E, A\}$, a pontuação do aluno $P_a$ é dada pela \autoref{eq_pontuacao}:
 
 \begin{equation}
 P_a = I_a + \sum_{o \in R} w_{o,a}
@@ -138,7 +138,7 @@ m_{q,a} =
 \label{eq_maximo}
 \end{equation}
 
-\noindent em que $I_{max} = 5$ é o maior interesse que pode ser declarado, $Q$ é o conjunto das questões do banco e $O_q$ é o conjunto das opções da questão $q$; pesos negativos não aumentam o máximo possível. Com o banco de questões da versão atual, composto por trinta questões e 138 opções de resposta, os máximos são $M_H = 180{,}5$, $M_B = 146{,}5$, $M_E = 212{,}0$ e $M_A = 157{,}5$. A diferença entre esses valores mostra por que a comparação direta das pontuações não é adequada: a área de Exatas tem cerca de 45\% mais pontos em jogo do que a de Biológicas.
+\noindent em que $I_{max} = 5$ é o maior interesse que pode ser declarado, $Q$ é o conjunto das questões do banco e $O_q$ é o conjunto das opções da questão $q$; pesos negativos, caso existam, não aumentam o máximo possível. O banco de questões da versão atual é composto por 34 questões e 148 opções de resposta, das quais apenas as onze questões que atribuem pontos, todas da trilha de Autoconhecimento, contribuem para o máximo. Com esse banco, os máximos são $M_H = 31{,}5$, $M_B = 15{,}5$, $M_E = 27{,}5$ e $M_A = 16{,}5$. A diferença entre esses valores mostra por que a comparação direta das pontuações não é adequada: a área de Humanas tem cerca do dobro de pontos em jogo da área de Biológicas.
 
 A afinidade com cada área, $S_a$, corresponde ao percentual da pontuação em relação ao máximo, limitado ao intervalo de 0 a 100 e arredondado com uma casa decimal, conforme a \autoref{eq_afinidade}:
 
@@ -149,12 +149,12 @@ S_a = \min\left(100,\, \max\left(0,\, \frac{100 \cdot P_a}{M_a}\right)\right)
 
 As áreas com o maior valor de $S_a$ são destacadas --- todas elas, em caso de empate --- e o leque de possibilidades é composto pelas subáreas do conhecimento associadas às áreas em destaque, cada qual acompanhada de exemplos de carreiras; se nenhuma área pontuar, nenhuma é destacada. As quatro afinidades são exibidas ao aluno em ordem decrescente, juntamente com o aviso de que o resultado constitui um ponto de partida para a reflexão, e não um diagnóstico. Ao término da jornada, as pontuações e os máximos são gravados no registro da jornada, de modo que o resultado de uma jornada concluída não se altera caso o aluno modifique seus interesses ou o banco de questões seja alterado posteriormente.
 
-Para ilustrar o cálculo, considera-se um aluno hipotético que declarou, no perfil, interesse 4 em Humanas, 2 em Biológicas, 1 em Exatas e 3 em Artes, e que respondeu às trinta questões das trilhas de Autoconhecimento, Influências e Projeto de Futuro --- a trilha de Informação não possui questões pontuadas. Três de suas respostas exemplificam a aplicação dos pesos, indicados na ordem ($H$; $B$; $E$; $A$):
+Para ilustrar o cálculo, considera-se um aluno hipotético que declarou, no perfil, interesse 4 em Humanas, 2 em Biológicas, 1 em Exatas e 3 em Artes, e que respondeu às questões das trilhas de Autoconhecimento, Influências e Projeto de Futuro --- a trilha de Informação não possui questões. Como apenas as questões de Autoconhecimento atribuem pontos, são elas que determinam a pontuação. Três de suas respostas exemplificam a aplicação dos pesos, indicados na ordem ($H$; $B$; $E$; $A$):
 
 \begin{itemize}
-  \item na questão ``Quais destes assuntos costumam prender sua atenção naturalmente em conversas, vídeos ou leituras?'', o aluno escolheu ``Comportamento humano e relações sociais'', com pesos (10; 0; 0; 0);
-  \item na questão de seleção múltipla ``Das atividades abaixo, qual você curte e faz com frequência?'', marcou ``Ajudar pessoas a resolverem problemas pessoais'', com pesos (8; 2; 0; 0), e ``Criar coisas novas'', com pesos (0; 0; 4; 6), o que soma (8; 2; 4; 6);
-  \item na questão em escala ``O quanto a carreira que você está considerando é uma escolha sua, e não uma resposta ao que os outros esperam de você?'', escolheu ``É completamente minha escolha'', com pesos (2; 1; 1; 6).
+  \item na questão de seleção múltipla ``Quais destes assuntos costumam prender sua atenção naturalmente em conversas, vídeos ou leituras?'', limitada a três opções, marcou ``Comportamento humano e relações sociais'' e ``Política, história e atualidades'', cada uma com pesos (3; 0; 0; 0), e ``Expressão artística e criatividade'', com pesos (0; 0; 0; 3), o que soma (6; 0; 0; 3);
+  \item na questão em escala ``Não nascemos sabendo. Como você avalia sua facilidade atual em escrever textos ou expressar ideias com clareza?'', escolheu ``Muita facilidade'', com pesos (2; 0; 0; 1);
+  \item na questão ``Se você tivesse que descrever seu `jeitão' profissional hoje, qual frase melhor se encaixa?'', escolheu ``O conector'', com pesos (3; 0; 0; 0).
 \end{itemize}
 
 O \autoref{quadro-exemplo-leque} apresenta a soma dos pesos das respostas de cada trilha, a pontuação e o máximo de cada área e a afinidade resultante.
@@ -177,17 +177,15 @@ O \autoref{quadro-exemplo-leque} apresenta a soma dos pesos das respostas de cad
 \endlastfoot
 Interesse declarado ($I_a$) & 4,0 & 2,0 & 1,0 & 3,0 \\
 \hline
-Respostas da trilha de Autoconhecimento & 71,0 & 17,0 & 7,0 & 15,0 \\
+Respostas da trilha de Autoconhecimento & 23,5 & 4,5 & 4,0 & 5,0 \\
 \hline
-Respostas da trilha de Influências & 35,5 & 18,0 & 18,0 & 28,5 \\
+Respostas das trilhas de Influências e de Projeto de Futuro & 0,0 & 0,0 & 0,0 & 0,0 \\
 \hline
-Respostas da trilha de Projeto de Futuro & 27,5 & 19,5 & 24,5 & 28,5 \\
+\textbf{Pontuação} ($P_a$) & \textbf{27,5} & \textbf{6,5} & \textbf{5,0} & \textbf{8,0} \\
 \hline
-\textbf{Pontuação} ($P_a$) & \textbf{138,0} & \textbf{56,5} & \textbf{50,5} & \textbf{75,0} \\
+Máximo possível ($M_a$) & 31,5 & 15,5 & 27,5 & 16,5 \\
 \hline
-Máximo possível ($M_a$) & 180,5 & 146,5 & 212,0 & 157,5 \\
-\hline
-\textbf{Afinidade} ($S_a$) & \textbf{76,5\%} & \textbf{38,6\%} & \textbf{23,8\%} & \textbf{47,6\%} \\
+\textbf{Afinidade} ($S_a$) & \textbf{87,3\%} & \textbf{41,9\%} & \textbf{18,2\%} & \textbf{48,5\%} \\
 \hline
 \end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
@@ -196,10 +194,65 @@ Máximo possível ($M_a$) & 180,5 & 146,5 & 212,0 & 157,5 \\
 Para a área de Humanas, por exemplo, a afinidade resulta de:
 
 \[
-S_H = \frac{100 \cdot 138{,}0}{180{,}5} \approx 76{,}5
+S_H = \frac{100 \cdot 27{,}5}{31{,}5} \approx 87{,}3
 \]
 
 \noindent Como Humanas apresenta a maior afinidade, é a única área destacada, e o leque de possibilidades apresentado ao aluno reúne suas cinco subáreas: Ciências Sociais e Comportamentais (como Psicologia, Economia e Relações Internacionais); Direito, Gestão e Negócios (como Direito, Administração e Marketing); Comunicação e Informação (como Jornalismo e Biblioteconomia); Humanidades e Letras (como História, Filosofia e Letras); e Educação em Humanas (como Pedagogia e as licenciaturas em História, Geografia e Letras). As demais áreas são exibidas com suas afinidades, na ordem Artes, Biológicas e Exatas, para que o aluno também possa explorá-las.
+
+\subsection{Critérios de atribuição dos pesos}\label{sec:criterios-pesos}
+
+O banco de questões da versão atual, cujas questões foram validadas pela parceira do projeto, é apresentado integralmente, com as opções e os pesos de cada uma, no \autoref{apendice-banco-questoes}. Seus pesos obedecem a cinco critérios, identificáveis na estrutura do banco e coerentes com referenciais teóricos da orientação profissional:
+
+\begin{enumerate}
+  \item \textbf{apenas as questões de autoconhecimento atribuem pontos}: as trilhas de Influências e de Projeto de Futuro abordam as pressões do contexto e o planejamento da vida, que são objeto de reflexão do aluno e de discussão com o profissional de orientação, mas não indicam, por si, afinidade com uma área. Atribuir-lhes pontos confundiria as influências externas com as inclinações do próprio aluno, o que contraria a perspectiva clínica da orientação vocacional, em que a escolha é compreendida como elaboração do próprio sujeito diante dessas influências \cite{bohoslavsky2015};
+  \item \textbf{cada opção que pontua distribui exatamente três pontos entre as áreas}: a opção característica de uma única área atribui três pontos a ela; a que se relaciona a duas áreas distribui 1,5 e 1,5 pontos, ou 2 e 1 ponto, quando uma das áreas é a principal; e a que se relaciona a três áreas distribui 1,5, 1 e 0,5 ponto. Assim, nenhuma resposta vale mais do que outra no total, e varia apenas a distribuição dos pontos entre as áreas;
+  \item \textbf{as questões de autoavaliação de habilidades atribuem pontos crescentes e lineares}: nas questões em escala sobre a facilidade do aluno em atividades como resolver problemas lógicos, escrever ou trabalhar em equipe, as quatro opções atribuem, no total, 0, 1, 2 e 3 pontos, conforme o grau de facilidade declarado, e a opção ``Muita dificuldade'' não pontua, sem penalizar a área. O critério é coerente com a Teoria Social Cognitiva de Carreira, segundo a qual a autoeficácia percebida em uma atividade contribui para a formação dos interesses \cite{lent1994}, e com o enunciado dessas questões, que lembra ao aluno que as habilidades podem ser desenvolvidas;
+  \item \textbf{opções sem relação com uma área específica não pontuam, e não há pesos negativos}: valores gerais, como o reconhecimento financeiro e o equilíbrio entre trabalho e tempo livre, atividades que o aluno realiza sem apreciar e a disposição para aprender não indicam afinidade com uma área. Como nenhum peso é negativo, a rejeição a uma atividade não retira uma área do leque de possibilidades, em coerência com a regra de negócio RN-07;
+  \item \textbf{a associação entre as opções e as áreas segue a correspondência entre tipos de interesse e áreas do conhecimento}: o perfil ``O conector'', que se aproxima dos tipos social e empreendedor da tipologia de \citeonline{holland1997}, pontua em Humanas; ``O realizador'', próximo ao tipo realista, distribui seus pontos entre Exatas, Biológicas e Artes; e ``O pensador'', próximo ao tipo investigativo, entre Humanas e Exatas.
+\end{enumerate}
+
+As questões em escala utilizam quatro pontos, sem ponto neutro, por sugestão da parceira do projeto. A literatura não é unânime quanto a essa escolha. Há estudos que associam o ponto neutro ao seu uso como uma ``fuga'', quando o respondente conhece pouco o tema, está pouco motivado ou procura uma resposta socialmente aceitável \cite{chyung2017}, e que mostram que a escolha da categoria central não indica necessariamente indecisão \cite{wetzelhutter2020}. Outros apontam propriedades psicométricas ligeiramente superiores nas escalas com ponto neutro, embora a maior parte dos respondentes que o escolhem passe a optar por uma categoria adjacente quando ele é retirado \cite{kankaras2025}. A equipe seguiu a sugestão da parceira por favorecer que o estudante se posicione em uma atividade de reflexão, em coerência com o objetivo do sistema de apoiar o processo de orientação, e não de medir traços psicológicos.
+
+\subsection{Verificação do modelo por simulação}
+
+A normalização pelo máximo corrige a diferença de pontos em jogo entre as áreas, mas não garante, por si, que o modelo seja neutro, isto é, que nenhuma área seja favorecida independentemente das respostas. Para verificar essa propriedade e a capacidade do modelo de identificar a área predominante de um aluno, foi realizada uma simulação computacional com o banco de questões da versão atual. O cálculo das afinidades foi reproduzido em um programa à parte, escrito em Python, com as mesmas regras do sistema, e validado pela comparação com os máximos por área calculados pelo sistema. Os alunos simulados respeitam as regras da interface, como o limite de opções indicado no enunciado das questões de seleção múltipla. Foram considerados dois cenários, cada um com 10.000 alunos simulados e semente aleatória fixa:
+
+\begin{itemize}
+  \item \textbf{neutralidade}: os alunos escolhem as opções ao acaso e declaram interesses sorteados entre 0 e 5; em um modelo neutro, cada área deveria ser destacada em cerca de 25\% dos casos;
+  \item \textbf{sensibilidade}: cada aluno recebe uma área predominante, sorteada, e, em cada questão, escolhe a opção mais associada a essa área com probabilidade $p$, respondendo ao acaso nos demais casos; mede-se a proporção de alunos cuja área predominante é destacada.
+\end{itemize}
+
+O \autoref{quadro-simulacao} apresenta os resultados. Nos casos de empate entre áreas, cada área empatada foi contabilizada de forma proporcional.
+
+{\ABNTEXfontereduzida
+\renewcommand{\arraystretch}{1.25}
+\begin{xltabular}{\textwidth}{|>{\raggedright\arraybackslash}X|>{\centering\arraybackslash}p{2.0cm}|>{\centering\arraybackslash}p{2.0cm}|>{\centering\arraybackslash}p{2.0cm}|>{\centering\arraybackslash}p{2.0cm}|}
+\multicolumn{5}{@{}c@{}}{\quadrolongocaption{Resultados da simulação do cálculo das afinidades.}\label{quadro-simulacao}} \\[0.3em]
+\hline
+\textbf{Cenário} & \textbf{Humanas} & \textbf{Biológicas} & \textbf{Exatas} & \textbf{Artes} \\
+\hline
+\endfirsthead
+\multicolumn{5}{@{}r@{}}{\textit{(continuação)}} \\
+\hline
+\textbf{Cenário} & \textbf{Humanas} & \textbf{Biológicas} & \textbf{Exatas} & \textbf{Artes} \\
+\hline
+\endhead
+\multicolumn{5}{@{}r@{}}{\textit{(continua)}} \\
+\endfoot
+\endlastfoot
+Neutralidade: proporção de alunos com a área destacada & 26,0\% & 23,8\% & 22,7\% & 27,4\% \\
+\hline
+Neutralidade, considerando apenas as respostas, sem os interesses declarados & 39,7\% & 12,7\% & 29,2\% & 18,4\% \\
+\hline
+Sensibilidade ($p = 0{,}7$): proporção de alunos com a área predominante destacada & 92,9\% & 88,6\% & 94,8\% & 87,8\% \\
+\hline
+\end{xltabular}
+\legend{Fonte: Autoria própria (2026).}
+}
+
+No cenário de neutralidade, cada área foi destacada entre 22,7\% e 27,4\% das vezes, próximo da proporção esperada, e a repetição da simulação com outras sementes alterou os resultados em menos de um ponto percentual. No cenário de sensibilidade, a área predominante foi destacada em 77,5\%, 90,6\% e 98,6\% dos casos para $p$ igual a 0,5, 0,7 e 0,9, respectivamente. O modelo mostra-se, portanto, aproximadamente neutro e capaz de refletir as inclinações expressas nas respostas.
+
+A simulação revelou, contudo, que o equilíbrio do resultado decorre da compensação entre dois efeitos. Considerando apenas as respostas, sem os interesses declarados, Humanas seria destacada em 39,7\% dos casos e Biológicas em 12,7\%, pois nove questões atribuem pontos a Humanas e a Exatas, contra seis a Biológicas e a Artes, e as questões de autoavaliação de habilidades contemplam principalmente Humanas e Exatas. Os interesses declarados no perfil compensam essa diferença. Registra-se essa característica como limitação do banco de questões da versão atual: o equilíbrio entre as áreas depende do interesse declarado, e a inclusão de questões que contemplem Biológicas e Artes na mesma proporção das demais áreas reduziria essa dependência.
 
 \section{Modelo de Dados}
 
@@ -277,7 +330,7 @@ As principais decisões do modelo de dados são as seguintes:
   \item \textbf{restrições de unicidade}: o banco impede o registro de mais de uma síntese por aluno e trilha, de mais de um registro por número de jornada do aluno e de mais de um \textit{feedback} por aluno em uma mesma jornada ou sessão;
   \item \textbf{exclusão em cascata}: sínteses, jornadas concluídas e \textit{feedbacks} são removidos automaticamente com o aluno ou o profissional correspondente, em atendimento ao direito de eliminação de dados previsto na LGPD \cite{brasil2018lgpd};
   \item \textbf{enumerações persistidas como texto}: tipos de instituição, nomes de trilha, tipos de questão, áreas do conhecimento e situações de sessão são gravados por nome, o que torna os registros legíveis e independentes da ordem de declaração;
-  \item \textbf{carga inicial}: os perfis de acesso, as trilhas, o banco de questões — trinta questões e 138 opções de resposta com pesos por área — e as vinte subáreas do conhecimento são carregados por \textit{script} de inicialização no ambiente de testes.
+  \item \textbf{carga inicial}: os perfis de acesso, as trilhas, o banco de questões --- 34 questões e 148 opções de resposta com pesos por área, apresentado no \autoref{apendice-banco-questoes} --- e as vinte subáreas do conhecimento são carregados por \textit{script} de inicialização.
 \end{itemize}
 
 \section{Projeto da Interface do Usuário}
