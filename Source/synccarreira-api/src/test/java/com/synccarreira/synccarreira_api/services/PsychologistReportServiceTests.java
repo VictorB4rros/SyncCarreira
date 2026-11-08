@@ -4,6 +4,7 @@ import com.synccarreira.synccarreira_api.dto.psychologist.PanelDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportDTOs;
 import com.synccarreira.synccarreira_api.dto.psychologist.ReportFile;
 import com.synccarreira.synccarreira_api.entities.Institution;
+import com.synccarreira.synccarreira_api.entities.JourneyRecord;
 import com.synccarreira.synccarreira_api.entities.SchoolClass;
 import com.synccarreira.synccarreira_api.entities.Student;
 import com.synccarreira.synccarreira_api.entities.Synthesis;
@@ -11,6 +12,7 @@ import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 import com.synccarreira.synccarreira_api.entities.enums.ProgressStatus;
 import com.synccarreira.synccarreira_api.entities.enums.TrailName;
 import com.synccarreira.synccarreira_api.projections.PanelStudentProjection;
+import com.synccarreira.synccarreira_api.repositories.JourneyRecordRepository;
 import com.synccarreira.synccarreira_api.repositories.SchoolClassRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
 import com.synccarreira.synccarreira_api.repositories.SynthesisRepository;
@@ -19,6 +21,7 @@ import com.synccarreira.synccarreira_api.services.exceptions.ForbiddenException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import com.synccarreira.synccarreira_api.services.reports.JourneyReportWriter;
 import com.synccarreira.synccarreira_api.tests.InstitutionFactory;
+import com.synccarreira.synccarreira_api.tests.JourneyFactory;
 import com.synccarreira.synccarreira_api.tests.SchoolClassFactory;
 import com.synccarreira.synccarreira_api.tests.StudentFactory;
 import com.synccarreira.synccarreira_api.tests.SynthesisFactory;
@@ -63,6 +66,12 @@ public class PsychologistReportServiceTests {
     private SynthesisRepository synthesisRepository;
 
     @Mock
+    private JourneyRecordRepository journeyRecordRepository;
+
+    @Mock
+    private AreaScoreCalculator areaScoreCalculator;
+
+    @Mock
     private JourneyReportWriter reportWriter;
 
     @Captor
@@ -80,6 +89,7 @@ public class PsychologistReportServiceTests {
     private Student ana, bruno;
     private PanelDTOs.StudentStatus anaStatus, brunoStatus;
     private List<Synthesis> anaSyntheses;
+    private JourneyRecord anaJourney;
     private byte[] content;
 
     @BeforeEach
@@ -124,6 +134,18 @@ public class PsychologistReportServiceTests {
                 bruno.getId(), bruno.getName(), schoolClassId, schoolClass.getName(), 0, 8, 0, 0, 3,
                 TrailName.AUTOCONHECIMENTO, false, ProgressStatus.NAO_INICIADA, false, null, List.of());
 
+        // Jornada concluída da Ana: Exatas tem a maior pontuação bruta (12,0), mas como tem mais pontos em jogo
+        // fica com 43,6% do máximo; a maior afinidade é Artes, com 66,7% (6,0 de 9,0), como no leque do resultado
+        anaJourney = JourneyFactory.createJourneyRecord(ana, ana.getCurrentJourneyNumber(), "{}");
+        anaJourney.setHumanitiesScore(6.0);
+        anaJourney.setExactSciencesScore(12.0);
+        anaJourney.setBiologicalSciencesScore(4.0);
+        anaJourney.setArtsScore(6.0);
+        anaJourney.setHumanitiesMaxScore(20.0);
+        anaJourney.setExactSciencesMaxScore(27.5);
+        anaJourney.setBiologicalSciencesMaxScore(20.0);
+        anaJourney.setArtsMaxScore(9.0);
+
         // As sínteses da fábrica pertencem ao aluno de id 1 (Ana)
         anaSyntheses = List.of(
                 SynthesisFactory.createSynthesis(TrailFactory.createTrail()),
@@ -142,6 +164,9 @@ public class PsychologistReportServiceTests {
         // A ordem retornada é diferente da ordem dos alunos: o relatório deve associar o status pelo id
         Mockito.when(panelService.buildStudentStatuses(eq(institutionId), anyList())).thenReturn(List.of(brunoStatus, anaStatus));
         Mockito.when(panelService.summarize(anyList())).thenReturn(new PanelDTOs.PanelSummary(2, 1, 0, 1, 1, List.of(anaStatus, brunoStatus)));
+        // Ana concluiu a jornada atual; Bruno não tem jornada concluída e usa o máximo das perguntas atuais
+        Mockito.when(journeyRecordRepository.findByStudentIdIn(any())).thenReturn(List.of(anaJourney));
+        Mockito.when(areaScoreCalculator.currentMaxScores()).thenReturn(AreaScoreCalculator.areaMap(30.0, 30.0, 30.0, 30.0));
         Mockito.when(reportWriter.writeClassReport(any())).thenReturn(content);
     }
 
@@ -150,7 +175,12 @@ public class PsychologistReportServiceTests {
         Mockito.when(studentRepository.findById(ana.getId())).thenReturn(Optional.of(ana));
         Mockito.when(synthesisRepository.findByStudentId(ana.getId())).thenReturn(anaSyntheses);
         Mockito.when(panelService.buildStudentStatuses(eq(institutionId), anyList())).thenReturn(List.of(anaStatus));
+        Mockito.when(journeyRecordRepository.findByStudentIdIn(any())).thenReturn(List.of(anaJourney));
         Mockito.when(reportWriter.writeStudentReport(any())).thenReturn(content);
+    }
+
+    private static Double affinity(ReportDTOs.StudentReport report, KnowledgeArea area) {
+        return report.affinities().get(area);
     }
 
     @Test
@@ -236,16 +266,33 @@ public class PsychologistReportServiceTests {
     }
 
     @Test
-    void generateClassReportShouldReturnHighestScoreAreasOnlyForStudentsWithScore() {
+    void generateClassReportShouldHighlightAreasByAffinityPercentageLikeJourneyResult() {
         mockClassReportData();
 
         service.generateClassReport(psychologistId, schoolClassId);
 
         Mockito.verify(reportWriter).writeClassReport(classReportCaptor.capture());
         List<ReportDTOs.StudentReport> students = classReportCaptor.getValue().students();
-        Assertions.assertEquals(List.of(KnowledgeArea.BIOLOGICAS), students.get(0).highestScoreAreas());
+        // Pelo percentual do máximo possível, e não pela maior pontuação bruta (Exatas)
+        Assertions.assertEquals(List.of(KnowledgeArea.ARTES), students.get(0).highestScoreAreas());
+        Assertions.assertEquals(66.7, affinity(students.get(0), KnowledgeArea.ARTES));
+        Assertions.assertEquals(43.6, affinity(students.get(0), KnowledgeArea.EXATAS));
         // Sem pontuação, as quatro áreas empatariam em zero
         Assertions.assertTrue(students.get(1).highestScoreAreas().isEmpty());
+        Assertions.assertEquals(0.0, affinity(students.get(1), KnowledgeArea.HUMANAS));
+    }
+
+    @Test
+    void generateClassReportShouldFetchCurrentMaxScoresOnlyOnce() {
+        mockClassReportData();
+        Student carla = StudentFactory.createStudent();
+        carla.setId(3L);
+        carla.setDeterminedSchoolClass(schoolClass);
+        Mockito.when(studentRepository.searchBySchoolClassId(schoolClassId)).thenReturn(List.of(ana, bruno, carla));
+
+        service.generateClassReport(psychologistId, schoolClassId);
+
+        Mockito.verify(areaScoreCalculator, Mockito.times(1)).currentMaxScores();
     }
 
     @Test
@@ -359,15 +406,52 @@ public class PsychologistReportServiceTests {
         Assertions.assertEquals("3º ano A", report.schoolClassName());
         Assertions.assertEquals(2026, report.schoolYear());
         Assertions.assertEquals("E.E. Pedro II", report.institutionName());
-        Assertions.assertEquals(7.5, report.humanitiesScore());
-        Assertions.assertEquals(6.0, report.exactSciencesScore());
-        Assertions.assertEquals(8.25, report.biologicalSciencesScore());
-        Assertions.assertEquals(5.0, report.artsScore());
-        Assertions.assertEquals(List.of(KnowledgeArea.BIOLOGICAS), report.highestScoreAreas());
+        // Jornada concluída: usa os scores e os máximos guardados na conclusão, como o leque do resultado
+        Assertions.assertEquals(30.0, affinity(report, KnowledgeArea.HUMANAS));
+        Assertions.assertEquals(43.6, affinity(report, KnowledgeArea.EXATAS));
+        Assertions.assertEquals(20.0, affinity(report, KnowledgeArea.BIOLOGICAS));
+        Assertions.assertEquals(66.7, affinity(report, KnowledgeArea.ARTES));
+        Assertions.assertEquals(List.of(KnowledgeArea.ARTES), report.highestScoreAreas());
+        Mockito.verify(areaScoreCalculator, Mockito.never()).currentMaxScores();
         Assertions.assertSame(anaStatus, report.status());
         Assertions.assertEquals(2, report.syntheses().size());
         Assertions.assertEquals(SynthesisFactory.CONTENT, report.syntheses().get(0).content());
         Assertions.assertTrue(report.syntheses().get(1).journeySynthesis());
+    }
+
+    @Test
+    void generateStudentReportShouldUseCurrentScoresAndCurrentMaxScoresWhenCurrentJourneyIsNotConcluded() {
+        mockStudentReportData();
+        // A jornada 1 já foi concluída e o aluno está na jornada 2, em andamento
+        ana.setCurrentJourneyNumber(2);
+        Mockito.when(areaScoreCalculator.currentMaxScores()).thenReturn(AreaScoreCalculator.areaMap(10.0, 40.0, 40.0, 6.0));
+
+        service.generateStudentReport(psychologistId, ana.getId());
+
+        Mockito.verify(reportWriter).writeStudentReport(studentReportCaptor.capture());
+        ReportDTOs.StudentReport report = studentReportCaptor.getValue();
+        Assertions.assertEquals(75.0, affinity(report, KnowledgeArea.HUMANAS));
+        Assertions.assertEquals(20.6, affinity(report, KnowledgeArea.BIOLOGICAS));
+        Assertions.assertEquals(83.3, affinity(report, KnowledgeArea.ARTES));
+        // Biológicas tem a maior pontuação bruta (8,25), mas Artes tem a maior afinidade
+        Assertions.assertEquals(List.of(KnowledgeArea.ARTES), report.highestScoreAreas());
+    }
+
+    @Test
+    void generateStudentReportShouldUseCurrentMaxScoresWhenConcludedJourneyHasNoMaxScoresStored() {
+        mockStudentReportData();
+        anaJourney.setHumanitiesMaxScore(null);
+        anaJourney.setExactSciencesMaxScore(null);
+        anaJourney.setBiologicalSciencesMaxScore(null);
+        anaJourney.setArtsMaxScore(null);
+        Mockito.when(areaScoreCalculator.currentMaxScores()).thenReturn(AreaScoreCalculator.areaMap(10.0, 40.0, 15.0, 30.0));
+
+        service.generateStudentReport(psychologistId, ana.getId());
+
+        Mockito.verify(reportWriter).writeStudentReport(studentReportCaptor.capture());
+        ReportDTOs.StudentReport report = studentReportCaptor.getValue();
+        Assertions.assertEquals(80.0, affinity(report, KnowledgeArea.EXATAS));
+        Assertions.assertEquals(List.of(KnowledgeArea.EXATAS), report.highestScoreAreas());
     }
 
     @Test

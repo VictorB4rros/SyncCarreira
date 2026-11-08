@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 // Resultado da jornada com o leque de carreiras sugeridas (RF-12 / RN-07).
 // As áreas são comparadas em percentual do máximo possível de cada uma (ver AreaScoreCalculator).
@@ -72,20 +71,7 @@ public class JourneyResultService {
     // nem se o aluno alterar o perfil, nem se as perguntas ou os pesos forem alterados
     @Transactional(readOnly = true)
     public JourneyResultDTO resultFor(JourneyRecord journey) {
-        Map<KnowledgeArea, Double> scores = AreaScoreCalculator.areaMap(
-                journey.getHumanitiesScore(),
-                journey.getBiologicalSciencesScore(),
-                journey.getExactSciencesScore(),
-                journey.getArtsScore());
-        // Jornadas concluídas antes do RF-12 não têm o máximo guardado: usa o das perguntas atuais
-        Map<KnowledgeArea, Double> maxScores = journey.hasMaxScores()
-                ? AreaScoreCalculator.areaMap(
-                        journey.getHumanitiesMaxScore(),
-                        journey.getBiologicalSciencesMaxScore(),
-                        journey.getExactSciencesMaxScore(),
-                        journey.getArtsMaxScore())
-                : areaScoreCalculator.currentMaxScores();
-        List<AreaScoreDTO> areaScores = AreaScoreCalculator.calculate(scores, maxScores);
+        List<AreaScoreDTO> areaScores = areaScoreCalculator.calculate(journey);
         List<KnowledgeArea> highlighted = AreaScoreCalculator.highlightedAreas(areaScores);
 
         List<SubareaDTO> suggestions = highlighted.isEmpty()

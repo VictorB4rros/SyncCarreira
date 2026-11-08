@@ -4,13 +4,16 @@ import com.synccarreira.synccarreira_api.dto.SynthesisDTO;
 import com.synccarreira.synccarreira_api.entities.enums.KnowledgeArea;
 
 import java.util.List;
+import java.util.Map;
 
 public final class ReportDTOs {
 
     private ReportDTOs() {
     }
 
-    // Panorama da jornada de um aluno: dados cadastrais, pontuação por área, progresso nas trilhas e sínteses enviadas
+    // Panorama da jornada de um aluno: dados cadastrais, afinidade por área, progresso nas trilhas e sínteses enviadas.
+    // A afinidade é o percentual (0 a 100) da pontuação sobre o máximo possível da área, o mesmo cálculo do resultado
+    // da jornada (ver AreaScoreCalculator). A pontuação bruta não entra no relatório.
     public record StudentReport(
             Long studentId,
             String name,
@@ -21,10 +24,7 @@ public final class ReportDTOs {
             String schoolClassName,
             Integer schoolYear,
             String institutionName,
-            Double humanitiesScore,
-            Double exactSciencesScore,
-            Double biologicalSciencesScore,
-            Double artsScore,
+            Map<KnowledgeArea, Double> affinities,
             List<KnowledgeArea> highestScoreAreas,
             PanelDTOs.StudentStatus status,
             List<SynthesisDTO> syntheses

@@ -157,26 +157,19 @@ public class JourneyPdfWriter {
         }
     }
 
-    // RF-12: scores em percentual do máximo possível de cada área, área(s) em destaque e leque de subáreas sugeridas
+    // RF-12: afinidade em percentual do máximo possível de cada área, área(s) em destaque e leque de subáreas sugeridas.
+    // A pontuação bruta não é exibida, apenas a afinidade em %.
     private static void writeResult(Document document, int section, JourneyRecordDTO journey, JourneyResultDTO result) {
         document.add(sectionTitle(section + ". Resultado"));
-        document.add(new Paragraph("Percentual alcançado em cada área, considerando o máximo de pontos possível em cada uma:", NORMAL));
+        document.add(new Paragraph("Afinidade com cada área, em percentual do máximo de pontos possível em cada uma:", NORMAL));
 
-        PdfPTable table = new PdfPTable(3);
-        table.setWidthPercentage(100f);
-        table.setSpacingBefore(4f);
-        table.setWidths(new float[] { 2f, 1f, 1f });
-        for (String title : List.of("Área", "Pontuação", "Percentual")) {
-            PdfPCell header = cell(title, BOLD);
-            header.setGrayFill(HEADER_GRAY);
-            table.addCell(header);
-        }
+        PdfPTable table = keyValueTable();
+        addHeader(table, "Área", "Afinidade");
         for (AreaScoreDTO score : result.scores()) {
             Font font = score.highlighted() ? BOLD : NORMAL;
             String area = score.highlighted() ? score.areaName() + " (destaque)" : score.areaName();
             table.addCell(cell(area, font));
-            table.addCell(cell(score(score.score()) + " de " + score(score.maxScore()), font));
-            table.addCell(cell(score(score.percentage()) + "%", font));
+            table.addCell(cell(percentage(score.percentage()), font));
         }
         document.add(table);
 
@@ -264,8 +257,9 @@ public class JourneyPdfWriter {
         return value != null ? String.valueOf(value) : NOT_INFORMED;
     }
 
-    private static String score(Double value) {
-        return String.format(Locale.forLanguageTag("pt-BR"), "%.1f", value != null ? value : 0.0);
+    // Ex.: 66,7%
+    private static String percentage(double value) {
+        return String.format(Locale.forLanguageTag("pt-BR"), "%.1f%%", value);
     }
 
     private static String label(TrailName trailName) {

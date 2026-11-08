@@ -139,20 +139,6 @@ public class Student extends User {
         this.artsScore = arts;
     }
 
-    public List<KnowledgeArea> highestScoreAreas() {
-        Map<KnowledgeArea, Double> scores = new EnumMap<>(KnowledgeArea.class);
-        scores.put(KnowledgeArea.HUMANAS, valueOrZero(humanitiesScore));
-        scores.put(KnowledgeArea.BIOLOGICAS, valueOrZero(biologicalSciencesScore));
-        scores.put(KnowledgeArea.EXATAS, valueOrZero(exactSciencesScore));
-        scores.put(KnowledgeArea.ARTES, valueOrZero(artsScore));
-
-        double highestScore = Collections.max(scores.values());
-        return scores.entrySet().stream()
-                .filter(entry -> entry.getValue() == highestScore)
-                .map(Map.Entry::getKey)
-                .toList();
-    }
-
     private static double valueOrZero(Double score) {
         return score != null ? score : 0.0;
     }
