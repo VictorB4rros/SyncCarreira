@@ -110,7 +110,7 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.POST, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PUT, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.PATCH, APPOINTMENTS).hasAnyRole(PSYCHOLOGIST, ADMIN)
-				.requestMatchers(HttpMethod.GET, PSYCHOLOGIST_PANEL).hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.GET, PSYCHOLOGIST_PANEL).hasRole(PSYCHOLOGIST)
 				.requestMatchers(HttpMethod.GET, "/information-links/me").hasRole(USER)
 				.requestMatchers(HttpMethod.GET, INFORMATION_LINKS).hasAnyRole(PSYCHOLOGIST, ADMIN)
 				.requestMatchers(HttpMethod.POST, INFORMATION_LINKS).hasAnyRole(PSYCHOLOGIST, ADMIN)
@@ -127,7 +127,7 @@ public class ResourceServerConfig {
 				.requestMatchers(HttpMethod.GET, "/feedbacks/me").hasRole(USER)
 				.requestMatchers(HttpMethod.PATCH, "/feedbacks/*/read").hasRole(USER)
 				.requestMatchers(HttpMethod.GET, "/feedbacks/sent").hasRole(PSYCHOLOGIST)
-				.requestMatchers(HttpMethod.GET, "/feedbacks/panel/**").hasAnyRole(PSYCHOLOGIST, ADMIN)
+				.requestMatchers(HttpMethod.GET, "/feedbacks/panel/**").hasRole(PSYCHOLOGIST)
 				.requestMatchers(HttpMethod.POST, FEEDBACKS).hasRole(PSYCHOLOGIST)
 				.requestMatchers(HttpMethod.DELETE, FEEDBACKS).hasRole(PSYCHOLOGIST));
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
