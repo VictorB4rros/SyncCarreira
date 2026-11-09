@@ -9,6 +9,7 @@
  *  - RF-09: feedback de fim de jornada e histórico de feedbacks enviados
  */
 
+
 import { Fragment, useCallback, useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext.jsx'
@@ -319,10 +320,12 @@ export default function ProgressDashboardPage() {
   }
 
   async function handleSendJourneyFeedback(content) {
-    const created = await sendJourneyFeedback({ studentId: feedbackTarget.studentId, content })
+    if (!feedbackTarget) return
+    const { studentId } = feedbackTarget
+    const created = await sendJourneyFeedback({ studentId, content })
     setSentFeedbacks(list => [created, ...list])
     setFeedbackStatus(list => list.map(item => (
-      item.studentId === feedbackTarget.studentId ? { ...item, journeyFeedbackSent: true } : item
+      item.studentId === studentId ? { ...item, journeyFeedbackSent: true } : item
     )))
     setFeedbackTarget(null)
     setToast('Feedback enviado. O aluno foi avisado por e-mail.')

@@ -8,12 +8,101 @@ import './HomePage.css'
 
 // ─── Card de trilha com progresso ─────────────────────────────
 
+const EMPTY_PROGRESS = { pct: 0, answered: 0, total: 0 }
+
+/** Progresso = perguntas com ao menos uma opção respondida, sobre o total da trilha. */
+function buildProgress(questions, answers) {
+  const answeredQuestionIds = new Set()
+  for (const ans of answers) {
+    const optId = ans.questionOptionDTO?.id
+    if (!optId) continue
+    const question = questions.find(q => q.options?.some(o => o.id === optId))
+    if (question) answeredQuestionIds.add(question.id)
+  }
+  const answered = answeredQuestionIds.size
+  const total = questions.length
+  return { pct: Math.round((answered / total) * 100), answered, total }
+}
+
+async function fetchAnswersOrEmpty(studentId, trailId) {
+  try {
+    return await getAnswers(studentId, trailId)
+  } catch {
+    // aluno sem respostas ainda — progresso 0
+    return []
+  }
+}
+
+/** Resolve acesso e progresso do aluno em uma trilha. */
+async function loadTrailState(trailId, studentId) {
+  const allowed = await canAccessTrail(trailId)
+  if (!allowed) return { access: 'locked', progress: EMPTY_PROGRESS }
+
+  const questions = await getQuestionsByTrail(trailId)
+  if (questions.length === 0) return { access: 'allowed', progress: EMPTY_PROGRESS }
+
+  const answers = await fetchAnswersOrEmpty(studentId, trailId)
+  return { access: 'allowed', progress: buildProgress(questions, answers) }
+}
+
+function trailButtonLabel({ isInformationTrail, isLocked, accessFailed, isComplete, isStarted }) {
+  if (isLocked) return 'Bloqueada'
+  if (accessFailed) return 'Indisponível'
+  if (isComplete) return 'Revisar'
+  if (isStarted) return 'Continuar'
+  return isInformationTrail ? 'Acessar' : 'Iniciar'
+}
+
+function TrailStatusIcon({ unavailable, complete }) {
+  if (unavailable) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" strokeLinecap="round"/></svg>
+    )
+  }
+  if (complete) {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="22" height="22"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round"/><polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    )
+  }
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" strokeLinecap="round"/><path d="M12 8v4l3 3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+  )
+}
+
+function TrailProgressInfo({ access, progress, isLocked, accessFailed, isInformationTrail }) {
+  if (access === 'checking' || progress === null) {
+    return <span className="hp-trail-card__loading">{isInformationTrail ? 'Verificando acesso…' : 'Carregando progresso…'}</span>
+  }
+  if (isLocked) {
+    return <span className="hp-trail-card__lock-message">Conclua a trilha anterior, incluindo a síntese, para liberar esta etapa.</span>
+  }
+  if (accessFailed) {
+    return <span className="hp-trail-card__lock-message">Não foi possível verificar o acesso. Atualize a página e tente novamente.</span>
+  }
+  if (isInformationTrail) {
+    return <span className="hp-trail-card__final-step">Etapa final · síntese da jornada</span>
+  }
+  return (
+    <>
+      <div className="hp-trail-card__bar">
+        <div
+          className="hp-trail-card__bar-fill"
+          style={{ width: `${progress.pct}%` }}
+        />
+      </div>
+      <span className="hp-trail-card__pct">
+        {progress.answered} / {progress.total} perguntas · {progress.pct}%
+      </span>
+    </>
+  )
+}
+
 function TrailCard({ trail, studentId, onEnter, refreshKey }) {
   const [progress, setProgress] = useState(null)
   const [access, setAccess] = useState('checking')
   const isInformationTrail = trail?.name
       ?.normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/[̀-ͯ]/g, '')
       .toUpperCase() === 'INFORMACAO'
 
   // refreshKey muda quando o usuário volta para a Home — força recarregar o progresso
@@ -24,97 +113,43 @@ function TrailCard({ trail, studentId, onEnter, refreshKey }) {
     setAccess('checking')
     let current = true
 
-    async function loadProgress() {
-      try {
-        const allowed = await canAccessTrail(trail.id)
+    loadTrailState(trail.id, studentId)
+      .then(state => {
         if (!current) return
-        if (!allowed) {
-          setAccess('locked')
-          setProgress({ pct: 0, answered: 0, total: 0 })
-          return
-        }
-        setAccess('allowed')
-
-        const questions = await getQuestionsByTrail(trail.id)
-        if (!current) return
-        const total = questions.length
-        if (total === 0) { setProgress({ pct: 0, answered: 0, total: 0 }); return }
-
-        let answers = []
-        try {
-          answers = await getAnswers(studentId, trail.id)
-        } catch {
-          // aluno sem respostas ainda — progresso 0
-        }
-
-        const answeredSet = new Set()
-        for (const ans of answers) {
-          const optId = ans.questionOptionDTO?.id
-          if (!optId) continue
-          const q = questions.find(q => q.options?.some(o => o.id === optId))
-          if (q) answeredSet.add(q.id)
-        }
-
-        const answered = answeredSet.size
-        setProgress({ pct: Math.round((answered / total) * 100), answered, total })
-
-      } catch {
+        setAccess(state.access)
+        setProgress(state.progress)
+      })
+      .catch(() => {
         if (!current) return
         setAccess('error')
         setProgress(null)
-      }
-    }
+      })
 
-    loadProgress()
     return () => { current = false }
   }, [trail?.id, studentId, refreshKey]) // refreshKey garante reload ao voltar
 
   const isLocked = access === 'locked'
   const accessFailed = access === 'error'
+  const unavailable = isLocked || accessFailed
   const isComplete = progress?.pct === 100
   const isStarted  = progress?.answered > 0
-
-  let buttonLabel = isInformationTrail ? 'Acessar' : 'Iniciar'
-  if (isLocked)       buttonLabel = 'Bloqueada'
-  else if (accessFailed) buttonLabel = 'Indisponível'
-  else if (isComplete)     buttonLabel = 'Revisar'
-  else if (isStarted) buttonLabel = 'Continuar'
+  const buttonLabel = trailButtonLabel({ isInformationTrail, isLocked, accessFailed, isComplete, isStarted })
 
   return (
-    <div className={`hp-trail-card${isComplete ? ' hp-trail-card--done' : ''}${isLocked || accessFailed ? ' hp-trail-card--locked' : ''}`}>
+    <div className={`hp-trail-card${isComplete ? ' hp-trail-card--done' : ''}${unavailable ? ' hp-trail-card--locked' : ''}`}>
       <div className="hp-trail-card__icon" aria-hidden="true">
-        {isLocked || accessFailed ? (
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" strokeLinecap="round"/></svg>
-        ) : isComplete
-          ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" width="22" height="22"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" strokeLinecap="round"/><polyline points="22 4 12 14.01 9 11.01" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="22" height="22"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" strokeLinecap="round"/><path d="M12 8v4l3 3" strokeLinecap="round" strokeLinejoin="round"/></svg>
-        }
+        <TrailStatusIcon unavailable={unavailable} complete={isComplete} />
       </div>
 
       <div className="hp-trail-card__info">
         <span className="hp-trail-card__name">{trail.name}</span>
-
-        {access === 'checking' || progress === null ? (
-          <span className="hp-trail-card__loading">{isInformationTrail ? 'Verificando acesso…' : 'Carregando progresso…'}</span>
-        ) : isLocked ? (
-          <span className="hp-trail-card__lock-message">Conclua a trilha anterior, incluindo a síntese, para liberar esta etapa.</span>
-        ) : accessFailed ? (
-          <span className="hp-trail-card__lock-message">Não foi possível verificar o acesso. Atualize a página e tente novamente.</span>
-        ) : isInformationTrail ? (
-          <span className="hp-trail-card__final-step">Etapa final · síntese da jornada</span>
-        ) : (
-          <>
-            <div className="hp-trail-card__bar">
-              <div
-                className="hp-trail-card__bar-fill"
-                style={{ width: `${progress.pct}%` }}
-              />
-            </div>
-            <span className="hp-trail-card__pct">
-              {progress.answered} / {progress.total} perguntas · {progress.pct}%
-            </span>
-          </>
-        )}
+        <TrailProgressInfo
+          access={access}
+          progress={progress}
+          isLocked={isLocked}
+          accessFailed={accessFailed}
+          isInformationTrail={isInformationTrail}
+        />
       </div>
 
       <button

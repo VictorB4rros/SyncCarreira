@@ -6,6 +6,7 @@
  * e trata o 401. Nenhum endpoint de outro perfil é chamado aqui.
  */
 
+
 import type { AxiosError, AxiosInstance } from 'axios'
 import httpClient from '../../../services/api.js'
 import { downloadFile } from '../../../utils/download.js'
@@ -183,22 +184,29 @@ export function getHttpStatus(error: unknown): number | undefined {
   return asAxiosError(error)?.response?.status
 }
 
+function networkErrorMessage(axiosError: AxiosError<CustomError>): string {
+  return axiosError.code === 'ECONNABORTED'
+    ? 'O servidor demorou para responder. Tente novamente.'
+    : 'Não foi possível conectar ao servidor. Verifique sua conexão.'
+}
+
+function responseErrorMessage(response: NonNullable<AxiosError<CustomError>['response']>, fallback: string): string {
+  const data = response.data
+  const fieldMessages = data?.errors?.map(e => e.message).filter(Boolean) ?? []
+  if (fieldMessages.length > 0) return fieldMessages.join(' ')
+  if (typeof data?.error === 'string' && data.error.trim()) return data.error
+  if (response.status === 403) return 'Você não tem acesso a este recurso.'
+  if (response.status >= 500) return 'O servidor encontrou um erro. Tente novamente em instantes.'
+  return fallback
+}
+
 /** Mensagem pronta para o usuário: usa o texto do backend (CustomError.error) quando existe. */
 export function getErrorMessage(error: unknown, fallback = 'Algo deu errado. Tente novamente.'): string {
   const axiosError = asAxiosError(error)
   if (axiosError) {
-    if (!axiosError.response) {
-      return axiosError.code === 'ECONNABORTED'
-        ? 'O servidor demorou para responder. Tente novamente.'
-        : 'Não foi possível conectar ao servidor. Verifique sua conexão.'
-    }
-    const data = axiosError.response.data
-    const fieldMessages = data?.errors?.map(e => e.message).filter(Boolean) ?? []
-    if (fieldMessages.length > 0) return fieldMessages.join(' ')
-    if (typeof data?.error === 'string' && data.error.trim()) return data.error
-    if (axiosError.response.status === 403) return 'Você não tem acesso a este recurso.'
-    if (axiosError.response.status >= 500) return 'O servidor encontrou um erro. Tente novamente em instantes.'
-    return fallback
+    return axiosError.response
+      ? responseErrorMessage(axiosError.response, fallback)
+      : networkErrorMessage(axiosError)
   }
   if (error instanceof Error && error.message) return error.message
   return fallback
