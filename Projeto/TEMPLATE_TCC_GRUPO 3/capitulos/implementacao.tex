@@ -546,13 +546,16 @@ A versão atual apresenta as seguintes limitações conhecidas:
   \item \textbf{criptografia por coluna}: o banco de dados é criptografado em repouso, mas as respostas, as sínteses e os perfis não são criptografados individualmente pela aplicação e, por isso, são legíveis por quem acessa o banco com credenciais válidas;
   \item \textbf{chave de assinatura dos \textit{tokens}}: o par de chaves é gerado em memória a cada inicialização da API, o que invalida as sessões abertas a cada reinício e impede a execução de múltiplas instâncias com \textit{tokens} compartilhados;
   \item \textbf{armazenamento do \textit{token}}: o \textit{token} de acesso é mantido no armazenamento local do navegador, acessível a \textit{scripts} em caso de vulnerabilidade de injeção de código;
-  \item \textbf{validade do contrato}: o contrato vencido do profissional de orientação não impede seu acesso ao sistema;
+  \item \textbf{tentativas de autenticação e renovação do \textit{token}}: não há limitação do número de tentativas de autenticação, o que expõe as contas a ataques de força bruta, nem renovação do \textit{token} de acesso, que expira após cinco horas e exige nova autenticação;
+  \item \textbf{validade do contrato}: o contrato vencido do profissional de orientação bloqueia o agendamento de sessões e o envio de \textit{feedbacks}, mas não impede o acesso ao painel e aos relatórios;
   \item \textbf{links de informação}: não são vinculados a uma instituição e, por isso, são exibidos a alunos de todas as instituições;
   \item \textbf{gestão de senhas}: não há recuperação de senha pelo próprio usuário nem reenvio do \textit{link} de primeiro acesso; o usuário é orientado a procurar o Administrador;
-  \item \textbf{consulta ao banco de questões}: a consulta pelo profissional de orientação está disponível na API, mas não possui tela na aplicação \textit{web};
+  \item \textbf{exclusão de profissionais}: a exclusão da conta de um profissional de orientação remove os \textit{feedbacks} que ele enviou, de modo que os alunos deixam de ter acesso a esse retorno;
   \item \textbf{consentimento}: o fluxo de aceite do termo de consentimento previsto no Documento de Requisitos não foi implementado;
   \item \textbf{apontamentos da análise estática}: permanecem em aberto apontamentos de confiabilidade, que resultam na nota B nesse critério, e de segurança;
   \item \textbf{infraestrutura}: a API é executada em instância única, sem redundância, balanceamento de carga ou monitoramento, e a implantação é realizada manualmente, sem fluxo de entrega contínua; o desempenho e a disponibilidade não foram medidos;
   \item \textbf{testes da aplicação \textit{web}}: a aplicação \textit{web} possui testes de componentes, que não são executados na integração contínua, e não possui testes ponta a ponta, de modo que a verificação dos fluxos completos depende de testes manuais;
+  \item \textbf{equilíbrio entre as áreas}: a simulação do cálculo do leque mostrou que o equilíbrio entre as áreas do conhecimento depende do interesse declarado no perfil, pois as questões do banco atribuem mais pontos a Humanas e a Exatas do que a Biológicas e a Artes;
+  \item \textbf{natureza do instrumento}: a soma dos pesos das respostas constitui, na prática, um instrumento de avaliação simplificado, sem validação psicométrica; por isso, o resultado é apresentado como ponto de partida para a reflexão, com aviso explícito de que não constitui diagnóstico, e sua interpretação depende do acompanhamento pelo profissional de orientação;
   \item \textbf{avaliação com usuários}: o sistema foi avaliado apenas pela parceira do projeto, sem avaliação com profissionais de orientação e estudantes.
 \end{itemize}

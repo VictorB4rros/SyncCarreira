@@ -10,6 +10,18 @@
 
 O Documento de Requisitos do Sistema, em sua versão 1.1, elaborado pela equipe e assinado digitalmente pela parceira do projeto e pelos integrantes do grupo, é reproduzido integralmente nas páginas a seguir.
 
+O desenvolvimento seguiu os requisitos desse documento. Ao longo do projeto, alguns pontos foram adaptados ou não foram implementados, e o próprio documento apresenta divergências internas de redação. Para facilitar a leitura, registram-se a seguir essas divergências e o tratamento adotado; a situação de cada requisito na versão desenvolvida é apresentada no capítulo de implementação, e o atendimento aos objetivos, na conclusão.
+
+\begin{itemize}
+  \item \textbf{trilhas da jornada (RN-01 e RF-10)}: o documento prevê cinco trilhas, com a de Informação antes da de Projeto de Futuro; o sistema organiza a jornada em quatro trilhas, com a de Informação por último, seguidas da síntese final, em adaptação acordada com a parceira do projeto;
+  \item \textbf{sinalização de dúvida (RF-04, RN-03 e RN-04)}: o documento prevê a sinalização automática pelo sistema, o acionamento do sinal pela psicóloga e a priorização automática para sessões em grupo; no sistema, o próprio aluno sinaliza a dúvida ao concluir a jornada, o profissional de orientação recebe o alerta no painel e por e-mail, e a priorização ocorre pelo destaque no painel e pelo filtro de alunos em dúvida no agendamento;
+  \item \textbf{validação das questões (RN-06 e RN-09)}: o banco de questões foi validado pela parceira e é alterado apenas pela equipe de desenvolvimento, por \textit{script} de banco de dados, sem fluxo de validação no próprio sistema;
+  \item \textbf{gestão de usuários (RF-02)}: a desativação de contas foi implementada como exclusão definitiva, em atendimento ao direito de eliminação de dados previsto na LGPD, e o registro no CRP é obrigatório nesta versão;
+  \item \textbf{tipos de questão}: os controles deslizantes (\textit{sliders}) citados nos fluxos de uso não foram adotados; as questões utilizam escala de quatro pontos e seleção única ou múltipla, e os interesses são declarados em escala de 0 a 5;
+  \item \textbf{CPF e importação de alunos}: o CPF, previsto como obrigatório nas validações, não é coletado pelo sistema, e o cadastro de alunos é individual, sem importação de listas;
+  \item \textbf{numeração nos fluxos de uso}: os fluxos citam requisitos com numeração diferente da lista de requisitos --- a curadoria como RF-05, o alerta como RF-09, o agendamento como RF-07, a área de agendamentos e \textit{feedbacks} como RF-17 e o isolamento entre instituições como RN-08 ---; este trabalho adota a numeração da lista de requisitos.
+\end{itemize}
+
 \includepdf[pages=-,scale=0.85,frame,pagecommand={\thispagestyle{abntnumero}}]{pos-textual/documento-requisitos.pdf}
 
 % Apêndice B -- Resultados da análise estática no SonarCloud
