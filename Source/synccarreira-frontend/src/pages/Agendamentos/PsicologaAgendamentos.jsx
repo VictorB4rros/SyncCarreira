@@ -144,7 +144,7 @@ export default function PsicologaAgendamentos() {
     }
   }, [psychologist.id])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { load().catch(() => undefined) }, [load])
 
   const loadSentFeedbacks = useCallback(async () => {
     try {
@@ -271,25 +271,11 @@ export default function PsicologaAgendamentos() {
 
   async function handleCancelSession(reason) {
     const a = modal.appointment
-
-    // Cancela primeiro no backend (fonte da verdade). Só depois remove o evento do
-    // Google — assim, se o backend falhar, o evento continua no Google e nada fica
-    // dessincronizado (o erro sobe para o CancelModal, que mantém o modal aberto).
-    replaceInList(await cancelAppointment(a.id, reason))
-
     if (a.googleEventId && isGoogleConfigured()) {
-      try {
-        await ensureGoogle()
-        await cancelMeetEvent(a.googleEventId)
-      } catch (googleError) {
-        // A sessão já está cancelada no sistema; só o Google não acompanhou.
-        console.error('Falha ao remover o evento do Google:', googleError)
-        setModal(null)
-        setToast('Sessão cancelada, mas o evento pode ainda aparecer no Google Agenda. Remova-o manualmente.')
-        return
-      }
+      await ensureGoogle()
+      await cancelMeetEvent(a.googleEventId)
     }
-
+    replaceInList(await cancelAppointment(a.id, reason))
     setModal(null)
     setToast('Sessão cancelada. Os alunos foram avisados.')
   }
@@ -303,7 +289,6 @@ export default function PsicologaAgendamentos() {
   async function handleDeleteFeedback(feedbackId) {
     await deleteFeedback(feedbackId)
     setSentFeedbacks(list => list.filter(feedback => feedback.id !== feedbackId))
-    setToast('Feedback apagado.')
   }
 
   // ── Agrupamento por aba ─────────────────────────────────────

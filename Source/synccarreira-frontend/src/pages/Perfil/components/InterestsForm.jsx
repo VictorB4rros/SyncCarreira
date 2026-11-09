@@ -106,7 +106,7 @@ export default function InterestsForm({ profile, onSaved }) {
           <fieldset className="sp-area" key={key}>
             <legend><span>{String(index + 1).padStart(2, '0')}</span>{title}</legend>
             <p>{prompt}</p>
-            <fieldset className="sp-rating" aria-label={`Interesse em ${title}`}>
+            <div className="sp-rating">
               {[0, 1, 2, 3, 4, 5].map(value => (
                 <button
                   className={affinities[key] === value ? 'is-selected' : ''}
@@ -119,7 +119,7 @@ export default function InterestsForm({ profile, onSaved }) {
                   {value}
                 </button>
               ))}
-            </fieldset>
+            </div>
           </fieldset>
         ))}
       </div>

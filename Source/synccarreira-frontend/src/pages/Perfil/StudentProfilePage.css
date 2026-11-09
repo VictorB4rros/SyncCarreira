@@ -24,9 +24,9 @@
 .sp-submit, .sp-gate-actions button { flex: 0 0 auto; min-height: 42px; padding: 0 16px; border: 0; border-radius: 9px; background: #6845f5; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
 .sp-submit:hover:not(:disabled), .sp-gate-actions button:hover { background: #5535db; }
 .sp-submit:disabled { background: #d4d0df; color: #777389; cursor: not-allowed; }
-.sp-message { margin: 16px 0 0; padding: 11px 13px; border-radius: 9px; font-size: 12px; line-height: 1.5; }
+.sp-message { display: block; margin: 16px 0 0; padding: 11px 13px; border-radius: 9px; font-size: 12px; line-height: 1.5; }
 .sp-message--error { border: 1px solid #f0caca; background: #fff5f5; color: #a33333; }
-.sp-message--success { border: 1px solid #cde8d2; background: #f3fbf4; color: #28743a;  display: block; }
+.sp-message--success { border: 1px solid #cde8d2; background: #f3fbf4; color: #28743a; }
 .sp-state { display: grid; min-height: 230px; place-items: center; color: #716d81; font-size: 13px; }
 .sp-gate-state { display: grid; min-height: 100vh; align-content: center; justify-items: center; gap: 11px; padding: 30px; background: #f5f4fa; color: #716d81; text-align: center; }
 .sp-gate-state h1 { margin: 0; color: #29263d; font-size: 22px; }
@@ -64,7 +64,6 @@
 .sp-doubt__action--ghost:hover:not(:disabled) { background: #fff5df; }
 .sp-doubt__confirm { display: grid; gap: 10px; margin-top: 12px; padding: 12px; border-radius: 10px; background: #fff; color: #4a3d20; font-size: 12.5px; }
 .sp-doubt__confirm > div { display: flex; flex-wrap: wrap; gap: 8px; }
-.sp-doubt__actions { display: flex; flex: 0 0 auto; flex-direction: column; gap: 8px; }
 .sp-doubt--sent { border-color: #cfe8d6; background: #f4fbf6; }
 .sp-doubt--sent .sp-doubt__icon { background: #dff1e4; color: #23683a; }
 .sp-doubt--sent h2 { color: #22442c; }
@@ -129,11 +128,8 @@
   .sp-submit { width: 100%; }
   .sp-scale-ends { gap: 12px; font-size: 10px; }
   .sp-doubt, .sp-current { flex-direction: column; align-items: stretch; }
-  .sp-doubt__actions { flex-direction: row; flex-wrap: wrap; }
   .sp-doubt__icon { display: none; }
   .sp-journey__facts { grid-template-columns: 1fr; }
   .sp-journey__head { flex-wrap: wrap; }
   .sp-journey__doubt { margin-left: 0; }
 }
-/* fieldset sem a borda/padding padrão do navegador */
-fieldset.sp-rating { border: 0; padding: 0; margin: 0; min-width: 0; }

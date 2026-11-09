@@ -107,7 +107,7 @@ export default function AlunoAgendamentos({ embedded = false }) {
     }
   }, [user.id, user.email])
 
-  useEffect(() => { load() }, [load])
+  useEffect(() => { load().catch(() => undefined) }, [load])
 
   // Feedbacks recebidos (RF-16): sessão e fim de jornada. Os novos são marcados como lidos ao abrir a tela.
   const [feedbacks, setFeedbacks] = useState([])
