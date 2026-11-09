@@ -3,6 +3,7 @@
  * @description Caixa de devolutivas e feedbacks da psicóloga (RF-09/RF-16).
  * Abrir um feedback não lido chama PATCH /feedbacks/{id}/read e atualiza o contador do menu.
  */
+
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
@@ -66,11 +67,11 @@ function replaceFeedback(
   return (list ?? []).map(f => (f.id === id ? next(f) : f))
 }
 
-function FeedbackListItem({ feedback, active, onOpen }: {
+function FeedbackListItem({ feedback, active, onOpen }: Readonly<{
   feedback: FeedbackDTO
   active: boolean
   onOpen: (feedback: FeedbackDTO) => void
-}) {
+}>) {
   return (
     <li>
       <button
@@ -108,7 +109,7 @@ function FeedbackListItem({ feedback, active, onOpen }: {
   )
 }
 
-function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFilter, onOpen }: {
+function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFilter, onOpen }: Readonly<{
   filter: Filter
   counts: Counts
   visible: FeedbackDTO[]
@@ -116,7 +117,7 @@ function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFi
   hasSelection: boolean
   onFilter: (filter: Filter) => void
   onOpen: (feedback: FeedbackDTO) => void
-}) {
+}>) {
   return (
     <section aria-label="Caixa de entrada" className={cn('flex-col gap-3 lg:col-span-5', hasSelection ? 'hidden lg:flex' : 'flex')}>
       <div role="group" aria-label="Filtrar feedbacks" className="flex flex-wrap gap-2">
@@ -156,11 +157,11 @@ function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFi
   )
 }
 
-function FeedbackDetail({ selected, studentName, onBack }: {
+function FeedbackDetail({ selected, studentName, onBack }: Readonly<{
   selected: FeedbackDTO | null
   studentName: string
   onBack: () => void
-}) {
+}>) {
   return (
     <section aria-label="Leitura do feedback" className={cn('lg:col-span-7', !selected && 'hidden lg:block')}>
       {selected ? (

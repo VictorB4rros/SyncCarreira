@@ -1,6 +1,7 @@
 /**
  * @description Blocos visuais da gestão de contas: cabeçalho, abas, resumo e tabelas por área.
  */
+
 import { INSTITUTION_TYPES, displayDate } from './accountManagementConfig.js'
 
 export function ManagementHeading({ view, onCreate }) {
@@ -20,7 +21,8 @@ export function ManagementHeading({ view, onCreate }) {
 
 export function ViewTabs({ groupLabel, options, value, onChange }) {
     return (
-        <div className="students-profile-switch" role="group" aria-label={groupLabel}>
+        <fieldset className="students-profile-switch">
+            <legend className="sr-only">{groupLabel}</legend>
             {options.map(option => (
                 <button
                     key={option.id}
@@ -32,7 +34,7 @@ export function ViewTabs({ groupLabel, options, value, onChange }) {
                     {option.label}
                 </button>
             ))}
-        </div>
+        </fieldset>
     )
 }
 

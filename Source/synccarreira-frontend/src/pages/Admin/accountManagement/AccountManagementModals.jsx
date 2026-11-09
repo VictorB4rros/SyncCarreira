@@ -1,13 +1,14 @@
 /**
  * @description Modais de cadastro, vínculo de turma e instituição da gestão de contas.
  */
+
 import { CLASS_YEAR_MAX, CLASS_YEAR_MIN, INSTITUTION_TYPES, SCHOOL_YEARS } from './accountManagementConfig.js'
 
 function ModalShell({ eyebrow, title, titleId, dismissLabel, onClose, children }) {
     return (
         <div className="students-modal-backdrop">
             <button className="students-modal-dismiss" type="button" aria-label={dismissLabel} onClick={onClose} />
-            <section className="students-modal" role="dialog" aria-modal="true" aria-labelledby={titleId}>
+            <dialog className="students-modal" open aria-modal="true" aria-labelledby={titleId}>
                 <div className="students-modal-heading">
                     <div>
                         <p className="students-eyebrow">{eyebrow}</p>
@@ -16,7 +17,7 @@ function ModalShell({ eyebrow, title, titleId, dismissLabel, onClose, children }
                     <button className="students-close" type="button" aria-label="Fechar" onClick={onClose}>×</button>
                 </div>
                 {children}
-            </section>
+            </dialog>
         </div>
     )
 }
@@ -52,10 +53,10 @@ export function AccountFormModal({ profile, editingId, form, onChange, onSubmit,
         >
             <form onSubmit={onSubmit}>
                 {error && <p className="students-error" role="alert">{error}</p>}
-                <label>Nome completo
-                    <input autoFocus required value={form.name} onChange={event => onChange('name', event.target.value)} />
+                <label><span>Nome completo</span>
+                    <input required value={form.name} onChange={event => onChange('name', event.target.value)} />
                 </label>
-                <label>E-mail
+                <label><span>E-mail</span>
                     <input type="email" required value={form.email} onChange={event => onChange('email', event.target.value)} />
                 </label>
 
@@ -79,13 +80,13 @@ export function AccountFormModal({ profile, editingId, form, onChange, onSubmit,
 function StudentFields({ form, onChange }) {
     return (
         <div className="students-form-row">
-            <label>Ano escolar
+            <label><span>Ano escolar</span>
                 <select value={form.schollarYear} onChange={event => onChange('schollarYear', event.target.value)}>
                     <option value="">Selecione</option>
                     {SCHOOL_YEARS.map(year => <option key={year} value={year}>{year}</option>)}
                 </select>
             </label>
-            <label>Tipo de escola
+            <label><span>Tipo de escola</span>
                 <select value={form.schoolType} onChange={event => onChange('schoolType', event.target.value)}>
                     <option value="">Selecione</option>
                     <option value="Pública">Pública</option>
@@ -99,14 +100,14 @@ function StudentFields({ form, onChange }) {
 function PsychologistFields({ form, onChange, institutions, loadingInstitutions }) {
     return (
         <>
-            <label>CRP
+            <label><span>CRP</span>
                 <input required value={form.crp} onChange={event => onChange('crp', event.target.value)} />
             </label>
             <div className="students-form-row">
-                <label>Validade do contrato
+                <label><span>Validade do contrato</span>
                     <input type="date" required value={form.contractExpirationDate} onChange={event => onChange('contractExpirationDate', event.target.value)} />
                 </label>
-                <label>Instituição
+                <label><span>Instituição</span>
                     <select required value={form.institutionId} onChange={event => onChange('institutionId', event.target.value)} disabled={loadingInstitutions}>
                         <InstitutionOptions institutions={institutions} loading={loadingInstitutions} />
                     </select>
@@ -140,7 +141,7 @@ export function ClassFormModal({ form, setForm, onSubmit, onClose, error, saving
                             onChange={event => setForm(current => ({ ...current, schoolYear: event.target.value }))}
                         />
                     </label>
-                    <label>Instituição
+                    <label><span>Instituição</span>
                         <select required value={form.institutionId} onChange={event => setForm(current => ({ ...current, institutionId: event.target.value }))} disabled={loadingInstitutions}>
                             <InstitutionOptions institutions={institutions} loading={loadingInstitutions} />
                         </select>
@@ -169,7 +170,7 @@ export function AssignmentModal({ student, classId, onClassChange, classes, load
                     <strong>{student?.name}</strong>
                     <span>{student?.email}</span>
                 </p>
-                <label>Turma
+                <label><span>Turma</span>
                     <select required value={classId} onChange={event => onClassChange(event.target.value)} disabled={loadingClasses}>
                         <option value="">{loadingClasses ? 'Carregando turmas...' : 'Selecione uma turma'}</option>
                         {classes.map(schoolClass => (
@@ -209,17 +210,17 @@ export function InstitutionFormModal({ editingId, form, setForm, onSubmit, onClo
         >
             <form onSubmit={onSubmit}>
                 {error && <p className="students-error" role="alert">{error}</p>}
-                <label>Razão social
-                    <input autoFocus required value={form.legalName} onChange={event => setForm(current => ({ ...current, legalName: event.target.value }))} />
+                <label><span>Razão social</span>
+                    <input required value={form.legalName} onChange={event => setForm(current => ({ ...current, legalName: event.target.value }))} />
                 </label>
-                <label>Nome fantasia
+                <label><span>Nome fantasia</span>
                     <input value={form.tradeName} onChange={event => setForm(current => ({ ...current, tradeName: event.target.value }))} />
                 </label>
                 <div className="students-form-row">
-                    <label>CNPJ
+                    <label><span>CNPJ</span>
                         <input required inputMode="numeric" placeholder="00.000.000/0000-00" value={form.cnpj} onChange={event => setForm(current => ({ ...current, cnpj: event.target.value }))} />
                     </label>
-                    <label>Tipo de instituição
+                    <label><span>Tipo de instituição</span>
                         <select required value={form.type} onChange={event => setForm(current => ({ ...current, type: event.target.value }))}>
                             {INSTITUTION_TYPES.map(type => <option key={type.id} value={type.id}>{type.label}</option>)}
                         </select>
@@ -228,7 +229,7 @@ export function InstitutionFormModal({ editingId, form, setForm, onSubmit, onClo
                 {editingId && (
                     <label className="institution-active-toggle">
                         <input type="checkbox" checked={form.active} onChange={event => setForm(current => ({ ...current, active: event.target.checked }))} />
-                        Instituição ativa
+                        <span>Instituição ativa</span>
                     </label>
                 )}
                 <div className="students-modal-actions">

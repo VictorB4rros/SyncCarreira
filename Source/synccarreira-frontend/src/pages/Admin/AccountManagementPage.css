@@ -314,3 +314,7 @@
     .students-form-row { grid-template-columns: 1fr; }
     .students-modal { padding: 21px; }
 }
+
+/* Acessibilidade: fieldset e dialog sem o estilo padrão do navegador */
+fieldset.students-profile-switch { min-width: 0; margin: 25px 0 0; border: 0; }
+dialog.students-modal { margin: auto; }
