@@ -26,7 +26,7 @@
 .sp-submit:disabled { background: #d4d0df; color: #777389; cursor: not-allowed; }
 .sp-message { margin: 16px 0 0; padding: 11px 13px; border-radius: 9px; font-size: 12px; line-height: 1.5; }
 .sp-message--error { border: 1px solid #f0caca; background: #fff5f5; color: #a33333; }
-.sp-message--success { border: 1px solid #cde8d2; background: #f3fbf4; color: #28743a; }
+.sp-message--success { border: 1px solid #cde8d2; background: #f3fbf4; color: #28743a;  display: block; }
 .sp-state { display: grid; min-height: 230px; place-items: center; color: #716d81; font-size: 13px; }
 .sp-gate-state { display: grid; min-height: 100vh; align-content: center; justify-items: center; gap: 11px; padding: 30px; background: #f5f4fa; color: #716d81; text-align: center; }
 .sp-gate-state h1 { margin: 0; color: #29263d; font-size: 22px; }
@@ -135,3 +135,5 @@
   .sp-journey__head { flex-wrap: wrap; }
   .sp-journey__doubt { margin-left: 0; }
 }
+/* fieldset sem a borda/padding padrão do navegador */
+fieldset.sp-rating { border: 0; padding: 0; margin: 0; min-width: 0; }

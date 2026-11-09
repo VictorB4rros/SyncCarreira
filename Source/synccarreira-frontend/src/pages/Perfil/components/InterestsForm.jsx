@@ -106,7 +106,7 @@ export default function InterestsForm({ profile, onSaved }) {
           <fieldset className="sp-area" key={key}>
             <legend><span>{String(index + 1).padStart(2, '0')}</span>{title}</legend>
             <p>{prompt}</p>
-            <div className="sp-rating" role="group" aria-label={`Interesse em ${title}`}>
+            <fieldset className="sp-rating" aria-label={`Interesse em ${title}`}>
               {[0, 1, 2, 3, 4, 5].map(value => (
                 <button
                   className={affinities[key] === value ? 'is-selected' : ''}
@@ -119,13 +119,13 @@ export default function InterestsForm({ profile, onSaved }) {
                   {value}
                 </button>
               ))}
-            </div>
+            </fieldset>
           </fieldset>
         ))}
       </div>
 
       {error && <p className="sp-message sp-message--error" role="alert">{error}</p>}
-      {success && <p className="sp-message sp-message--success" role="status">{success}</p>}
+      {success && <output className="sp-message sp-message--success">{success}</output>}
 
       <div className="sp-form-footer">
         <p>Essas respostas não definem sua carreira. Elas são apenas um ponto de partida e podem mudar com o tempo.</p>
