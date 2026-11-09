@@ -231,7 +231,7 @@ Na aplicação \textit{web}, foram escritos testes de componentes e de funções
 
 \subsection{Análise estática}
 
-A cada integração, o SonarCloud realiza a análise estática do código e avalia o resultado em relação ao critério de qualidade. Na análise mais recente, de novembro de 2026, o projeto encontra-se aprovado no \textit{quality gate}, com cobertura de 89,3\%, baixa duplicação de código e nota A em segurança, em revisão de pontos sensíveis de segurança e em manutenibilidade. Em confiabilidade, a nota é C, em razão de apontamentos predominantemente de severidade baixa e média. Os apontamentos da análise foram tratados como parte do fluxo de trabalho, a exemplo da substituição de injeção de dependência por atributo por injeção via construtor e da correção de uma possível referência nula no \textit{token} de autenticação. Os resultados completos da análise encontram-se no \autoref{apendice-sonar}.
+A cada integração, o SonarCloud realiza a análise estática do código e avalia o resultado em relação ao critério de qualidade. Na análise mais recente, de novembro de 2026, o projeto encontra-se aprovado no \textit{quality gate}, com cobertura de 89,3\%, baixa duplicação de código e nota A em segurança, em revisão de pontos sensíveis de segurança e em manutenibilidade. Em confiabilidade, a nota é B, em razão de apontamentos predominantemente de severidade baixa e média. Os apontamentos da análise foram tratados como parte do fluxo de trabalho, a exemplo da substituição de injeção de dependência por atributo por injeção via construtor e da correção de uma possível referência nula no \textit{token} de autenticação. Os resultados completos da análise encontram-se no \autoref{apendice-sonar}.
 
 \subsection{Testes manuais}
 
@@ -389,6 +389,16 @@ A \autoref{fig_ev_jacoco} apresenta o relatório de cobertura gerado pelo JaCoCo
     \legend{Fonte: Autoria própria (2026).}
 \end{figure}
 
+A \autoref{fig_ev_rds} apresenta a configuração da instância do banco de dados de produção no console da AWS, com a criptografia do armazenamento habilitada e a chave gerenciada pelo AWS KMS, em atendimento ao RNF-02.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Configuração do armazenamento do banco de dados de produção no Amazon RDS.}
+    \label{fig_ev_rds}
+    \fbox{\includegraphics[width=0.45\textwidth]{img/fig-cap5-rds-criptografia.png}}
+    \legend{Fonte: Autoria própria (2026).}
+\end{figure}
+
 Por fim, a \autoref{fig_ev_producao} apresenta a aplicação \textit{web} em execução no ambiente de produção, acessada pelo domínio próprio do projeto.
 
 \begin{figure}[htbp]
@@ -427,15 +437,15 @@ A estimativa considera os preços sob demanda da região us-east-1 da Amazon Web
 \multicolumn{4}{@{}r@{}}{\textit{(continua)}} \\
 \endfoot
 \endlastfoot
-Amazon EC2 & Instância t3.micro (2 vCPU, 1 GiB de memória) & 730 h $\times$ US\$ 0,0104/h = US\$ 7,59 & 41,77 \\
+Amazon EC2 & Instância t3.small (2 vCPU, 2 GiB de memória) & 730 h $\times$ US\$ 0,0209/h = US\$ 15,26 & 83,93 \\
 \hline
 Amazon EBS & Volume gp3 de 8 GB da instância & 8 GB $\times$ US\$ 0,08/GB = US\$ 0,64 & 3,52 \\
 \hline
 Endereço IPv4 público & Um endereço associado à instância & 730 h $\times$ US\$ 0,005/h = US\$ 3,65 & 20,08 \\
 \hline
-Amazon RDS for MySQL & Instância db.t3.micro, Single-AZ & 730 h $\times$ US\$ 0,017/h = US\$ 12,41 & 68,27 \\
+Amazon RDS for MySQL & Instância db.t4g.micro (2 vCPU, 1 GiB de memória), Single-AZ & 730 h $\times$ US\$ 0,016/h = US\$ 11,68 \cite{bytebase2026rds} & 64,26 \\
 \hline
-Armazenamento do RDS & 20 GB em SSD de uso geral (gp2) & 20 GB $\times$ US\$ 0,115/GB = US\$ 2,30 & 12,65 \\
+Armazenamento do RDS & 20 GB em SSD de uso geral (gp3) & 20 GB $\times$ US\$ 0,115/GB = US\$ 2,30 & 12,65 \\
 \hline
 Amazon S3 e CloudFront & Arquivos estáticos da aplicação \textit{web} & Volume dentro das cotas gratuitas permanentes do CloudFront; armazenamento inferior a US\$ 0,01 & 0,00 \\
 \hline
@@ -443,19 +453,19 @@ Domínio synccarreira.com.br & Registro anual no Registro.br & R\$ 40,00 por ano
 \hline
 Brevo & Plano Starter, a partir de 5.000 e-mails por mês & Valor mensal contratado: R\$ 40,00 & 40,00 \\
 \hline
-\textbf{Total} &  &  & \textbf{189,62} \\
+\textbf{Total} &  &  & \textbf{227,77} \\
 \hline
 \end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
 }
 
-O custo estimado de operação é, portanto, de aproximadamente R\$ 189,62 por mês, ou R\$ 2.275,44 por ano. O banco de dados gerenciado responde por cerca de 43\% desse valor; a instância da API, somada ao seu armazenamento e ao endereço público, por cerca de 34\%; e o serviço de envio de e-mails, por cerca de 21\%. A equipe optou pelo plano pago da Brevo porque o plano gratuito limita o envio a 300 e-mails por dia \cite{brevo2026planos}, o que restringiria, por exemplo, o cadastro de várias turmas no mesmo dia: três turmas de 120 alunos geram 360 mensagens de primeiro acesso.
+O custo estimado de operação é, portanto, de aproximadamente R\$ 227,77 por mês, ou R\$ 2.733,24 por ano. A instância da API, somada ao seu armazenamento e ao endereço público, responde por cerca de 47\% desse valor; o banco de dados gerenciado, por cerca de 34\%; e o serviço de envio de e-mails, por cerca de 18\%. A equipe optou pelo plano pago da Brevo porque o plano gratuito limita o envio a 300 e-mails por dia \cite{brevo2026planos}, o que restringiria, por exemplo, o cadastro de várias turmas no mesmo dia: três turmas de 120 alunos geram 360 mensagens de primeiro acesso.
 
-Dois aspectos complementam a estimativa. Quanto aos tributos, os serviços da AWS são faturados a clientes no Brasil pela Amazon AWS Serviços Brasil Ltda., em reais, com a incidência de PIS e COFINS, à alíquota combinada de 9,25\%, e de ISS, à alíquota de 2,9\% \cite{aws2026tributos}; aplicadas aos itens da AWS, essas alíquotas elevam o custo mensal para cerca de R\$ 207,39. Quanto às cópias de segurança, o armazenamento das cópias automáticas do banco de dados não gera custo adicional enquanto não ultrapassar o tamanho do armazenamento provisionado da instância \cite{luo2022rdsbackup}, condição atendida pelo volume de dados da plataforma; a instância da API, por sua vez, não armazena dados e dispensa cópias de segurança próprias.
+Dois aspectos complementam a estimativa. Quanto aos tributos, os serviços da AWS são faturados a clientes no Brasil pela Amazon AWS Serviços Brasil Ltda., em reais, com a incidência de PIS e COFINS, à alíquota combinada de 9,25\%, e de ISS, à alíquota de 2,9\% \cite{aws2026tributos}; aplicadas aos itens da AWS, essas alíquotas elevam o custo mensal para cerca de R\$ 250,18. Quanto às cópias de segurança, o armazenamento das cópias automáticas do banco de dados não gera custo adicional enquanto não ultrapassar o tamanho do armazenamento provisionado da instância \cite{luo2022rdsbackup}, condição atendida pelo volume de dados da plataforma; a instância da API, por sua vez, não armazena dados e dispensa cópias de segurança próprias.
 
 \subsection{Cenários de escala}
 
-Para avaliar o comportamento do custo com o crescimento da plataforma, foram considerados três cenários, com uma, cinco e vinte instituições parceiras, cada uma com 120 alunos. A configuração das instâncias de cada cenário foi estimada pela equipe, uma vez que o desempenho da plataforma sob carga não foi medido: no cenário de cinco instituições, a instância da API passa a t3.small, com 2 GiB de memória; no de vinte instituições, a instância da API passa a t3.medium, com 4 GiB de memória, e a do banco de dados, a db.t3.small. Os demais itens do \autoref{quadro-custos} foram mantidos. Para cada cenário, calculou-se também o custo com a reserva das instâncias por um ano, modalidade em que a AWS oferece desconto em troca do compromisso de uso, com base nos valores efetivos por hora das instâncias EC2 \cite{aws2026t3} e nos valores efetivos mensais das instâncias RDS \cite{bytebase2026rds}. O \autoref{quadro-cenarios} apresenta os resultados, sem tributos.
+Para avaliar o comportamento do custo com o crescimento da plataforma, foram considerados três cenários, com uma, cinco e vinte instituições parceiras, cada uma com 120 alunos. A configuração das instâncias de cada cenário foi estimada pela equipe, uma vez que o desempenho da plataforma sob carga não foi medido: no cenário de cinco instituições, mantém-se a configuração atual; no de vinte instituições, a instância da API passa a t3.medium, com 4 GiB de memória, e a do banco de dados, a db.t4g.small. Os demais itens do \autoref{quadro-custos} foram mantidos. Para cada cenário, calculou-se também o custo com a reserva das instâncias por um ano, modalidade em que a AWS oferece desconto em troca do compromisso de uso, com base nos valores efetivos por hora das instâncias EC2 \cite{aws2026t3} e nos valores efetivos mensais das instâncias RDS \cite{bytebase2026rds, bytebase2026rdssmall}. O \autoref{quadro-cenarios} apresenta os resultados, sem tributos.
 
 {\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
@@ -473,19 +483,19 @@ Para avaliar o comportamento do custo com o crescimento da plataforma, foram con
 \multicolumn{6}{@{}r@{}}{\textit{(continua)}} \\
 \endfoot
 \endlastfoot
-1 instituição & 120 & t3.micro; db.t3.micro & 189,62 & 147,69 & 1,58 \\
+1 instituição & 120 & t3.small; db.t4g.micro & 227,77 & 171,78 & 1,90 \\
 \hline
-5 instituições & 600 & t3.small; db.t3.micro & 231,79 & 171,79 & 0,39 \\
+5 instituições & 600 & t3.small; db.t4g.micro & 227,77 & 171,78 & 0,38 \\
 \hline
-20 instituições & 2.400 & t3.medium; db.t3.small & 383,99 & 268,00 & 0,16 \\
+20 instituições & 2.400 & t3.medium; db.t4g.small & 375,96 & 268,00 & 0,16 \\
 \hline
 \end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
 }
 
-Como parte relevante do custo é fixa --- armazenamento, endereço público, domínio e serviço de e-mail ---, o custo por aluno cai de R\$ 1,58 para R\$ 0,16 por mês entre o primeiro e o terceiro cenário. A reserva das instâncias por um ano reduz o custo mensal entre 22\% e 30\%, conforme o cenário, e é indicada a partir do momento em que a demanda da plataforma se torne estável.
+Como parte relevante do custo é fixa --- armazenamento, endereço público, domínio e serviço de e-mail ---, o custo por aluno cai de R\$ 1,90 para R\$ 0,16 por mês entre o primeiro e o terceiro cenário. A reserva das instâncias por um ano reduz o custo mensal entre 25\% e 29\%, conforme o cenário, e é indicada a partir do momento em que a demanda da plataforma se torne estável.
 
-A migração da infraestrutura para a região sa-east-1, em São Paulo, proposta para manter os dados armazenados no Brasil, eleva o preço das instâncias. Na configuração atual, a instância t3.micro passa de US\$ 0,0104 para US\$ 0,0168 por hora \cite{doit2026saeast1}, e a instância db.t3.micro, de cerca de US\$ 12 para US\$ 26 por mês \cite{bytebase2026rds}, o que acrescenta aproximadamente R\$ 100,46 ao custo mensal das instâncias, quase o dobro do valor atual desses itens, sem considerar a diferença de preço do armazenamento.
+A migração da infraestrutura para a região sa-east-1, em São Paulo, proposta para manter os dados armazenados no Brasil, eleva o preço das instâncias. Na configuração atual, a instância t3.small passa de US\$ 0,0209 para US\$ 0,0336 por hora \cite{doit2026saeast1}, e a instância db.t4g.micro, de cerca de US\$ 12 para US\$ 25 por mês \cite{bytebase2026rds}, o que acrescenta aproximadamente R\$ 124,28 ao custo mensal das instâncias, um aumento de cerca de 84\% nesses itens, sem considerar a diferença de preço do armazenamento.
 
 \subsection{Custo de desenvolvimento e modelo de negócio}
 
@@ -525,7 +535,7 @@ Pesquisa e concepção & 6 integrantes $\times$ 12 semanas & 3 & 216 \\
 
 Adotou-se como valor de referência de mercado a mediana salarial de desenvolvedor(a) \textit{full-stack} júnior em São Paulo, de R\$ 7.550,00 mensais \cite{roberthalf2027fullstack}, dividida pelas 220 horas da jornada mensal de referência, o que resulta em cerca de R\$ 34,32 por hora, sem encargos trabalhistas. O custo estimado de desenvolvimento é, assim, de aproximadamente R\$ 36.137,05. Trata-se de uma ordem de grandeza: a estimativa por \textit{commits} desconsidera o tempo de revisão, de testes manuais e de implantação não registrado no histórico, e a documentação acadêmica do projeto não foi incluída.
 
-Para a oferta da plataforma no modelo SaaS, propõe-se a cobrança por aluno ativo, na faixa de R\$ 3,00 a R\$ 5,00 por mês, o que corresponde a R\$ 360,00 a R\$ 600,00 mensais por instituição com 120 alunos. O ponto de equilíbrio foi calculado como o número de instituições cuja receita cobre o custo mensal de operação, sob demanda, somado à amortização do custo de desenvolvimento em 36 meses, de cerca de R\$ 1.003,81 por mês. Com o preço de R\$ 3,00 por aluno, o equilíbrio é atingido a partir de quatro instituições, com receita de R\$ 1.440,00 e custo de R\$ 1.235,60; com os preços de R\$ 4,00 e R\$ 5,00, a partir de três instituições, com receitas de R\$ 1.440,00 e R\$ 1.800,00, respectivamente, para o mesmo custo. O cálculo é simplificado e não inclui os tributos sobre a receita nem os custos de suporte, comercialização e manutenção evolutiva, que elevariam o ponto de equilíbrio.
+Para a oferta da plataforma no modelo SaaS, propõe-se a cobrança por aluno ativo, na faixa de R\$ 3,00 a R\$ 5,00 por mês, o que corresponde a R\$ 360,00 a R\$ 600,00 mensais por instituição com 120 alunos. O ponto de equilíbrio foi calculado como o número de instituições cuja receita cobre o custo mensal de operação, sob demanda, somado à amortização do custo de desenvolvimento em 36 meses, de cerca de R\$ 1.003,81 por mês. Com o preço de R\$ 3,00 por aluno, o equilíbrio é atingido a partir de quatro instituições, com receita de R\$ 1.440,00 e custo de R\$ 1.231,58; com os preços de R\$ 4,00 e R\$ 5,00, a partir de três instituições, com receitas de R\$ 1.440,00 e R\$ 1.800,00, respectivamente, para o mesmo custo. O cálculo é simplificado e não inclui os tributos sobre a receita nem os custos de suporte, comercialização e manutenção evolutiva, que elevariam o ponto de equilíbrio.
 
 \section{Limitações da Implementação}
 
@@ -541,7 +551,7 @@ A versão atual apresenta as seguintes limitações conhecidas:
   \item \textbf{gestão de senhas}: não há recuperação de senha pelo próprio usuário nem reenvio do \textit{link} de primeiro acesso; o usuário é orientado a procurar o Administrador;
   \item \textbf{consulta ao banco de questões}: a consulta pelo profissional de orientação está disponível na API, mas não possui tela na aplicação \textit{web};
   \item \textbf{consentimento}: o fluxo de aceite do termo de consentimento previsto no Documento de Requisitos não foi implementado;
-  \item \textbf{apontamentos da análise estática}: permanecem em aberto apontamentos de confiabilidade, que resultam na nota C nesse critério, e de segurança;
+  \item \textbf{apontamentos da análise estática}: permanecem em aberto apontamentos de confiabilidade, que resultam na nota B nesse critério, e de segurança;
   \item \textbf{infraestrutura}: a API é executada em instância única, sem redundância, balanceamento de carga ou monitoramento, e a implantação é realizada manualmente, sem fluxo de entrega contínua; o desempenho e a disponibilidade não foram medidos;
   \item \textbf{testes da aplicação \textit{web}}: a aplicação \textit{web} possui testes de componentes, que não são executados na integração contínua, e não possui testes ponta a ponta, de modo que a verificação dos fluxos completos depende de testes manuais;
   \item \textbf{avaliação com usuários}: o sistema foi avaliado apenas pela parceira do projeto, sem avaliação com profissionais de orientação e estudantes.
