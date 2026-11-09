@@ -160,7 +160,9 @@ function getTokenClient() {
 /**
  * Abre o popup do Google e obtém um access_token para a agenda.
  * Deve ser chamado a partir de um clique (senão o navegador bloqueia o popup).
- * Se já houver um popup aberto, devolve a mesma promessa.
+ * Se um pedido anterior ficou sem resposta (por exemplo, a janela foi fechada e o
+ * Chrome não deixou o Google perceber, o aviso de Cross-Origin-Opener-Policy no
+ * console), ele é encerrado e um novo popup é aberto.
  *
  * @param {string} [loginHint] - e-mail da psicóloga, para pré-selecionar a conta
  * @returns {Promise<string>} access token
@@ -170,7 +172,7 @@ export async function connectGoogle(loginHint) {
     throw new GoogleCalendarError('Integração com Google não configurada (VITE_GOOGLE_CLIENT_ID ausente no .env).')
   }
   if (isGoogleConnected()) return accessToken
-  if (pendingToken) return pendingToken.promise
+  finishPending('reject', new GoogleCalendarError(popupErrorMessage('popup_closed'), 0, 'popup_closed'))
 
   await loadGis()
 
@@ -257,15 +259,11 @@ async function sendOnce(url, method, body) {
   }
 }
 
-async function calendarFetch(path, { method = 'GET', query = {}, body } = {}) {
-  if (!isGoogleConnected()) {
-    throw new GoogleCalendarError('Conecte sua conta Google para sincronizar a agenda.', 401)
-  }
-  return fetchWithRetry(buildUrl(path, query), method, body, 1)
-}
-
-/** Tenta de novo, com espera crescente, enquanto o erro for transitório. */
-async function fetchWithRetry(url, method, body, attempt) {
+/**
+ * Faz a chamada e, em falhas temporárias (rede, 429, 5xx), tenta de novo com
+ * espera crescente (1 s, 2 s…), até MAX_ATTEMPTS tentativas.
+ */
+async function sendWithRetry(url, method, body, attempt = 1) {
   const { resp, networkError } = await sendOnce(url, method, body)
   const isLast = attempt >= MAX_ATTEMPTS
 
@@ -277,9 +275,15 @@ async function fetchWithRetry(url, method, body, attempt) {
     throw await toCalendarError(resp)
   }
 
-  // espera crescente: 1 s, 2 s…
   await sleep(1000 * attempt)
-  return fetchWithRetry(url, method, body, attempt + 1)
+  return sendWithRetry(url, method, body, attempt + 1)
+}
+
+async function calendarFetch(path, { method = 'GET', query = {}, body } = {}) {
+  if (!isGoogleConnected()) {
+    throw new GoogleCalendarError('Conecte sua conta Google para sincronizar a agenda.', 401)
+  }
+  return sendWithRetry(buildUrl(path, query), method, body)
 }
 
 /** Soma minutos a uma data "YYYY-MM-DDTHH:mm[:ss]" local e devolve no mesmo formato. */
@@ -361,16 +365,11 @@ function meetCreationFailed(event) {
  * O Google às vezes devolve a sala do Meet como "pending".
  * Consulta o evento mais algumas vezes até o link aparecer.
  */
-async function waitForMeetLink(event) {
-  return pollMeetLink(event, encodeURIComponent(event.id), 0)
-}
-
-/** Consulta o evento de novo até o link aparecer, a criação falhar ou acabar o limite de tentativas. */
-async function pollMeetLink(current, eventId, attempt) {
-  if (meetLinkOf(current) || meetCreationFailed(current) || attempt >= MEET_POLL_ATTEMPTS) return current
+async function waitForMeetLink(event, attemptsLeft = MEET_POLL_ATTEMPTS) {
+  if (attemptsLeft <= 0 || meetLinkOf(event) || meetCreationFailed(event)) return event
   await sleep(1000)
-  const refreshed = await calendarFetch(`/${eventId}`)
-  return pollMeetLink(refreshed, eventId, attempt + 1)
+  const current = await calendarFetch(`/${encodeURIComponent(event.id)}`)
+  return waitForMeetLink(current, attemptsLeft - 1)
 }
 
 function toResult(event) {
