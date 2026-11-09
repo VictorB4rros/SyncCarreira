@@ -5,6 +5,7 @@
  * Reaproveita a instância axios existente (services/api.js), que já injeta o Bearer token
  * e trata o 401. Nenhum endpoint de outro perfil é chamado aqui.
  */
+
 import type { AxiosError, AxiosInstance } from 'axios'
 import httpClient from '../../../services/api.js'
 import { downloadFile } from '../../../utils/download.js'
@@ -143,6 +144,12 @@ export async function getMyDoubt(): Promise<JourneyDoubtDTO> {
 export async function flagDoubt(): Promise<JourneyDoubtDTO> {
   const { data } = await api.post<JourneyDoubtDTO>('/journey/doubt')
   return data
+}
+
+/** Desfaz a sinalização de dúvida do aluno logado (idempotente no backend). */
+export async function unflagDoubt(): Promise<void> {
+  // 204 No Content: sem corpo na resposta
+  await api.delete('/journey/doubt')
 }
 
 // ─── Sessões e feedbacks ────────────────────────────────────────

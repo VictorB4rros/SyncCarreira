@@ -50,6 +50,9 @@
 .jp-score-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
 .jp-score-list > div { min-width: 130px; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 8px 10px; color: #777388; background: #faf9fc; border-radius: 9px; font-size: 10px; }
 .jp-score-list strong { color: #5f4d91; font-size: 11px; }
+.jp-score-list > .jp-score--highlighted { color: #5f4d91; background: #f1ecff; box-shadow: inset 0 0 0 1px #d9ccff; }
+.jp-score-list > .jp-score--highlighted strong { color: #4b3a86; }
+.jp-score-note { display: block; margin: 10px 0 0; color: #8a8698; font-size: 11px; }
 .jp-past-empty, .jp-history-error, .jp-state { padding: 22px; color: #777388; background: white; border: 1px solid #e6e3ef; border-radius: 15px; font-size: 14px; }
 .jp-history-error { color: #8e4747; }
 .jp-state { margin-top: 26px; text-align: center; }

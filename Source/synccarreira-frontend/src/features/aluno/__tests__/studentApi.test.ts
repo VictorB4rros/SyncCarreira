@@ -80,6 +80,15 @@ describe('endpoints do aluno', () => {
     expect(data).toEqual({ recommendedAreas: ['EXATAS'], score: null, areaScores: [], careerLinks: [], universityAccessLinks: [] })
   })
 
+  it('dúvida: POST sinaliza e DELETE desfaz em /journey/doubt', async () => {
+    http.post.mockResolvedValue({ data: { studentId: 7, inDoubt: true, doubtFlaggedAt: '2026-10-25T13:00:00Z' } })
+    http.delete.mockResolvedValue({ status: 204, data: '' })
+    await api.flagDoubt()
+    await expect(api.unflagDoubt()).resolves.toBeUndefined()
+    expect(http.post).toHaveBeenCalledWith('/journey/doubt')
+    expect(http.delete).toHaveBeenCalledWith('/journey/doubt')
+  })
+
   it('PDF da jornada usa o helper de download com nome padrão', async () => {
     downloadFile.mockResolvedValue('jornada-1.pdf')
     await api.downloadJourneyPdf(11, 1)

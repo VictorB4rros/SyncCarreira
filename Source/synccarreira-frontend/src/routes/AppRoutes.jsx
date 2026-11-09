@@ -18,6 +18,7 @@ import StudentProfilePage from '../pages/Perfil/StudentProfilePage.jsx'
 import StudentProfileGate from '../pages/Perfil/StudentProfileGate.jsx'
 import ProgressDashboardPage from '../pages/Psicologas/ProgressDashboardPage.jsx'
 import PsychologistClassesPage from '../pages/Psicologas/PsychologistClassesPage.jsx'
+import PsychologistTrailsPage from '../pages/Psicologas/PsychologistTrailsPage.jsx'
 import JourneyPanoramaPage from '../pages/Jornada/JourneyPanoramaPage.jsx'
 import PsychologistPortalLayout from '../pages/Psicologas/PsychologistPortalLayout.jsx'
 import { isAdministrator, isPsychologist } from '../utils/roles.js'
@@ -118,6 +119,8 @@ export default function AppRoutes() {
             }>
                 <Route index element={<ProgressDashboardPage />} />
                 <Route path="turmas" element={<PsychologistClassesPage />} />
+                {/* UC05: consulta somente leitura do banco de questões das trilhas */}
+                <Route path="trilhas" element={<PsychologistTrailsPage />} />
                 <Route path="agenda" element={<AgendamentosPage />} />
                 <Route path="conteudos" element={<InformationLinkManagementPage />} />
                 <Route path="alunos/:id" element={<StaffRoute><StudentDetailPage /></StaffRoute>} />
