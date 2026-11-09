@@ -9,7 +9,7 @@ Este capítulo encerra o documento com a avaliação do projeto como um todo. Re
 
 O projeto teve como objetivo geral desenvolver o \textit{SyncCarreira}, uma plataforma no modelo \textit{Software as a Service} destinada à automação e à gestão dos processos de orientação vocacional em instituições de ensino. A versão desenvolvida encontra-se em execução em ambiente de nuvem, acessível pelo domínio próprio do projeto, e atende aos três perfis previstos: o Administrador, que configura as instituições, as turmas e as contas; o profissional de orientação, que acompanha os alunos e conduz os atendimentos; e o aluno, protagonista da jornada.
 
-Do ponto de vista do aluno, a plataforma estrutura o processo de escolha profissional em trilhas sequenciais, com registro obrigatório de uma síntese ao final de cada uma, e apresenta, ao término da jornada, um leque de áreas e carreiras acompanhado de aviso explícito de que não se trata de diagnóstico. Do ponto de vista do profissional de orientação, o sistema substitui o acompanhamento manual por um painel por turma, preservando o sigilo das respostas individuais, sinaliza automaticamente os alunos que permanecem em dúvida e reúne em um único ambiente o agendamento de sessões, o envio de \textit{feedback}, a curadoria de fontes externas e a emissão de relatórios. O \autoref{quadro-objetivos} sintetiza o atendimento a cada objetivo específico.
+Do ponto de vista do aluno, a plataforma estrutura o processo de escolha profissional em trilhas sequenciais, com registro obrigatório de uma síntese ao final de cada uma, e apresenta, ao término da jornada, um leque de áreas e carreiras acompanhado de aviso explícito de que não se trata de diagnóstico. Do ponto de vista do profissional de orientação, o sistema oferece um painel por turma que apoia o acompanhamento, preservando o sigilo das respostas individuais, destaca os alunos que declaram permanecer em dúvida e reúne em um único ambiente o agendamento de sessões, o envio de \textit{feedback}, a curadoria de fontes externas e a emissão de relatórios. O \autoref{quadro-objetivos} sintetiza o atendimento a cada objetivo específico.
 
 {\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
@@ -27,13 +27,13 @@ Do ponto de vista do aluno, a plataforma estrutura o processo de escolha profiss
 \multicolumn{3}{@{}r@{}}{\textit{(continua)}} \\
 \endfoot
 \endlastfoot
-Estruturar a jornada do aluno em trilhas sequenciais e obrigatórias & Atendido & Liberação de cada trilha condicionada à conclusão da anterior, com síntese final ao término da jornada. \\
+Estruturar a jornada do aluno em quatro trilhas sequenciais e obrigatórias, seguidas da síntese final & Atendido & Liberação de cada trilha condicionada à conclusão da anterior; síntese final disponível após a trilha de Informação. \\
 \hline
 Assegurar a autonomia do estudante por meio do registro obrigatório de sínteses & Atendido & Síntese textual livre ao final de cada trilha. \\
 \hline
 Fornecer ao profissional de orientação um painel de acompanhamento por turma, com sigilo das respostas & Atendido & Painel com indicadores e progresso por trilha, sem exibição do conteúdo das respostas. \\
 \hline
-Sinalizar automaticamente os alunos em dúvida e priorizá-los para atendimento & Atendido & Destaque no painel, aviso por e-mail ao profissional e filtro no agendamento. \\
+Permitir que o aluno sinalize dúvida ao concluir a jornada, alertando o profissional e priorizando seu atendimento & Atendido & Destaque no painel, aviso por e-mail ao profissional e filtro de alunos em dúvida no agendamento. \\
 \hline
 Viabilizar o agendamento de sessões com notificação pelo Google Calendar & Atendido & Sessões individuais ou em grupo, com convite e videoconferência. \\
 \hline
@@ -45,15 +45,31 @@ Disponibilizar o histórico de respostas e sínteses, inclusive de jornadas ante
 \hline
 Permitir a gestão de múltiplas instituições com isolamento dos dados & Parcial & Isolamento de alunos, painel e sessões; \textit{links} de informação compartilhados entre instituições. \\
 \hline
-Garantir a conformidade com a LGPD, com criptografia de dados sensíveis e exclusão de dados & Parcial & Exclusão definitiva implementada; apenas as senhas são protegidas por função de \textit{hash}. \\
+Adotar medidas de proteção de dados pessoais compatíveis com a LGPD & Atendido & Controle de acesso por perfil, senhas protegidas por função de \textit{hash}, criptografia em repouso do banco de dados e exclusão definitiva dos dados. \\
+\hline
+Levantar e formalizar os requisitos junto à psicóloga parceira & Atendido & Documento de Requisitos aprovado pelas partes. \\
+\hline
+Desenvolver a API e o banco de dados da plataforma & Atendido & Regras de negócio, controle de acesso por perfil e verificação do escopo institucional em cada serviço. \\
+\hline
+Desenvolver a aplicação \textit{web} responsiva, com as interfaces dos três perfis & Atendido & Interfaces dos três perfis; pontuação de acessibilidade entre 94 e 100 na ferramenta Lighthouse nas telas principais. \\
+\hline
+Implantar a plataforma em nuvem, acessível por domínio próprio & Atendido & Implantação na AWS, com acesso pelo domínio synccarreira.com.br. \\
+\hline
+Verificar o código por testes automatizados, com cobertura mínima de 80\% & Atendido & Cobertura de 89,3\% registrada na análise estática. \\
+\hline
+Submeter o código a análise estática contínua, com aprovação no critério de qualidade & Atendido & Aprovação no \textit{quality gate} do SonarCloud. \\
+\hline
+Coletar a avaliação da psicóloga parceira sobre a aplicação & Parcial & Aplicação apresentada à parceira, que concordou com a organização da jornada e indicou sua utilidade também para mentores(as) educacionais; sem avaliação formal registrada. \\
 \hline
 \end{xltabular}
 \legend{Fonte: Autoria própria (2026).}
 }
 
-Dos dez objetivos específicos, oito foram plenamente atendidos e dois o foram parcialmente, o que permite concluir que o objetivo geral foi alcançado: a plataforma digitaliza a jornada de escolha profissional e oferece ao profissional de orientação as ferramentas de acompanhamento previstas. As lacunas remanescentes — a criptografia dos dados sensíveis e o isolamento completo das fontes de informação por instituição — não comprometem o fluxo principal de uso, mas devem ser tratadas antes da adoção da plataforma em larga escala, dada a natureza dos dados de estudantes menores de idade.
+Dos dezessete objetivos específicos, quinze foram atendidos e dois o foram parcialmente. Nos termos em que foi definido, o objetivo geral foi alcançado: a plataforma foi desenvolvida, implantada em ambiente de nuvem, verificada por testes automatizados e por análise estática e apresentada à parceira do projeto, que acompanhou a definição do processo digitalizado. As lacunas remanescentes --- o isolamento das fontes de informação por instituição e o registro formal da avaliação da parceira --- não comprometem o fluxo principal de uso.
 
-No plano técnico, a arquitetura em camadas, a separação entre a aplicação \textit{web} e a API, a integração contínua com testes automatizados e a análise estática do código resultaram em uma base de código com cobertura de testes de 89,3\%, aprovada no critério de qualidade adotado, o que favorece a manutenção e a evolução da plataforma. Durante o refinamento do escopo, a equipe optou por não incorporar à primeira versão funcionalidades de automação baseadas em Inteligência Artificial, priorizando a clareza do fluxo de navegação e a curadoria de conteúdo pelo profissional de orientação, de modo a concentrar o esforço nas funcionalidades essenciais ao processo de orientação.
+Os resultados, contudo, devem ser lidos com cautela. Não foi realizada avaliação com profissionais de orientação e estudantes em uso real, de modo que a usabilidade da plataforma para esses usuários e seus efeitos sobre o acompanhamento vocacional não foram medidos. O trabalho demonstra, portanto, a viabilidade técnica da proposta, e não o seu impacto, que depende de avaliação em instituições parceiras antes da adoção da plataforma em larga escala, dada a natureza dos dados de estudantes menores de idade.
+
+No plano técnico, a arquitetura em camadas, a separação entre a aplicação \textit{web} e a API, a integração contínua com testes automatizados e a análise estática do código resultaram em uma base de código com cobertura de testes de 89,3\%, aprovada no critério de qualidade adotado, o que favorece a manutenção e a evolução da plataforma.
 
 \section{Dificuldades Encontradas}
 
@@ -73,17 +89,31 @@ Ao longo do desenvolvimento, a equipe enfrentou dificuldades de natureza conceit
 
 \section{Trabalhos Futuros}
 
-A versão desenvolvida constitui uma base funcional para a evolução do \textit{SyncCarreira}. Como continuidade do trabalho, propõem-se as seguintes melhorias e ampliações:
+A versão desenvolvida constitui uma base funcional para a evolução do \textit{SyncCarreira}. Como continuidade do trabalho, propõem-se melhorias organizadas por prioridade.
+
+No curto prazo, como requisitos para o uso da plataforma em instituições parceiras:
 
 \begin{itemize}
   \item \textbf{proteção de dados}: criptografar por coluna as respostas, as sínteses e os perfis dos alunos, implementar o fluxo de aceite do termo de consentimento e mover o armazenamento do \textit{token} de acesso para um mecanismo menos exposto a \textit{scripts};
-  \item \textbf{gestão de acesso}: permitir a recuperação de senha pelo próprio usuário e o reenvio do \textit{link} de primeiro acesso, tornar opcional o registro profissional para mentores, bloquear o acesso de profissionais com contrato vencido e vincular os \textit{links} de informação a cada instituição;
-  \item \textbf{gestão do banco de questões}: oferecer na aplicação \textit{web} a consulta e a manutenção das questões e de seus pesos pelo profissional de orientação, preservando a validação prevista nas regras de negócio;
-  \item \textbf{infraestrutura e operação}: automatizar a implantação por meio de entrega contínua, persistir a chave de assinatura dos \textit{tokens}, adotar monitoramento e redundância, medir formalmente o desempenho e a disponibilidade e migrar a infraestrutura para a região sa-east-1, em São Paulo, mantendo os dados armazenados no Brasil;
-  \item \textbf{qualidade}: incluir testes automatizados na aplicação \textit{web} e tratar os apontamentos pendentes da análise estática;
-  \item \textbf{apoio à análise das sínteses}: empregar Inteligência Artificial generativa para auxiliar o profissional de orientação na leitura das sínteses dos alunos, por meio de resumos e da identificação de temas recorrentes, sem gerar diagnósticos e sempre sob supervisão do profissional;
+  \item \textbf{abrangência e isolamento}: tornar opcional o registro profissional, de modo a permitir o cadastro de mentores(as) educacionais, e vincular os \textit{links} de informação a cada instituição;
+  \item \textbf{autenticação}: persistir a chave de assinatura dos \textit{tokens} e limitar as tentativas de autenticação, como proteção contra ataques de força bruta.
+\end{itemize}
+
+No médio prazo, voltados à operação e à qualidade:
+
+\begin{itemize}
+  \item \textbf{validação com usuários}: avaliar a plataforma junto a profissionais de orientação e estudantes em uso real, de modo a mensurar sua usabilidade e seus efeitos sobre o acompanhamento vocacional e orientar as próximas versões;
+  \item \textbf{infraestrutura e operação}: automatizar a implantação por meio de entrega contínua, adotar monitoramento e redundância, medir formalmente o desempenho e a disponibilidade e migrar a infraestrutura para a região sa-east-1, em São Paulo, mantendo os dados armazenados no Brasil;
+  \item \textbf{qualidade}: incluir testes ponta a ponta dos fluxos críticos, executar os testes da aplicação \textit{web} na integração contínua e tratar os apontamentos pendentes da análise estática;
+  \item \textbf{gestão de acesso}: permitir a recuperação de senha pelo próprio usuário e o reenvio do \textit{link} de primeiro acesso, bloquear o acesso ao painel de profissionais com contrato vencido e substituir a concessão por senha pelo fluxo de código de autorização com PKCE, em conformidade com as boas práticas atuais de segurança do OAuth 2.0, que desaconselham aquela concessão \cite{lodderstedt2025rfc9700};
+  \item \textbf{gestão do banco de questões}: permitir a manutenção das questões e de seus pesos pelo profissional de orientação na aplicação \textit{web}, preservando a validação prevista nas regras de negócio.
+\end{itemize}
+
+No longo prazo, voltados à ampliação do produto:
+
+\begin{itemize}
+  \item \textbf{apoio à análise das sínteses}: empregar Inteligência Artificial generativa para auxiliar o profissional de orientação na leitura das sínteses dos alunos, por meio de resumos e da identificação de temas recorrentes, sem gerar diagnósticos e sempre sob supervisão do profissional. Por envolver textos escritos por estudantes, em sua maioria menores de idade, essa funcionalidade exigiria avaliação de impacto à proteção de dados, observância do melhor interesse do titular, previsto na LGPD \cite{brasil2018lgpd}, e das obrigações do Estatuto Digital da Criança e do Adolescente \cite{brasil2025lei15211}, além da garantia contratual de que os textos não sejam utilizados pelo provedor do modelo para outras finalidades;
   \item \textbf{internacionalização}: disponibilizar a plataforma em outros idiomas, ampliando seu alcance;
   \item \textbf{novos públicos}: adaptar as trilhas e o banco de questões para estudantes do ensino superior, apoiando decisões de reorientação de curso e de inserção profissional;
-  \item \textbf{ampliação do produto}: desenvolver aplicativos móveis nativos, integrar a plataforma a sistemas de gestão acadêmica e ambientes virtuais de aprendizagem e implementar o módulo de faturamento necessário à oferta comercial no modelo SaaS;
-  \item \textbf{validação com usuários}: avaliar a plataforma junto a profissionais de orientação e estudantes em uso real, de modo a mensurar seus efeitos sobre o acompanhamento vocacional e orientar as próximas versões.
+  \item \textbf{ampliação do produto}: desenvolver aplicativos móveis nativos, integrar a plataforma a sistemas de gestão acadêmica e ambientes virtuais de aprendizagem e implementar o módulo de faturamento necessário à oferta comercial no modelo SaaS.
 \end{itemize}
