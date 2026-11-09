@@ -399,7 +399,7 @@ Amazon S3 e CloudFront & Arquivos estáticos da aplicação \textit{web} & Volum
 \hline
 Domínio synccarreira.com.br & Registro anual no Registro.br & R\$ 40,00 por ano $\div$ 12 \cite{homehost2026dominio} & 3,33 \\
 \hline
-Brevo & Plano pago de envio de e-mails transacionais & Valor mensal contratado: R\$ 40,00 & 40,00 \\
+Brevo & Plano Starter, a partir de 5.000 e-mails por mês & Valor mensal contratado: R\$ 40,00 & 40,00 \\
 \hline
 \textbf{Total} &  &  & \textbf{189,62} \\
 \hline
@@ -407,7 +407,7 @@ Brevo & Plano pago de envio de e-mails transacionais & Valor mensal contratado: 
 \legend{Fonte: Autoria própria (2026).}
 }
 
-O custo estimado de operação é, portanto, de aproximadamente R\$ 189,62 por mês, ou R\$ 2.275,44 por ano. O banco de dados gerenciado responde por cerca de 43\% desse valor; a instância da API, somada ao seu armazenamento e ao endereço público, por cerca de 34\%; e o serviço de envio de e-mails, por cerca de 21\%.
+O custo estimado de operação é, portanto, de aproximadamente R\$ 189,62 por mês, ou R\$ 2.275,44 por ano. O banco de dados gerenciado responde por cerca de 43\% desse valor; a instância da API, somada ao seu armazenamento e ao endereço público, por cerca de 34\%; e o serviço de envio de e-mails, por cerca de 21\%. A equipe optou pelo plano pago da Brevo porque o plano gratuito limita o envio a 300 e-mails por dia \cite{brevo2026planos}, o que restringiria, por exemplo, o cadastro de várias turmas no mesmo dia: três turmas de 120 alunos geram 360 mensagens de primeiro acesso.
 
 Dois aspectos complementam a estimativa. Quanto aos tributos, os serviços da AWS são faturados a clientes no Brasil pela Amazon AWS Serviços Brasil Ltda., em reais, com a incidência de PIS e COFINS, à alíquota combinada de 9,25\%, e de ISS, à alíquota de 2,9\% \cite{aws2026tributos}; aplicadas aos itens da AWS, essas alíquotas elevam o custo mensal para cerca de R\$ 207,39. Quanto às cópias de segurança, o armazenamento das cópias automáticas do banco de dados não gera custo adicional enquanto não ultrapassar o tamanho do armazenamento provisionado da instância \cite{luo2022rdsbackup}, condição atendida pelo volume de dados da plataforma; a instância da API, por sua vez, não armazena dados e dispensa cópias de segurança próprias.
 
