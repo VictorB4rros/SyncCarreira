@@ -116,7 +116,8 @@ function OptionWeights({ option }) {
 function QuestionCard({ question, number }) {
   const options = question.options ?? []
   const limit = selectionLimit(question)
-  const limitText = limit ? ` Limite: ${limit} ${limit === 1 ? 'opção' : 'opções'}.` : ''
+  const limitUnit = limit === 1 ? 'opção' : 'opções'
+  const limitText = limit ? ` Limite: ${limit} ${limitUnit}.` : ''
   const emptyText = question.questionType === 'ABERTA'
     ? 'Pergunta aberta: não tem opções nem peso por área.'
     : 'Nenhuma opção cadastrada.'
