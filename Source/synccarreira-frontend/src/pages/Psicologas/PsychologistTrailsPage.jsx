@@ -3,7 +3,6 @@
  * @description — psico consulta o banco de questões das trilhas (somente leitura).
  */
 
-
 import { useEffect, useMemo, useState } from 'react'
 import { getQuestionBank } from '../../services/questionBankService.js'
 import './PsychologistTrailsPage.css'
@@ -117,6 +116,7 @@ function OptionWeights({ option }) {
 function QuestionCard({ question, number }) {
   const options = question.options ?? []
   const limit = selectionLimit(question)
+  const limitText = limit ? ` Limite: ${limit} ${limit === 1 ? 'opção' : 'opções'}.` : ''
   const emptyText = question.questionType === 'ABERTA'
     ? 'Pergunta aberta: não tem opções nem peso por área.'
     : 'Nenhuma opção cadastrada.'
@@ -129,7 +129,7 @@ function QuestionCard({ question, number }) {
           <span className="psy-qb-type">{TYPE_LABELS[question.questionType] ?? question.questionType}</span>
           <span className="psy-qb-question__hint">
             {TYPE_HINTS[question.questionType] ?? ''}
-            {limit ? ` Limite: ${limit} ${limit === 1 ? 'opção' : 'opções'}.` : ''}
+            {limitText}
           </span>
         </div>
       </header>
