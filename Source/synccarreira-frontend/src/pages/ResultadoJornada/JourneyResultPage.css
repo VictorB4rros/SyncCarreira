@@ -9,6 +9,15 @@
 .journey-result-hero h1 { max-width: 650px; margin: 10px 0 8px; color: #24203b; font-size: clamp(28px, 4vw, 38px); line-height: 1.12; }
 .journey-result-hero > p { max-width: 620px; margin: 0; color: #66627a; font-size: 15px; line-height: 1.6; }
 .journey-result-hero__date { display: inline-block; margin-top: 18px; color: #77728c; font-size: 12px; }
+.journey-result-hero__actions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px; margin-top: 18px; }
+.journey-result-pdf { display: inline-flex; min-height: 42px; align-items: center; gap: 8px; padding: 0 16px; border: 1px solid #6c47ff; border-radius: 10px; background: #fff; color: #5535e0; font-size: 13px; font-weight: 700; cursor: pointer; }
+.journey-result-pdf:hover:not(:disabled) { background: #6c47ff; color: #fff; }
+.journey-result-pdf:disabled { cursor: progress; opacity: .65; }
+.journey-result-pdf:focus-visible { outline: 3px solid #6c47ff40; outline-offset: 2px; }
+.journey-result-pdf svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.journey-result-pdf__message { font-size: 12px; }
+.journey-result-pdf__message--success { color: #047857; }
+.journey-result-pdf__message--error { color: #b91c1c; }
 .journey-result-disclaimer { display: flex; gap: 14px; margin-top: 18px; padding: 18px 20px; border: 1px solid #e8d9ad; border-radius: 13px; background: #fffaf0; }
 .journey-result-disclaimer__mark { display: grid; width: 28px; height: 28px; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #f5e8c6; color: #836522; font-family: Georgia, serif; font-weight: 700; }
 .journey-result-disclaimer strong { color: #604d24; font-size: 13px; }

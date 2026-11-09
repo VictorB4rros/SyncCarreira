@@ -6,7 +6,7 @@ import './PsychologistPortalLayout.css'
 const navigation = [
   { to: '/psicologa', label: 'Visão geral', icon: 'dashboard', end: true },
   { to: '/psicologa/turmas', label: 'Turmas', icon: 'users' },
-  { to: '/psicologa#pd-stages', label: 'Trilhas', icon: 'book', anchor: true },
+  { to: '/psicologa/trilhas', label: 'Trilhas', icon: 'list' },
   { to: '/psicologa#pd-guidance', label: 'Orientações', icon: 'shield', anchor: true },
   { to: '/psicologa#pd-reports', label: 'Relatórios', icon: 'chart', anchor: true },
   { to: '/psicologa/agenda', label: 'Agenda', icon: 'calendar' },
@@ -20,6 +20,7 @@ function PortalIcon({ name, size = 18 }) {
     users: <><path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="10" cy="7" r="4" /><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" /></>,
     chart: <><path d="M3 3v18h18" /><path d="m19 9-5 5-4-4-5 5" /></>,
     calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 11h18" /></>,
+    list: <><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4.5" cy="6" r="1.2" /><circle cx="4.5" cy="12" r="1.2" /><circle cx="4.5" cy="18" r="1.2" /></>,
     book: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" /></>,
     close: <><path d="m18 6-12 12M6 6l12 12" /></>,
     shield: <><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" /><path d="m9 12 2 2 4-4" /></>,
@@ -49,7 +50,7 @@ function isActiveItem(item, location) {
 
 const HASH_TITLES = {
   '#pd-students': 'Turmas',
-  '#pd-stages': 'Trilhas',
+  '#pd-stages': 'Monitoramento da jornada',
   '#pd-guidance': 'Orientações',
   '#pd-reports': 'Relatórios',
 }
@@ -58,6 +59,7 @@ function resolvePageTitle(location) {
   const { pathname, hash } = location
   if (pathname.endsWith('/agenda')) return 'Agenda'
   if (pathname.endsWith('/turmas')) return 'Turmas'
+  if (pathname.endsWith('/trilhas')) return 'Banco de questões'
   if (pathname.endsWith('/conteudos')) return 'Conteúdos'
   if (pathname.endsWith('/alunos') || pathname.includes('/alunos/')) return 'Alunos e turmas'
   return HASH_TITLES[hash] ?? 'Visão geral'

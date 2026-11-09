@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import AppHeader from '../../components/AppHeader/AppHeader.jsx'
 import { useAuth } from '../../context/AuthContext.jsx'
 import { getAnswers, getMySyntheses, getQuestionsByTrail, getTrails } from '../../services/trailService.js'
-import { getMyCurrentJourneyStatus, getMyJourneyHistory } from '../../services/journeyHistoryService.js'
+import { getMyCurrentJourneyStatus, getMyJourneyHistory, getMyJourneyResult } from '../../services/journeyHistoryService.js'
 import './JourneyPanoramaPage.css'
 
 const TRAIL_NAMES = {
@@ -114,15 +114,70 @@ function TrailMemory({ trail, index, isLast }) {
   )
 }
 
-function PastJourney({ journey }) {
-  const areas = journey.highestScoreAreas ?? []
-  const scores = [
+/** Mesmo formato do leque (JourneyResultPage): pt-BR, até 1 casa decimal. */
+function formatPercentage(value) {
+  return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(Number(value ?? 0))
+}
+
+function formatPoints(value) {
+  return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(Number(value ?? 0))
+}
+
+/**
+ * Afinidade por área de uma jornada concluída.
+ *
+ * O JourneyRecordDTO só traz a pontuação BRUTA de cada área (humanitiesScore etc.), que não é comparável
+ * entre áreas porque cada uma tem um máximo diferente. Os percentuais vêm do resultado da jornada
+ * (GET /journeys/me/{id}/result), a mesma fonte do leque: assim os números ficam idênticos aos do leque.
+ * Se o resultado não carregar, mostramos a pontuação bruta como "pts" — nunca com "%".
+ */
+function PastJourneyScores({ journey, resultState }) {
+  if (resultState?.status === 'loading' || !resultState) {
+    return <p className="jp-score-note" role="status">Calculando a afinidade desta jornada…</p>
+  }
+
+  if (resultState.status === 'ready') {
+    const scores = resultState.result.scores ?? []
+    if (!scores.length) return null
+    return (
+      <div className="jp-score-list" aria-label="Afinidade por área (percentual do máximo possível)">
+        {scores.map(score => (
+          <div key={score.area} className={score.highlighted ? 'jp-score--highlighted' : undefined}>
+            <span>{score.areaName || AREA_NAMES[score.area] || score.area}</span>
+            <strong>{formatPercentage(score.percentage)}%</strong>
+          </div>
+        ))}
+      </div>
+    )
+  }
+
+  const rawScores = [
     { label: 'Ciências Humanas', value: journey.humanitiesScore },
     { label: 'Ciências Exatas', value: journey.exactSciencesScore },
     { label: 'Ciências Biológicas', value: journey.biologicalSciencesScore },
     { label: 'Artes', value: journey.artsScore },
-  ]
-    .filter(item => item.value !== null && item.value !== undefined)
+  ].filter(item => item.value !== null && item.value !== undefined)
+
+  if (!rawScores.length) return null
+  return (
+    <>
+      <div className="jp-score-list" aria-label="Pontuação por área">
+        {rawScores.map(score => (
+          <div key={score.label}>
+            <span>{score.label}</span><strong>{formatPoints(score.value)} pts</strong>
+          </div>
+        ))}
+      </div>
+      <p className="jp-score-note">Não foi possível calcular a afinidade em % agora; exibindo a pontuação de cada área.</p>
+    </>
+  )
+}
+
+function PastJourney({ journey, resultState }) {
+  // Áreas em destaque: as do resultado (mesma regra do leque); o histórico é o fallback
+  const areas = resultState?.status === 'ready'
+    ? (resultState.result.highlightedAreas ?? [])
+    : (journey.highestScoreAreas ?? [])
 
   return (
     <article className="jp-past-card">
@@ -141,15 +196,7 @@ function PastJourney({ journey }) {
             {areas.map(area => <span key={area}>{AREA_NAMES[area] ?? area}</span>)}
           </div>
         )}
-        {scores.length > 0 && (
-          <div className="jp-score-list">
-            {scores.map(score => (
-              <div key={score.label}>
-                <span>{score.label}</span><strong>{Math.round(Number(score.value) * 10) / 10}%</strong>
-              </div>
-            ))}
-          </div>
-        )}
+        <PastJourneyScores journey={journey} resultState={resultState} />
       </div>
     </article>
   )
@@ -170,6 +217,8 @@ export default function JourneyPanoramaPage() {
   const { user } = useAuth()
   const [currentJourney, setCurrentJourney] = useState(null)
   const [pastJourneys, setPastJourneys] = useState([])
+  // Resultado (afinidade em %) de cada jornada concluída, por id: { status: 'loading' | 'ready' | 'error', result? }
+  const [pastResults, setPastResults] = useState({})
   const [historyError, setHistoryError] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -210,10 +259,21 @@ export default function JourneyPanoramaPage() {
 
         if (active) {
           setCurrentJourney({ ...status, trails: detailedTrails })
+          let history = []
           try {
-            setPastJourneys(await getMyJourneyHistory())
+            history = await getMyJourneyHistory()
+            if (active) setPastJourneys(history)
           } catch {
-            setHistoryError('Não foi possível carregar o resumo das jornadas anteriores.')
+            if (active) setHistoryError('Não foi possível carregar o resumo das jornadas anteriores.')
+          }
+          if (active && history.length) {
+            setPastResults(Object.fromEntries(history.map(journey => [journey.id, { status: 'loading' }])))
+            // Cada jornada carrega o próprio resultado: uma falha não esconde as demais
+            history.forEach(journey => {
+              getMyJourneyResult(journey.id)
+                .then(result => { if (active) setPastResults(prev => ({ ...prev, [journey.id]: { status: 'ready', result } })) })
+                .catch(() => { if (active) setPastResults(prev => ({ ...prev, [journey.id]: { status: 'error' } })) })
+            })
           }
         }
       } catch (loadError) {
@@ -269,7 +329,7 @@ export default function JourneyPanoramaPage() {
               {!historyError && pastJourneys.length === 0 && (
                 <div className="jp-past-empty">Quando você concluir outras jornadas, elas ficarão guardadas aqui.</div>
               )}
-              {pastJourneys.map(journey => <PastJourney key={journey.id} journey={journey} />)}
+              {pastJourneys.map(journey => <PastJourney key={journey.id} journey={journey} resultState={pastResults[journey.id]} />)}
             </section>
           </>
         )}

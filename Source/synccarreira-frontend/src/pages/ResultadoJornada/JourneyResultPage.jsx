@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import AppHeader from '../../components/AppHeader/AppHeader.jsx'
 import { getCurrentJourneyResult } from '../../services/journeyResultService.js'
+import { downloadMyJourneyPdf } from '../../services/journeyHistoryService.js'
 import './JourneyResultPage.css'
 
 const AREA_LABELS = {
@@ -36,6 +37,8 @@ export default function JourneyResultPage() {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [downloading, setDownloading] = useState(false)
+  const [pdfMessage, setPdfMessage] = useState(null)
 
   useEffect(() => {
     let current = true
@@ -49,6 +52,21 @@ export default function JourneyResultPage() {
 
     return () => { current = false }
   }, [])
+
+  /** RF-15: o PDF é o da jornada exibida no leque (GET /journeys/me/{journeyId}/pdf). */
+  async function handleDownloadPdf() {
+    if (!result?.journeyId) return
+    setDownloading(true)
+    setPdfMessage(null)
+    try {
+      await downloadMyJourneyPdf(result.journeyId, result.journeyNumber)
+      setPdfMessage({ tone: 'success', text: 'Download do PDF iniciado.' })
+    } catch (downloadError) {
+      setPdfMessage({ tone: 'error', text: downloadError.message })
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   const scores = result?.scores ?? []
   const suggestions = result?.suggestions ?? []
@@ -79,6 +97,25 @@ export default function JourneyResultPage() {
               {formattedDate(result.concludedAt) && (
                 <span className="journey-result-hero__date">Concluída em {formattedDate(result.concludedAt)}</span>
               )}
+              <div className="journey-result-hero__actions">
+                <button
+                  type="button"
+                  className="journey-result-pdf"
+                  onClick={handleDownloadPdf}
+                  disabled={downloading || !result.journeyId}
+                >
+                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
+                  {downloading ? 'Gerando PDF…' : 'Baixar PDF da jornada'}
+                </button>
+                {pdfMessage && (
+                  <span
+                    className={`journey-result-pdf__message journey-result-pdf__message--${pdfMessage.tone}`}
+                    role={pdfMessage.tone === 'error' ? 'alert' : 'status'}
+                  >
+                    {pdfMessage.text}
+                  </span>
+                )}
+              </div>
             </header>
 
             <aside className="journey-result-disclaimer" aria-label="Aviso sobre o resultado">
