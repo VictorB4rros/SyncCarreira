@@ -357,6 +357,48 @@ RNF-08 & Isolamento por instituição & Parcial & Isolamento de alunos, painel e
 \legend{Fonte: Autoria própria (2026).}
 }
 
+As situações registradas nos quadros são acompanhadas das evidências apresentadas a seguir, obtidas em 8 de novembro de 2026.
+
+A \autoref{fig_ev_swagger} apresenta a documentação da API publicada no ambiente de produção, gerada automaticamente no padrão OpenAPI e exibida pelo Swagger UI, em atendimento ao RNF-07. Os recursos são agrupados por módulo, com a descrição de cada operação.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Documentação da API no Swagger UI, no ambiente de produção.}
+    \label{fig_ev_swagger}
+    \fbox{\includegraphics[width=0.9\textwidth]{img/fig-cap5-swagger.png}}
+    \legend{Fonte: Autoria própria (2026).}
+\end{figure}
+
+A \autoref{fig_ev_actions} apresenta as execuções dos fluxos de integração contínua no GitHub Actions, que compilam o servidor e a aplicação \textit{web}, executam os testes automatizados e enviam o código para a análise estática a cada \textit{pull request} e a cada integração no ramo principal. Até a data da captura, haviam sido registradas 267 execuções.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Execuções dos fluxos de integração contínua no GitHub Actions.}
+    \label{fig_ev_actions}
+    \fbox{\includegraphics[width=0.95\textwidth]{img/fig-cap5-actions.png}}
+    \legend{Fonte: Autoria própria (2026).}
+\end{figure}
+
+A \autoref{fig_ev_jacoco} apresenta o relatório de cobertura gerado pelo JaCoCo na execução dos testes automatizados do servidor, por pacote. Na versão do ramo principal da data da captura, os testes cobrem 90\% das instruções e 84\% dos desvios condicionais do código analisado.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Relatório de cobertura dos testes do servidor gerado pelo JaCoCo.}
+    \label{fig_ev_jacoco}
+    \fbox{\includegraphics[width=1.0\textwidth]{img/fig-cap5-jacoco.png}}
+    \legend{Fonte: Autoria própria (2026).}
+\end{figure}
+
+Por fim, a \autoref{fig_ev_producao} apresenta a aplicação \textit{web} em execução no ambiente de produção, acessada pelo domínio próprio do projeto.
+
+\begin{figure}[htbp]
+    \centering
+    \caption{Aplicação \textit{web} em execução no ambiente de produção.}
+    \label{fig_ev_producao}
+    \fbox{\includegraphics[width=0.5\textwidth]{img/fig-cap5-producao.png}}
+    \legend{Fonte: Autoria própria (2026).}
+\end{figure}
+
 Em relação aos objetivos do projeto, a solução estrutura a jornada do aluno em trilhas sequenciais com registro obrigatório de sínteses, fornece ao profissional de orientação o acompanhamento por turma sem exposição do conteúdo das respostas, sinaliza ao profissional os alunos que declaram permanecer em dúvida, viabiliza o agendamento de sessões com convite automático, a curadoria de fontes externas, o envio de \textit{feedback} e a emissão de relatórios, e apresenta ao aluno um leque de possibilidades acompanhado de aviso explícito de que não se trata de diagnóstico. A gestão de múltiplas instituições com isolamento de dados e a exclusão definitiva de dados atendem às necessidades institucionais e às exigências da LGPD, com as ressalvas registradas na seção de limitações.
 
 A versão desenvolvida foi apresentada à parceira do projeto, para sua avaliação. A organização da jornada em quatro trilhas seguidas da síntese final foi acordada com a parceira, que indicou, na etapa final do projeto, que o sistema também seria útil para mentores(as) educacionais. Não foi realizada avaliação com profissionais de orientação e estudantes, de modo que a usabilidade e a utilidade do sistema para esses usuários ainda precisam ser verificadas em uso real.
