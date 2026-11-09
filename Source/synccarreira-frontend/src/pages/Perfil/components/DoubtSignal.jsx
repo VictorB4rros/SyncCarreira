@@ -10,6 +10,7 @@
  * de aparecer como prioritário para a psicóloga. Depois de desfazer, pode sinalizar de novo.
  */
 
+
 import { useEffect, useState } from 'react'
 import { getMyDoubt, flagMyDoubt, unflagMyDoubt } from '../../../services/journeyDoubtService.js'
 
@@ -44,7 +45,8 @@ export default function DoubtSignal({ journeyConcluded, onOpenSchedule }) {
     setSending(true)
     setError('')
     try {
-      setDoubt(await unflagMyDoubt())
+      await unflagMyDoubt()
+      setDoubt(prev => ({ ...prev, inDoubt: false, doubtFlaggedAt: null }))
       setConfirmingUndo(false)
       setNotice('Sinalização desfeita. Se precisar, você pode avisar a psicóloga novamente por aqui.')
     } catch (unflagError) {
@@ -84,7 +86,7 @@ export default function DoubtSignal({ journeyConcluded, onOpenSchedule }) {
           <h2 id="sp-doubt-title">Sua orientadora já sabe que você está com dúvida</h2>
           <p>
             Você avisou{doubt.doubtFlaggedAt ? ` em ${formatDateTime(doubt.doubtFlaggedAt)}` : ''}. Ela recebeu um e-mail e
-            pode marcar uma conversa com você. As sessões aparecem em “Agendamentos e feedbacks”.
+            pode marcar uma conversa com você. As sessões aparecem em “Agendamentos”.
           </p>
           {confirmingUndo && (
             <div className="sp-doubt__confirm">
@@ -152,7 +154,7 @@ export default function DoubtSignal({ journeyConcluded, onOpenSchedule }) {
             </div>
           </div>
         )}
-        {notice && !confirming && <p className="sp-message sp-message--success" role="status">{notice}</p>}
+        {notice && !confirming && <output className="sp-message sp-message--success">{notice}</output>}
         {error && <p className="sp-message sp-message--error" role="alert">{error}</p>}
       </div>
       {!confirming && (

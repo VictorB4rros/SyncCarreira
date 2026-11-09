@@ -123,6 +123,22 @@ function formatPoints(value) {
   return new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 1 }).format(Number(value ?? 0))
 }
 
+/** Busca o resultado de uma jornada concluída e entrega o estado (ready/error) a quem chamou. */
+function loadPastJourneyResult(journeyId, onSettled) {
+  return getMyJourneyResult(journeyId)
+    .then(result => onSettled({ status: 'ready', result }))
+    .catch(() => onSettled({ status: 'error' }))
+}
+
+/** Carrega o resultado de cada jornada; uma falha não esconde as demais. */
+function loadPastResults(history, isActive, setPastResults) {
+  history.forEach(journey => {
+    void loadPastJourneyResult(journey.id, state => {
+      if (isActive()) setPastResults(prev => ({ ...prev, [journey.id]: state }))
+    })
+  })
+}
+
 /**
  * Afinidade por área de uma jornada concluída.
  *
@@ -133,7 +149,7 @@ function formatPoints(value) {
  */
 function PastJourneyScores({ journey, resultState }) {
   if (resultState?.status === 'loading' || !resultState) {
-    return <p className="jp-score-note" role="status">Calculando a afinidade desta jornada…</p>
+    return <output className="jp-score-note">Calculando a afinidade desta jornada…</output>
   }
 
   if (resultState.status === 'ready') {
@@ -268,12 +284,7 @@ export default function JourneyPanoramaPage() {
           }
           if (active && history.length) {
             setPastResults(Object.fromEntries(history.map(journey => [journey.id, { status: 'loading' }])))
-            // Cada jornada carrega o próprio resultado: uma falha não esconde as demais
-            history.forEach(journey => {
-              getMyJourneyResult(journey.id)
-                .then(result => { if (active) setPastResults(prev => ({ ...prev, [journey.id]: { status: 'ready', result } })) })
-                .catch(() => { if (active) setPastResults(prev => ({ ...prev, [journey.id]: { status: 'error' } })) })
-            })
+            loadPastResults(history, () => active, setPastResults)
           }
         }
       } catch (loadError) {

@@ -80,7 +80,7 @@ export default function JourneyResultPage() {
         </button>
 
         {loading ? (
-          <div className="journey-result-state" role="status">Preparando seu resultado…</div>
+          <output className="journey-result-state">Preparando seu resultado…</output>
         ) : error ? (
           <section className="journey-result-state journey-result-state--error" role="alert">
             <span className="journey-result-state__icon" aria-hidden="true">i</span>
@@ -107,13 +107,15 @@ export default function JourneyResultPage() {
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
                   {downloading ? 'Gerando PDF…' : 'Baixar PDF da jornada'}
                 </button>
-                {pdfMessage && (
-                  <span
-                    className={`journey-result-pdf__message journey-result-pdf__message--${pdfMessage.tone}`}
-                    role={pdfMessage.tone === 'error' ? 'alert' : 'status'}
-                  >
+                {pdfMessage?.tone === 'error' && (
+                  <span className="journey-result-pdf__message journey-result-pdf__message--error" role="alert">
                     {pdfMessage.text}
                   </span>
+                )}
+                {pdfMessage?.tone === 'success' && (
+                  <output className="journey-result-pdf__message journey-result-pdf__message--success">
+                    {pdfMessage.text}
+                  </output>
                 )}
               </div>
             </header>

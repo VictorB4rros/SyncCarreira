@@ -12,6 +12,7 @@ vi.mock('../api/studentApi', async importOriginal => ({
   getJourneyHistory: vi.fn(),
   getMyDoubt: vi.fn(),
   flagDoubt: vi.fn(),
+  unflagDoubt: vi.fn(),
   startNewJourney: vi.fn(),
   downloadJourneyPdf: vi.fn(),
 }))
@@ -80,6 +81,20 @@ describe('ResultsPage', () => {
     expect(api.flagDoubt).toHaveBeenCalled()
     expect(await screen.findByText('Dúvida sinalizada')).toBeInTheDocument()
     expect(screen.getByText('Notificação enviada com sucesso')).toBeInTheDocument()
+  })
+
+  it('desfaz a sinalização de dúvida depois de confirmar', async () => {
+    vi.mocked(api.getMyDoubt).mockResolvedValue({ studentId: 7, inDoubt: true, doubtFlaggedAt: '2026-10-25T13:00:00Z' })
+    vi.mocked(api.unflagDoubt).mockResolvedValue(undefined)
+    renderPage()
+    expect(await screen.findByText('Dúvida sinalizada')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: /Desfazer sinalização/ }))
+    expect(api.unflagDoubt).not.toHaveBeenCalled()
+    const dialog = screen.getByRole('dialog', { name: 'Desfazer a sinalização de dúvida?' })
+    await userEvent.click(within(dialog).getByRole('button', { name: /Sim, desfazer/ }))
+    expect(api.unflagDoubt).toHaveBeenCalled()
+    expect(await screen.findByRole('button', { name: /Sinalizar dúvida/ })).toBeInTheDocument()
+    expect(screen.getByText('Sinalização desfeita')).toBeInTheDocument()
   })
 
   it('nova jornada pede confirmação antes de chamar a API', async () => {

@@ -21,6 +21,7 @@ import {
   RefreshCw,
   Shield,
   Star,
+  Undo2,
   Users,
 } from 'lucide-react'
 import {
@@ -33,6 +34,7 @@ import {
   getJourneyResult,
   getMyDoubt,
   startNewJourney,
+  unflagDoubt,
 } from '../api/studentApi'
 import {
   Alert,
@@ -268,10 +270,17 @@ function ResultView({ result, current }: { result: JourneyResultDTO; current: bo
   )
 }
 
+/**
+ * RF-04: sinalização de dúvida para a psicóloga.
+ * O aluno também pode DESFAZER a sinalização (enviada por engano ou porque mudou de ideia):
+ * autonomia sobre a própria sinalização (RN-02 / LGPD) e a psicóloga deixa de recebê-lo como prioritário.
+ */
 function DoubtCard() {
   const toast = useToast()
   const { data, error, loading, reload, setData } = useAsync<JourneyDoubtDTO>(getMyDoubt, [])
   const [sending, setSending] = useState(false)
+  const [confirmUndo, setConfirmUndo] = useState(false)
+  const [undoError, setUndoError] = useState('')
 
   async function handleFlag() {
     setSending(true)
@@ -290,6 +299,21 @@ function DoubtCard() {
     }
   }
 
+  async function handleUnflag() {
+    setSending(true)
+    setUndoError('')
+    try {
+      await unflagDoubt()
+      if (data) setData({ ...data, inDoubt: false, doubtFlaggedAt: null })
+      setConfirmUndo(false)
+      toast.success('Sinalização desfeita', 'Você não aparece mais nos alertas da psicóloga. Pode sinalizar de novo quando quiser.')
+    } catch (err) {
+      setUndoError(getErrorMessage(err, 'Não foi possível desfazer a sinalização.'))
+    } finally {
+      setSending(false)
+    }
+  }
+
   return (
     <Card className="flex flex-col gap-3 bg-gradient-to-br from-white to-surface-container-low">
       <CardTitle icon={HeartHandshake}>Apoio emocional</CardTitle>
@@ -302,9 +326,14 @@ function DoubtCard() {
       ) : error ? (
         <Alert tone="danger">{getErrorMessage(error, 'Não foi possível verificar a sinalização.')}</Alert>
       ) : data?.inDoubt ? (
-        <Alert tone="success" title="Dúvida sinalizada">
-          Você avisou a psicóloga em {formatDate(data.doubtFlaggedAt)}. Ela vai combinar uma conversa com você.
-        </Alert>
+        <>
+          <Alert tone="success" title="Dúvida sinalizada">
+            Você avisou a psicóloga em {formatDate(data.doubtFlaggedAt)}. Ela vai combinar uma conversa com você.
+          </Alert>
+          <Button variant="ghost" size="sm" icon={Undo2} onClick={() => { setUndoError(''); setConfirmUndo(true) }}>
+            Desfazer sinalização
+          </Button>
+        </>
       ) : (
         <>
           <Button icon={MessageCircle} loading={sending} onClick={() => void handleFlag()}>
@@ -313,6 +342,29 @@ function DoubtCard() {
           <p className="text-[11px] text-muted">As psicólogas da sua escola recebem um aviso por e-mail para agendar uma conversa.</p>
         </>
       )}
+
+      <Modal
+        open={confirmUndo}
+        onClose={() => !sending && setConfirmUndo(false)}
+        title="Desfazer a sinalização de dúvida?"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setConfirmUndo(false)} disabled={sending}>
+              Manter sinalização
+            </Button>
+            <Button icon={Undo2} loading={sending} onClick={() => void handleUnflag()}>
+              Sim, desfazer
+            </Button>
+          </>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <p>
+            Você deixa de aparecer nos alertas de orientação da psicóloga. Se mudar de ideia, é só sinalizar de novo por aqui.
+          </p>
+          {undoError && <Alert tone="danger">{undoError}</Alert>}
+        </div>
+      </Modal>
     </Card>
   )
 }

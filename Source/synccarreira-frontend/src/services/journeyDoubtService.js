@@ -33,8 +33,8 @@ export async function flagMyDoubt() {
 /** O aluno desfaz a própria sinalização (enviada por engano ou porque mudou de ideia). */
 export async function unflagMyDoubt() {
   try {
-    const { data } = await api.delete('/journey/doubt')
-    return data
+    // 204 No Content: não há corpo; quem chama atualiza o estado localmente
+    await api.delete('/journey/doubt')
   } catch (error) {
     const data = error.response?.data
     const wrapped = new Error(data?.error || data?.message || 'Não foi possível desfazer a sinalização agora. Tente novamente.')

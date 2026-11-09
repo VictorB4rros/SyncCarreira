@@ -3,6 +3,7 @@
  * @description — psico consulta o banco de questões das trilhas (somente leitura).
  */
 
+
 import { useEffect, useMemo, useState } from 'react'
 import { getQuestionBank } from '../../services/questionBankService.js'
 import './PsychologistTrailsPage.css'
@@ -102,18 +103,23 @@ function OptionWeights({ option }) {
     .map(area => ({ ...area, value: Number(option[area.field] ?? 0) }))
     .filter(area => area.value !== 0)
 
-  if (!weights.length) return <span className="psy-qb-weight psy-qb-weight--none">Sem peso</span>
+  const chips = weights.length
+    ? weights.map(area => (
+      <span key={area.key} className={`psy-qb-weight psy-qb-weight--${area.key.toLowerCase()}`}>
+        {area.label} {numberFormat.format(area.value)}
+      </span>
+    ))
+    : [<span key="none" className="psy-qb-weight psy-qb-weight--none">Sem peso</span>]
 
-  return weights.map(area => (
-    <span key={area.key} className={`psy-qb-weight psy-qb-weight--${area.key.toLowerCase()}`}>
-      {area.label} {numberFormat.format(area.value)}
-    </span>
-  ))
+  return <>{chips}</>
 }
 
 function QuestionCard({ question, number }) {
   const options = question.options ?? []
   const limit = selectionLimit(question)
+  const emptyText = question.questionType === 'ABERTA'
+    ? 'Pergunta aberta: não tem opções nem peso por área.'
+    : 'Nenhuma opção cadastrada.'
 
   return (
     <article className="psy-qb-question">
@@ -144,7 +150,7 @@ function QuestionCard({ question, number }) {
         </ol>
       ) : (
         <p className="psy-qb-question__empty">
-          {question.questionType === 'ABERTA' ? 'Pergunta aberta: não tem opções nem peso por área.' : 'Nenhuma opção cadastrada.'}
+          {emptyText}
         </p>
       )}
     </article>
@@ -259,7 +265,8 @@ export default function PsychologistTrailsPage() {
       {!loading && !error && bank && (
         <>
           <section className="psy-qb-toolbar" aria-label="Filtros do banco de questões">
-            <div className="psy-qb-tabs" role="group" aria-label="Filtrar por trilha">
+            <fieldset className="psy-qb-tabs">
+              <legend className="psy-sr-only">Filtrar por trilha</legend>
               <button type="button" aria-pressed={selected === ALL} onClick={() => setSelected(ALL)}>
                 Todas <span>{totalQuestions}</span>
               </button>
@@ -268,7 +275,7 @@ export default function PsychologistTrailsPage() {
                   {group.trail ? trailLabel(group.trail) : 'Sem trilha'} <span>{group.questions.length}</span>
                 </button>
               ))}
-            </div>
+            </fieldset>
             <label className="psy-qb-search">
               <span className="psy-sr-only">Buscar no enunciado ou nas opções</span>
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
@@ -290,9 +297,9 @@ export default function PsychologistTrailsPage() {
           </div>
 
           {normalizedQuery && (
-            <p className="psy-qb-results" role="status">
+            <output className="psy-qb-results">
               {visibleCount} {visibleCount === 1 ? 'pergunta encontrada' : 'perguntas encontradas'} para “{query.trim()}”.
-            </p>
+            </output>
           )}
 
           {visibleGroups.length > 0
