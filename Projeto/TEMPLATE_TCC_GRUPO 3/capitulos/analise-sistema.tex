@@ -110,7 +110,7 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
 
 \textit{Pós-condições:} conta criada com perfil de acesso definido e vinculada à instituição (profissional de orientação) ou à turma (aluno); mensagem de primeiro acesso enviada ao e-mail cadastrado.
 
-\textit{Fluxo principal:} (1) Administrador acessa a aba ``Usuários'' e seleciona o perfil desejado (Aluno ou Profissional de Orientação); (2) sistema exibe as contas cadastradas nesse perfil; (3) Administrador aciona o cadastro de nova conta; (4) sistema exibe o formulário correspondente ao perfil: para o profissional de orientação, nome, e-mail, número de registro no Conselho Regional de Psicologia (CRP), instituição e data de validade do contrato; para o aluno, nome, e-mail, ano escolar e tipo de escola; (5) Administrador preenche os campos e confirma; (6) sistema valida os dados, cria a conta com o perfil correspondente e envia ao e-mail informado uma mensagem de primeiro acesso com \textit{link} para definição de senha; (7) a nova conta passa a constar na listagem.
+\textit{Fluxo principal:} (1) Administrador acessa a aba ``Usuários'' e seleciona o perfil desejado (Aluno ou Profissional de Orientação); (2) sistema exibe as contas cadastradas nesse perfil; (3) Administrador aciona o cadastro de nova conta; (4) sistema exibe o formulário correspondente ao perfil: para o profissional de orientação, nome, e-mail, número de registro no Conselho Regional de Psicologia (CRP), obrigatório nesta versão, instituição e data de validade do contrato; para o aluno, nome, e-mail, ano escolar e tipo de escola; (5) Administrador preenche os campos e confirma; (6) sistema valida os dados, cria a conta com o perfil correspondente e envia ao e-mail informado uma mensagem de primeiro acesso com \textit{link} para definição de senha; (7) a nova conta passa a constar na listagem.
 
 \textit{Fluxos alternativos:}
 
@@ -127,6 +127,8 @@ A seguir, cada caso de uso é detalhado em ator, requisitos relacionados, pré-c
   \item FE02 – Profissional de orientação já cadastrado com o mesmo nome e CRP: o sistema informa a duplicidade.
   \item FE03 – Nenhuma instituição ativa ou turma cadastrada: o sistema orienta o cadastro prévio (UC01).
 \end{itemize}
+
+O registro no CRP é obrigatório nesta versão porque o sistema foi concebido para o acompanhamento realizado por psicólogos(as). Na etapa final do projeto, a parceira indicou que o sistema também seria útil para mentores(as) educacionais, o que motiva tornar esse campo opcional em versões futuras.
 
 \subsection*{UC03 -- Visualizar Painel de Progresso dos Alunos}\label{uc:uc03}
 

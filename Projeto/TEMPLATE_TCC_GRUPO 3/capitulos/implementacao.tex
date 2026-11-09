@@ -39,6 +39,8 @@ Navegadores & Google Chrome e Mozilla Firefox \\
 \hline
 Versionamento e integração contínua & Git e GitHub, com fluxos automatizados no GitHub Actions \\
 \hline
+Testes da aplicação \textit{web} & Vitest e Testing Library \\
+\hline
 Qualidade de código & SonarCloud e JaCoCo \\
 \hline
 \end{xltabular}
@@ -187,11 +189,11 @@ As credenciais do servidor de e-mail e as demais configurações dependentes do 
 
 \section{Testes Realizados}
 
-Os testes de \textit{software} têm como objetivo demonstrar que o programa faz o que se propõe a fazer e descobrir defeitos antes de seu uso, podendo ser conduzidos em diferentes níveis, desde componentes isolados até o sistema integrado \cite{sommerville2011}. No \textit{SyncCarreira}, os testes foram organizados em testes automatizados do servidor, análise estática contínua do código e testes manuais da API e da aplicação \textit{web}.
+Os testes de \textit{software} têm como objetivo demonstrar que o programa faz o que se propõe a fazer e descobrir defeitos antes de seu uso, podendo ser conduzidos em diferentes níveis, desde componentes isolados até o sistema integrado \cite{sommerville2011}. No \textit{SyncCarreira}, os testes foram organizados em testes automatizados do servidor e da aplicação \textit{web}, análise estática contínua do código e testes manuais da API e da aplicação \textit{web}.
 
 \subsection{Testes automatizados}
 
-Os testes automatizados do servidor foram escritos com o JUnit 5 e somam 44 classes de teste, com 470 métodos de teste, organizadas nos mesmos pacotes do código de produção. O \autoref{quadro-testes} apresenta sua distribuição por tipo.
+Os testes automatizados do servidor foram escritos com o JUnit 5 e somam 44 classes de teste, com 475 métodos de teste, organizadas nos mesmos pacotes do código de produção. O \autoref{quadro-testes} apresenta sua distribuição por tipo.
 
 {\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
@@ -209,11 +211,11 @@ Os testes automatizados do servidor foram escritos com o JUnit 5 e somam 44 clas
 \multicolumn{5}{@{}r@{}}{\textit{(continua)}} \\
 \endfoot
 \endlastfoot
-Unitários & 25 & 334 & JUnit 5 e Mockito & Verificar as regras de negócio dos serviços, o cálculo do leque, as entidades e os geradores de relatórios e documentos, com as dependências substituídas por objetos simulados. \\
+Unitários & 25 & 335 & JUnit 5 e Mockito & Verificar as regras de negócio dos serviços, o cálculo do leque, as entidades e os geradores de relatórios e documentos, com as dependências substituídas por objetos simulados. \\
 \hline
-De controlador & 14 & 119 & MockMvc & Verificar os recursos REST: códigos de situação, validação da entrada e formato das respostas e, em parte dos cenários, as restrições de acesso por perfil. \\
+De controlador & 14 & 121 & MockMvc & Verificar os recursos REST: códigos de situação, validação da entrada e formato das respostas e, em parte dos cenários, as restrições de acesso por perfil. \\
 \hline
-De repositório & 4 & 16 & H2 em memória & Verificar as consultas ao banco, em especial as consultas agregadas do painel. \\
+De repositório & 4 & 18 & H2 em memória & Verificar as consultas ao banco, em especial as consultas agregadas do painel. \\
 \hline
 De contexto & 1 & 1 & Spring Boot Test & Verificar a inicialização completa da aplicação. \\
 \hline
@@ -221,11 +223,15 @@ De contexto & 1 & 1 & Spring Boot Test & Verificar a inicialização completa da
 \legend{Fonte: Autoria própria (2026).}
 }
 
+Entre esses testes, 21 verificam o acesso horizontal, isto é, a recusa de requisições de um usuário a recursos de outra instituição, de outro profissional de orientação ou de outro aluno, abrangendo o painel, os relatórios, os agendamentos e os \textit{feedbacks}.
+
 Os testes são executados automaticamente no GitHub Actions a cada \textit{pull request} e a cada integração no ramo principal. O relatório de cobertura gerado pelo JaCoCo é enviado ao SonarCloud, que registrou cobertura de 89,3\% do código analisado, acima do mínimo de 80\% exigido para o código novo pelo critério de qualidade (\textit{quality gate}) padrão da ferramenta.
+
+Na aplicação \textit{web}, foram escritos testes de componentes e de funções com as bibliotecas Vitest e Testing Library, organizados em 12 arquivos com 96 casos de teste. Esses testes verificam, entre outros aspectos, as guardas de acesso da área do aluno, o formulário de interesses, a execução das trilhas, a exibição das questões e do resultado e as chamadas à API. Eles são executados no ambiente de desenvolvimento e ainda não integram o fluxo do GitHub Actions, e a aplicação \textit{web} não possui testes ponta a ponta.
 
 \subsection{Análise estática}
 
-A cada integração, o SonarCloud realiza a análise estática do código e avalia o resultado em relação ao critério de qualidade. Na análise mais recente, de novembro de 2026, o projeto encontra-se aprovado no \textit{quality gate}, com cobertura de 89,3\%, 0,3\% de código duplicado e nota A em segurança, em revisão de pontos sensíveis de segurança e em manutenibilidade. Em confiabilidade, a nota é C, com 45 apontamentos, predominantemente de severidade baixa. Os apontamentos da análise foram tratados como parte do fluxo de trabalho, a exemplo da substituição de injeção de dependência por atributo por injeção via construtor e da correção de uma possível referência nula no \textit{token} de autenticação. Os resultados completos da análise encontram-se no APÊNDICE B.
+A cada integração, o SonarCloud realiza a análise estática do código e avalia o resultado em relação ao critério de qualidade. Na análise mais recente, de novembro de 2026, o projeto encontra-se aprovado no \textit{quality gate}, com cobertura de 89,3\%, baixa duplicação de código e nota A em segurança, em revisão de pontos sensíveis de segurança e em manutenibilidade. Em confiabilidade, a nota é C, em razão de apontamentos predominantemente de severidade baixa e média. Os apontamentos da análise foram tratados como parte do fluxo de trabalho, a exemplo da substituição de injeção de dependência por atributo por injeção via construtor e da correção de uma possível referência nula no \textit{token} de autenticação. Os resultados completos da análise encontram-se no \autoref{apendice-sonar}.
 
 \subsection{Testes manuais}
 
@@ -255,11 +261,11 @@ Corpo de requisição com JSON malformado retornava 422 com a mensagem técnica 
 \legend{Fonte: Autoria própria (2026).}
 }
 
-A aplicação \textit{web} foi verificada manualmente, com os três perfis de acesso, nos navegadores Google Chrome e Mozilla Firefox, abrangendo os fluxos de cada perfil e a adaptação da interface a diferentes larguras de tela. O plano de garantia da qualidade e testes elaborado pela equipe, que orienta a continuidade da verificação do sistema, encontra-se no APÊNDICE C.
+A aplicação \textit{web} foi verificada manualmente, com os três perfis de acesso, nos navegadores Google Chrome e Mozilla Firefox, abrangendo os fluxos de cada perfil e a adaptação da interface a diferentes larguras de tela. O plano de garantia da qualidade e testes elaborado pela equipe, que orienta a continuidade da verificação do sistema, encontra-se no \autoref{apendice-plano-testes}.
 
 \section{Resultados Obtidos}
 
-A versão desenvolvida encontra-se em execução no ambiente de produção e contempla os três perfis de acesso previstos. O \autoref{quadro-situacao-rf} apresenta a situação de cada requisito funcional na versão atual.
+A versão desenvolvida encontra-se em execução no ambiente de produção e contempla os três perfis de acesso previstos. A situação de cada requisito é classificada em cinco categorias: \textbf{Atendido}, quando o requisito foi implementado conforme o Documento de Requisitos; \textbf{Atendido com adaptação}, quando foi implementado de forma diferente da prevista, em acordo com a parceira do projeto; \textbf{Parcial}, quando parte do requisito não foi implementada; \textbf{Não atendido}, quando o requisito não foi implementado; e \textbf{Não medido}, quando o requisito não funcional depende de uma medição que não foi realizada. O \autoref{quadro-situacao-rf} apresenta a situação de cada requisito funcional na versão atual.
 
 {\ABNTEXfontereduzida
 \renewcommand{\arraystretch}{1.25}
@@ -279,11 +285,11 @@ A versão desenvolvida encontra-se em execução no ambiente de produção e con
 \endlastfoot
 RF-01 & Gestão de instituições & Atendido & Instituições e turmas. \\
 \hline
-RF-02 & Gestão de usuários e perfis & Atendido & Exclusão definitiva das contas; CRP ainda obrigatório no cadastro. \\
+RF-02 & Gestão de usuários e perfis & Parcial & Registro no CRP obrigatório no cadastro do profissional de orientação; desativação implementada como exclusão definitiva das contas. \\
 \hline
 RF-03 & Painel de status por aluno & Atendido & Indicadores, progresso por trilha e filtros. \\
 \hline
-RF-04 & Alerta de necessidade de orientação & Atendido & Destaque no painel e mensagem eletrônica ao profissional. \\
+RF-04 & Alerta de necessidade de orientação & Atendido com adaptação & A sinalização é feita pelo próprio aluno ao concluir a jornada; destaque no painel e mensagem eletrônica ao profissional. \\
 \hline
 RF-05 & Priorização de alunos em dúvida & Atendido & Filtro de alunos em dúvida no agendamento. \\
 \hline
@@ -295,7 +301,7 @@ RF-08 & Agendamento de sessões & Atendido & Convite e videoconferência pelo Go
 \hline
 RF-09 & Feedback personalizado & Atendido & Feedbacks de jornada e de sessão, com aviso por e-mail. \\
 \hline
-RF-10 & Jornada de 5 trilhas em ordem & Atendido & Quatro trilhas implementadas; a síntese final é registrada após a conclusão da última trilha. \\
+RF-10 & Jornada de 5 trilhas em ordem & Atendido com adaptação & Quatro trilhas em ordem obrigatória, seguidas da síntese final da jornada, conforme acordado com a parceira do projeto. \\
 \hline
 RF-11 & Síntese ao final de cada trilha & Atendido & — \\
 \hline
@@ -333,7 +339,7 @@ Quanto aos requisitos não funcionais, o \autoref{quadro-situacao-rnf} sintetiza
 \endlastfoot
 RNF-01 & Segurança (autenticação e autorização) & Atendido & Autorização por perfil e verificação de propriedade dos dados. \\
 \hline
-RNF-02 & Privacidade e proteção de dados & Parcial & Exclusão de dados implementada; dados sensíveis sem criptografia em repouso. \\
+RNF-02 & Privacidade e proteção de dados & Atendido & Exclusão definitiva dos dados associados à conta e criptografia em repouso do banco de dados. \\
 \hline
 RNF-03 & Desempenho & Não medido & Sem medição formal do tempo de resposta. \\
 \hline
@@ -351,7 +357,9 @@ RNF-08 & Isolamento por instituição & Parcial & Isolamento de alunos, painel e
 \legend{Fonte: Autoria própria (2026).}
 }
 
-Em relação aos objetivos do projeto, a solução estrutura a jornada do aluno em trilhas sequenciais com registro obrigatório de sínteses, fornece ao profissional de orientação o acompanhamento por turma sem exposição do conteúdo das respostas, sinaliza automaticamente os alunos que permanecem em dúvida, viabiliza o agendamento de sessões com convite automático, a curadoria de fontes externas, o envio de \textit{feedback} e a emissão de relatórios, e apresenta ao aluno um leque de possibilidades acompanhado de aviso explícito de que não se trata de diagnóstico. A gestão de múltiplas instituições com isolamento de dados e a exclusão definitiva de dados atendem às necessidades institucionais e às exigências da LGPD, com as ressalvas registradas na seção de limitações.
+Em relação aos objetivos do projeto, a solução estrutura a jornada do aluno em trilhas sequenciais com registro obrigatório de sínteses, fornece ao profissional de orientação o acompanhamento por turma sem exposição do conteúdo das respostas, sinaliza ao profissional os alunos que declaram permanecer em dúvida, viabiliza o agendamento de sessões com convite automático, a curadoria de fontes externas, o envio de \textit{feedback} e a emissão de relatórios, e apresenta ao aluno um leque de possibilidades acompanhado de aviso explícito de que não se trata de diagnóstico. A gestão de múltiplas instituições com isolamento de dados e a exclusão definitiva de dados atendem às necessidades institucionais e às exigências da LGPD, com as ressalvas registradas na seção de limitações.
+
+A versão desenvolvida foi apresentada à parceira do projeto, para sua avaliação. A organização da jornada em quatro trilhas seguidas da síntese final foi acordada com a parceira, que indicou, na etapa final do projeto, que o sistema também seria útil para mentores(as) educacionais. Não foi realizada avaliação com profissionais de orientação e estudantes, de modo que a usabilidade e a utilidade do sistema para esses usuários ainda precisam ser verificadas em uso real.
 
 \section{Análise Financeira}
 
@@ -404,8 +412,8 @@ O custo estimado de operação é, portanto, de aproximadamente R\$ 181,60 por m
 A versão atual apresenta as seguintes limitações conhecidas:
 
 \begin{itemize}
-  \item \textbf{registro profissional}: o número de registro no Conselho Regional de Psicologia permanece obrigatório no cadastro, o que impede o cadastro de mentores sem registro;
-  \item \textbf{criptografia de dados sensíveis}: respostas, sínteses e perfis são armazenados sem criptografia em repouso; apenas as senhas são protegidas por função de \textit{hash};
+  \item \textbf{registro profissional}: o cadastro do profissional de orientação exige o número de registro no Conselho Regional de Psicologia, o que restringe o uso do sistema a psicólogos(as), embora a parceira do projeto tenha indicado sua utilidade também para mentores(as) educacionais;
+  \item \textbf{criptografia por coluna}: o banco de dados é criptografado em repouso, mas as respostas, as sínteses e os perfis não são criptografados individualmente pela aplicação e, por isso, são legíveis por quem acessa o banco com credenciais válidas;
   \item \textbf{chave de assinatura dos \textit{tokens}}: o par de chaves é gerado em memória a cada inicialização da API, o que invalida as sessões abertas a cada reinício e impede a execução de múltiplas instâncias com \textit{tokens} compartilhados;
   \item \textbf{armazenamento do \textit{token}}: o \textit{token} de acesso é mantido no armazenamento local do navegador, acessível a \textit{scripts} em caso de vulnerabilidade de injeção de código;
   \item \textbf{validade do contrato}: o contrato vencido do profissional de orientação não impede seu acesso ao sistema;
@@ -413,7 +421,8 @@ A versão atual apresenta as seguintes limitações conhecidas:
   \item \textbf{gestão de senhas}: não há recuperação de senha pelo próprio usuário nem reenvio do \textit{link} de primeiro acesso; o usuário é orientado a procurar o Administrador;
   \item \textbf{consulta ao banco de questões}: a consulta pelo profissional de orientação está disponível na API, mas não possui tela na aplicação \textit{web};
   \item \textbf{consentimento}: o fluxo de aceite do termo de consentimento previsto no Documento de Requisitos não foi implementado;
-  \item \textbf{apontamentos da análise estática}: permanecem em aberto dois apontamentos de segurança de severidade alta e os apontamentos de confiabilidade que resultam na nota C nesse critério;
+  \item \textbf{apontamentos da análise estática}: permanecem em aberto apontamentos de confiabilidade, que resultam na nota C nesse critério, e de segurança;
   \item \textbf{infraestrutura}: a API é executada em instância única, sem redundância, balanceamento de carga ou monitoramento, e a implantação é realizada manualmente, sem fluxo de entrega contínua; o desempenho e a disponibilidade não foram medidos;
-  \item \textbf{testes da aplicação \textit{web}}: a aplicação \textit{web} não possui testes automatizados, e sua verificação depende de testes manuais.
+  \item \textbf{testes da aplicação \textit{web}}: a aplicação \textit{web} possui testes de componentes, que não são executados na integração contínua, e não possui testes ponta a ponta, de modo que a verificação dos fluxos completos depende de testes manuais;
+  \item \textbf{avaliação com usuários}: o sistema foi avaliado apenas pela parceira do projeto, sem avaliação com profissionais de orientação e estudantes.
 \end{itemize}
