@@ -26,14 +26,18 @@ export function MeetIcon() {
  * @param {'psicologa'|'aluno'} props.viewer - muda o texto de "com quem" é a sessão
  * @param {React.ReactNode} [props.children] - botões de ação
  */
+/** Texto de "com quem": para a psicóloga, os alunos; para o aluno, a orientadora. */
+function withWhomLabel(viewer, a) {
+  if (viewer === 'psicologa') return a.students.map(s => s.name).join(', ') || 'Sem participantes'
+  return a.psychologist?.name ? `com ${a.psychologist.name}` : 'com sua orientadora'
+}
+
 export default function SessionCard({ appointment: a, viewer, children }) {
   const status = displayStatus(a)
   const start  = new Date(a.dateTime)
   const soon   = status === 'AGENDADA' && isHappeningSoon(a)
 
-  const withWhom = viewer === 'psicologa'
-    ? a.students.map(s => s.name).join(', ') || 'Sem participantes'
-    : a.psychologist?.name ? `com ${a.psychologist.name}` : 'com sua orientadora'
+  const withWhom = withWhomLabel(viewer, a)
 
   return (
     <article className={`ag-card ag-card--${status.toLowerCase()}${soon ? ' ag-card--soon' : ''}`}>

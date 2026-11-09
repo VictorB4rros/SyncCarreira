@@ -88,7 +88,7 @@ export default function StudentProfilePage() {
       <main className="sp-main">
         <Link className="sp-back" to="/home">← Voltar para o início</Link>
 
-        {loading && <section className="sp-card"><div className="sp-state" role="status">Carregando seu perfil…</div></section>}
+        {loading && <section className="sp-card"><output className="sp-state">Carregando seu perfil…</output></section>}
         {!loading && error && <section className="sp-card"><p className="sp-message sp-message--error" role="alert">{error}</p></section>}
 
         {!loading && !error && profile && !profile.profileCompleted && (

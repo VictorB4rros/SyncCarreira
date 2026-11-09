@@ -8,9 +8,9 @@
  *  - ROLE_ADMIN     → administrador (não vê a tela de agendamentos da psicóloga)
  */
 
-const PSYCHOLOGIST_ROLES = ['ROLE_PSICOLOGA']
+const PSYCHOLOGIST_ROLES = new Set(['ROLE_PSICOLOGA'])
 
-const STUDENT_ROLES = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO']
+const STUDENT_ROLES = new Set(['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO'])
 
 /** Lista de authorities do usuário (usa `roles` e, na falta, `perfil`). */
 function authoritiesOf(user) {
@@ -23,7 +23,7 @@ function authoritiesOf(user) {
 
 /** @returns {boolean} true se o usuário deve ver a visão de psicóloga/orientadora */
 export function isPsychologist(user) {
-  return authoritiesOf(user).some(a => PSYCHOLOGIST_ROLES.includes(a))
+  return authoritiesOf(user).some(a => PSYCHOLOGIST_ROLES.has(a))
 }
 
 /** @returns {boolean} true se o usuário deve ter acesso às ferramentas administrativas */
@@ -39,5 +39,5 @@ export function isAdministrator(user) {
  * cair no fluxo de aluno — gerando badge "Aluno" e 403 em /students/me.
  */
 export function isStudent(user) {
-  return authoritiesOf(user).some(a => STUDENT_ROLES.includes(a))
+  return authoritiesOf(user).some(a => STUDENT_ROLES.has(a))
 }
