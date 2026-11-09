@@ -3,7 +3,8 @@
  * @description Caixa de devolutivas e feedbacks da psicóloga (RF-09/RF-16).
  * Abrir um feedback não lido chama PATCH /feedbacks/{id}/read e atualiza o contador do menu.
  */
-import { useEffect, useMemo, useRef, useState } from 'react'
+
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -28,6 +29,14 @@ import { FEEDBACK_TYPE_LABELS } from '../lib/labels'
 import type { FeedbackDTO } from '../types'
 
 type Filter = 'ALL' | 'UNREAD' | 'JORNADA' | 'SESSAO'
+type Counts = Record<Filter, number>
+
+const FILTERS: { key: Filter; label: string }[] = [
+  { key: 'ALL', label: 'Todas' },
+  { key: 'UNREAD', label: 'Não lidas' },
+  { key: 'JORNADA', label: 'Devolutivas de jornada' },
+  { key: 'SESSAO', label: 'Feedbacks de sessão' },
+]
 
 export function feedbackTitle(feedback: FeedbackDTO): string {
   if (feedback.type === 'JORNADA') return `Devolutiva da Jornada #${feedback.journeyNumber ?? '—'}`
@@ -39,24 +48,151 @@ function preview(text: string, max = 120) {
   return clean.length > max ? `${clean.slice(0, max).trimEnd()}…` : clean
 }
 
+function matchesFilter(feedback: FeedbackDTO, filter: Filter): boolean {
+  if (filter === 'ALL') return true
+  if (filter === 'UNREAD') return !feedback.read
+  return feedback.type === filter
+}
+
+function parseFeedbackId(raw: string | null): number | null {
+  return raw ? Number(raw) : null
+}
+
+/** Substitui um feedback, pelo id, dentro da lista carregada. */
+function replaceFeedback(
+  list: FeedbackDTO[] | null | undefined,
+  id: number,
+  next: (current: FeedbackDTO) => FeedbackDTO,
+): FeedbackDTO[] {
+  return (list ?? []).map(f => (f.id === id ? next(f) : f))
+}
+
+function FeedbackListItem({ feedback, active, onOpen }: Readonly<{
+  feedback: FeedbackDTO
+  active: boolean
+  onOpen: (feedback: FeedbackDTO) => void
+}>) {
+  return (
+    <li>
+      <button
+        type="button"
+        onClick={() => onOpen(feedback)}
+        aria-current={active || undefined}
+        className={cn(
+          'flex w-full items-start gap-3 px-4 py-3 text-left transition-colors',
+          active ? 'bg-surface-container' : 'hover:bg-surface-container-low',
+        )}
+      >
+        <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', feedback.read ? 'bg-transparent' : 'bg-primary')} aria-hidden />
+        <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+          <span className="flex items-center justify-between gap-2">
+            <span className={cn('truncate text-sm', feedback.read ? 'font-semibold text-on-surface-variant' : 'font-bold text-on-surface')}>
+              {feedbackTitle(feedback)}
+            </span>
+            <span className="shrink-0 text-[11px] text-subtle">{formatLongDate(feedback.createdAt).replace(/ de \d{4}$/, '')}</span>
+          </span>
+          <span className="text-xs text-secondary">{feedback.psychologistName}</span>
+          <span className="line-clamp-2 text-xs text-muted">{preview(feedback.content)}</span>
+          <span className="pt-0.5 text-[11px] font-semibold">
+            {feedback.read ? (
+              <span className="inline-flex items-center gap-1 text-subtle">
+                <CheckCheck className="h-3.5 w-3.5" aria-hidden /> Lido
+              </span>
+            ) : (
+              <span className="text-primary">Não lido</span>
+            )}
+          </span>
+        </span>
+        <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-subtle" aria-hidden />
+      </button>
+    </li>
+  )
+}
+
+function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFilter, onOpen }: Readonly<{
+  filter: Filter
+  counts: Counts
+  visible: FeedbackDTO[]
+  selectedId: number | null
+  hasSelection: boolean
+  onFilter: (filter: Filter) => void
+  onOpen: (feedback: FeedbackDTO) => void
+}>) {
+  return (
+    <section aria-label="Caixa de entrada" className={cn('flex-col gap-3 lg:col-span-5', hasSelection ? 'hidden lg:flex' : 'flex')}>
+      <div role="group" aria-label="Filtrar feedbacks" className="flex flex-wrap gap-2">
+        {FILTERS.map(f => (
+          <button
+            key={f.key}
+            type="button"
+            aria-pressed={filter === f.key}
+            onClick={() => onFilter(f.key)}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
+              filter === f.key ? 'bg-primary text-on-primary' : 'bg-white text-primary shadow-card hover:bg-surface-container-low',
+            )}
+          >
+            {f.label}
+            <span className={cn('rounded-full px-1.5 text-[10px]', filter === f.key ? 'bg-white/20' : 'bg-surface-container')}>{counts[f.key]}</span>
+          </button>
+        ))}
+      </div>
+
+      <div className="overflow-hidden rounded-2xl bg-white shadow-card">
+        <div className="flex items-center justify-between border-b border-outline-variant px-4 py-3">
+          <span className="text-sm font-bold text-on-surface">Caixa de entrada</span>
+          <span className="text-xs text-muted">Mais recentes primeiro</span>
+        </div>
+        {visible.length === 0 ? (
+          <p className="px-4 py-8 text-center text-sm text-muted">Nenhum feedback neste filtro.</p>
+        ) : (
+          <ul className="divide-y divide-outline-variant/60">
+            {visible.map(f => (
+              <FeedbackListItem key={f.id} feedback={f} active={f.id === selectedId} onOpen={onOpen} />
+            ))}
+          </ul>
+        )}
+      </div>
+    </section>
+  )
+}
+
+function FeedbackDetail({ selected, studentName, onBack }: Readonly<{
+  selected: FeedbackDTO | null
+  studentName: string
+  onBack: () => void
+}>) {
+  return (
+    <section aria-label="Leitura do feedback" className={cn('lg:col-span-7', !selected && 'hidden lg:block')}>
+      {selected ? (
+        <FeedbackReader feedback={selected} studentName={studentName} onBack={onBack} />
+      ) : (
+        <EmptyState
+          icon={Heart}
+          title="Espaço de escuta ativa"
+          description="Feedbacks não são notas: são reflexões para apoiar a sua decisão com autonomia. Escolha uma mensagem para ler."
+        />
+      )}
+    </section>
+  )
+}
+
 export default function FeedbacksPage() {
   const { setUnreadFeedbacks, profile } = useStudent()
   const { data, error, loading, reload, setData } = useAsync(getMyFeedbacks, [])
   const [filter, setFilter] = useState<Filter>('ALL')
   const [params, setParams] = useSearchParams()
-  const selectedId = params.get('id') ? Number(params.get('id')) : null
+  const selectedId = parseFeedbackId(params.get('id'))
   const markAttempted = useRef(new Set<number>())
 
   const feedbacks = useMemo(() => [...(data ?? [])].sort((a, b) => b.createdAt.localeCompare(a.createdAt)), [data])
-  const counts = {
+  const counts: Counts = {
     ALL: feedbacks.length,
     UNREAD: feedbacks.filter(f => !f.read).length,
     JORNADA: feedbacks.filter(f => f.type === 'JORNADA').length,
     SESSAO: feedbacks.filter(f => f.type === 'SESSAO').length,
   }
-  const visible = feedbacks.filter(f =>
-    filter === 'ALL' ? true : filter === 'UNREAD' ? !f.read : f.type === filter,
-  )
+  const visible = feedbacks.filter(f => matchesFilter(f, filter))
   const selected = feedbacks.find(f => f.id === selectedId) ?? null
 
   // Mantém o contador do menu em sincronia com a lista carregada
@@ -69,22 +205,50 @@ export default function FeedbacksPage() {
     if (!selected || selected.read || markAttempted.current.has(selected.id)) return
     const id = selected.id
     markAttempted.current.add(id)
-    setData(list => (list ?? []).map(f => (f.id === id ? { ...f, read: true, readAt: new Date().toISOString() } : f)))
+    setData(list => replaceFeedback(list, id, f => ({ ...f, read: true, readAt: new Date().toISOString() })))
     markFeedbackAsRead(id)
-      .then(updated => setData(list => (list ?? []).map(f => (f.id === id ? updated : f))))
-      .catch(() => setData(list => (list ?? []).map(f => (f.id === id ? { ...f, read: false, readAt: null } : f))))
+      .then(updated => setData(list => replaceFeedback(list, id, () => updated)))
+      .catch(() => setData(list => replaceFeedback(list, id, f => ({ ...f, read: false, readAt: null }))))
   }, [selected, setData])
 
   function open(feedback: FeedbackDTO) {
     setParams({ id: String(feedback.id) })
   }
 
-  const filters: { key: Filter; label: string }[] = [
-    { key: 'ALL', label: 'Todas' },
-    { key: 'UNREAD', label: 'Não lidas' },
-    { key: 'JORNADA', label: 'Devolutivas de jornada' },
-    { key: 'SESSAO', label: 'Feedbacks de sessão' },
-  ]
+  let body: ReactNode
+  if (loading && !data) {
+    body = (
+      <div className="grid gap-6 lg:grid-cols-12">
+        <Skeleton className="h-80 lg:col-span-5" />
+        <Skeleton className="h-80 lg:col-span-7" />
+      </div>
+    )
+  } else if (error) {
+    body = <ErrorState message={getErrorMessage(error, 'Não foi possível carregar seus feedbacks.')} onRetry={reload} />
+  } else if (feedbacks.length === 0) {
+    body = (
+      <EmptyState
+        icon={HeartHandshake}
+        title="Nenhum feedback por enquanto"
+        description="Quando a sua psicóloga enviar uma devolutiva da jornada ou um feedback de sessão, você recebe um e-mail e ele aparece aqui."
+      />
+    )
+  } else {
+    body = (
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
+        <FeedbackInbox
+          filter={filter}
+          counts={counts}
+          visible={visible}
+          selectedId={selectedId}
+          hasSelection={selected !== null}
+          onFilter={setFilter}
+          onOpen={open}
+        />
+        <FeedbackDetail selected={selected} studentName={profile.name} onBack={() => setParams({})} />
+      </div>
+    )
+  }
 
   return (
     <>
@@ -93,108 +257,7 @@ export default function FeedbacksPage() {
         title="Devolutivas & feedbacks"
         description="Espaço seguro para ler as análises da equipe de psicologia escolar sobre a sua jornada e as suas sessões."
       />
-
-      {loading && !data ? (
-        <div className="grid gap-6 lg:grid-cols-12">
-          <Skeleton className="h-80 lg:col-span-5" />
-          <Skeleton className="h-80 lg:col-span-7" />
-        </div>
-      ) : error ? (
-        <ErrorState message={getErrorMessage(error, 'Não foi possível carregar seus feedbacks.')} onRetry={reload} />
-      ) : feedbacks.length === 0 ? (
-        <EmptyState
-          icon={HeartHandshake}
-          title="Nenhum feedback por enquanto"
-          description="Quando a sua psicóloga enviar uma devolutiva da jornada ou um feedback de sessão, você recebe um e-mail e ele aparece aqui."
-        />
-      ) : (
-        <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-12">
-          {/* Lista */}
-          <section aria-label="Caixa de entrada" className={cn('flex-col gap-3 lg:col-span-5', selected ? 'hidden lg:flex' : 'flex')}>
-            <div role="group" aria-label="Filtrar feedbacks" className="flex flex-wrap gap-2">
-              {filters.map(f => (
-                <button
-                  key={f.key}
-                  type="button"
-                  aria-pressed={filter === f.key}
-                  onClick={() => setFilter(f.key)}
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors',
-                    filter === f.key ? 'bg-primary text-on-primary' : 'bg-white text-primary shadow-card hover:bg-surface-container-low',
-                  )}
-                >
-                  {f.label}
-                  <span className={cn('rounded-full px-1.5 text-[10px]', filter === f.key ? 'bg-white/20' : 'bg-surface-container')}>{counts[f.key]}</span>
-                </button>
-              ))}
-            </div>
-
-            <div className="overflow-hidden rounded-2xl bg-white shadow-card">
-              <div className="flex items-center justify-between border-b border-outline-variant px-4 py-3">
-                <span className="text-sm font-bold text-on-surface">Caixa de entrada</span>
-                <span className="text-xs text-muted">Mais recentes primeiro</span>
-              </div>
-              {visible.length === 0 ? (
-                <p className="px-4 py-8 text-center text-sm text-muted">Nenhum feedback neste filtro.</p>
-              ) : (
-                <ul className="divide-y divide-outline-variant/60">
-                  {visible.map(f => {
-                    const active = f.id === selectedId
-                    return (
-                      <li key={f.id}>
-                        <button
-                          type="button"
-                          onClick={() => open(f)}
-                          aria-current={active || undefined}
-                          className={cn(
-                            'flex w-full items-start gap-3 px-4 py-3 text-left transition-colors',
-                            active ? 'bg-surface-container' : 'hover:bg-surface-container-low',
-                          )}
-                        >
-                          <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', f.read ? 'bg-transparent' : 'bg-primary')} aria-hidden />
-                          <span className="flex min-w-0 flex-1 flex-col gap-0.5">
-                            <span className="flex items-center justify-between gap-2">
-                              <span className={cn('truncate text-sm', f.read ? 'font-semibold text-on-surface-variant' : 'font-bold text-on-surface')}>
-                                {feedbackTitle(f)}
-                              </span>
-                              <span className="shrink-0 text-[11px] text-subtle">{formatLongDate(f.createdAt).replace(/ de \d{4}$/, '')}</span>
-                            </span>
-                            <span className="text-xs text-secondary">{f.psychologistName}</span>
-                            <span className="line-clamp-2 text-xs text-muted">{preview(f.content)}</span>
-                            <span className="pt-0.5 text-[11px] font-semibold">
-                              {f.read ? (
-                                <span className="inline-flex items-center gap-1 text-subtle">
-                                  <CheckCheck className="h-3.5 w-3.5" aria-hidden /> Lido
-                                </span>
-                              ) : (
-                                <span className="text-primary">Não lido</span>
-                              )}
-                            </span>
-                          </span>
-                          <ChevronRight className="mt-1 h-4 w-4 shrink-0 text-subtle" aria-hidden />
-                        </button>
-                      </li>
-                    )
-                  })}
-                </ul>
-              )}
-            </div>
-          </section>
-
-          {/* Leitura */}
-          <section aria-label="Leitura do feedback" className={cn('lg:col-span-7', !selected && 'hidden lg:block')}>
-            {selected ? (
-              <FeedbackReader feedback={selected} studentName={profile.name} onBack={() => setParams({})} />
-            ) : (
-              <EmptyState
-                icon={Heart}
-                title="Espaço de escuta ativa"
-                description="Feedbacks não são notas: são reflexões para apoiar a sua decisão com autonomia. Escolha uma mensagem para ler."
-              />
-            )}
-          </section>
-        </div>
-      )}
+      {body}
     </>
   )
 }

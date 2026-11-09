@@ -73,6 +73,7 @@ export default function StudentFormPage() {
 
   function handleSubmit(event) {
     event.preventDefault()
+    if (!form) return
 
     const errors = validate(form)
     if (Object.keys(errors).length > 0) {

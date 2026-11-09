@@ -91,18 +91,18 @@ export default function JourneyResultPage() {
         ) : (
           <>
             <header className="journey-result-hero">
-              <span className="journey-result-hero__eyebrow">Jornada {result.journeyNumber}</span>
+              <span className="journey-result-hero__eyebrow">Jornada {result?.journeyNumber}</span>
               <h1>Seu leque de possibilidades</h1>
               <p>Use este resultado para explorar caminhos que podem combinar com você neste momento.</p>
-              {formattedDate(result.concludedAt) && (
-                <span className="journey-result-hero__date">Concluída em {formattedDate(result.concludedAt)}</span>
+              {formattedDate(result?.concludedAt) && (
+                <span className="journey-result-hero__date">Concluída em {formattedDate(result?.concludedAt)}</span>
               )}
               <div className="journey-result-hero__actions">
                 <button
                   type="button"
                   className="journey-result-pdf"
                   onClick={handleDownloadPdf}
-                  disabled={downloading || !result.journeyId}
+                  disabled={downloading || !result?.journeyId}
                 >
                   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
                   {downloading ? 'Gerando PDF…' : 'Baixar PDF da jornada'}
@@ -124,7 +124,7 @@ export default function JourneyResultPage() {
               <span className="journey-result-disclaimer__mark" aria-hidden="true">i</span>
               <div>
                 <strong>Um ponto de partida, não um diagnóstico</strong>
-                <p>{result.disclaimer}</p>
+                <p>{result?.disclaimer}</p>
               </div>
             </aside>
 
