@@ -54,7 +54,7 @@ public class ResourceServerConfig {
 	@Bean
 	@Profile("test")
 	@Order(1)
-	public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain h2SecurityFilterChain(HttpSecurity http) {
 
 		http.securityMatcher(PathRequest.toH2Console()).csrf(csrf -> csrf.disable())
 				.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()));
@@ -63,7 +63,7 @@ public class ResourceServerConfig {
 
 	@Bean
 	@Order(3)
-	public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
+	public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) {
 
 		http.csrf(csrf -> csrf.disable());
 		http.authorizeHttpRequests(authorize -> authorize

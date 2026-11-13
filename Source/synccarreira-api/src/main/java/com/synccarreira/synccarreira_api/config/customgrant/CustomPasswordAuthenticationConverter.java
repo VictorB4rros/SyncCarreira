@@ -18,13 +18,15 @@ import static org.springframework.security.oauth2.core.OAuth2TokenIntrospectionC
 
 public class CustomPasswordAuthenticationConverter implements AuthenticationConverter {
 
+	private static final String PASSWORD = "password";
+
 	@Nullable
 	@Override
 	public Authentication convert(HttpServletRequest request) {
 		
 		String grantType = request.getParameter(OAuth2ParameterNames.GRANT_TYPE);
 				
-		if (!"password".equals(grantType)) {
+		if (!PASSWORD.equals(grantType)) {
 			return null;
 		}
 		
@@ -45,9 +47,9 @@ public class CustomPasswordAuthenticationConverter implements AuthenticationConv
 		}
 		
 		// password (REQUIRED)
-		String password = parameters.getFirst("password");
+		String password = parameters.getFirst(PASSWORD);
 		if (!StringUtils.hasText(password) ||
-				parameters.get("password").size() != 1) {
+				parameters.get(PASSWORD).size() != 1) {
 			throw new OAuth2AuthenticationException(OAuth2ErrorCodes.INVALID_REQUEST);
 		}
 				
