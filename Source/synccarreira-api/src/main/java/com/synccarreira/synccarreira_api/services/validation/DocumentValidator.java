@@ -41,24 +41,45 @@ public final class DocumentValidator {
 
     public static boolean isCnpjValid(String cnpj) {
         if (cnpj == null) return false;
+        char[] c = normalizeCnpj(cnpj);
+        if (c.length != 14 || allCharsEqual(c)) return false;
+        return hasValidCnpjCheckDigits(c);
+    }
+
+    // Remove a máscara e passa letras para maiúsculas; devolve um array vazio se o formato for inválido
+    private static char[] normalizeCnpj(String cnpj) {
         char[] c = new char[14];
         int n = 0;
         for (int i = 0; i < cnpj.length(); i++) {
             char ch = cnpj.charAt(i);
-            if (ch == '.' || ch == '/' || ch == '-') continue;
-            if (n == 14) return false;
+            if (isCnpjMaskChar(ch)) continue;
+            if (n == 14) return new char[0];
             if (ch >= 'a' && ch <= 'z') ch -= 32;
-            boolean digit = ch >= '0' && ch <= '9';
-            boolean letter  = ch >= 'A' && ch <= 'Z';
-            if (!digit && !(letter && n < 12)) return false;
+            if (!isAllowedCnpjChar(ch, n)) return new char[0];
             c[n++] = ch;
         }
-        if (n != 14) return false;
+        return n == 14 ? c : new char[0];
+    }
 
-        boolean equals = true;
-        for (int i = 1; i < 14 && equals; i++) equals = c[i] == c[0];
-        if (equals) return false;
+    private static boolean isCnpjMaskChar(char ch) {
+        return ch == '.' || ch == '/' || ch == '-';
+    }
 
+    // As 12 primeiras posições aceitam letras (CNPJ alfanumérico); os dígitos verificadores, só números
+    private static boolean isAllowedCnpjChar(char ch, int position) {
+        boolean digit = ch >= '0' && ch <= '9';
+        boolean letter = ch >= 'A' && ch <= 'Z';
+        return digit || (letter && position < 12);
+    }
+
+    private static boolean allCharsEqual(char[] c) {
+        for (int i = 1; i < c.length; i++) {
+            if (c[i] != c[0]) return false;
+        }
+        return true;
+    }
+
+    private static boolean hasValidCnpjCheckDigits(char[] c) {
         int s1 = 0;
         int s2 = 0;
         for (int i = 0; i < 12; i++) {

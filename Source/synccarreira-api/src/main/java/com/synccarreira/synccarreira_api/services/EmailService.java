@@ -27,7 +27,7 @@ public class EmailService {
     public static final String JOURNEY_DOUBT_TEMPLATE = "journey-doubt-template.html";
     public static final String FEEDBACK_TEMPLATE = "feedback-template.html";
 
-    private static final Pattern LINK_PATTERN = Pattern.compile("<a\\s[^>]*href=\"([^\"]*+)\"[^>]*+>([^<]*+)</a>", Pattern.CASE_INSENSITIVE);
+    private static final Pattern LINK_PATTERN = Pattern.compile("<a(?=\\s)(?:(?!\\shref=\")[^>])*+\\shref=\"([^\"]*+)\"[^>]*+>([^<]*+)</a>", Pattern.CASE_INSENSITIVE);
     private static final Pattern BLOCK_END_PATTERN = Pattern.compile("</(p|div|ul|ol|h[1-6]|tr)>\\s*", Pattern.CASE_INSENSITIVE);
     private static final Pattern LINE_BREAK_PATTERN = Pattern.compile("(<br\\s*/?>|</li>)\\s*", Pattern.CASE_INSENSITIVE);
     private static final Pattern LIST_ITEM_PATTERN = Pattern.compile("<li[^>]*>", Pattern.CASE_INSENSITIVE);

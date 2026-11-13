@@ -34,13 +34,13 @@ public class AreaScoreCalculator {
     // Percentuais com o máximo possível das perguntas cadastradas agora (jornada em andamento, ex.: trilha de Informação)
     @Transactional(readOnly = true)
     public List<AreaScoreDTO> calculate(Double humanities, Double biologicalSciences, Double exactSciences, Double arts) {
-        return calculate(areaMap(humanities, biologicalSciences, exactSciences, arts), currentMaxScores());
+        return calculate(areaMap(humanities, biologicalSciences, exactSciences, arts), loadCurrentMaxScores());
     }
 
     // Percentuais de uma jornada concluída, com os scores e os máximos guardados na conclusão
     @Transactional(readOnly = true)
     public List<AreaScoreDTO> calculate(JourneyRecord journey) {
-        return calculate(journey, this::currentMaxScores);
+        return calculate(journey, this::loadCurrentMaxScores);
     }
 
     // Usa os scores e os máximos guardados na conclusão da jornada: o resultado não muda depois,
@@ -104,6 +104,11 @@ public class AreaScoreCalculator {
     // JourneyRecord, para que o resultado de uma jornada concluída não mude se as perguntas ou os pesos mudarem depois.
     @Transactional(readOnly = true)
     public Map<KnowledgeArea, Double> currentMaxScores() {
+        return loadCurrentMaxScores();
+    }
+
+    // Chamado também pelos métodos desta classe, que já rodam dentro da transação
+    private Map<KnowledgeArea, Double> loadCurrentMaxScores() {
         Map<KnowledgeArea, Double> maxScores = new EnumMap<>(KnowledgeArea.class);
         Arrays.stream(KnowledgeArea.values()).forEach(area -> maxScores.put(area, (double) StudentAffinityDTO.MAX));
         for (Question question : questionRepository.findAll()) {

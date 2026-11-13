@@ -160,6 +160,27 @@ public class EmailServiceTests {
                 Time SyncCarreira""", result);
     }
 
+    @Test
+    void toPlainTextShouldUseFirstHrefWhenLinkHasTwoHrefAttributes() {
+        String html = "<p><a class=\"btn\" href=\"https://primeiro.com.br\" href=\"https://segundo.com.br\">abrir</a></p>";
+
+        Assertions.assertEquals("abrir (https://primeiro.com.br)", EmailService.toPlainText(html));
+    }
+
+    @Test
+    void toPlainTextShouldIgnoreAttributesEndingWithHref() {
+        String html = "<p><a data-href=\"https://outro.com.br\" href=\"https://synccarreira.com.br\">site</a></p>";
+
+        Assertions.assertEquals("site (https://synccarreira.com.br)", EmailService.toPlainText(html));
+    }
+
+    @Test
+    void toPlainTextShouldNotTreatOtherTagsStartingWithAAsLinks() {
+        String html = "<p><abbr href=\"https://synccarreira.com.br\">SC</abbr></p>";
+
+        Assertions.assertEquals("SC", EmailService.toPlainText(html));
+    }
+
     private String extractHtmlBody(MimeMessage message) throws Exception {
         return (String) extractAlternativeMultipart(message).getBodyPart(1).getContent();
     }

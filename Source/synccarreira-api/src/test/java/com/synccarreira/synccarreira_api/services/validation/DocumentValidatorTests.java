@@ -120,5 +120,36 @@ public class DocumentValidatorTests {
             assertThat(DocumentValidator.isCnpjValid(emptyCnpj)).isFalse();
             assertThat(DocumentValidator.isCnpjValid(nullCnpj)).isFalse();
         }
+
+        @Test
+        void isCnpjValidShouldAcceptLowercaseLetters() {
+            assertThat(DocumentValidator.isCnpjValid("39zzmvb3000177")).isTrue();
+        }
+
+        @Test
+        void isCnpjValidShouldReturnFalseWhenCheckDigitIsALetter() {
+            assertThat(DocumentValidator.isCnpjValid("39ZZMVB30001A7")).isFalse();
+        }
+
+        @Test
+        void isCnpjValidShouldReturnFalseWhenCnpjHasMoreThanFourteenCharacters() {
+            assertThat(DocumentValidator.isCnpjValid("39ZZMVB30001770")).isFalse();
+        }
+
+        @Test
+        void isCnpjValidShouldReturnFalseWhenCnpjHasFewerThanFourteenCharacters() {
+            assertThat(DocumentValidator.isCnpjValid("39ZZMVB30001")).isFalse();
+        }
+
+        @Test
+        void isCnpjValidShouldReturnFalseForSymbolsOutsideLettersAndDigits() {
+            assertThat(DocumentValidator.isCnpjValid("39ZZMVB~000177")).isFalse();
+            assertThat(DocumentValidator.isCnpjValid("39ZZMVB_000177")).isFalse();
+        }
+
+        @Test
+        void isCnpjValidShouldReturnFalseWhenFirstCheckDigitIsWrong() {
+            assertThat(DocumentValidator.isCnpjValid("39ZZMVB3000187")).isFalse();
+        }
     }
 }
