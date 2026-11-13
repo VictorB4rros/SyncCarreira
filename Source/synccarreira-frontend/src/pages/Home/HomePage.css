@@ -211,7 +211,7 @@
 
 .hp-trail-card--locked .hp-trail-card__icon {
   background: #e2e6e4;
-  color: #7b8781;
+  color: #606964;
 }
 
 .hp-trail-card--locked .hp-trail-card__name,
@@ -313,7 +313,7 @@
 
 .hp-trail-card__btn:disabled {
   background: #e0e4e2;
-  color: #68746e;
+  color: #5e6863;
   cursor: not-allowed;
 }
 

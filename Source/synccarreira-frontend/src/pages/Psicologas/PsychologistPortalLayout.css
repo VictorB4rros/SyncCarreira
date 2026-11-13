@@ -52,7 +52,7 @@
 .psy-topbar { position: fixed; z-index: 30; top: 0; right: 0; left: 280px; display: flex; height: 76px; align-items: center; justify-content: space-between; gap: 16px; padding: 0 28px; border-bottom: 1px solid #e8eaf1; background: rgb(255 255 255 / 92%); box-shadow: 0 4px 20px rgb(15 23 42 / 3%); backdrop-filter: blur(14px); }
 .psy-topbar__context { display: flex; min-width: 0; align-items: center; gap: 10px; color: #5b6472; font-size: 12px; }
 .psy-topbar__context strong { overflow: hidden; color: #4c1d95; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-.psy-topbar__search { display: flex; width: min(420px, 34vw); height: 42px; align-items: center; gap: 9px; padding: 0 10px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; color: #8b7b91; }
+.psy-topbar__search { display: flex; width: min(420px, 34vw); height: 42px; align-items: center; gap: 9px; padding: 0 10px; border: 1px solid #e2e8f0; border-radius: 12px; background: #fff; color: #817188; }
 .psy-topbar__search:focus-within { border-color: #a78bfa; box-shadow: 0 0 0 3px rgb(124 58 237 / 12%); }
 .psy-topbar__search input { width: 100%; min-width: 0; border: 0; outline: 0; background: transparent; color: #0f172a; font: inherit; font-size: 11px; }
 .psy-topbar__search input::placeholder { color: #9a8ba0; }

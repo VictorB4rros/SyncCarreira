@@ -129,6 +129,6 @@
 
 @media print {
   .sc-aluno .sc-no-print {
-    display: none !important;
+    display: none;
   }
 }

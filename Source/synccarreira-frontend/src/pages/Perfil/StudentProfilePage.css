@@ -15,7 +15,7 @@
 .sp-area legend span { display: grid; width: 25px; height: 25px; place-items: center; border-radius: 8px; background: #eeeaff; color: #6747e6; font-size: 9px; }
 .sp-area > p { min-height: 38px; margin: 6px 0 14px; color: #716d81; font-size: 12px; line-height: 1.5; }
 .sp-rating { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; }
-.sp-rating button { min-height: 39px; border: 1px solid #dedbe9; border-radius: 9px; background: #fff; color: #514c67; font-size: 13px; font-weight: 650; cursor: pointer; transition: .15s ease; }
+.sp-rating button { min-height: 39px; border: 1px solid #dedbe9; border-radius: 9px; background: #fff; color: #514c67; font-size: 13px; font-weight: 650; cursor: pointer; transition: border-color .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease; }
 .sp-rating button:hover { border-color: #a895ff; background: #f7f4ff; }
 .sp-rating button.is-selected { border-color: #6d4aff; background: #6d4aff; color: #fff; box-shadow: 0 3px 9px #6d4aff30; }
 .sp-rating button:focus-visible, .sp-submit:focus-visible { outline: 3px solid #b9aaff; outline-offset: 2px; }
@@ -23,7 +23,7 @@
 .sp-form-footer p { max-width: 520px; margin: 0; color: #777389; font-size: 11px; line-height: 1.55; }
 .sp-submit, .sp-gate-actions button { flex: 0 0 auto; min-height: 42px; padding: 0 16px; border: 0; border-radius: 9px; background: #6845f5; color: #fff; font-size: 12px; font-weight: 700; cursor: pointer; }
 .sp-submit:hover:not(:disabled), .sp-gate-actions button:hover { background: #5535db; }
-.sp-submit:disabled { background: #d4d0df; color: #777389; cursor: not-allowed; }
+.sp-submit:disabled { background: #d4d0df; color: #5c5869; cursor: not-allowed; }
 .sp-message { display: block; margin: 16px 0 0; padding: 11px 13px; border-radius: 9px; font-size: 12px; line-height: 1.5; }
 .sp-message--error { border: 1px solid #f0caca; background: #fff5f5; color: #a33333; }
 .sp-message--success { border: 1px solid #cde8d2; background: #f3fbf4; color: #28743a; }
