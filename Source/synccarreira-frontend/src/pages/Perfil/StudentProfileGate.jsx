@@ -5,9 +5,9 @@ import { getMyStudentProfile } from '../../services/studentProfileService.js'
 import './StudentProfilePage.css'
 
 function hasStudentRole(user) {
-  const studentRoles = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO']
-  return user?.roles?.some(role => studentRoles.includes(role.authority))
-    || studentRoles.includes(user?.perfil)
+  const studentRoles = new Set(['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO'])
+  return user?.roles?.some(role => studentRoles.has(role.authority))
+    || studentRoles.has(user?.perfil)
 }
 
 export default function StudentProfileGate({ children }) {

@@ -74,9 +74,9 @@ function AppointmentsRoute() {
 
 function StudentRoute({ children }) {
     const { user } = useAuth()
-    const studentRoles = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO']
-    const isStudent = user?.roles?.some(role => studentRoles.includes(role.authority))
-        || studentRoles.includes(user?.perfil)
+    const studentRoles = new Set(['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO'])
+    const isStudent = user?.roles?.some(role => studentRoles.has(role.authority))
+        || studentRoles.has(user?.perfil)
     return user && isStudent
         ? children
         : <Navigate to={user ? "/home" : "/login"} replace />

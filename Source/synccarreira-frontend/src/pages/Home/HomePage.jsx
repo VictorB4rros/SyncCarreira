@@ -166,6 +166,18 @@ function TrailCard({ trail, studentId, onEnter, refreshKey }) {
 
 // ─── Componente principal ─────────────────────────────────────
 
+function roleLabel(administradora, psicologa) {
+  if (administradora) return 'Administrador'
+  if (psicologa) return 'Psicóloga / Orientadora'
+  return 'Aluno'
+}
+
+function welcomeMessage(administradora, psicologa) {
+  if (administradora) return 'Gerencie usuários, turmas e instituições da plataforma.'
+  if (psicologa) return 'Acompanhe seus alunos e organize as sessões de orientação.'
+  return 'Continue sua jornada de autoconhecimento.'
+}
+
 export default function HomePage() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -230,14 +242,10 @@ export default function HomePage() {
               Bem-vindo, <span>{user?.nome ?? 'Usuário'}</span>!
             </h1>
             <span className="hp-role">
-              {administradora ? 'Administrador' : psicologa ? 'Psicóloga / Orientadora' : 'Aluno'}
+              {roleLabel(administradora, psicologa)}
             </span>
             <p className="hp-sub">
-              {administradora
-                ? 'Gerencie usuários, turmas e instituições da plataforma.'
-                : psicologa
-                  ? 'Acompanhe seus alunos e organize as sessões de orientação.'
-                  : 'Continue sua jornada de autoconhecimento.'}
+              {welcomeMessage(administradora, psicologa)}
             </p>
             {psicologa && (
               <button

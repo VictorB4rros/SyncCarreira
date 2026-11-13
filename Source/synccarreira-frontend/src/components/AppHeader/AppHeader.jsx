@@ -13,9 +13,9 @@ import { isAdministrator, isPsychologist } from '../../utils/roles.js'
 import './AppHeader.css'
 
 function hasStudentRole(user) {
-  const studentRoles = ['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO']
-  return user?.roles?.some(role => studentRoles.includes(role.authority))
-    || studentRoles.includes(user?.perfil)
+  const studentRoles = new Set(['ROLE_USER', 'ROLE_STUDENT', 'ROLE_ALUNO'])
+  return user?.roles?.some(role => studentRoles.has(role.authority))
+    || studentRoles.has(user?.perfil)
 }
 
 export default function AppHeader() {
@@ -62,9 +62,7 @@ export default function AppHeader() {
           <NavLink to="/gestao" className={linkClass}>Gestão</NavLink>
         )}
         {isPsychologist(user) && (
-          <>
-            <NavLink to="/curadoria-links" className={linkClass}>Curadoria de links</NavLink>
-          </>
+          <NavLink to="/curadoria-links" className={linkClass}>Curadoria de links</NavLink>
         )}
       </nav>
 

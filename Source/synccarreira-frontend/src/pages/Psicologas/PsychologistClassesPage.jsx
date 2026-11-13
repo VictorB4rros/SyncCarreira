@@ -129,8 +129,8 @@ export default function PsychologistClassesPage() {
     try {
       const fileName = await downloadClassReport(user.id, group.id, group.name)
       setDownloadMessage(`Download iniciado: ${fileName}`)
-    } catch (downloadFailure) {
-      setDownloadError(downloadFailure.message || 'Não foi possível gerar o relatório da turma.')
+    } catch (error_) {
+      setDownloadError(error_.message || 'Não foi possível gerar o relatório da turma.')
     } finally {
       setBusyClassId(null)
     }
