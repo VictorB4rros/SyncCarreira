@@ -2,6 +2,7 @@
  * @file TrailsPage.tsx
  * @description "Minhas Trilhas Vocacionais": visão geral dos 4 pilares com o perfil do aluno.
  */
+import type { ReactNode } from 'react'
 import { CalendarDays, Footprints, HeartHandshake, MessageCircle, ShieldCheck } from 'lucide-react'
 import { loadJourneyProgress } from '../api/loadJourneyProgress'
 import { getErrorMessage } from '../api/studentApi'
@@ -16,6 +17,21 @@ export default function TrailsPage() {
   const { data, error, loading, reload } = useAsync(loadJourneyProgress, [])
   const summary = data?.summary
   const concluded = journey?.currentJourneyConcluded || summary?.allConcluded
+
+  let timeline: ReactNode = null
+  if (loading && !data) {
+    timeline = (
+      <TimelineSkeleton />
+    )
+  } else if (error) {
+    timeline = (
+      <ErrorState message={getErrorMessage(error, 'Não foi possível carregar suas trilhas.')} onRetry={reload} />
+    )
+  } else if (data) {
+    timeline = (
+      <PillarTimeline progress={data} />
+    )
+  }
 
   return (
     <>
@@ -90,13 +106,7 @@ export default function TrailsPage() {
         </aside>
 
         <section className="flex flex-col gap-4 lg:col-span-8" aria-label="Etapas da jornada">
-          {loading && !data ? (
-            <TimelineSkeleton />
-          ) : error ? (
-            <ErrorState message={getErrorMessage(error, 'Não foi possível carregar suas trilhas.')} onRetry={reload} />
-          ) : data ? (
-            <PillarTimeline progress={data} />
-          ) : null}
+          {timeline}
         </section>
       </div>
     </>

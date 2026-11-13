@@ -2,6 +2,7 @@
  * @file HomePage.tsx
  * @description "Minha Jornada": saudação, progresso dos 4 pilares e resumo lateral.
  */
+import type { ReactNode } from 'react'
 import { ArrowRight, ChartColumn, LockOpen, Timer, Waypoints } from 'lucide-react'
 import { loadJourneyProgress } from '../api/loadJourneyProgress'
 import { getErrorMessage } from '../api/studentApi'
@@ -14,11 +15,42 @@ import { formatDate } from '../lib/format'
 import { firstName, pillarCode, trailLabel } from '../lib/labels'
 import type { JourneyProgress } from '../api/loadJourneyProgress'
 
-function Hero({ progress }: { progress: JourneyProgress | null }) {
+function Hero({ progress }: Readonly<{ progress: JourneyProgress | null }>) {
   const { profile, journey } = useStudent()
   const summary = progress?.summary
   const current = summary?.current
   const concluded = journey?.currentJourneyConcluded || summary?.allConcluded
+
+  let message: ReactNode
+  if (!summary) {
+    message = 'Carregando o seu progresso…'
+  } else if (concluded) {
+    message = <>Você concluiu os {summary.totalTrails} pilares. Seu panorama vocacional está pronto para conversar com a sua psicóloga.</>
+  } else if (current) {
+    message = (
+      <>
+        Você está no <strong className="font-semibold text-white">{pillarCode(current.trail.sequentialOrder)}: {trailLabel(current.trail.name)}</strong>.
+        Prossiga na sua trilha reflexiva com acolhimento e clareza.
+      </>
+    )
+  } else {
+    message = 'Sua jornada está pronta para começar.'
+  }
+
+  let action: ReactNode = null
+  if (concluded) {
+    action = (
+      <ButtonLink to="/aluno/resultados" variant="light" size="lg" iconRight={ChartColumn}>
+        Ver meu resultado
+      </ButtonLink>
+    )
+  } else if (current) {
+    action = (
+      <ButtonLink to={`/aluno/trilhas/${current.trail.id}`} variant="light" size="lg" iconRight={ArrowRight}>
+        Continuar {pillarCode(current.trail.sequentialOrder)}
+      </ButtonLink>
+    )
+  }
 
   return (
     <section className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary-deep via-primary to-primary-container p-5 text-white shadow-raised sm:p-8">
@@ -41,18 +73,7 @@ function Hero({ progress }: { progress: JourneyProgress | null }) {
             Olá, {firstName(profile.name) || 'estudante'} <span aria-hidden>👋</span>
           </h1>
           <p className="text-sm leading-relaxed text-primary-fixed sm:text-base">
-            {!summary ? (
-              'Carregando o seu progresso…'
-            ) : concluded ? (
-              <>Você concluiu os {summary.totalTrails} pilares. Seu panorama vocacional está pronto para conversar com a sua psicóloga.</>
-            ) : current ? (
-              <>
-                Você está no <strong className="font-semibold text-white">{pillarCode(current.trail.sequentialOrder)}: {trailLabel(current.trail.name)}</strong>.
-                Prossiga na sua trilha reflexiva com acolhimento e clareza.
-              </>
-            ) : (
-              'Sua jornada está pronta para começar.'
-            )}
+            {message}
           </p>
           {summary && (
             <div className="mt-2 flex flex-col gap-1.5">
@@ -68,15 +89,7 @@ function Hero({ progress }: { progress: JourneyProgress | null }) {
         </div>
 
         <div className="flex shrink-0 flex-col items-start gap-3 lg:items-end">
-          {concluded ? (
-            <ButtonLink to="/aluno/resultados" variant="light" size="lg" iconRight={ChartColumn}>
-              Ver meu resultado
-            </ButtonLink>
-          ) : current ? (
-            <ButtonLink to={`/aluno/trilhas/${current.trail.id}`} variant="light" size="lg" iconRight={ArrowRight}>
-              Continuar {pillarCode(current.trail.sequentialOrder)}
-            </ButtonLink>
-          ) : null}
+          {action}
           {current && current.totalQuestions > 0 && !concluded && (
             <span className="flex items-center gap-1 text-xs text-primary-fixed/80">
               <Timer className="h-4 w-4" aria-hidden /> Faltam {current.totalQuestions - current.answeredQuestions} perguntas neste pilar
@@ -88,7 +101,7 @@ function Hero({ progress }: { progress: JourneyProgress | null }) {
   )
 }
 
-export function PillarTimeline({ progress, compact = false }: { progress: JourneyProgress; compact?: boolean }) {
+export function PillarTimeline({ progress, compact = false }: Readonly<{ progress: JourneyProgress; compact?: boolean }>) {
   return (
     <div className="flex flex-col gap-4">
       {progress.trails.map((info, i) => (
@@ -111,6 +124,15 @@ export function TimelineSkeleton() {
 export default function HomePage() {
   const { profile, nextSession } = useStudent()
   const { data, error, loading, reload } = useAsync(loadJourneyProgress, [])
+
+  let timeline: ReactNode = null
+  if (loading && !data) {
+    timeline = <TimelineSkeleton />
+  } else if (error) {
+    timeline = <ErrorState message={getErrorMessage(error, 'Não foi possível carregar seus pilares.')} onRetry={reload} />
+  } else if (data) {
+    timeline = <PillarTimeline progress={data} />
+  }
 
   return (
     <>
@@ -135,13 +157,7 @@ export default function HomePage() {
             </span>
           </div>
 
-          {loading && !data ? (
-            <TimelineSkeleton />
-          ) : error ? (
-            <ErrorState message={getErrorMessage(error, 'Não foi possível carregar seus pilares.')} onRetry={reload} />
-          ) : data ? (
-            <PillarTimeline progress={data} />
-          ) : null}
+          {timeline}
         </section>
 
         <aside className="flex flex-col gap-4 lg:col-span-4">

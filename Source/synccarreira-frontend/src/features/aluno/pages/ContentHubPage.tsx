@@ -16,6 +16,28 @@ import type { InformationLinkDTO, KnowledgeArea } from '../types'
 
 type Filter = 'TODOS' | 'UNIVERSIDADE' | KnowledgeArea
 
+function renderLinks(totalLinks: number, visible: InformationLinkDTO[]) {
+  if (totalLinks === 0) {
+    return (
+      <EmptyState
+        icon={BookOpen}
+        title="Ainda não há materiais para você"
+        description="A equipe de psicologia ainda não cadastrou links para as suas áreas. Volte em breve!"
+      />
+    )
+  }
+  if (visible.length === 0) {
+    return <EmptyState icon={Search} title="Nenhum conteúdo encontrado" description="Tente outro termo ou limpe os filtros." />
+  }
+  return (
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {visible.map(link => (
+        <LinkCard key={link.id} link={link} />
+      ))}
+    </div>
+  )
+}
+
 function normalize(text: string) {
   return text.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
 }
@@ -126,21 +148,7 @@ export default function ContentHubPage() {
             </div>
           </div>
 
-          {allLinks.length === 0 ? (
-            <EmptyState
-              icon={BookOpen}
-              title="Ainda não há materiais para você"
-              description="A equipe de psicologia ainda não cadastrou links para as suas áreas. Volte em breve!"
-            />
-          ) : visible.length === 0 ? (
-            <EmptyState icon={Search} title="Nenhum conteúdo encontrado" description="Tente outro termo ou limpe os filtros." />
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {visible.map(link => (
-                <LinkCard key={link.id} link={link} />
-              ))}
-            </div>
-          )}
+          {renderLinks(allLinks.length, visible)}
         </section>
 
         <aside className="flex flex-col gap-4 lg:col-span-4">

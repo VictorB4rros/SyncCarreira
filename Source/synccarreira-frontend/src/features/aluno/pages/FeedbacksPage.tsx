@@ -262,7 +262,7 @@ export default function FeedbacksPage() {
   )
 }
 
-function FeedbackReader({ feedback, studentName, onBack }: { feedback: FeedbackDTO; studentName: string; onBack: () => void }) {
+function FeedbackReader({ feedback, studentName, onBack }: Readonly<{ feedback: FeedbackDTO; studentName: string; onBack: () => void }>) {
   return (
     <article className="flex flex-col gap-5 rounded-2xl bg-white p-5 shadow-card sm:p-7">
       <button type="button" onClick={onBack} className="sc-no-print inline-flex w-fit items-center gap-1.5 text-sm font-semibold text-primary lg:hidden">

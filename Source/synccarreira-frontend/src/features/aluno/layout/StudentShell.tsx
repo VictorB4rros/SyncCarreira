@@ -52,7 +52,7 @@ export function pageTitleFor(pathname: string): string {
   return match?.label ?? 'Espaço do Estudante'
 }
 
-function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
+function Sidebar({ onNavigate }: Readonly<{ onNavigate?: () => void }>) {
   const { user, logout } = useStudentAuth()
   const { unreadFeedbacks, profile } = useStudent()
   const navigate = useNavigate()
@@ -141,8 +141,9 @@ export default function StudentShell() {
     window.scrollTo?.({ top: 0 })
   }, [pathname])
 
+  const journeyStatus = journey?.currentJourneyConcluded ? 'Concluída' : 'Em andamento'
   const journeyLabel = journey?.currentJourneyNumber
-    ? `Jornada #${journey.currentJourneyNumber} • ${journey.currentJourneyConcluded ? 'Concluída' : 'Em andamento'}`
+    ? `Jornada #${journey.currentJourneyNumber} • ${journeyStatus}`
     : null
 
   return (

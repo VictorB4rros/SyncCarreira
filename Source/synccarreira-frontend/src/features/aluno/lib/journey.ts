@@ -114,12 +114,9 @@ export function deriveTrailProgress(
   else if (answeredQuestions > 0) status = 'IN_PROGRESS'
   else status = 'AVAILABLE'
 
-  const percentage =
-    status === 'CONCLUDED'
-      ? 100
-      : totalQuestions > 0
-        ? clampPercent((answeredQuestions / totalQuestions) * 100)
-        : 0
+  let percentage = 0
+  if (status === 'CONCLUDED') percentage = 100
+  else if (totalQuestions > 0) percentage = clampPercent((answeredQuestions / totalQuestions) * 100)
 
   return {
     trail,
