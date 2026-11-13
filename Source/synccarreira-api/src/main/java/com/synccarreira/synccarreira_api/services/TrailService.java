@@ -1,21 +1,16 @@
 package com.synccarreira.synccarreira_api.services;
 
-import com.synccarreira.synccarreira_api.dto.AnswerDTO;
 import com.synccarreira.synccarreira_api.dto.TrailDTO;
 import com.synccarreira.synccarreira_api.dto.TrailUpdateDTO;
 import com.synccarreira.synccarreira_api.dto.UserDTO;
 import com.synccarreira.synccarreira_api.entities.Answer;
-import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.Student;
 import com.synccarreira.synccarreira_api.entities.Trail;
-import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
-import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
 import com.synccarreira.synccarreira_api.repositories.SynthesisRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
