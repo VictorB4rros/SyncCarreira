@@ -26,7 +26,7 @@ export default function StudentDetailPage() {
   }, [id])
 
   if (loading) {
-    return <div className="student-state" role="status">Carregando dados do aluno…</div>
+    return <output className="student-state">Carregando dados do aluno…</output>
   }
 
   if (error) {

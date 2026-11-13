@@ -219,6 +219,20 @@ public class JourneyResultServiceTests {
     }
 
     @Test
+    void findMyJourneyResultShouldReturnResultOfJourneyFromLoggedStudent() {
+        Mockito.when(authService.authenticated()).thenReturn(student);
+        Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
+        Mockito.when(journeyRecordRepository.findByIdAndStudentId(journey.getId(), student.getId())).thenReturn(Optional.of(journey));
+        setStoredMaxScores();
+        Mockito.when(subareaRepository.findByAreaInOrderByAreaAscDisplayOrderAsc(any())).thenReturn(List.of());
+
+        JourneyResultDTO result = service.findMyJourneyResult(journey.getId());
+
+        Assertions.assertEquals(journey.getId(), result.journeyId());
+        Assertions.assertEquals(4, result.scores().size());
+    }
+
+    @Test
     void findMyJourneyResultShouldThrowResourceNotFoundExceptionWhenJourneyIsNotFromLoggedStudent() {
         Mockito.when(authService.authenticated()).thenReturn(student);
         Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));

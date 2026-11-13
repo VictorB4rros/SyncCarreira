@@ -55,7 +55,7 @@ public class JourneyResultService {
         JourneyRecord journey = journeyRecordRepository
                 .findByStudentIdAndJourneyNumber(student.getId(), student.getCurrentJourneyNumber())
                 .orElseThrow(() -> new BusinessException("O resultado fica disponível quando você conclui a jornada, enviando a síntese de todas as trilhas."));
-        return resultFor(journey);
+        return buildResult(journey);
     }
 
     // Resultado de uma jornada concluída do histórico (RF-15)
@@ -64,13 +64,18 @@ public class JourneyResultService {
         Student student = loggedStudent();
         JourneyRecord journey = journeyRecordRepository.findByIdAndStudentId(journeyId, student.getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Jornada não encontrada. ID: " + journeyId));
-        return resultFor(journey);
+        return buildResult(journey);
     }
 
     // Usa os scores e os máximos guardados na conclusão da jornada: o resultado não muda depois,
     // nem se o aluno alterar o perfil, nem se as perguntas ou os pesos forem alterados
     @Transactional(readOnly = true)
     public JourneyResultDTO resultFor(JourneyRecord journey) {
+        return buildResult(journey);
+    }
+
+    // Chamado também pelos métodos desta classe, que já rodam dentro da transação
+    private JourneyResultDTO buildResult(JourneyRecord journey) {
         List<AreaScoreDTO> areaScores = areaScoreCalculator.calculate(journey);
         List<KnowledgeArea> highlighted = AreaScoreCalculator.highlightedAreas(areaScores);
 

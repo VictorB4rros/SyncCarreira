@@ -129,7 +129,7 @@ export default function ContentHubPage() {
                 className="w-full rounded-xl border border-outline-variant bg-surface-container-low/50 py-2.5 pl-9 pr-3 text-sm placeholder:text-subtle focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </label>
-            <div role="group" aria-label="Filtrar por categoria" className="flex flex-wrap gap-2">
+            <fieldset aria-label="Filtrar por categoria" className="m-0 flex min-w-0 flex-wrap gap-2 border-0 p-0">
               {filters.map(f => (
                 <button
                   key={f.key}
@@ -145,7 +145,7 @@ export default function ContentHubPage() {
                   <span className={cn('rounded-full px-1.5 text-[10px]', filter === f.key ? 'bg-white/20' : 'bg-white')}>{f.count}</span>
                 </button>
               ))}
-            </div>
+            </fieldset>
           </div>
 
           {renderLinks(allLinks.length, visible)}

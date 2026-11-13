@@ -120,7 +120,7 @@ function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFi
 }>) {
   return (
     <section aria-label="Caixa de entrada" className={cn('flex-col gap-3 lg:col-span-5', hasSelection ? 'hidden lg:flex' : 'flex')}>
-      <div role="group" aria-label="Filtrar feedbacks" className="flex flex-wrap gap-2">
+      <fieldset aria-label="Filtrar feedbacks" className="m-0 flex min-w-0 flex-wrap gap-2 border-0 p-0">
         {FILTERS.map(f => (
           <button
             key={f.key}
@@ -136,7 +136,7 @@ function FeedbackInbox({ filter, counts, visible, selectedId, hasSelection, onFi
             <span className={cn('rounded-full px-1.5 text-[10px]', filter === f.key ? 'bg-white/20' : 'bg-surface-container')}>{counts[f.key]}</span>
           </button>
         ))}
-      </div>
+      </fieldset>
 
       <div className="overflow-hidden rounded-2xl bg-white shadow-card">
         <div className="flex items-center justify-between border-b border-outline-variant px-4 py-3">

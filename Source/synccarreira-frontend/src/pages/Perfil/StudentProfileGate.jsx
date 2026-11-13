@@ -37,7 +37,7 @@ export default function StudentProfileGate({ children }) {
   if (!hasStudentRole(user)) return children
 
   if (status === 'loading') {
-    return <main className="sp-gate-state" role="status">Verificando seu perfil…</main>
+    return <main className="sp-gate-state"><output>Verificando seu perfil…</output></main>
   }
 
   if (status === 'incomplete') {

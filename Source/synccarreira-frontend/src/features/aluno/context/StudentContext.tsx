@@ -103,10 +103,10 @@ export function StudentProvider({ user, children }: Readonly<{ user: AuthUser; c
 
   if (loading && !profile) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface text-muted" role="status">
+      <output className="flex min-h-screen items-center justify-center bg-surface text-muted">
         <LoaderCircle className="h-6 w-6 animate-spin text-primary" aria-hidden />
         <span className="ml-3 text-sm font-medium">Carregando seu espaço…</span>
-      </div>
+      </output>
     )
   }
 

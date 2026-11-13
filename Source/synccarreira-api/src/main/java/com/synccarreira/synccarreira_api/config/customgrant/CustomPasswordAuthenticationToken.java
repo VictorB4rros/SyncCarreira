@@ -8,6 +8,7 @@ import org.springframework.security.oauth2.server.authorization.authentication.O
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 public class CustomPasswordAuthenticationToken extends OAuth2AuthorizationGrantAuthenticationToken {
@@ -44,5 +45,20 @@ public class CustomPasswordAuthenticationToken extends OAuth2AuthorizationGrantA
 
 	public Set<String> getScopes() {
 		return this.scopes;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) return true;
+		if (obj == null || getClass() != obj.getClass() || !super.equals(obj)) return false;
+		CustomPasswordAuthenticationToken other = (CustomPasswordAuthenticationToken) obj;
+		return Objects.equals(username, other.username)
+				&& Objects.equals(password, other.password)
+				&& Objects.equals(scopes, other.scopes);
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(super.hashCode(), username, password, scopes);
 	}
 }

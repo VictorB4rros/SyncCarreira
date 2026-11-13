@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +35,6 @@ public class Psychologist extends User {
     private List<Appointment> appointments = new ArrayList<>();
 
     public boolean isContractValid() {
-        return contractExpirationDate != null && !contractExpirationDate.isBefore(LocalDate.now());
+        return contractExpirationDate != null && !contractExpirationDate.isBefore(LocalDate.now(ZoneId.systemDefault()));
     }
 }

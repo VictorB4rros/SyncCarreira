@@ -150,6 +150,8 @@ function OptionsQuestion({ question, selectedOptionIds, onSelect, saveStatus }) 
   const max = maxSelections(question)
   // Com o limite atingido, só as opções marcadas continuam clicáveis (para desmarcar)
   const limitReached = max !== null && selectedOptionIds.length >= max
+  // Várias opções: <fieldset> (role group implícito); uma opção: radiogroup
+  const OptionsGroup = multiple ? 'fieldset' : 'div'
   const answered = selectedOptionIds.length > 0
 
   return (
@@ -166,7 +168,7 @@ function OptionsQuestion({ question, selectedOptionIds, onSelect, saveStatus }) 
             <p className="tp-question__hint">{optionsBadge(multiple, max)}</p>
         )}
 
-        <div className="tp-options" role={multiple ? 'group' : 'radiogroup'}>
+        <OptionsGroup className="tp-options" role={multiple ? undefined : 'radiogroup'}>
           {question.options.map((opt) => {
             const checked = selectedOptionIds.includes(opt.id)
             return (
@@ -190,7 +192,7 @@ function OptionsQuestion({ question, selectedOptionIds, onSelect, saveStatus }) 
                 </button>
             )
           })}
-        </div>
+        </OptionsGroup>
 
         <SaveFeedback status={saveStatus} />
       </div>
@@ -236,7 +238,7 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
                 <span key={i} className="tp-likert__label">{label}</span>
             ))}
           </div>
-          <div className="tp-likert__scale" role="group" aria-label="Escala com quatro opções">
+          <fieldset className="tp-likert__scale" aria-label="Escala com quatro opções">
             {LIKERT_VALUES.map((val) => (
                 <button
                     key={val}
@@ -249,11 +251,11 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
                   {val}
                 </button>
             ))}
-          </div>
+          </fieldset>
           {selectedNeutralOptionIsHidden && (
-            <p className="tp-likert__notice" role="status">
+            <output className="tp-likert__notice">
               Sua resposta anterior foi neutra. Selecione uma das quatro opções para atualizá-la.
-            </p>
+            </output>
           )}
         </div>
 
@@ -327,10 +329,10 @@ function InformationLinks({ data, loading, error }) {
 
   if (error) {
     return (
-      <section className="tp-info-links tp-info-links--error" role="status">
+      <output className="tp-info-links tp-info-links--error">
         <h2>Materiais complementares</h2>
         <p>{error} Você ainda pode registrar sua síntese final.</p>
-      </section>
+      </output>
     )
   }
 
@@ -664,9 +666,9 @@ export default function TrailPage() {
         />
 
         {answersWarning && (
-            <p className="tp-answers-warning" role="status">
+            <output className="tp-answers-warning">
               {answersWarning}
-            </p>
+            </output>
         )}
 
         <main className="tp-main">
