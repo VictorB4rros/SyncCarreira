@@ -133,7 +133,7 @@ export default function InformationLinkManagementPage() {
           </div>
           <form className="information-links-form" onSubmit={handleSubmit}>
             <label>
-              Tópico ou nome da fonte
+              {'Tópico ou nome da fonte'}
               <input
                 value={form.topic}
                 onChange={event => updateForm('topic', event.target.value)}
@@ -143,7 +143,7 @@ export default function InformationLinkManagementPage() {
               />
             </label>
             <label>
-              Link
+              {'Link'}
               <input
                 type="url"
                 value={form.url}
@@ -154,7 +154,7 @@ export default function InformationLinkManagementPage() {
               />
             </label>
             <label>
-              Exibir como
+              {'Exibir como'}
               <select
                 value={form.category}
                 onChange={event => updateForm('category', event.target.value)}
