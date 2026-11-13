@@ -7,7 +7,6 @@ import com.synccarreira.synccarreira_api.entities.Institution;
 import com.synccarreira.synccarreira_api.entities.SchoolClass;
 import com.synccarreira.synccarreira_api.repositories.InstitutionRepository;
 import com.synccarreira.synccarreira_api.repositories.SchoolClassRepository;
-import com.synccarreira.synccarreira_api.repositories.UserRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.BusinessException;
 import com.synccarreira.synccarreira_api.services.exceptions.ConflictException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
@@ -25,7 +24,7 @@ public class SchoolClassService {
 
     private final InstitutionRepository institutionRepository;
 
-    public SchoolClassService(final SchoolClassRepository schoolClassRepository, final InstitutionRepository institutionRepository, final UserRepository userRepository) {
+    public SchoolClassService(final SchoolClassRepository schoolClassRepository, final InstitutionRepository institutionRepository) {
         this.schoolClassRepository = schoolClassRepository;
         this.institutionRepository = institutionRepository;
     }

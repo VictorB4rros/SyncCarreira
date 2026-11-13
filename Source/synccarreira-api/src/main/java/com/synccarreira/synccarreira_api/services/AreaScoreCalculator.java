@@ -152,7 +152,7 @@ public class AreaScoreCalculator {
         if (maxScore == null || maxScore <= 0) {
             return 0.0;
         }
-        return round(Math.max(0.0, Math.min(100.0, score * 100.0 / maxScore)));
+        return round(Math.clamp(score * 100.0 / maxScore, 0.0, 100.0));
     }
 
     private static double round(double value) {
