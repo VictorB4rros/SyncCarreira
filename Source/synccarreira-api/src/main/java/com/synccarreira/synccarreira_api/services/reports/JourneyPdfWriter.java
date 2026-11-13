@@ -99,9 +99,12 @@ public class JourneyPdfWriter {
         addRow(table, "Aluno", data.studentName());
         addRow(table, "E-mail", data.studentEmail());
         addRow(table, "Ano escolar", orNotInformed(data.scholarYear()));
-        addRow(table, "Turma", journey.schoolClassName() != null
-                ? journey.schoolClassName() + (journey.schoolYear() != null ? " (" + journey.schoolYear() + ")" : "")
-                : NOT_INFORMED);
+        String schoolClass = NOT_INFORMED;
+        if (journey.schoolClassName() != null) {
+            String schoolYear = journey.schoolYear() != null ? " (" + journey.schoolYear() + ")" : "";
+            schoolClass = journey.schoolClassName() + schoolYear;
+        }
+        addRow(table, "Turma", schoolClass);
         addRow(table, "Instituição", orNotInformed(journey.institutionName()));
         document.add(table);
     }
@@ -174,10 +177,11 @@ public class JourneyPdfWriter {
         document.add(table);
 
         List<KnowledgeArea> highlighted = result.highlightedAreas();
-        String highest = highlighted == null || highlighted.isEmpty()
-                ? "Ainda não há área em destaque."
-                : (highlighted.size() == 1 ? "Área em destaque: " : "Áreas em destaque (empate): ")
-                        + highlighted.stream().map(JourneyPdfWriter::label).collect(Collectors.joining(", ")) + ".";
+        String highest = "Ainda não há área em destaque.";
+        if (highlighted != null && !highlighted.isEmpty()) {
+            String prefix = highlighted.size() == 1 ? "Área em destaque: " : "Áreas em destaque (empate): ";
+            highest = prefix + highlighted.stream().map(JourneyPdfWriter::label).collect(Collectors.joining(", ")) + ".";
+        }
         Paragraph highestParagraph = new Paragraph(highest, BOLD);
         highestParagraph.setSpacingBefore(8f);
         document.add(highestParagraph);

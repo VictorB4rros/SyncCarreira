@@ -122,7 +122,7 @@ function SaveFeedback({ status }) {
   if (status === 'saved')
     return (
         <div className="tp-question__save-feedback tp-question__save-feedback--saved">
-          <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13">
+          <svg viewBox="0 0 20 20" fill="currentColor" width="13" height="13" aria-hidden="true">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"/>
           </svg>{' '}
           Resposta salva
@@ -544,7 +544,7 @@ export default function TrailPage() {
       setLoadingPage(false)
     }
 
-    load()
+    void load()
   }, [trailId, user?.id])
 
   // ── Seleção de resposta ────────────────────────────────────
@@ -797,7 +797,7 @@ function PageHeader({ trail, progressPct, showProgress = true, onBack }) {
       <header className="tp-header">
         <div className="tp-header__left">
           <button className="tp-back" onClick={onBack}>
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" width="14" height="14" aria-hidden="true">
               <polyline points="15 18 9 12 15 6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Voltar

@@ -22,16 +22,13 @@ public class JourneyPdfWriterTests {
     private final JourneyPdfWriter writer = new JourneyPdfWriter();
 
     private static String extractText(byte[] pdf) throws Exception {
-        PdfReader reader = new PdfReader(pdf);
-        try {
+        try (PdfReader reader = new PdfReader(pdf)) {
             PdfTextExtractor extractor = new PdfTextExtractor(reader);
             StringBuilder text = new StringBuilder();
             for (int page = 1; page <= reader.getNumberOfPages(); page++) {
                 text.append(extractor.getTextFromPage(page)).append('\n');
             }
             return text.toString();
-        } finally {
-            reader.close();
         }
     }
 
@@ -75,11 +72,8 @@ public class JourneyPdfWriterTests {
 
         byte[] pdf = writer.write(data);
 
-        PdfReader reader = new PdfReader(pdf);
-        try {
+        try (PdfReader reader = new PdfReader(pdf)) {
             Assertions.assertTrue(reader.getNumberOfPages() >= 1);
-        } finally {
-            reader.close();
         }
     }
 

@@ -1,21 +1,16 @@
 package com.synccarreira.synccarreira_api.services;
 
-import com.synccarreira.synccarreira_api.dto.AnswerDTO;
 import com.synccarreira.synccarreira_api.dto.TrailDTO;
 import com.synccarreira.synccarreira_api.dto.TrailUpdateDTO;
 import com.synccarreira.synccarreira_api.dto.UserDTO;
 import com.synccarreira.synccarreira_api.entities.Answer;
-import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.Student;
 import com.synccarreira.synccarreira_api.entities.Trail;
-import com.synccarreira.synccarreira_api.entities.User;
 import com.synccarreira.synccarreira_api.repositories.AnswerRepository;
-import com.synccarreira.synccarreira_api.repositories.QuestionRepository;
 import com.synccarreira.synccarreira_api.repositories.StudentRepository;
 import com.synccarreira.synccarreira_api.repositories.SynthesisRepository;
 import com.synccarreira.synccarreira_api.repositories.TrailRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,6 +19,8 @@ import java.util.List;
 
 @Service
 public class TrailService {
+
+    private static final String TRAIL_NOT_FOUND = "Trilha não encontrada. ID: ";
 
     private final TrailRepository trailRepository;
 
@@ -59,7 +56,7 @@ public class TrailService {
     @Transactional(readOnly = true)
     public TrailDTO findById(Long id) {
         Trail trail = trailRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Trilha não encontrada. ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(TRAIL_NOT_FOUND + id));
         return new TrailDTO(trail);
     }
 
@@ -75,7 +72,7 @@ public class TrailService {
     @Transactional
     public TrailDTO update(Long id, TrailUpdateDTO dto) {
         Trail trail = trailRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Trilha não encontrada. ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(TRAIL_NOT_FOUND + id));
         Trail trail1 = trailRepository.findBySequentialOrder(dto.sequentialOrder()).orElse(null);
         if (trail1 != null) {
             List<Trail> trails = new ArrayList<>();
@@ -95,7 +92,7 @@ public class TrailService {
     @Transactional
     public void delete(Long id) {
         if (!trailRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Trilha não encontrada. ID: " + id);
+            throw new ResourceNotFoundException(TRAIL_NOT_FOUND + id);
         }
         trailRepository.deleteById(id);
     }
@@ -103,7 +100,7 @@ public class TrailService {
     @Transactional(readOnly = true)
     public boolean canAccess(Long trailId) {
         Trail trail = trailRepository.findById(trailId)
-                .orElseThrow(() -> new ResourceNotFoundException("Trilha não encontrada. ID: " + trailId));
+                .orElseThrow(() -> new ResourceNotFoundException(TRAIL_NOT_FOUND + trailId));
 
         if (trail.getSequentialOrder() == 1) {
             // RF-14: a jornada só começa depois que o aluno preenche as afinidades do perfil

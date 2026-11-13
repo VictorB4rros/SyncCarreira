@@ -11,7 +11,6 @@ import com.synccarreira.synccarreira_api.repositories.UserRepository;
 import com.synccarreira.synccarreira_api.services.exceptions.DatabaseException;
 import com.synccarreira.synccarreira_api.services.exceptions.ResourceNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,17 +28,21 @@ import java.util.Optional;
 @Service
 public class UserService implements UserDetailsService {
 
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	private UserRepository repository;
-	
-	@Autowired
-	private RoleRepository roleRepository;
+	private final PasswordEncoder passwordEncoder;
 
-	@Autowired
-	private AuthService authService;
+	private final UserRepository repository;
+
+	private final RoleRepository roleRepository;
+
+	private final AuthService authService;
+
+	public UserService(final PasswordEncoder passwordEncoder, final UserRepository repository,
+			final RoleRepository roleRepository, final AuthService authService) {
+		this.passwordEncoder = passwordEncoder;
+		this.repository = repository;
+		this.roleRepository = roleRepository;
+		this.authService = authService;
+	}
 	
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAll(Pageable pageable) {

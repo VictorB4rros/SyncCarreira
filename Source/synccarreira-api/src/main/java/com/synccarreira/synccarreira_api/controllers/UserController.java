@@ -9,7 +9,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -23,8 +22,11 @@ import java.net.URI;
 @Tag(name = "Usuários", description = "Endpoints para interagir com os usuários da aplicação.")
 public class UserController {
 
-	@Autowired
-	private UserService service;
+	private final UserService service;
+
+	public UserController(final UserService service) {
+		this.service = service;
+	}
 
 	@Operation(summary = "Busca todos os usuários cadastrados.")
 	@ApiResponses(value = {

@@ -203,7 +203,7 @@ export default function HomePage() {
         setLoadingTrails(false)
       }
     }
-    load()
+    void load()
   }, [psicologa, aluno])
 
   // Ao entrar numa trilha, atualiza o refreshKey ao voltar via navigate
