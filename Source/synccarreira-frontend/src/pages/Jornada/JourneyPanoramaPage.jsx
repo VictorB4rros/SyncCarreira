@@ -314,7 +314,7 @@ export default function JourneyPanoramaPage() {
           {currentJourney && <span className="jp-hero__meta">Jornada {currentJourney.currentJourneyNumber} · {completedStages} de {totalStages} etapas concluídas</span>}
         </header>
 
-        {loading && <div className="jp-state" role="status">Reunindo os registros da sua jornada…</div>}
+        {loading && <output className="jp-state">Reunindo os registros da sua jornada…</output>}
         {!loading && error && <div className="jp-state jp-state--error" role="alert">{error}</div>}
 
         {!loading && !error && currentJourney && (
@@ -336,7 +336,7 @@ export default function JourneyPanoramaPage() {
                 <span className="jp-section-heading__number jp-section-heading__number--warm">02</span>
                 <div><h2 id="jp-past-title">Outros caminhos que você percorreu</h2><p>Uma lembrança de cada jornada concluída.</p></div>
               </div>
-              {historyError && <p className="jp-history-error" role="status">{historyError}</p>}
+              {historyError && <output className="jp-history-error">{historyError}</output>}
               {!historyError && pastJourneys.length === 0 && (
                 <div className="jp-past-empty">Quando você concluir outras jornadas, elas ficarão guardadas aqui.</div>
               )}

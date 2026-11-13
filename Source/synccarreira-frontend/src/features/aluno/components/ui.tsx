@@ -193,16 +193,16 @@ export function ProgressBar({ value, label, className, tone = 'primary' }: Reado
 
 // ─── Estados de carregamento, erro e vazio ─────────────────────
 
-export function Spinner({ className }: { className?: string }) {
+export function Spinner({ className }: Readonly<{ className?: string }>) {
   return <LoaderCircle className={cn('h-5 w-5 animate-spin text-primary', className)} aria-hidden />
 }
 
 export function LoadingState({ label = 'Carregando…', className }: Readonly<{ label?: string; className?: string }>) {
   return (
-    <div role="status" className={cn('flex items-center justify-center gap-3 py-16 text-sm font-medium text-muted', className)}>
+    <output className={cn('flex items-center justify-center gap-3 py-16 text-sm font-medium text-muted', className)}>
       <Spinner />
       <span>{label}</span>
-    </div>
+    </output>
   )
 }
 
@@ -270,14 +270,16 @@ export function Alert({ tone = 'info', title, children, className }: Readonly<{ 
     danger: 'bg-error-container text-on-error-container border-error/20',
   }[tone]
   const IconTone = alertIcon(tone)
+  // Alertas de erro usam role="alert"; os demais, o <output> (role status implícito)
+  const Region = tone === 'danger' ? 'div' : 'output'
   return (
-    <div role={tone === 'danger' ? 'alert' : 'status'} className={cn('flex items-start gap-2.5 rounded-xl border p-3 text-sm', styles, className)}>
+    <Region role={tone === 'danger' ? 'alert' : undefined} className={cn('flex items-start gap-2.5 rounded-xl border p-3 text-sm', styles, className)}>
       <IconTone className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
       <div className="flex flex-col gap-0.5">
         {title && <strong className="font-semibold">{title}</strong>}
         <div className="leading-relaxed">{children}</div>
       </div>
-    </div>
+    </Region>
   )
 }
 
@@ -301,7 +303,7 @@ export function Modal({
   size?: 'md' | 'lg'
 }>) {
   const titleId = useId()
-  const panelRef = useRef<HTMLDivElement>(null)
+  const panelRef = useRef<HTMLDialogElement>(null)
   const onCloseRef = useRef(onClose)
   onCloseRef.current = onClose
 
@@ -324,14 +326,15 @@ export function Modal({
   return (
     <div className="fixed inset-0 z-[70] flex items-end justify-center p-0 sm:items-center sm:p-4">
       <button type="button" aria-label="Fechar" className="absolute inset-0 bg-primary-deep/50 backdrop-blur-sm" onClick={onClose} />
-      <div
+      <dialog
         ref={panelRef}
-        role="dialog"
+        open
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
         className={cn(
-          'relative z-10 flex max-h-[90vh] w-full flex-col overflow-hidden rounded-t-2xl bg-white shadow-raised outline-none sm:rounded-2xl',
+          // m-0, h-auto, border-0, p-0 e text-inherit anulam o estilo padrão do navegador para <dialog>
+          'relative z-10 m-0 flex h-auto max-h-[90vh] w-full flex-col overflow-hidden rounded-t-2xl border-0 bg-white p-0 text-inherit shadow-raised outline-none sm:rounded-2xl',
           size === 'lg' ? 'sm:max-w-2xl' : 'sm:max-w-lg',
         )}
       >
@@ -346,7 +349,7 @@ export function Modal({
         </div>
         <div className="overflow-y-auto px-5 py-4 text-sm text-on-surface-variant">{children}</div>
         {footer && <div className="flex flex-wrap justify-end gap-2 border-t border-outline-variant bg-surface-container-low/50 px-5 py-3">{footer}</div>}
-      </div>
+      </dialog>
     </div>
   )
 }
@@ -404,10 +407,11 @@ export function ToastProvider({ children }: Readonly<{ children: ReactNode }>) {
       <div aria-live="polite" className="pointer-events-none fixed bottom-4 right-4 z-[80] flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2">
         {toasts.map(toast => {
           const IconTone = toastIcon(toast.tone)
+          const Region = toast.tone === 'error' ? 'div' : 'output'
           return (
-            <div
+            <Region
               key={toast.id}
-              role={toast.tone === 'error' ? 'alert' : 'status'}
+              role={toast.tone === 'error' ? 'alert' : undefined}
               className={cn(
                 'pointer-events-auto flex items-start gap-3 rounded-xl p-3.5 text-sm shadow-raised',
                 toast.tone === 'error' ? 'bg-error-container text-on-error-container' : 'bg-inverse-surface text-inverse-on-surface',
@@ -421,7 +425,7 @@ export function ToastProvider({ children }: Readonly<{ children: ReactNode }>) {
               <button type="button" onClick={() => dismiss(toast.id)} className="rounded p-0.5 opacity-70 hover:opacity-100" aria-label="Fechar aviso">
                 <X className="h-4 w-4" aria-hidden />
               </button>
-            </div>
+            </Region>
           )
         })}
       </div>

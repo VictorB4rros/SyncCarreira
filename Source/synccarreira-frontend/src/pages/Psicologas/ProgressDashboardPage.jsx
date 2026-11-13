@@ -360,7 +360,7 @@ export default function ProgressDashboardPage() {
           </div>
         </header>
 
-        {loading && <div className="pd-state" role="status">Carregando dados do painel…</div>}
+        {loading && <output className="pd-state">Carregando dados do painel…</output>}
         {!loading && error && (
           <div className="pd-state pd-state--error" role="alert">
             <strong>Não foi possível carregar o painel</strong>

@@ -154,7 +154,7 @@ export default function InformationLinkManagementPage() {
         </header>
 
         {error && <p className="information-links-alert information-links-alert--error" role="alert">{error}</p>}
-        {success && <p className="information-links-alert information-links-alert--success" role="status">{success}</p>}
+        {success && <output className="information-links-alert information-links-alert--success">{success}</output>}
 
         <section className="information-links-panel" aria-labelledby="information-links-form-title">
           <div className="information-links-panel__heading">

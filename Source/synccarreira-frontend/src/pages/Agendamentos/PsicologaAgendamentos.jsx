@@ -177,6 +177,7 @@ export default function PsicologaAgendamentos() {
         .sort((a, b) => new Date(a.doubtFlaggedAt) - new Date(b.doubtFlaggedAt))
       setDoubtStudents(flagged)
     } catch (err) {
+      console.error('[PsicologaAgendamentos] Falha ao carregar o painel de alunos:', err)
       setDoubtError('Não foi possível confirmar quais alunos pertencem à sua instituição. Tente novamente.')
       setInstitutionStudentIds(new Set())
     } finally {

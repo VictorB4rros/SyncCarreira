@@ -35,16 +35,16 @@ function typeLabel(question: QuestionDTO): string {
 function SaveFeedback({ status, errorMessage }: Readonly<{ status?: SaveStatus; errorMessage?: string }>) {
   if (status === 'saving') {
     return (
-      <span className="flex items-center gap-1 text-xs font-medium text-muted" role="status">
+      <output className="flex items-center gap-1 text-xs font-medium text-muted">
         <LoaderCircle className="h-3.5 w-3.5 animate-spin" aria-hidden /> Salvando…
-      </span>
+      </output>
     )
   }
   if (status === 'saved') {
     return (
-      <span className="flex items-center gap-1 text-xs font-semibold text-primary" role="status">
+      <output className="flex items-center gap-1 text-xs font-semibold text-primary">
         <CircleCheck className="h-3.5 w-3.5" aria-hidden /> Resposta salva
-      </span>
+      </output>
     )
   }
   if (status === 'error') {
@@ -62,6 +62,8 @@ export function QuestionCard({ question, index, selected, status, errorMessage, 
   const multiple = acceptsSeveralOptions(question)
   const max = maxSelections(question)
   const limitReached = max !== null && selected.length >= max
+  // Várias opções: <fieldset> (role group implícito); uma opção: radiogroup
+  const OptionsGroup = multiple ? 'fieldset' : 'div'
   const promptId = `pergunta-${question.id}`
 
   return (
@@ -93,10 +95,10 @@ export function QuestionCard({ question, index, selected, status, errorMessage, 
       {question.questionType === 'LIKERT' ? (
         <LikertScale question={question} selected={selected} disabled={disabled} onChoose={onChoose} labelledBy={promptId} />
       ) : (
-        <div
-          role={multiple ? 'group' : 'radiogroup'}
+        <OptionsGroup
+          role={multiple ? undefined : 'radiogroup'}
           aria-labelledby={promptId}
-          className="mt-4 grid gap-2 sm:grid-cols-2"
+          className={cn('mt-4 grid gap-2 sm:grid-cols-2', multiple && 'min-w-0 border-0 p-0')}
         >
           {question.options.map(option => {
             const checked = selected.includes(option.id)
@@ -132,7 +134,7 @@ export function QuestionCard({ question, index, selected, status, errorMessage, 
               </button>
             )
           })}
-        </div>
+        </OptionsGroup>
       )}
 
       <div className="mt-3 min-h-5">
@@ -189,9 +191,9 @@ function LikertScale({
         })}
       </div>
       {hiddenNeutralSelected && (
-        <p className="mt-2 text-xs font-medium text-secondary" role="status">
+        <output className="mt-2 block text-xs font-medium text-secondary">
           Sua resposta anterior era neutra. Escolha uma das quatro opções para atualizá-la.
-        </p>
+        </output>
       )}
     </div>
   )
