@@ -123,7 +123,7 @@ export function ExternalButtonLink({
 
 // ─── Superfícies e rótulos ──────────────────────────────────────
 
-export function Card({ className, children, as: As = 'div' }: { className?: string; children: ReactNode; as?: 'div' | 'section' | 'article' | 'aside' }) {
+export function Card({ className, children, as: As = 'div' }: Readonly<{ className?: string; children: ReactNode; as?: 'div' | 'section' | 'article' | 'aside' }>) {
   return <As className={cn('rounded-2xl bg-white p-4 shadow-card sm:p-6', className)}>{children}</As>
 }
 
@@ -138,7 +138,7 @@ const BADGE_TONES: Record<BadgeTone, string> = {
   white: 'bg-white/15 text-white',
 }
 
-export function Badge({ tone = 'soft', icon: IconLeft, className, children }: { tone?: BadgeTone; icon?: Icon; className?: string; children: ReactNode }) {
+export function Badge({ tone = 'soft', icon: IconLeft, className, children }: Readonly<{ tone?: BadgeTone; icon?: Icon; className?: string; children: ReactNode }>) {
   return (
     <span className={cn('inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold leading-none whitespace-nowrap', BADGE_TONES[tone], className)}>
       {IconLeft && <IconLeft className="h-3.5 w-3.5" aria-hidden />}
@@ -147,7 +147,7 @@ export function Badge({ tone = 'soft', icon: IconLeft, className, children }: { 
   )
 }
 
-export function CardTitle({ icon: IconLeft, children, aside }: { icon?: Icon; children: ReactNode; aside?: ReactNode }) {
+export function CardTitle({ icon: IconLeft, children, aside }: Readonly<{ icon?: Icon; children: ReactNode; aside?: ReactNode }>) {
   return (
     <div className="flex items-center justify-between gap-2">
       <h2 className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-on-surface">
@@ -159,7 +159,7 @@ export function CardTitle({ icon: IconLeft, children, aside }: { icon?: Icon; ch
   )
 }
 
-export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?: ReactNode; title: ReactNode; description?: ReactNode; actions?: ReactNode }) {
+export function PageHeader({ eyebrow, title, description, actions }: Readonly<{ eyebrow?: ReactNode; title: ReactNode; description?: ReactNode; actions?: ReactNode }>) {
   return (
     <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
       <div className="flex max-w-3xl flex-col gap-1">
@@ -172,7 +172,7 @@ export function PageHeader({ eyebrow, title, description, actions }: { eyebrow?:
   )
 }
 
-export function ProgressBar({ value, label, className, tone = 'primary' }: { value: number; label: string; className?: string; tone?: 'primary' | 'light' }) {
+export function ProgressBar({ value, label, className, tone = 'primary' }: Readonly<{ value: number; label: string; className?: string; tone?: 'primary' | 'light' }>) {
   const pct = Math.min(100, Math.max(0, Math.round(value)))
   return (
     <div
@@ -197,7 +197,7 @@ export function Spinner({ className }: { className?: string }) {
   return <LoaderCircle className={cn('h-5 w-5 animate-spin text-primary', className)} aria-hidden />
 }
 
-export function LoadingState({ label = 'Carregando…', className }: { label?: string; className?: string }) {
+export function LoadingState({ label = 'Carregando…', className }: Readonly<{ label?: string; className?: string }>) {
   return (
     <div role="status" className={cn('flex items-center justify-center gap-3 py-16 text-sm font-medium text-muted', className)}>
       <Spinner />
@@ -206,11 +206,11 @@ export function LoadingState({ label = 'Carregando…', className }: { label?: s
   )
 }
 
-export function Skeleton({ className }: { className?: string }) {
+export function Skeleton({ className }: Readonly<{ className?: string }>) {
   return <div aria-hidden className={cn('animate-pulse rounded-xl bg-surface-container', className)} />
 }
 
-export function ErrorState({ title = 'Algo deu errado', message, onRetry, className }: { title?: string; message: string; onRetry?: () => void | Promise<void>; className?: string }) {
+export function ErrorState({ title = 'Algo deu errado', message, onRetry, className }: Readonly<{ title?: string; message: string; onRetry?: () => void | Promise<void>; className?: string }>) {
   const [retrying, setRetrying] = useState(false)
 
   async function handleRetry() {
@@ -244,7 +244,7 @@ export function ErrorState({ title = 'Algo deu errado', message, onRetry, classN
   )
 }
 
-export function EmptyState({ icon: IconMain = Inbox, title, description, action, className }: { icon?: Icon; title: string; description?: ReactNode; action?: ReactNode; className?: string }) {
+export function EmptyState({ icon: IconMain = Inbox, title, description, action, className }: Readonly<{ icon?: Icon; title: string; description?: ReactNode; action?: ReactNode; className?: string }>) {
   return (
     <div className={cn('flex flex-col items-center gap-3 rounded-2xl border border-dashed border-outline-variant bg-surface-container-low/60 px-6 py-10 text-center', className)}>
       <span className="flex h-12 w-12 items-center justify-center rounded-full bg-surface-container text-primary">
@@ -257,13 +257,19 @@ export function EmptyState({ icon: IconMain = Inbox, title, description, action,
   )
 }
 
-export function Alert({ tone = 'info', title, children, className }: { tone?: 'info' | 'danger' | 'success'; title?: string; children: ReactNode; className?: string }) {
+function alertIcon(tone: 'info' | 'danger' | 'success') {
+  if (tone === 'danger') return CircleAlert
+  if (tone === 'success') return CircleCheck
+  return Info
+}
+
+export function Alert({ tone = 'info', title, children, className }: Readonly<{ tone?: 'info' | 'danger' | 'success'; title?: string; children: ReactNode; className?: string }>) {
   const styles = {
     info: 'bg-surface-container-low text-on-surface-variant border-outline-variant',
     success: 'bg-surface-container text-primary-strong border-secondary-container',
     danger: 'bg-error-container text-on-error-container border-error/20',
   }[tone]
-  const IconTone = tone === 'danger' ? CircleAlert : tone === 'success' ? CircleCheck : Info
+  const IconTone = alertIcon(tone)
   return (
     <div role={tone === 'danger' ? 'alert' : 'status'} className={cn('flex items-start gap-2.5 rounded-xl border p-3 text-sm', styles, className)}>
       <IconTone className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
@@ -285,7 +291,7 @@ export function Modal({
   children,
   footer,
   size = 'md',
-}: {
+}: Readonly<{
   open: boolean
   onClose: () => void
   title: string
@@ -293,7 +299,7 @@ export function Modal({
   children?: ReactNode
   footer?: ReactNode
   size?: 'md' | 'lg'
-}) {
+}>) {
   const titleId = useId()
   const panelRef = useRef<HTMLDivElement>(null)
   const onCloseRef = useRef(onClose)
@@ -360,9 +366,15 @@ interface ToastApi {
   info: (title: string, description?: string) => void
 }
 
+function toastIcon(tone: Toast['tone']) {
+  if (tone === 'error') return CircleAlert
+  if (tone === 'success') return CircleCheck
+  return Info
+}
+
 const ToastContext = createContext<ToastApi | null>(null)
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export function ToastProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [toasts, setToasts] = useState<Toast[]>([])
   const nextId = useRef(1)
 
@@ -391,7 +403,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
       {children}
       <div aria-live="polite" className="pointer-events-none fixed bottom-4 right-4 z-[80] flex w-[calc(100%-2rem)] max-w-sm flex-col gap-2">
         {toasts.map(toast => {
-          const IconTone = toast.tone === 'error' ? CircleAlert : toast.tone === 'success' ? CircleCheck : Info
+          const IconTone = toastIcon(toast.tone)
           return (
             <div
               key={toast.id}

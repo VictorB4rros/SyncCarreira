@@ -43,12 +43,12 @@ export function AffinityForm({
   submitLabel = 'Salvar afinidades',
   onSaved,
   onCancel,
-}: {
+}: Readonly<{
   initial?: StudentAffinityDTO | null
   submitLabel?: string
   onSaved: (profile: StudentProfileDTO) => void
   onCancel?: () => void
-}) {
+}>) {
   const [values, setValues] = useState<StudentAffinityDTO>(initial ?? emptyAffinities())
   const [errors, setErrors] = useState<Partial<Record<string, string>>>({})
   const [submitError, setSubmitError] = useState('')

@@ -3,6 +3,7 @@
  * @description Card de um pilar (trilha) na linha do tempo da jornada.
  * Estados: concluído, em andamento/disponível e bloqueado.
  */
+import type { ReactNode } from 'react'
 import { ArrowRight, Brain, Check, CircleCheck, Clock, Eye, Info, Lock, NotebookPen, Sparkles } from 'lucide-react'
 import type { TrailProgressInfo } from '../lib/journey'
 import { formatDate } from '../lib/format'
@@ -14,7 +15,7 @@ function excerpt(text: string, max = 180) {
   return clean.length > max ? `${clean.slice(0, max).trimEnd()}…` : clean
 }
 
-export function PillarCard({ info, previous, compact = false }: { info: TrailProgressInfo; previous?: TrailProgressInfo; compact?: boolean }) {
+export function PillarCard({ info, previous, compact = false }: Readonly<{ info: TrailProgressInfo; previous?: TrailProgressInfo; compact?: boolean }>) {
   const { trail, status, synthesis, totalQuestions, answeredQuestions, percentage, nextQuestion } = info
   const meta = TRAIL_META[trail.name]
   const code = pillarCode(trail.sequentialOrder)
@@ -87,7 +88,13 @@ export function PillarCard({ info, previous, compact = false }: { info: TrailPro
 
   const started = status === 'IN_PROGRESS'
   const allAnswered = answeredQuestions === totalQuestions
-  const cta = isFinal && totalQuestions === 0 ? 'Abrir materiais e síntese final' : started ? 'Responder perguntas & síntese' : 'Começar este pilar'
+  let cta = 'Começar este pilar'
+  if (isFinal && totalQuestions === 0) cta = 'Abrir materiais e síntese final'
+  else if (started) cta = 'Responder perguntas & síntese'
+
+  let nextQuestionHint: ReactNode = ''
+  if (nextQuestion) nextQuestionHint = <>Próxima pergunta: “{excerpt(nextQuestion.content, 80)}”</>
+  else if (allAnswered) nextQuestionHint = 'Perguntas concluídas — falta a síntese.'
 
   return (
     <article aria-labelledby={headingId} className="relative overflow-hidden rounded-2xl bg-white p-4 shadow-raised ring-2 ring-primary/15 sm:p-6">
@@ -126,7 +133,7 @@ export function PillarCard({ info, previous, compact = false }: { info: TrailPro
         )}
         <div className="flex flex-wrap items-center justify-between gap-2 pt-1 text-[11px] text-muted">
           <span className="min-w-0 truncate">
-            {nextQuestion ? <>Próxima pergunta: “{excerpt(nextQuestion.content, 80)}”</> : allAnswered ? 'Perguntas concluídas — falta a síntese.' : ''}
+            {nextQuestionHint}
           </span>
           <span className="flex items-center gap-1 font-semibold text-secondary">
             <Clock className="h-3.5 w-3.5" aria-hidden /> Síntese pendente

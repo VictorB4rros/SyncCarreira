@@ -37,7 +37,7 @@ export function useStudent(): StudentContextValue {
   return ctx
 }
 
-export function StudentProvider({ user, children }: { user: AuthUser; children: ReactNode }) {
+export function StudentProvider({ user, children }: Readonly<{ user: AuthUser; children: ReactNode }>) {
   const [profile, setProfile] = useState<StudentProfileDTO | null>(null)
   const [journey, setJourney] = useState<JourneyStatusDTO | null>(null)
   const [unreadFeedbacks, setUnreadFeedbacks] = useState(0)

@@ -32,7 +32,7 @@ function typeLabel(question: QuestionDTO): string {
   return 'Escolha uma opção'
 }
 
-function SaveFeedback({ status, errorMessage }: { status?: SaveStatus; errorMessage?: string }) {
+function SaveFeedback({ status, errorMessage }: Readonly<{ status?: SaveStatus; errorMessage?: string }>) {
   if (status === 'saving') {
     return (
       <span className="flex items-center gap-1 text-xs font-medium text-muted" role="status">
@@ -57,7 +57,7 @@ function SaveFeedback({ status, errorMessage }: { status?: SaveStatus; errorMess
   return null
 }
 
-export function QuestionCard({ question, index, selected, status, errorMessage, disabled = false, onChoose }: QuestionCardProps) {
+export function QuestionCard({ question, index, selected, status, errorMessage, disabled = false, onChoose }: Readonly<QuestionCardProps>) {
   const answered = selected.length > 0
   const multiple = acceptsSeveralOptions(question)
   const max = maxSelections(question)
@@ -148,13 +148,13 @@ function LikertScale({
   disabled,
   onChoose,
   labelledBy,
-}: {
+}: Readonly<{
   question: QuestionDTO
   selected: number[]
   disabled: boolean
   onChoose: (question: QuestionDTO, optionId: number) => void
   labelledBy: string
-}) {
+}>) {
   const options = likertOptions(question.options)
   const selectedId = selected[0]
   const hiddenNeutralSelected = selectedId !== undefined && !options.some(o => o.id === selectedId)

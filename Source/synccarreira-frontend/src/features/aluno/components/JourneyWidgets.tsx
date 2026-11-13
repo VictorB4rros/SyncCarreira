@@ -22,7 +22,7 @@ import { formatDate, formatTime, relativeDayLabel, safeExternalUrl } from '../li
 import { AFFINITY_FIELDS, AREA_LABELS, SCHEDULE_TYPE_LABELS, pillarCode, trailLabel } from '../lib/labels'
 import { Badge, ButtonLink, Card, CardTitle, ExternalButtonLink, Modal, ProgressBar, cn } from './ui'
 
-export function NextSessionCard({ session }: { session: AppointmentDTO | null }) {
+export function NextSessionCard({ session }: Readonly<{ session: AppointmentDTO | null }>) {
   if (!session) {
     return (
       <Card className="flex flex-col gap-3">
@@ -82,7 +82,7 @@ export function NextSessionCard({ session }: { session: AppointmentDTO | null })
   )
 }
 
-export function AffinitiesCard({ affinities }: { affinities: StudentAffinityDTO }) {
+export function AffinitiesCard({ affinities }: Readonly<{ affinities: StudentAffinityDTO }>) {
   return (
     <Card className="flex flex-col gap-3">
       <CardTitle icon={ChartColumn} aside={<span className="text-[11px] text-subtle">Autoavaliação</span>}>
@@ -110,7 +110,7 @@ export function AffinitiesCard({ affinities }: { affinities: StudentAffinityDTO 
   )
 }
 
-export function LatestSynthesesCard({ syntheses }: { syntheses: SynthesisDTO[] }) {
+export function LatestSynthesesCard({ syntheses }: Readonly<{ syntheses: SynthesisDTO[] }>) {
   const sorted = [...syntheses].sort((a, b) => b.createdAt.localeCompare(a.createdAt))
   const [openId, setOpenId] = useState<number | null>(sorted[0]?.id ?? null)
   const [reading, setReading] = useState<SynthesisDTO | null>(null)
