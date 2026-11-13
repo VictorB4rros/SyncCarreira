@@ -7,7 +7,6 @@ import com.synccarreira.synccarreira_api.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerMapping;
 
 import java.util.ArrayList;
@@ -16,14 +15,18 @@ import java.util.Map;
 
 public class UserUpdateValidator implements ConstraintValidator<UserUpdateValid, UserUpdateDTO> {
 	
-	@Autowired
-	private HttpServletRequest request;
-	
-	@Autowired
-	private UserRepository repository;
-	
+	private final HttpServletRequest request;
+
+	private final UserRepository repository;
+
+	public UserUpdateValidator(final HttpServletRequest request, final UserRepository repository) {
+		this.request = request;
+		this.repository = repository;
+	}
+
 	@Override
 	public void initialize(UserUpdateValid ann) {
+		// Nenhuma inicialização necessária: a validação não usa atributos da anotação
 	}
 
 	@Override

@@ -12,7 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -25,8 +24,11 @@ import java.util.List;
 @Tag(name = "Trilhas", description = "Endpoints para interagir com as trilhas da aplicação.")
 public class TrailController {
 
-    @Autowired
-    private TrailService trailService;
+    private final TrailService trailService;
+
+    public TrailController(final TrailService trailService) {
+        this.trailService = trailService;
+    }
 
     @GetMapping
     @Operation(summary = "Busca todas as trilhas.")
