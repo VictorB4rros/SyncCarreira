@@ -59,7 +59,8 @@ public final class DocumentValidator {
         for (int i = 1; i < 14 && equals; i++) equals = c[i] == c[0];
         if (equals) return false;
 
-        int s1 = 0, s2 = 0;
+        int s1 = 0;
+        int s2 = 0;
         for (int i = 0; i < 12; i++) {
             int v = c[i] - '0';
             s1 += v * W1[i];

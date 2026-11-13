@@ -3,7 +3,7 @@
  * @description Resultado da jornada (atual ou do histórico), sinalização de dúvida,
  * download do PDF, nova jornada e histórico de ciclos (RF-15).
  */
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -85,6 +85,36 @@ export default function ResultsPage() {
   const result = useAsync(() => (viewingHistory ? getJourneyResult(historyId as number) : loadCurrentResult()), [historyId])
   const history = useAsync(getJourneyHistory, [])
 
+  let resultContent: ReactNode
+  if (result.loading && !result.data) {
+    resultContent = (
+      <div className="flex flex-col gap-4" aria-label="Carregando resultado">
+        <Skeleton className="h-28" />
+        <Skeleton className="h-64" />
+      </div>
+    )
+  } else if (result.error) {
+    resultContent = (
+      <ErrorState
+        message={getErrorMessage(result.error, 'Não foi possível carregar o resultado.')}
+        onRetry={result.reload}
+      />
+    )
+  } else if (result.data) {
+    resultContent = (
+      <ResultView result={result.data} current={!viewingHistory} />
+    )
+  } else {
+    resultContent = (
+      <EmptyState
+        icon={Layers}
+        title="Seu resultado aparece ao concluir os 4 pilares"
+        description="Responda as perguntas e envie a síntese de cada pilar. Ao enviar a síntese final, o seu panorama vocacional fica disponível aqui."
+        action={<ButtonLink to="/aluno/trilhas" iconRight={ArrowRight}>Continuar minha jornada</ButtonLink>}
+      />
+    )
+  }
+
   return (
     <>
       <PageHeader
@@ -100,33 +130,14 @@ export default function ResultsPage() {
         }
       />
 
-      {result.loading && !result.data ? (
-        <div className="flex flex-col gap-4" aria-label="Carregando resultado">
-          <Skeleton className="h-28" />
-          <Skeleton className="h-64" />
-        </div>
-      ) : result.error ? (
-        <ErrorState
-          message={getErrorMessage(result.error, 'Não foi possível carregar o resultado.')}
-          onRetry={result.reload}
-        />
-      ) : result.data ? (
-        <ResultView result={result.data} current={!viewingHistory} />
-      ) : (
-        <EmptyState
-          icon={Layers}
-          title="Seu resultado aparece ao concluir os 4 pilares"
-          description="Responda as perguntas e envie a síntese de cada pilar. Ao enviar a síntese final, o seu panorama vocacional fica disponível aqui."
-          action={<ButtonLink to="/aluno/trilhas" iconRight={ArrowRight}>Continuar minha jornada</ButtonLink>}
-        />
-      )}
+      {resultContent}
 
       <HistoryTable state={history} activeId={viewingHistory ? historyId : result.data?.journeyId ?? null} />
     </>
   )
 }
 
-function ResultView({ result, current }: { result: JourneyResultDTO; current: boolean }) {
+function ResultView({ result, current }: Readonly<{ result: JourneyResultDTO; current: boolean }>) {
   const toast = useToast()
   const [downloading, setDownloading] = useState(false)
   const scores = [...result.scores].sort((a, b) => b.percentage - a.percentage)
@@ -314,6 +325,37 @@ function DoubtCard() {
     }
   }
 
+  let doubtContent: ReactNode
+  if (loading && !data) {
+    doubtContent = (
+      <Skeleton className="h-10" />
+    )
+  } else if (error) {
+    doubtContent = (
+      <Alert tone="danger">{getErrorMessage(error, 'Não foi possível verificar a sinalização.')}</Alert>
+    )
+  } else if (data?.inDoubt) {
+    doubtContent = (
+      <>
+        <Alert tone="success" title="Dúvida sinalizada">
+          Você avisou a psicóloga em {formatDate(data.doubtFlaggedAt)}. Ela vai combinar uma conversa com você.
+        </Alert>
+        <Button variant="ghost" size="sm" icon={Undo2} onClick={() => { setUndoError(''); setConfirmUndo(true) }}>
+          Desfazer sinalização
+        </Button>
+      </>
+    )
+  } else {
+    doubtContent = (
+      <>
+        <Button icon={MessageCircle} loading={sending} onClick={() => void handleFlag()}>
+          Sinalizar dúvida para a psicóloga
+        </Button>
+        <p className="text-[11px] text-muted">As psicólogas da sua escola recebem um aviso por e-mail para agendar uma conversa.</p>
+      </>
+    )
+  }
+
   return (
     <Card className="flex flex-col gap-3 bg-gradient-to-br from-white to-surface-container-low">
       <CardTitle icon={HeartHandshake}>Apoio emocional</CardTitle>
@@ -321,27 +363,7 @@ function DoubtCard() {
       <p className="text-sm text-muted">
         Hesitar entre duas áreas ou sentir pressão com as escolhas é <strong className="text-on-surface">completamente normal</strong>. Nenhuma decisão precisa ser solitária ou definitiva agora.
       </p>
-      {loading && !data ? (
-        <Skeleton className="h-10" />
-      ) : error ? (
-        <Alert tone="danger">{getErrorMessage(error, 'Não foi possível verificar a sinalização.')}</Alert>
-      ) : data?.inDoubt ? (
-        <>
-          <Alert tone="success" title="Dúvida sinalizada">
-            Você avisou a psicóloga em {formatDate(data.doubtFlaggedAt)}. Ela vai combinar uma conversa com você.
-          </Alert>
-          <Button variant="ghost" size="sm" icon={Undo2} onClick={() => { setUndoError(''); setConfirmUndo(true) }}>
-            Desfazer sinalização
-          </Button>
-        </>
-      ) : (
-        <>
-          <Button icon={MessageCircle} loading={sending} onClick={() => void handleFlag()}>
-            Sinalizar dúvida para a psicóloga
-          </Button>
-          <p className="text-[11px] text-muted">As psicólogas da sua escola recebem um aviso por e-mail para agendar uma conversa.</p>
-        </>
-      )}
+      {doubtContent}
 
       <Modal
         open={confirmUndo}
@@ -425,7 +447,7 @@ function NewJourneyButton() {
   )
 }
 
-function HistoryTable({ state, activeId }: { state: AsyncState<JourneyRecordDTO[]>; activeId: number | null }) {
+function HistoryTable({ state, activeId }: Readonly<{ state: AsyncState<JourneyRecordDTO[]>; activeId: number | null }>) {
   const toast = useToast()
   const [downloadingId, setDownloadingId] = useState<number | null>(null)
   const journeys = [...(state.data ?? [])].sort((a, b) => b.journeyNumber - a.journeyNumber)
@@ -441,71 +463,82 @@ function HistoryTable({ state, activeId }: { state: AsyncState<JourneyRecordDTO[
     }
   }
 
+  let historyContent: ReactNode
+  if (state.loading && !state.data) {
+    historyContent = (
+      <Skeleton className="h-24" />
+    )
+  } else if (state.error) {
+    historyContent = (
+      <Alert tone="danger">{getErrorMessage(state.error, 'Não foi possível carregar o histórico.')}</Alert>
+    )
+  } else if (journeys.length === 0) {
+    historyContent = (
+      <p className="text-sm text-muted">Nenhuma jornada concluída ainda. Ao concluir, ela fica registrada aqui com resultado e PDF.</p>
+    )
+  } else {
+    historyContent = (
+      <div className="-mx-4 overflow-x-auto sm:mx-0">
+        <table className="w-full min-w-[640px] text-left text-sm">
+          <thead>
+            <tr className="border-b border-outline-variant text-xs uppercase tracking-wider text-muted">
+              <th scope="col" className="px-4 py-2 font-semibold">Ciclo</th>
+              <th scope="col" className="px-4 py-2 font-semibold">Finalização</th>
+              <th scope="col" className="px-4 py-2 font-semibold">Área predominante</th>
+              <th scope="col" className="px-4 py-2 font-semibold">Status</th>
+              <th scope="col" className="px-4 py-2 text-right font-semibold">Ações</th>
+            </tr>
+          </thead>
+          <tbody>
+            {journeys.map(j => (
+              <tr key={j.id} className={cn('border-b border-outline-variant/60 last:border-0', activeId === j.id && 'bg-surface-container-low')}>
+                <td className="px-4 py-3 font-semibold text-on-surface">
+                  Jornada #{j.journeyNumber}
+                  {j.schoolClassName && <span className="block text-xs font-normal text-muted">{j.schoolClassName}</span>}
+                </td>
+                <td className="px-4 py-3 text-on-surface-variant">{formatLongDate(j.concludedAt)}</td>
+                <td className="px-4 py-3 text-on-surface-variant">
+                  {j.highestScoreAreas.length > 0 ? j.highestScoreAreas.map(a => AREA_SHORT_LABELS[a]).join(', ') : '—'}
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex flex-wrap gap-1">
+                    <Badge tone={activeId === j.id ? 'primary' : 'soft'}>{activeId === j.id ? 'Visualizando' : 'Concluída'}</Badge>
+                    {j.inDoubt && <Badge tone="strong">Dúvida sinalizada</Badge>}
+                  </div>
+                </td>
+                <td className="px-4 py-3">
+                  <div className="flex justify-end gap-1">
+                    <Link
+                      to={`/aluno/resultados/${j.id}`}
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-primary hover:bg-surface-container-low"
+                    >
+                      <Eye className="h-3.5 w-3.5" aria-hidden /> Ver resultado
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => void handleDownload(j)}
+                      disabled={downloadingId === j.id}
+                      className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-primary hover:bg-surface-container-low disabled:opacity-60"
+                    >
+                      <Download className="h-3.5 w-3.5" aria-hidden /> {downloadingId === j.id ? 'Gerando…' : 'PDF'}
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
   return (
     <Card as="section" className="flex flex-col gap-4">
       <CardTitle icon={CalendarCheck} aside={journeys.length > 0 && <Badge tone="soft">{journeys.length} concluída(s)</Badge>}>
         Histórico de ciclos de orientação
       </CardTitle>
 
-      {state.loading && !state.data ? (
-        <Skeleton className="h-24" />
-      ) : state.error ? (
-        <Alert tone="danger">{getErrorMessage(state.error, 'Não foi possível carregar o histórico.')}</Alert>
-      ) : journeys.length === 0 ? (
-        <p className="text-sm text-muted">Nenhuma jornada concluída ainda. Ao concluir, ela fica registrada aqui com resultado e PDF.</p>
-      ) : (
-        <div className="-mx-4 overflow-x-auto sm:mx-0">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead>
-              <tr className="border-b border-outline-variant text-xs uppercase tracking-wider text-muted">
-                <th scope="col" className="px-4 py-2 font-semibold">Ciclo</th>
-                <th scope="col" className="px-4 py-2 font-semibold">Finalização</th>
-                <th scope="col" className="px-4 py-2 font-semibold">Área predominante</th>
-                <th scope="col" className="px-4 py-2 font-semibold">Status</th>
-                <th scope="col" className="px-4 py-2 text-right font-semibold">Ações</th>
-              </tr>
-            </thead>
-            <tbody>
-              {journeys.map(j => (
-                <tr key={j.id} className={cn('border-b border-outline-variant/60 last:border-0', activeId === j.id && 'bg-surface-container-low')}>
-                  <td className="px-4 py-3 font-semibold text-on-surface">
-                    Jornada #{j.journeyNumber}
-                    {j.schoolClassName && <span className="block text-xs font-normal text-muted">{j.schoolClassName}</span>}
-                  </td>
-                  <td className="px-4 py-3 text-on-surface-variant">{formatLongDate(j.concludedAt)}</td>
-                  <td className="px-4 py-3 text-on-surface-variant">
-                    {j.highestScoreAreas.length > 0 ? j.highestScoreAreas.map(a => AREA_SHORT_LABELS[a]).join(', ') : '—'}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      <Badge tone={activeId === j.id ? 'primary' : 'soft'}>{activeId === j.id ? 'Visualizando' : 'Concluída'}</Badge>
-                      {j.inDoubt && <Badge tone="strong">Dúvida sinalizada</Badge>}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-1">
-                      <Link
-                        to={`/aluno/resultados/${j.id}`}
-                        className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-primary hover:bg-surface-container-low"
-                      >
-                        <Eye className="h-3.5 w-3.5" aria-hidden /> Ver resultado
-                      </Link>
-                      <button
-                        type="button"
-                        onClick={() => void handleDownload(j)}
-                        disabled={downloadingId === j.id}
-                        className="inline-flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-primary hover:bg-surface-container-low disabled:opacity-60"
-                      >
-                        <Download className="h-3.5 w-3.5" aria-hidden /> {downloadingId === j.id ? 'Gerando…' : 'PDF'}
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      {historyContent}
     </Card>
   )
 }

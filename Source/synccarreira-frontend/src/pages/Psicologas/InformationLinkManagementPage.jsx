@@ -106,6 +106,39 @@ export default function InformationLinkManagementPage() {
     }
   }
 
+  let linksContent
+  if (loading) {
+    linksContent = (
+      <div className="information-links-empty">Carregando fontes…</div>
+    )
+  } else if (links.length === 0) {
+    linksContent = (
+      <div className="information-links-empty">Nenhum link cadastrado. Adicione uma fonte para começar a curadoria.</div>
+    )
+  } else {
+    linksContent = (
+      <div className="information-links-table-wrap">
+        <table className="information-links-table">
+          <thead><tr><th>Tópico</th><th>Categoria</th><th>Endereço</th><th><span className="sr-only">Ações</span></th></tr></thead>
+          <tbody>
+            {links.map(link => (
+              <tr key={link.id}>
+                <td><strong>{link.topic}</strong></td>
+                <td><span className="information-links-category">{categoryLabel(link.knowledgeArea)}</span></td>
+                <td><a href={link.url} target="_blank" rel="noreferrer">Abrir fonte ↗</a></td>
+                <td className="information-links-actions">
+                  <button type="button" onClick={() => handleDelete(link)} disabled={deletingId === link.id}>
+                    {deletingId === link.id ? 'Removendo…' : 'Remover'}
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    )
+  }
+
   return (
     <div className="information-links-page">
       <main className="information-links-main">
@@ -186,31 +219,7 @@ export default function InformationLinkManagementPage() {
             </button>
           </div>
 
-          {loading ? (
-            <div className="information-links-empty">Carregando fontes…</div>
-          ) : links.length === 0 ? (
-            <div className="information-links-empty">Nenhum link cadastrado. Adicione uma fonte para começar a curadoria.</div>
-          ) : (
-            <div className="information-links-table-wrap">
-              <table className="information-links-table">
-                <thead><tr><th>Tópico</th><th>Categoria</th><th>Endereço</th><th><span className="sr-only">Ações</span></th></tr></thead>
-                <tbody>
-                  {links.map(link => (
-                    <tr key={link.id}>
-                      <td><strong>{link.topic}</strong></td>
-                      <td><span className="information-links-category">{categoryLabel(link.knowledgeArea)}</span></td>
-                      <td><a href={link.url} target="_blank" rel="noreferrer">Abrir fonte ↗</a></td>
-                      <td className="information-links-actions">
-                        <button type="button" onClick={() => handleDelete(link)} disabled={deletingId === link.id}>
-                          {deletingId === link.id ? 'Removendo…' : 'Remover'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+          {linksContent}
         </section>
       </main>
     </div>

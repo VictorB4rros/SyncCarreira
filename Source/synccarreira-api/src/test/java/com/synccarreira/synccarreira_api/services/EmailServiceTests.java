@@ -137,18 +137,27 @@ public class EmailServiceTests {
 
     @Test
     void toPlainTextShouldConvertHtmlIntoReadableTextKeepingLinksAndListItems() {
-        String html = "<!DOCTYPE html><html><head><meta charset=\"UTF-8\" /></head><body>"
-                + "<p>Ol&aacute;, Ana &amp; Jo&#227;o!</p>\n"
-                + "<p>Acesse   este link <a href=\"https://synccarreira.com.br/new-password?token=abc\">definir senha</a></p>\n"
-                + "<ul>\n  <li>Nome: Ana</li>\n  <li>Turma: 3A</li>\n</ul>\n"
-                + "<p>Time SyncCarreira</p></body></html>";
+        String html = """
+                <!DOCTYPE html><html><head><meta charset="UTF-8" /></head><body>\
+                <p>Ol&aacute;, Ana &amp; Jo&#227;o!</p>
+                <p>Acesse   este link <a href="https://synccarreira.com.br/new-password?token=abc">definir senha</a></p>
+                <ul>
+                  <li>Nome: Ana</li>
+                  <li>Turma: 3A</li>
+                </ul>
+                <p>Time SyncCarreira</p></body></html>""";
 
         String result = EmailService.toPlainText(html);
 
-        Assertions.assertEquals("Olá, Ana & João!\n\n"
-                + "Acesse este link definir senha (https://synccarreira.com.br/new-password?token=abc)\n\n"
-                + "- Nome: Ana\n- Turma: 3A\n\n"
-                + "Time SyncCarreira", result);
+        Assertions.assertEquals("""
+                Olá, Ana & João!
+
+                Acesse este link definir senha (https://synccarreira.com.br/new-password?token=abc)
+
+                - Nome: Ana
+                - Turma: 3A
+
+                Time SyncCarreira""", result);
     }
 
     private String extractHtmlBody(MimeMessage message) throws Exception {

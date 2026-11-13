@@ -8,7 +8,7 @@ import { hostnameOf, safeExternalUrl } from '../lib/format'
 import { AREA_SHORT_LABELS } from '../lib/labels'
 import { Badge } from './ui'
 
-export function LinkCard({ link }: { link: InformationLinkDTO }) {
+export function LinkCard({ link }: Readonly<{ link: InformationLinkDTO }>) {
   const university = link.knowledgeArea === null
   const href = safeExternalUrl(link.url)
   return (

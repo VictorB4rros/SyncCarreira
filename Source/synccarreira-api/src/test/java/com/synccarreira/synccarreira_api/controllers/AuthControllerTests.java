@@ -25,7 +25,7 @@ import tools.jackson.databind.ObjectMapper;
 
 @WebMvcTest(value = AuthController.class, excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
-public class AuthControllerTests {
+class AuthControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -40,7 +40,7 @@ public class AuthControllerTests {
     private NewPasswordDTO validNewPasswordDTO, invalidTokenNewPasswordDTO, invalidNewPasswordDTO;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         validToken = "3f1c9a2e-7b4d-4e8a-9c6f-1d2b3a4c5e6f";
         invalidToken = "00000000-0000-0000-0000-000000000000";
         newPassword = "novaSenha123";
@@ -52,7 +52,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void saveNewPasswordShouldReturnNoContentWhenTokenIsValid() throws Exception {
+    void saveNewPasswordShouldReturnNoContentWhenTokenIsValid() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(validNewPasswordDTO);
 
         ResultActions result = mockMvc.perform(put("/auth/new-password")
@@ -65,7 +65,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void saveNewPasswordShouldReturnNotFoundWhenTokenIsInvalid() throws Exception {
+    void saveNewPasswordShouldReturnNotFoundWhenTokenIsInvalid() throws Exception {
         doThrow(new ResourceNotFoundException("Token inválido")).when(service).saveNewPassword(any());
         String jsonBody = objectMapper.writeValueAsString(invalidTokenNewPasswordDTO);
 
@@ -81,7 +81,7 @@ public class AuthControllerTests {
     }
 
     @Test
-    public void saveNewPasswordShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
+    void saveNewPasswordShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidNewPasswordDTO);
 
         ResultActions result = mockMvc.perform(put("/auth/new-password")

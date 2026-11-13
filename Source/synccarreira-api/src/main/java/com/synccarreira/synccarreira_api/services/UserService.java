@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
 	@Transactional(readOnly = true)
 	public Page<UserDTO> findAll(Pageable pageable) {
 		Page<User> result = repository.findAll(pageable);
-		return result.map(x -> new UserDTO(x));
+		return result.map(UserDTO::new);
 	}
 	
 	@Transactional(readOnly = true)
@@ -116,7 +116,7 @@ public class UserService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
-		if (result.size() == 0) {
+		if (result.isEmpty()) {
 			throw new UsernameNotFoundException("Email não encontrado");
 		}
 		User user = new User();

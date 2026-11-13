@@ -433,7 +433,9 @@ public class AnswerServiceTests {
         singleAnswerQuestion.setQuestionType(type);
         mockValidRequest(agree);
 
-        Assertions.assertThrows(BusinessException.class, () -> service.uncheck(agree.getId()));
+        Long agreeId = agree.getId();
+
+        Assertions.assertThrows(BusinessException.class, () -> service.uncheck(agreeId));
         Mockito.verify(answerRepository, Mockito.never()).findByStudentAndQuestion(anyLong(), anyLong());
         Mockito.verify(answerRepository, Mockito.never()).deleteAll(any());
         Mockito.verify(studentRepository, Mockito.never()).save(any());
@@ -446,7 +448,9 @@ public class AnswerServiceTests {
         Mockito.when(studentRepository.findByIdForUpdate(student.getId())).thenReturn(Optional.of(student));
         Mockito.when(trailService.canAccess(question.getTrail().getId())).thenReturn(false);
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.uncheck(option.getId()));
+        Long optionId = option.getId();
+
+        Assertions.assertThrows(ForbiddenException.class, () -> service.uncheck(optionId));
         Mockito.verify(answerRepository, Mockito.never()).findByStudentAndQuestion(anyLong(), anyLong());
         Mockito.verify(answerRepository, Mockito.never()).deleteAll(any());
     }
@@ -466,7 +470,9 @@ public class AnswerServiceTests {
         Mockito.when(authService.authenticated()).thenReturn(student);
         Mockito.when(studentRepository.findByIdForUpdate(student.getId())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.uncheck(option.getId()));
+        Long optionId = option.getId();
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.uncheck(optionId));
         Mockito.verify(answerRepository, Mockito.never()).deleteAll(any());
     }
 

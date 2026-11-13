@@ -197,14 +197,20 @@ function OptionsQuestion({ question, selectedOptionIds, onSelect, saveStatus }) 
   )
 }
 
+function likertBadge(selectedNeutralOptionIsHidden, selectedOptionId) {
+  if (selectedNeutralOptionIsHidden) return 'Atualize sua resposta'
+  if (selectedOptionId) return '✓ Respondida'
+  return 'Escala Likert · 4 opções'
+}
+
 /**
  * Pergunta do tipo LIKERT — quatro opções, sem ponto neutro.
  */
 function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
   const responseOptions = getLikertOptions(question.options)
   const selectedValue = responseOptions.findIndex(option => option.id === selectedOptionId) + 1 || null
-  const selectedOption = question.options.find(option => option.id === selectedOptionId)
-  const selectedNeutralOptionIsHidden = Boolean(selectedOption && selectedValue === null)
+  const hasSelectedOption = question.options.some(option => option.id === selectedOptionId)
+  const selectedNeutralOptionIsHidden = Boolean(hasSelectedOption && selectedValue === null)
 
   function handleClick(value) {
     const opt = responseOptions[value - 1]
@@ -218,7 +224,7 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
         <div className="tp-question__meta">
           <span className="tp-question__num">Pergunta {question.index}</span>
           <span className={`tp-question__badge${selectedOptionId ? ' tp-question__badge--done' : ''}`}>
-          {selectedNeutralOptionIsHidden ? 'Atualize sua resposta' : selectedOptionId ? '✓ Respondida' : 'Escala Likert · 4 opções'}
+          {likertBadge(selectedNeutralOptionIsHidden, selectedOptionId)}
         </span>
         </div>
 
@@ -256,6 +262,13 @@ function LikertQuestion({ question, selectedOptionId, onSelect, saveStatus }) {
   )
 }
 
+function synthesisHint(locked, finalJourney, withoutQuestions) {
+  if (locked) return finalJourney ? 'Síntese final da jornada registrada.' : 'Síntese registrada.'
+  if (!finalJourney) return 'Para concluir a trilha, escreva suas reflexões e conclusões. Não há certo ou errado.'
+  if (withoutQuestions) return 'A consulta aos links desta trilha é opcional. Registre aqui o que descobriu ao longo de toda a jornada; não há certo ou errado.'
+  return 'Reflita sobre sua jornada completa e registre o que descobriu ao percorrer as trilhas. Não há certo ou errado.'
+}
+
 /**
  * RF-11 — Síntese final da trilha: texto livre, sem restrição de conteúdo.
  * Depois de salva, fica somente leitura (a API só oferece POST).
@@ -268,13 +281,7 @@ function SynthesisCard({ value, onChange, onSave, saveStatus, locked, finalJourn
           {finalJourney ? 'Síntese final da jornada' : 'Síntese da trilha'}
         </h2>
         <p className="tp-synthesis__hint">
-          {locked
-              ? finalJourney ? 'Síntese final da jornada registrada.' : 'Síntese registrada.'
-              : finalJourney
-                  ? withoutQuestions
-                      ? 'A consulta aos links desta trilha é opcional. Registre aqui o que descobriu ao longo de toda a jornada; não há certo ou errado.'
-                      : 'Reflita sobre sua jornada completa e registre o que descobriu ao percorrer as trilhas. Não há certo ou errado.'
-                  : 'Para concluir a trilha, escreva suas reflexões e conclusões. Não há certo ou errado.'}
+          {synthesisHint(locked, finalJourney, withoutQuestions)}
         </p>
 
         <textarea

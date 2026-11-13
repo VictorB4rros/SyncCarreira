@@ -9,7 +9,7 @@
  *  - A síntese só é aceita com todas as perguntas respondidas e não pode ser editada (POST único).
  *  - Pilar concluído (síntese enviada) fica em modo revisão: as respostas não mudam mais.
  */
-import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import {
   ArrowLeft,
@@ -167,7 +167,7 @@ function TrailRunSkeleton() {
   )
 }
 
-function TrailRun({ data }: { data: TrailRunData }) {
+function TrailRun({ data }: Readonly<{ data: TrailRunData }>) {
   const trail = data.trail as TrailDTO
   const { user, refreshJourney } = useStudent()
   const toast = useToast()
@@ -190,7 +190,7 @@ function TrailRun({ data }: { data: TrailRunData }) {
   const percentage = total > 0 ? Math.round((answered / total) * 100) : 100
   const allAnswered = answered === total
   const readOnly = synthesis !== null
-  const saving = Object.values(statuses).some(s => s === 'saving')
+  const saving = Object.values(statuses).includes('saving')
   const isFinal = trail.name === 'INFORMACAO'
   const meta = TRAIL_META[trail.name]
 
@@ -215,7 +215,8 @@ function TrailRun({ data }: { data: TrailRunData }) {
       const max = maxSelections(question)
       if (multiple && !wasChecked && max !== null && previous.length >= max) return
 
-      const next = multiple ? (wasChecked ? previous.filter(id => id !== optionId) : [...previous, optionId]) : [optionId]
+      let next = [optionId]
+      if (multiple) next = wasChecked ? previous.filter(id => id !== optionId) : [...previous, optionId]
       setSelections(s => ({ ...s, [question.id]: next }))
       setErrors(e => ({ ...e, [question.id]: '' }))
       setStatus(question.id, 'saving')
@@ -358,7 +359,7 @@ function SynthesisSection({
   isFinal,
   onSubmitted,
   onAlreadySubmitted,
-}: {
+}: Readonly<{
   trail: TrailDTO
   userId: number
   synthesis: SynthesisDTO | null
@@ -366,7 +367,7 @@ function SynthesisSection({
   isFinal: boolean
   onSubmitted: (saved: SynthesisDTO) => Promise<void>
   onAlreadySubmitted: () => Promise<void>
-}) {
+}>) {
   const key = draftKey(userId, trail.id)
   const [content, setContent] = useState(() => readDraft(key))
   const [error, setError] = useState('')
@@ -466,6 +467,42 @@ function SynthesisSection({
 function InformationLinksSection() {
   const { data, error, loading, reload } = useAsync(getMyInformationTrail, [])
 
+  let materialsContent: ReactNode = null
+  if (loading && !data) {
+    materialsContent = (
+      <LoadingState label="Carregando materiais…" className="py-8" />
+    )
+  } else if (error) {
+    materialsContent = (
+      <ErrorState message={getErrorMessage(error, 'Não foi possível carregar os materiais.')} onRetry={reload} />
+    )
+  } else if (data) {
+    materialsContent = (
+      <>
+        {data.recommendedAreas.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            <span className="font-semibold text-muted">Suas áreas em destaque:</span>
+            {data.recommendedAreas.map(area => (
+              <Badge key={area} tone="soft">{AREA_LABELS[area]}</Badge>
+            ))}
+          </div>
+        )}
+        {data.careerLinks.length + data.universityAccessLinks.length === 0 ? (
+          <p className="text-sm text-muted">Ainda não há materiais cadastrados. Você já pode escrever a sua síntese final.</p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {[...data.careerLinks, ...data.universityAccessLinks].map(link => (
+              <LinkCard key={link.id} link={link} />
+            ))}
+          </div>
+        )}
+        <Link to="/aluno/conteudos" className="self-start text-sm font-semibold text-primary hover:underline">
+          Abrir o Hub de Conteúdos
+        </Link>
+      </>
+    )
+  }
+
   return (
     <Card as="section" className="flex flex-col gap-4">
       <div className="flex flex-col gap-1">
@@ -475,34 +512,7 @@ function InformationLinksSection() {
           Explore antes de escrever a síntese final.
         </p>
       </div>
-      {loading && !data ? (
-        <LoadingState label="Carregando materiais…" className="py-8" />
-      ) : error ? (
-        <ErrorState message={getErrorMessage(error, 'Não foi possível carregar os materiais.')} onRetry={reload} />
-      ) : data ? (
-        <>
-          {data.recommendedAreas.length > 0 && (
-            <div className="flex flex-wrap items-center gap-2 text-xs">
-              <span className="font-semibold text-muted">Suas áreas em destaque:</span>
-              {data.recommendedAreas.map(area => (
-                <Badge key={area} tone="soft">{AREA_LABELS[area]}</Badge>
-              ))}
-            </div>
-          )}
-          {data.careerLinks.length + data.universityAccessLinks.length === 0 ? (
-            <p className="text-sm text-muted">Ainda não há materiais cadastrados. Você já pode escrever a sua síntese final.</p>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              {[...data.careerLinks, ...data.universityAccessLinks].map(link => (
-                <LinkCard key={link.id} link={link} />
-              ))}
-            </div>
-          )}
-          <Link to="/aluno/conteudos" className="self-start text-sm font-semibold text-primary hover:underline">
-            Abrir o Hub de Conteúdos
-          </Link>
-        </>
-      ) : null}
+      {materialsContent}
     </Card>
   )
 }

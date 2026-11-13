@@ -24,7 +24,7 @@ import java.util.List;
 
 @WebMvcTest(value = SchoolClassController.class, excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
-public class SchoolClassControllerTests {
+class SchoolClassControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -37,7 +37,7 @@ public class SchoolClassControllerTests {
     private SchoolClassDTO dto1, dto2;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         existingInstitutionId = 1L;
 
         dto1 = SchoolClassFactory.createSchoolClassDTO();
@@ -49,7 +49,7 @@ public class SchoolClassControllerTests {
     }
 
     @Test
-    public void findAllShouldReturnSchoolClassDTOList() throws Exception {
+    void findAllShouldReturnSchoolClassDTOList() throws Exception {
         when(service.findAll()).thenReturn(dtoList);
 
         ResultActions result = mockMvc.perform(get("/classes")
@@ -67,7 +67,7 @@ public class SchoolClassControllerTests {
     }
 
     @Test
-    public void findAllShouldReturnSchoolClassDTOListWhenInstitutionIdExists() throws Exception {
+    void findAllShouldReturnSchoolClassDTOListWhenInstitutionIdExists() throws Exception {
         when(service.findByInstitutionId(existingInstitutionId)).thenReturn(dtoList);
 
         ResultActions result = mockMvc.perform(get("/classes?institutionId={id}", existingInstitutionId)

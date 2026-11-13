@@ -33,7 +33,7 @@ export const TRAIL_META: Record<TrailName, TrailMeta> = {
   },
 }
 
-export function trailLabel(name: TrailName | string | null | undefined): string {
+export function trailLabel(name: string | null | undefined): string {
   if (!name) return 'Pilar'
   return TRAIL_META[name as TrailName]?.label ?? String(name)
 }
@@ -91,6 +91,6 @@ export function initials(fullName: string | null | undefined): string {
   const parts = (fullName ?? '').trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return '?'
   const first = parts[0][0] ?? ''
-  const last = parts.length > 1 ? parts[parts.length - 1][0] : ''
+  const last = parts.length > 1 ? (parts.at(-1)?.[0] ?? '') : ''
   return (first + last).toUpperCase()
 }

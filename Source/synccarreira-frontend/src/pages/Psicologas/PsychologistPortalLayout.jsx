@@ -22,12 +22,12 @@ function PortalIcon({ name, size = 18 }) {
     calendar: <><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 11h18" /></>,
     list: <><path d="M9 6h11M9 12h11M9 18h11" /><circle cx="4.5" cy="6" r="1.2" /><circle cx="4.5" cy="12" r="1.2" /><circle cx="4.5" cy="18" r="1.2" /></>,
     book: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z" /></>,
-    close: <><path d="m18 6-12 12M6 6l12 12" /></>,
+    close: <path d="m18 6-12 12M6 6l12 12" />,
     shield: <><path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z" /><path d="m9 12 2 2 4-4" /></>,
     logout: <><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><path d="m16 17 5-5-5-5M21 12H9" /></>,
-    menu: <><path d="M4 6h16M4 12h16M4 18h16" /></>,
+    menu: <path d="M4 6h16M4 12h16M4 18h16" />,
     search: <><circle cx="11" cy="11" r="8" /><path d="m21 21-4.35-4.35" /></>,
-    plus: <><path d="M12 5v14M5 12h14" /></>,
+    plus: <path d="M12 5v14M5 12h14" />,
   }
 
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" {...common}>{paths[name]}</svg>

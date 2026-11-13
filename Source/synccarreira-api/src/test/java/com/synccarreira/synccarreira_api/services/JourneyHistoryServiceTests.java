@@ -336,7 +336,7 @@ public class JourneyHistoryServiceTests {
         String content = objectMapper.writeValueAsString(JourneyFactory.createJourneyContent());
         JourneyRecord journey = JourneyFactory.createJourneyRecord(student, 1, content);
         Mockito.when(journeyRecordRepository.findByIdAndStudentId(1L, student.getId())).thenReturn(Optional.of(journey));
-        byte[] pdf = new byte[] { 1, 2, 3 };
+        byte[] pdf = { 1, 2, 3 };
         Mockito.when(journeyPdfWriter.write(any())).thenReturn(pdf);
         JourneyResultDTO journeyResult = ResultFactory.createJourneyResult();
         Mockito.when(journeyResultService.resultFor(journey)).thenReturn(journeyResult);

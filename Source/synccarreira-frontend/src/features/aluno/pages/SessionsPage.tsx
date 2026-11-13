@@ -3,7 +3,7 @@
  * @description "Minhas Sessões": orientações agendadas pela psicóloga (somente leitura para o aluno).
  * GET /appointments/student/{id} — o backend só permite a própria agenda.
  */
-import { useState } from 'react'
+import { useState, type ReactNode } from 'react'
 import { CalendarClock, CalendarPlus, CalendarX2, Clock, Headset, CalendarCheck, Users, Video } from 'lucide-react'
 import { getErrorMessage, getMyAppointments } from '../api/studentApi'
 import { Badge, EmptyState, ErrorState, ExternalButtonLink, PageHeader, Skeleton, cn } from '../components/ui'
@@ -16,11 +16,17 @@ import type { AppointmentDTO } from '../types'
 
 type Tab = 'upcoming' | 'past' | 'canceled'
 
-function SessionCard({ session, variant }: { session: AppointmentDTO; variant: Tab }) {
+function SessionCard({ session, variant }: Readonly<{ session: AppointmentDTO; variant: Tab }>) {
   const meetLink = safeExternalUrl(session.meetLink)
   const calendarLink = safeExternalUrl(session.calendarLink)
   const upcoming = variant === 'upcoming'
-  const status = upcoming ? 'Agendada' : session.scheduleStatus === 'AGENDADA' ? 'Aguardando registro' : SCHEDULE_STATUS_LABELS[session.scheduleStatus]
+  let status = SCHEDULE_STATUS_LABELS[session.scheduleStatus]
+  if (upcoming) status = 'Agendada'
+  else if (session.scheduleStatus === 'AGENDADA') status = 'Aguardando registro'
+
+  let badgeTone: 'primary' | 'neutral' | 'soft' = 'soft'
+  if (upcoming) badgeTone = 'primary'
+  else if (variant === 'canceled') badgeTone = 'neutral'
 
   return (
     <article className={cn('flex flex-col gap-4 rounded-2xl bg-white p-5 shadow-card sm:flex-row sm:items-start', variant === 'canceled' && 'opacity-80')}>
@@ -37,7 +43,7 @@ function SessionCard({ session, variant }: { session: AppointmentDTO; variant: T
 
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge tone={upcoming ? 'primary' : variant === 'canceled' ? 'neutral' : 'soft'}>{status}</Badge>
+          <Badge tone={badgeTone}>{status}</Badge>
           <Badge tone="soft" icon={session.scheduleType === 'GRUPO' ? Users : undefined}>
             {SCHEDULE_TYPE_LABELS[session.scheduleType]}
           </Badge>
@@ -95,6 +101,25 @@ export default function SessionsPage() {
     canceled: { title: 'Nenhuma sessão cancelada', description: 'Ótimo! Nenhuma orientação foi cancelada.' },
   }
 
+  let panelContent: ReactNode
+  if (loading && !data) {
+    panelContent = (
+      [0, 1].map(i => <Skeleton key={i} className="h-36" />)
+    )
+  } else if (error) {
+    panelContent = (
+      <ErrorState message={getErrorMessage(error, 'Não foi possível carregar suas sessões.')} onRetry={reload} />
+    )
+  } else if (active.items.length === 0) {
+    panelContent = (
+      <EmptyState icon={active.icon} title={emptyText[active.key].title} description={emptyText[active.key].description} />
+    )
+  } else {
+    panelContent = (
+      active.items.map(session => <SessionCard key={session.id} session={session} variant={active.key} />)
+    )
+  }
+
   return (
     <>
       <PageHeader
@@ -126,15 +151,7 @@ export default function SessionsPage() {
       </div>
 
       <section id="painel-sessoes" role="tabpanel" aria-labelledby={`aba-${active.key}`} className="flex flex-col gap-4">
-        {loading && !data ? (
-          [0, 1].map(i => <Skeleton key={i} className="h-36" />)
-        ) : error ? (
-          <ErrorState message={getErrorMessage(error, 'Não foi possível carregar suas sessões.')} onRetry={reload} />
-        ) : active.items.length === 0 ? (
-          <EmptyState icon={active.icon} title={emptyText[active.key].title} description={emptyText[active.key].description} />
-        ) : (
-          active.items.map(session => <SessionCard key={session.id} session={session} variant={active.key} />)
-        )}
+        {panelContent}
       </section>
     </>
   )

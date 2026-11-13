@@ -42,7 +42,7 @@ import java.util.List;
 
 @WebMvcTest(value = StudentController.class, excludeAutoConfiguration = {SecurityAutoConfiguration.class})
 @AutoConfigureMockMvc(addFilters = false)
-public class StudentControllerTests {
+class StudentControllerTests {
 
     @Autowired
     private MockMvc mockMvc;
@@ -60,7 +60,7 @@ public class StudentControllerTests {
     private Page<StudentDetailsDTO> studentDetailsPage;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         existingStudentId = 1L;
         nonExistingStudentId = 100L;
         dependentStudentId = 2L;
@@ -75,7 +75,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void findAllShouldReturnStudentDetailsDTOPage() throws Exception {
+    void findAllShouldReturnStudentDetailsDTOPage() throws Exception {
         when(service.findAll(any())).thenReturn(studentDetailsPage);
 
         ResultActions result = mockMvc.perform(get("/students?page=0&size=10")
@@ -90,7 +90,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void findByIdShouldReturnStudentDTOWhenIdExists() throws Exception {
+    void findByIdShouldReturnStudentDTOWhenIdExists() throws Exception {
         when(service.findById(existingStudentId)).thenReturn(studentDTO);
 
         ResultActions result = mockMvc.perform(get("/students/{id}", existingStudentId)
@@ -107,7 +107,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void findByIdShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void findByIdShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         when(service.findById(nonExistingStudentId)).thenThrow(new ResourceNotFoundException("Recurso não encontrado"));
 
         ResultActions result = mockMvc.perform(get("/students/{id}", nonExistingStudentId)
@@ -119,7 +119,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void insertShouldReturnCreatedAndStudentDTOWhenDataIsValid() throws Exception {
+    void insertShouldReturnCreatedAndStudentDTOWhenDataIsValid() throws Exception {
         when(service.insert(any())).thenReturn(studentDTO);
         String jsonBody = objectMapper.writeValueAsString(studentInsertDTO);
 
@@ -136,7 +136,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void insertShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
+    void insertShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidStudentInsertDTO);
 
         ResultActions result = mockMvc.perform(post("/students")
@@ -151,7 +151,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnStudentDTOWhenIdExists() throws Exception {
+    void updateShouldReturnStudentDTOWhenIdExists() throws Exception {
         when(service.update(eq(existingStudentId), any())).thenReturn(studentDTO);
         String jsonBody = objectMapper.writeValueAsString(studentUpdateDTO);
 
@@ -167,7 +167,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void updateShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         when(service.update(eq(nonExistingStudentId), any())).thenThrow(new ResourceNotFoundException("Resource not found"));
         String jsonBody = objectMapper.writeValueAsString(studentUpdateDTO);
 
@@ -181,7 +181,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void updateShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
+    void updateShouldReturnUnprocessableEntityWhenDataIsInvalid() throws Exception {
         String jsonBody = objectMapper.writeValueAsString(invalidStudentInsertDTO);
 
         ResultActions result = mockMvc.perform(put("/students/{id}", existingStudentId)
@@ -194,7 +194,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void deleteShouldReturnNoContentWhenIdExists() throws Exception {
+    void deleteShouldReturnNoContentWhenIdExists() throws Exception {
         ResultActions result = mockMvc.perform(delete("/students/{id}", existingStudentId)
                 .accept(MediaType.APPLICATION_JSON));
 
@@ -203,7 +203,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void deleteShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void deleteShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         doThrow(new ResourceNotFoundException("Resource not found")).when(service).delete(nonExistingStudentId);
 
         ResultActions result = mockMvc.perform(delete("/students/{id}", nonExistingStudentId)
@@ -214,7 +214,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void deleteShouldReturnBadRequestWhenStudentHasDependentData() throws Exception {
+    void deleteShouldReturnBadRequestWhenStudentHasDependentData() throws Exception {
         doThrow(new DatabaseException("Referential integrity failure")).when(service).delete(dependentStudentId);
 
         ResultActions result = mockMvc.perform(delete("/students/{id}", dependentStudentId)
@@ -225,7 +225,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void getScoreShouldReturnStudentScoreDTOWhenIdExists() throws Exception {
+    void getScoreShouldReturnStudentScoreDTOWhenIdExists() throws Exception {
         when(service.getScore(existingStudentId)).thenReturn(studentScoreDTO);
 
         ResultActions result = mockMvc.perform(get("/students/{id}/score", existingStudentId)
@@ -240,7 +240,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void getScoreShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
+    void getScoreShouldReturnNotFoundWhenIdDoesNotExist() throws Exception {
         when(service.getScore(nonExistingStudentId)).thenThrow(new ResourceNotFoundException("Student not found. ID: " + nonExistingStudentId));
 
         ResultActions result = mockMvc.perform(get("/students/{id}/score", nonExistingStudentId)
@@ -251,7 +251,7 @@ public class StudentControllerTests {
     }
 
     @Test
-    public void setSchoolClassShouldReturnNoContent() throws Exception {
+    void setSchoolClassShouldReturnNoContent() throws Exception {
         ResultActions result = mockMvc.perform(patch("/students/class")
                 .param("studentId", existingStudentId.toString())
                 .param("classId", existingSchoolClassId.toString())

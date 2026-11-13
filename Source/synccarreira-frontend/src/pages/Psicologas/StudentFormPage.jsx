@@ -16,6 +16,21 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@.]+(?:\.[^\s@.]+)+$/
 
 const EMPTY_FORM = { name: '', email: '', schollarYear: '', schoolType: '' }
 
+/** Valida os campos. Retorna um mapa de erros por campo (vazio = válido). */
+function validate(values) {
+  const errors = {}
+  if (!values.name.trim()) {
+    errors.name = 'Informe o nome do aluno.'
+  }
+  const email = values.email.trim()
+  if (!email) {
+    errors.email = 'Informe o e-mail do aluno.'
+  } else if (!EMAIL_REGEX.test(email)) {
+    errors.email = 'Informe um e-mail válido.'
+  }
+  return errors
+}
+
 export default function StudentFormPage() {
   const { id } = useParams()
   const navigate = useNavigate()
@@ -54,21 +69,6 @@ export default function StudentFormPage() {
     setForm((prev) => ({ ...prev, [name]: value }))
     setFieldErrors((prev) => ({ ...prev, [name]: undefined }))
     setError(null)
-  }
-
-  /** Valida os campos. Retorna um mapa de erros por campo (vazio = válido). */
-  function validate(values) {
-    const errors = {}
-    if (!values.name.trim()) {
-      errors.name = 'Informe o nome do aluno.'
-    }
-    const email = values.email.trim()
-    if (!email) {
-      errors.email = 'Informe o e-mail do aluno.'
-    } else if (!EMAIL_REGEX.test(email)) {
-      errors.email = 'Informe um e-mail válido.'
-    }
-    return errors
   }
 
   function handleSubmit(event) {

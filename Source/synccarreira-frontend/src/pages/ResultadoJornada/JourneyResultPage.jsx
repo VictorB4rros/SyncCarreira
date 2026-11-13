@@ -71,6 +71,131 @@ export default function JourneyResultPage() {
   const scores = result?.scores ?? []
   const suggestions = result?.suggestions ?? []
 
+  let resultContent
+  if (loading) {
+    resultContent = (
+      <output className="journey-result-state">Preparando seu resultado…</output>
+    )
+  } else if (error) {
+    resultContent = (
+      <section className="journey-result-state journey-result-state--error" role="alert">
+        <span className="journey-result-state__icon" aria-hidden="true">i</span>
+        <h1>Seu resultado ainda não está disponível</h1>
+        <p>{error}</p>
+        <button type="button" onClick={() => navigate('/home')}>Voltar para as trilhas</button>
+      </section>
+    )
+  } else {
+    resultContent = (
+      <>
+        <header className="journey-result-hero">
+          <span className="journey-result-hero__eyebrow">Jornada {result?.journeyNumber}</span>
+          <h1>Seu leque de possibilidades</h1>
+          <p>Use este resultado para explorar caminhos que podem combinar com você neste momento.</p>
+          {formattedDate(result?.concludedAt) && (
+            <span className="journey-result-hero__date">Concluída em {formattedDate(result?.concludedAt)}</span>
+          )}
+          <div className="journey-result-hero__actions">
+            <button
+              type="button"
+              className="journey-result-pdf"
+              onClick={handleDownloadPdf}
+              disabled={downloading || !result?.journeyId}
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
+              {downloading ? 'Gerando PDF…' : 'Baixar PDF da jornada'}
+            </button>
+            {pdfMessage?.tone === 'error' && (
+              <span className="journey-result-pdf__message journey-result-pdf__message--error" role="alert">
+                {pdfMessage.text}
+              </span>
+            )}
+            {pdfMessage?.tone === 'success' && (
+              <output className="journey-result-pdf__message journey-result-pdf__message--success">
+                {pdfMessage.text}
+              </output>
+            )}
+          </div>
+        </header>
+
+        <aside className="journey-result-disclaimer" aria-label="Aviso sobre o resultado">
+          <span className="journey-result-disclaimer__mark" aria-hidden="true">i</span>
+          <div>
+            <strong>Um ponto de partida, não um diagnóstico</strong>
+            <p>{result?.disclaimer}</p>
+          </div>
+        </aside>
+
+        <section className="journey-result-section" aria-labelledby="journey-result-areas-title">
+          <div className="journey-result-section__heading">
+            <span>01</span>
+            <div>
+              <h2 id="journey-result-areas-title">Áreas que apareceram nas suas respostas</h2>
+              <p>Os percentuais são comparados ao máximo possível de cada área.</p>
+            </div>
+          </div>
+          <div className="journey-result-scores">
+            {scores.map(score => (
+              <article className={`journey-result-score${score.highlighted ? ' journey-result-score--highlighted' : ''}`} key={score.area}>
+                <div className="journey-result-score__topline">
+                  <div>
+                    <h3>{score.areaName || AREA_LABELS[score.area] || score.area}</h3>
+                    {score.highlighted && <span className="journey-result-score__badge">Em destaque</span>}
+                  </div>
+                  <strong>{percentage(score.percentage)}%</strong>
+                </div>
+                <div className="journey-result-score__track" aria-hidden="true">
+                  <span style={{ width: `${Math.min(100, Math.max(0, score.percentage ?? 0))}%` }} />
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="journey-result-section" aria-labelledby="journey-result-careers-title">
+          <div className="journey-result-section__heading">
+            <span>02</span>
+            <div>
+              <h2 id="journey-result-careers-title">Áreas e carreiras para explorar</h2>
+              <p>São possibilidades para pesquisar, conversar e conhecer melhor — não uma escolha pronta.</p>
+            </div>
+          </div>
+
+          {suggestions.length > 0 ? (
+            <div className="journey-result-suggestions">
+              {suggestions.map(suggestion => (
+                <article className="journey-result-suggestion" key={suggestion.id}>
+                  <span className="journey-result-suggestion__area">
+                    {AREA_LABELS[suggestion.area] || suggestion.area}
+                  </span>
+                  <h3>{suggestion.name}</h3>
+                  <p>{suggestion.description}</p>
+                  {suggestion.careers?.length > 0 && (
+                    <div className="journey-result-careers">
+                      <h4>Algumas carreiras</h4>
+                      <ul>
+                        {suggestion.careers.map(career => <li key={career}>{career}</li>)}
+                      </ul>
+                    </div>
+                  )}
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p className="journey-result-empty">
+              Suas respostas ainda não destacam uma área específica. Isso não limita suas possibilidades: explore diferentes caminhos e converse com a psicóloga da sua escola.
+            </p>
+          )}
+        </section>
+
+        <footer className="journey-result-footer">
+          <p>Seus interesses podem mudar. Conhecer cursos e conversar com profissionais pode ajudar nos próximos passos.</p>
+          <button type="button" onClick={() => navigate('/home')}>Continuar explorando</button>
+        </footer>
+      </>
+    )
+  }
+
   return (
     <div className="journey-result-page">
       <AppHeader />
@@ -79,123 +204,7 @@ export default function JourneyResultPage() {
           <span aria-hidden="true">←</span> Voltar para minhas trilhas
         </button>
 
-        {loading ? (
-          <output className="journey-result-state">Preparando seu resultado…</output>
-        ) : error ? (
-          <section className="journey-result-state journey-result-state--error" role="alert">
-            <span className="journey-result-state__icon" aria-hidden="true">i</span>
-            <h1>Seu resultado ainda não está disponível</h1>
-            <p>{error}</p>
-            <button type="button" onClick={() => navigate('/home')}>Voltar para as trilhas</button>
-          </section>
-        ) : (
-          <>
-            <header className="journey-result-hero">
-              <span className="journey-result-hero__eyebrow">Jornada {result?.journeyNumber}</span>
-              <h1>Seu leque de possibilidades</h1>
-              <p>Use este resultado para explorar caminhos que podem combinar com você neste momento.</p>
-              {formattedDate(result?.concludedAt) && (
-                <span className="journey-result-hero__date">Concluída em {formattedDate(result?.concludedAt)}</span>
-              )}
-              <div className="journey-result-hero__actions">
-                <button
-                  type="button"
-                  className="journey-result-pdf"
-                  onClick={handleDownloadPdf}
-                  disabled={downloading || !result?.journeyId}
-                >
-                  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m0 0-4.5-4.5M12 15l4.5-4.5M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" /></svg>
-                  {downloading ? 'Gerando PDF…' : 'Baixar PDF da jornada'}
-                </button>
-                {pdfMessage?.tone === 'error' && (
-                  <span className="journey-result-pdf__message journey-result-pdf__message--error" role="alert">
-                    {pdfMessage.text}
-                  </span>
-                )}
-                {pdfMessage?.tone === 'success' && (
-                  <output className="journey-result-pdf__message journey-result-pdf__message--success">
-                    {pdfMessage.text}
-                  </output>
-                )}
-              </div>
-            </header>
-
-            <aside className="journey-result-disclaimer" aria-label="Aviso sobre o resultado">
-              <span className="journey-result-disclaimer__mark" aria-hidden="true">i</span>
-              <div>
-                <strong>Um ponto de partida, não um diagnóstico</strong>
-                <p>{result?.disclaimer}</p>
-              </div>
-            </aside>
-
-            <section className="journey-result-section" aria-labelledby="journey-result-areas-title">
-              <div className="journey-result-section__heading">
-                <span>01</span>
-                <div>
-                  <h2 id="journey-result-areas-title">Áreas que apareceram nas suas respostas</h2>
-                  <p>Os percentuais são comparados ao máximo possível de cada área.</p>
-                </div>
-              </div>
-              <div className="journey-result-scores">
-                {scores.map(score => (
-                  <article className={`journey-result-score${score.highlighted ? ' journey-result-score--highlighted' : ''}`} key={score.area}>
-                    <div className="journey-result-score__topline">
-                      <div>
-                        <h3>{score.areaName || AREA_LABELS[score.area] || score.area}</h3>
-                        {score.highlighted && <span className="journey-result-score__badge">Em destaque</span>}
-                      </div>
-                      <strong>{percentage(score.percentage)}%</strong>
-                    </div>
-                    <div className="journey-result-score__track" aria-hidden="true">
-                      <span style={{ width: `${Math.min(100, Math.max(0, score.percentage ?? 0))}%` }} />
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <section className="journey-result-section" aria-labelledby="journey-result-careers-title">
-              <div className="journey-result-section__heading">
-                <span>02</span>
-                <div>
-                  <h2 id="journey-result-careers-title">Áreas e carreiras para explorar</h2>
-                  <p>São possibilidades para pesquisar, conversar e conhecer melhor — não uma escolha pronta.</p>
-                </div>
-              </div>
-
-              {suggestions.length > 0 ? (
-                <div className="journey-result-suggestions">
-                  {suggestions.map(suggestion => (
-                    <article className="journey-result-suggestion" key={suggestion.id}>
-                      <span className="journey-result-suggestion__area">
-                        {AREA_LABELS[suggestion.area] || suggestion.area}
-                      </span>
-                      <h3>{suggestion.name}</h3>
-                      <p>{suggestion.description}</p>
-                      {suggestion.careers?.length > 0 && (
-                        <div className="journey-result-careers">
-                          <h4>Algumas carreiras</h4>
-                          <ul>
-                            {suggestion.careers.map(career => <li key={career}>{career}</li>)}
-                          </ul>
-                        </div>
-                      )}
-                    </article>
-                  ))}
-                </div>
-              ) : (
-                <p className="journey-result-empty">
-                  Suas respostas ainda não destacam uma área específica. Isso não limita suas possibilidades: explore diferentes caminhos e converse com a psicóloga da sua escola.
-                </p>
-              )}
-            </section>
-
-            <footer className="journey-result-footer">
-              <p>Seus interesses podem mudar. Conhecer cursos e conversar com profissionais pode ajudar nos próximos passos.</p>
-              <button type="button" onClick={() => navigate('/home')}>Continuar explorando</button>
-            </footer>
-          </>
-        )}
+        {resultContent}
       </main>
     </div>
   )
