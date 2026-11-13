@@ -73,7 +73,7 @@ public class JourneyHistoryControllerTests {
 
     @Test
     void downloadMyJourneyPdfShouldReturnPdfFile() throws Exception {
-        byte[] pdf = new byte[] { 37, 80, 68, 70 };
+        byte[] pdf = { 37, 80, 68, 70 };
         when(service.generateMyJourneyPdf(1L)).thenReturn(new ReportFile("minha-jornada-1-2026-10-01.pdf", pdf));
 
         ResultActions result = mockMvc.perform(get("/journeys/me/1/pdf"));

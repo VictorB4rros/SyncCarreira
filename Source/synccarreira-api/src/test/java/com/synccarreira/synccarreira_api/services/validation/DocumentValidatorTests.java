@@ -51,7 +51,7 @@ public class DocumentValidatorTests {
 
         @Test
         void onlyDigitsShouldReturnEmptyWhenStringIsNull() {
-            assertThat(DocumentValidator.onlyDigits(null)).isEqualTo("");
+            assertThat(DocumentValidator.onlyDigits(null)).isEmpty();
         }
 
         @Test

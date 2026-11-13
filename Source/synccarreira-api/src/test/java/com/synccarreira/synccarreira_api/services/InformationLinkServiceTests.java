@@ -3,6 +3,7 @@ package com.synccarreira.synccarreira_api.services;
 import com.synccarreira.synccarreira_api.dto.InformationLinkDTO;
 import com.synccarreira.synccarreira_api.dto.InformationLinkInsertDTO;
 import com.synccarreira.synccarreira_api.dto.InformationTrailDTO;
+import com.synccarreira.synccarreira_api.dto.result.AreaScoreDTO;
 import com.synccarreira.synccarreira_api.entities.InformationLink;
 import com.synccarreira.synccarreira_api.entities.Question;
 import com.synccarreira.synccarreira_api.entities.QuestionOption;
@@ -164,7 +165,7 @@ public class InformationLinkServiceTests {
         InformationTrailDTO result = service.findForLoggedStudent();
 
         Assertions.assertEquals(allAreas, result.recommendedAreas());
-        Assertions.assertTrue(result.areaScores().stream().noneMatch(score -> score.highlighted()));
+        Assertions.assertTrue(result.areaScores().stream().noneMatch(AreaScoreDTO::highlighted));
     }
 
     @Test

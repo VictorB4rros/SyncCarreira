@@ -2,6 +2,7 @@ package com.synccarreira.synccarreira_api.services;
 
 import com.synccarreira.synccarreira_api.dto.feedback.FeedbackDTO;
 import com.synccarreira.synccarreira_api.dto.feedback.JourneyFeedbackInsertDTO;
+import com.synccarreira.synccarreira_api.dto.feedback.SessionFeedbackInsertDTO;
 import com.synccarreira.synccarreira_api.dto.feedback.StudentFeedbackStatusDTO;
 import com.synccarreira.synccarreira_api.entities.Appointment;
 import com.synccarreira.synccarreira_api.entities.Feedback;
@@ -165,8 +166,9 @@ public class FeedbackServiceTests {
         Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
         Mockito.when(journeyRecordRepository.findByStudentIdOrderByJourneyNumberAsc(student.getId())).thenReturn(List.of());
 
-        Assertions.assertThrows(BusinessException.class,
-                () -> service.sendJourneyFeedback(FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId())));
+        JourneyFeedbackInsertDTO dto = FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId());
+
+        Assertions.assertThrows(BusinessException.class, () -> service.sendJourneyFeedback(dto));
         Mockito.verify(feedbackRepository, Mockito.never()).saveAndFlush(any());
         Mockito.verify(eventPublisher, Mockito.never()).publishEvent(any());
     }
@@ -177,8 +179,9 @@ public class FeedbackServiceTests {
         Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
         Mockito.when(journeyRecordRepository.existsByStudentIdAndJourneyNumber(student.getId(), 3)).thenReturn(false);
 
-        Assertions.assertThrows(BusinessException.class,
-                () -> service.sendJourneyFeedback(new JourneyFeedbackInsertDTO(student.getId(), 3, FeedbackFactory.CONTENT)));
+        JourneyFeedbackInsertDTO dto = new JourneyFeedbackInsertDTO(student.getId(), 3, FeedbackFactory.CONTENT);
+
+        Assertions.assertThrows(BusinessException.class, () -> service.sendJourneyFeedback(dto));
     }
 
     @Test
@@ -189,8 +192,9 @@ public class FeedbackServiceTests {
                 .thenReturn(List.of(JourneyFactory.createJourneyRecord(student, 1, "{}")));
         Mockito.when(feedbackRepository.existsByStudentIdAndJourneyNumber(student.getId(), 1)).thenReturn(true);
 
-        Assertions.assertThrows(ConflictException.class,
-                () -> service.sendJourneyFeedback(FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId())));
+        JourneyFeedbackInsertDTO dto = FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId());
+
+        Assertions.assertThrows(ConflictException.class, () -> service.sendJourneyFeedback(dto));
         Mockito.verify(feedbackRepository, Mockito.never()).saveAndFlush(any());
     }
 
@@ -203,8 +207,9 @@ public class FeedbackServiceTests {
         Mockito.when(feedbackRepository.existsByStudentIdAndJourneyNumber(student.getId(), 1)).thenReturn(false);
         Mockito.when(feedbackRepository.saveAndFlush(any())).thenThrow(DataIntegrityViolationException.class);
 
-        Assertions.assertThrows(ConflictException.class,
-                () -> service.sendJourneyFeedback(FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId())));
+        JourneyFeedbackInsertDTO dto = FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId());
+
+        Assertions.assertThrows(ConflictException.class, () -> service.sendJourneyFeedback(dto));
         Mockito.verify(eventPublisher, Mockito.never()).publishEvent(any());
     }
 
@@ -216,8 +221,9 @@ public class FeedbackServiceTests {
         student.getDeterminedSchoolClass().setInstitution(otherInstitution);
         Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
 
-        Assertions.assertThrows(ForbiddenException.class,
-                () -> service.sendJourneyFeedback(FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId())));
+        JourneyFeedbackInsertDTO dto = FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId());
+
+        Assertions.assertThrows(ForbiddenException.class, () -> service.sendJourneyFeedback(dto));
     }
 
     @Test
@@ -225,8 +231,9 @@ public class FeedbackServiceTests {
         psychologist.setContractExpirationDate(LocalDate.now().minusDays(1));
         mockLoggedPsychologist();
 
-        Assertions.assertThrows(IllegalStateException.class,
-                () -> service.sendJourneyFeedback(FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId())));
+        JourneyFeedbackInsertDTO dto = FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId());
+
+        Assertions.assertThrows(IllegalStateException.class, () -> service.sendJourneyFeedback(dto));
         Mockito.verify(studentRepository, Mockito.never()).findById(any());
     }
 
@@ -235,8 +242,9 @@ public class FeedbackServiceTests {
         Mockito.when(authService.authenticated()).thenReturn(student);
         Mockito.when(psychologistRepository.findById(student.getId())).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ForbiddenException.class,
-                () -> service.sendJourneyFeedback(FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId())));
+        JourneyFeedbackInsertDTO dto = FeedbackFactory.createJourneyFeedbackInsertDTO(student.getId());
+
+        Assertions.assertThrows(ForbiddenException.class, () -> service.sendJourneyFeedback(dto));
     }
 
     // ---------- Feedback de sessão ----------
@@ -281,8 +289,9 @@ public class FeedbackServiceTests {
         appointment.setDateTime(LocalDateTime.now().minusMinutes(10));
         mockValidSession();
 
-        Assertions.assertThrows(BusinessException.class,
-                () -> service.sendSessionFeedback(FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId())));
+        SessionFeedbackInsertDTO dto = FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId());
+
+        Assertions.assertThrows(BusinessException.class, () -> service.sendSessionFeedback(dto));
         Mockito.verify(feedbackRepository, Mockito.never()).saveAndFlush(any());
     }
 
@@ -291,8 +300,9 @@ public class FeedbackServiceTests {
         appointment.setScheduleStatus(ScheduleStatus.CANCELADA);
         mockValidSession();
 
-        Assertions.assertThrows(BusinessException.class,
-                () -> service.sendSessionFeedback(FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId())));
+        SessionFeedbackInsertDTO dto = FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId());
+
+        Assertions.assertThrows(BusinessException.class, () -> service.sendSessionFeedback(dto));
     }
 
     @Test
@@ -302,8 +312,9 @@ public class FeedbackServiceTests {
         mockValidSession();
         Mockito.when(studentRepository.findById(otherStudent.getId())).thenReturn(Optional.of(otherStudent));
 
-        Assertions.assertThrows(BusinessException.class,
-                () -> service.sendSessionFeedback(FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), otherStudent.getId())));
+        SessionFeedbackInsertDTO dto = FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), otherStudent.getId());
+
+        Assertions.assertThrows(BusinessException.class, () -> service.sendSessionFeedback(dto));
     }
 
     @Test
@@ -313,8 +324,9 @@ public class FeedbackServiceTests {
         appointment.setPsychologist(otherPsychologist);
         mockValidSession();
 
-        Assertions.assertThrows(ForbiddenException.class,
-                () -> service.sendSessionFeedback(FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId())));
+        SessionFeedbackInsertDTO dto = FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId());
+
+        Assertions.assertThrows(ForbiddenException.class, () -> service.sendSessionFeedback(dto));
     }
 
     @Test
@@ -323,8 +335,9 @@ public class FeedbackServiceTests {
         Mockito.when(studentRepository.findById(student.getId())).thenReturn(Optional.of(student));
         Mockito.when(feedbackRepository.existsByStudentIdAndAppointmentId(student.getId(), appointment.getId())).thenReturn(true);
 
-        Assertions.assertThrows(ConflictException.class,
-                () -> service.sendSessionFeedback(FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId())));
+        SessionFeedbackInsertDTO dto = FeedbackFactory.createSessionFeedbackInsertDTO(appointment.getId(), student.getId());
+
+        Assertions.assertThrows(ConflictException.class, () -> service.sendSessionFeedback(dto));
     }
 
     @Test
@@ -332,8 +345,9 @@ public class FeedbackServiceTests {
         mockLoggedPsychologist();
         Mockito.when(appointmentRepository.findById(99L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class,
-                () -> service.sendSessionFeedback(FeedbackFactory.createSessionFeedbackInsertDTO(99L, student.getId())));
+        SessionFeedbackInsertDTO dto = FeedbackFactory.createSessionFeedbackInsertDTO(99L, student.getId());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> service.sendSessionFeedback(dto));
     }
 
     // ---------- Apagar e listar (psicóloga) ----------
@@ -357,7 +371,9 @@ public class FeedbackServiceTests {
         Feedback feedback = FeedbackFactory.createJourneyFeedback(student, otherPsychologist, 1);
         Mockito.when(feedbackRepository.findById(feedback.getId())).thenReturn(Optional.of(feedback));
 
-        Assertions.assertThrows(ForbiddenException.class, () -> service.delete(feedback.getId()));
+        Long feedbackId = feedback.getId();
+
+        Assertions.assertThrows(ForbiddenException.class, () -> service.delete(feedbackId));
         Mockito.verify(feedbackRepository, Mockito.never()).delete(any());
     }
 
