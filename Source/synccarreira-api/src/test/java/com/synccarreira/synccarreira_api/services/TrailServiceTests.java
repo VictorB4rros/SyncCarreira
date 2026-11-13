@@ -1,5 +1,6 @@
 package com.synccarreira.synccarreira_api.services;
 
+import com.synccarreira.synccarreira_api.dto.TrailUpdateDTO;
 import com.synccarreira.synccarreira_api.dto.UserDTO;
 import com.synccarreira.synccarreira_api.entities.Answer;
 import com.synccarreira.synccarreira_api.entities.Question;
@@ -147,6 +148,36 @@ public class TrailServiceTests {
         Mockito.when(trailRepository.findById(nonExistingTrailId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> service.canAccess(nonExistingTrailId));
+    }
+
+    @Test
+    void findByIdShouldThrowResourceNotFoundExceptionWhenTrailDoesNotExist() {
+        Mockito.when(trailRepository.findById(nonExistingTrailId)).thenReturn(Optional.empty());
+
+        ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> service.findById(nonExistingTrailId));
+        Assertions.assertEquals("Trilha não encontrada. ID: " + nonExistingTrailId, exception.getMessage());
+    }
+
+    @Test
+    void updateShouldThrowResourceNotFoundExceptionWhenTrailDoesNotExist() {
+        Mockito.when(trailRepository.findById(nonExistingTrailId)).thenReturn(Optional.empty());
+        TrailUpdateDTO dto = new TrailUpdateDTO(TrailName.INFLUENCIAS, 2);
+
+        ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> service.update(nonExistingTrailId, dto));
+        Assertions.assertEquals("Trilha não encontrada. ID: " + nonExistingTrailId, exception.getMessage());
+        Mockito.verify(trailRepository, Mockito.never()).save(any());
+    }
+
+    @Test
+    void deleteShouldThrowResourceNotFoundExceptionWhenTrailDoesNotExist() {
+        Mockito.when(trailRepository.existsById(nonExistingTrailId)).thenReturn(false);
+
+        ResourceNotFoundException exception = Assertions.assertThrows(ResourceNotFoundException.class,
+                () -> service.delete(nonExistingTrailId));
+        Assertions.assertEquals("Trilha não encontrada. ID: " + nonExistingTrailId, exception.getMessage());
+        Mockito.verify(trailRepository, Mockito.never()).deleteById(any());
     }
 
     @Test
